@@ -50,7 +50,7 @@ const LocationSelection = () => {
     <>
       <BackButton />
       <PageBasedInput texts={texts} onSubmit={onSubmit}>
-        <CardHeader>{t("CHOOSE LOCATION")}</CardHeader>
+        <CardHeader>{t("CS_COMMON_CHOOSE_LOCATION")}</CardHeader>
         <SearchOnRadioButtons {...RadioButtonProps} placeholder={t("SEARCH")} />
         {showError ? <CardLabelError>{t("LOCATION ERRROR")}</CardLabelError> : null}
       </PageBasedInput>

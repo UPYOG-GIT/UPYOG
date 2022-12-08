@@ -28,7 +28,7 @@ const LanguageSelection = () => {
     }
 
     return isLoading ? <Loader/> : <PageBasedInput texts={texts} onSubmit={onSubmit}>
-        <CardHeader>{t("CHOOSE YOUR LANGUAGE")}</CardHeader>
+        <CardHeader>{t("CS_COMMON_CHOOSE_LANGUAGE")}</CardHeader>
         <RadioButtons {...RadioButtonProps}/>
     </PageBasedInput>
 }

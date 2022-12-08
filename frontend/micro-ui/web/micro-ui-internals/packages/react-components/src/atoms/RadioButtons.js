@@ -9,6 +9,8 @@ const RadioButtons = (props) => {
   function selectOption(value) {
     //selected = value;
     props.onSelect(value);
+
+    console.warn("Hii" + props);
   }
 
   return (
@@ -70,10 +72,14 @@ const RadioButtons = (props) => {
               </span>
               <label style={props.inputStyle}>{t(option)}</label>
             </div>
+            
           );
         }
       })}
+      
     </div>
+
+    
   );
 };
 
