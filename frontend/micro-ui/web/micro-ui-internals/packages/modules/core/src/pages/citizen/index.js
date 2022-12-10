@@ -34,7 +34,7 @@ const Home = ({
   const classname = Digit.Hooks.fsm.useRouteSubscription(pathname);
   const { t } = useTranslation();
   const { path } = useRouteMatch();
-  sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
+  sourceUrl = "https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/configs";
   const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf"
 
   const appRoutes = modules.map(({ code, tenants }, index) => {
@@ -114,7 +114,7 @@ const Home = ({
       </div>
       <div style={{ width: '100%', bottom: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'center', color:"#22394d" }}>
-          <img style={{ cursor: "pointer", display: "inline-flex", height: '1.4em' }} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
+          <img style={{ cursor: "pointer", display: "inline-flex", height: '1.4em' }} alt={"Powered by UPYOG"} src={`${sourceUrl}/digit-footer+copy.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
             window.open('https://www.digit.org/', '_blank').focus();
           }}></img>
           <span style={{ margin: "0 10px" }}>|</span>
