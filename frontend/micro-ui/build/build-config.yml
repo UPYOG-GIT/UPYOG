@@ -8,17 +8,17 @@
 # -
 # -
 
-# config:
-# -   name: builds/digit-ui
-#     build:
-#       - work-dir: frontend/micro-ui/web/
-#       dockerfile: web/docker/Dockerfile
-#       image-name: digit-ui
-
-
 config:
--   name: builds/citizen
+-   name: builds/digit-ui
     build:
       - work-dir: frontend/micro-ui/web/
       dockerfile: web/docker/Dockerfile
-      image-name: citizen
+      image-name: digit-ui
+
+
+# config:
+# -   name: builds/citizen
+#     build:
+#       - work-dir: frontend/micro-ui/web/
+#       dockerfile: web/docker/Dockerfile
+#       image-name: citizen
