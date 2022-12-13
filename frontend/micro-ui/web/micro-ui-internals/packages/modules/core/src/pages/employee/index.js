@@ -33,7 +33,7 @@ const EmployeeApp = ({
   useEffect(() => {
     Digit.UserService.setType("employee");
   }, []);
-  sourceUrl = "https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/configs";
+  sourceUrl = "https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com";
   const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf"
 
   return (
