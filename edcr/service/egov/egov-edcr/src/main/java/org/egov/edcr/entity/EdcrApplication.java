@@ -103,6 +103,9 @@ public class EdcrApplication extends AbstractAuditable {
     private transient Map<String, List<Object>> mdmsMasterData;
 
     private transient String deviationStatus;
+    
+  //add for coverage areaCategory
+//    private transient String areaCategory;
 
     @Override
     public Long getId() {
@@ -305,5 +308,16 @@ public class EdcrApplication extends AbstractAuditable {
     public void setDeviationStatus(String deviationStatus) {
         this.deviationStatus = deviationStatus;
     }
+
+//	public String getAreaCategory() {
+//		return areaCategory;
+//	}
+//
+//	public void setAreaCategory(String areaCategory) {
+//		this.areaCategory = areaCategory;
+//	}
+
+    
+    
 
 }

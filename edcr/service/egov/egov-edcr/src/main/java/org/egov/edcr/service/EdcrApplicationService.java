@@ -282,6 +282,9 @@ public class EdcrApplicationService {
         edcrApplication.getEdcrApplicationDetails().get(0).setComparisonDcrNumber(comparisonDcrNo);
         callDcrProcess(edcrApplication, NEW_SCRTNY);
         edcrIndexService.updateEdcrRestIndexes(edcrApplication, NEW_SCRTNY);
+        
+        
+        
         return edcrApplication;
     }
 }

@@ -83,6 +83,7 @@ public class DxfFileConstants {
     public static final String VILLAGE = "VILLAGE";
     public static final String DESAM = "DESAM";
     public static final Object NO_OF_BEDS = "NO_OF_BEDS";
+    public static final Object NO_OF_SEATS = "NO_OF_SEATS";
     public static final int YARD_DIMENSION_COLOR = 2;
     public static final int STAIR_FLIGHT_LENGTH_COLOR = 1;
     public static final int STAIR_FLIGHT_WIDTH_COLOR = 2;
@@ -140,6 +141,7 @@ public class DxfFileConstants {
     public static final String ROAD_WIDTH = "ROAD_WIDTH";
     public static final String ROAD_LENGTH = "ROAD_LENGTH";
     public static final String AREA_TYPE = "AREA_TYPE";
+    public static final String DEVELOPMENT_ZONE = "DEVELOPMENT_ZONE";
     public static final String AVG_PLOT_DEPTH = "AVG_PLOT_DEPTH";
     public static final String AVG_PLOT_WIDTH = "AVG_PLOT_WIDTH";
     public static final String LAND_USE_ZONE = "LAND_USE_ZONE";
@@ -163,6 +165,8 @@ public class DxfFileConstants {
     public static final String DISTRICT = "DISTRICT";
     public static final String MAUZA = "MAUZA";
     public static final String RWH_DECLARED = "RWH_DECLARED";
+    public static final String TENEMENT_FOR_RESIDENTIAL = "TENEMENT_FOR_RESIDENTIAL";
+    public static final String TENEMENT_FOR_COMMERCIAL = "TENEMENT_FOR_COMMERCIAL";
     public static final int RESIDENTIAL_ROOM_COLOR = 1;
     public static final int COMMERCIAL_ROOM_COLOR = 2;
     public static final int EDUCATIONAL_ROOM_COLOR = 3;

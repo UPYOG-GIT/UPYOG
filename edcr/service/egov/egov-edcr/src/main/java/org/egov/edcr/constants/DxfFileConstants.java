@@ -16,6 +16,7 @@ public class DxfFileConstants {
     public static final String G = "G"; // Industrial
     public static final String H = "H"; // Storage
     public static final String I = "I"; // Hazardous
+    public static final String J = "J"; // Government / Semi-Government   //add for birgaon requirement
 
     // sub occupancies code
     public static final String A2 = "A2";// Old Age Home
@@ -35,12 +36,15 @@ public class DxfFileConstants {
     public static final String C_MA = "C-MA";// Medical Admin
     public static final String C_MIP = "C-MIP";// Medical IP
     public static final String C_MOP = "C-MOP";// Medical OP
+    public static final String C_MPVT = "C-MPVT";// Medical Private   //add for birgaon requirement
+    public static final String C_MPBLC = "C-MPBLC";// Medical Public  //add for birgaon requirement
 
     public static final String D_B = "D-B"; // At sub city level in urban extension
     public static final String D_C = "D-C"; // Anganwari
     public static final String D_A = "D-A"; // Religious
     public static final String D_AW = "D-AW";// Assembly Worship
     public static final String D_BT = "D-BT";// Bus Terminal
+    public static final String D_MHCT = "D-MHCT";//Meeting Hall/Cinema Theater   //add for birgaon requirement
 
     public static final String E_PS = "E-PS";// Primary School
     public static final String E_SFMC = "E-SFMC";// School for Mentally Challenged
@@ -58,6 +62,7 @@ public class DxfFileConstants {
     public static final String F_LD = "F-LD";// Lodges
     public static final String F_CB = "F-CB";// Commercial Building
     public static final String F_IT = "F-IT";// IT / ITES Buildings
+    
 
 
     public static final String G_LI = "G-LI";// Large Industrial
@@ -329,6 +334,7 @@ public class DxfFileConstants {
     public static final String VILLAGE = "VILLAGE";
     public static final String DESAM = "DESAM";
     public static final Object NO_OF_BEDS = "NO_OF_BEDS";
+    public static final Object NO_OF_SEATS = "NO_OF_SEATS";
     public static final int YARD_DIMENSION_COLOR = 2;
 
     public static final String AREA_TYPE = "Area Type";

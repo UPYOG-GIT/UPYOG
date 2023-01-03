@@ -24,3 +24,4 @@ RUN mkdir -p ${WORK_DIR}
 
 COPY --from=build /app/web/build ${WORK_DIR}/
 COPY --from=build /app/web/docker/nginx.conf /etc/nginx/conf.d/default.conf
+

@@ -125,20 +125,20 @@ public class GeneralStair extends FeatureProcess {
                                             generalStair);
 
                                     List<StairLanding> landings = generalStair.getLandings();
-                                    if (!landings.isEmpty()) {
-                                        validateLanding(plan, block, scrutinyDetailLanding, mostRestrictiveOccupancyType,
-                                                floor,
-                                                typicalFloorValues, generalStair, landings, errors);
-                                    } else {
-                                        errors.put(
-                                                "General Stair landing not defined in block " + block.getNumber() + " floor "
-                                                        + floor.getNumber()
-                                                        + " stair " + generalStair.getNumber(),
-                                                "General Stair landing not defined in block " + block.getNumber() + " floor "
-                                                        + floor.getNumber()
-                                                        + " stair " + generalStair.getNumber());
-                                        plan.addErrors(errors);
-                                    }
+//                                    if (!landings.isEmpty()) {
+//                                        validateLanding(plan, block, scrutinyDetailLanding, mostRestrictiveOccupancyType,
+//                                                floor,
+//                                                typicalFloorValues, generalStair, landings, errors);
+//                                    } else {
+//                                        errors.put(
+//                                                "General Stair landing not defined in block " + block.getNumber() + " floor "
+//                                                        + floor.getNumber()
+//                                                        + " stair " + generalStair.getNumber(),
+//                                                "General Stair landing not defined in block " + block.getNumber() + " floor "
+//                                                        + floor.getNumber()
+//                                                        + " stair " + generalStair.getNumber());
+//                                        plan.addErrors(errors);
+//                                    }
 
                                 }
                             }

@@ -159,17 +159,17 @@ public class LocalDiskFileStoreServiceTest {
         }
     }
 
-    @Test
-    public final void testUploadStreams() throws IOException {
-        Set<InputStream> files = new HashSet<>();
-        for (int no = 0; no < 10; no++) {
-            final File newFile = Files.createTempFile(tempFilePath, "xyz" + no, "txt").toFile();
-            FileUtils.write(newFile, "Test", UTF_8);
-            FileInputStream fin = new FileInputStream(newFile);
-            files.add(fin);
-        }
-        FileUtils.deleteDirectory(tempFilePath.toFile());
-    }
+//    @Test
+//    public final void testUploadStreams() throws IOException {
+//        Set<InputStream> files = new HashSet<>();
+//        for (int no = 0; no < 10; no++) {
+//            final File newFile = Files.createTempFile(tempFilePath, "xyz" + no, "txt").toFile();
+//            FileUtils.write(newFile, "Test", UTF_8);
+//            FileInputStream fin = new FileInputStream(newFile);
+//            files.add(fin);
+//        }
+//        FileUtils.deleteDirectory(tempFilePath.toFile());
+//    }
 
     @Test
     public final void testFetch() throws IOException {

@@ -212,11 +212,18 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 			pl.setPlot(plot);
 		}
 
-		String noOfSeats = planInfoProperties.get(DxfFileConstants.SEATS_SP_RESI);
+//		String noOfSeats = planInfoProperties.get(DxfFileConstants.SEATS_SP_RESI);
+//		if (StringUtils.isNotBlank(noOfSeats)) {
+//			noOfSeats = noOfSeats.replaceAll("[^\\d.]", "");
+//			if (getNumericValue(noOfSeats, pl, DxfFileConstants.SEATS_SP_RESI) != null)
+//				pi.setNoOfSeats(getNumericValue(noOfSeats, pl, DxfFileConstants.SEATS_SP_RESI).intValue());
+//		}
+
+		String noOfSeats = planInfoProperties.get(DxfFileConstants.NO_OF_SEATS);
 		if (StringUtils.isNotBlank(noOfSeats)) {
-			noOfSeats = noOfSeats.replaceAll("[^\\d.]", "");
-			if (getNumericValue(noOfSeats, pl, DxfFileConstants.SEATS_SP_RESI) != null)
-				pi.setNoOfSeats(getNumericValue(noOfSeats, pl, DxfFileConstants.SEATS_SP_RESI).intValue());
+			noOfSeats = noOfSeats.replaceAll(digitsRegex, "");
+			if (getNumericValue(noOfSeats, pl, DxfFileConstants.NO_OF_SEATS.toString()) != null)
+				pi.setNoOfSeats(Integer.valueOf(noOfSeats));
 		}
 
 		String noOfMechanicalParking = planInfoProperties.get(layerNames.getLayerName("LAYER_NAME_MECHANICAL_PARKING"));
@@ -250,10 +257,10 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 			String value = crzZone;
 			if (value.equalsIgnoreCase(DcrConstants.YES)) {
 				pi.setCrzZoneArea(true);
-				//pi.setCrzZoneDesc(DcrConstants.YES);
+				// pi.setCrzZoneDesc(DcrConstants.YES);
 			} else if (value.equalsIgnoreCase(DcrConstants.NO)) {
 				pi.setCrzZoneArea(false);
-				//pi.setCrzZoneDesc(DcrConstants.NO);
+				// pi.setCrzZoneDesc(DcrConstants.NO);
 			} else
 				pl.addError(DxfFileConstants.CRZ_ZONE,
 						DxfFileConstants.CRZ_ZONE + " cannot be accepted , should be either YES/NO.");
@@ -266,10 +273,10 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		if (StringUtils.isNotBlank(securityZone))
 			if (securityZone.equalsIgnoreCase(DcrConstants.YES)) {
 				pi.setSecurityZone(true);
-				//pi.setSecurityZoneDesc(DcrConstants.YES);
+				// pi.setSecurityZoneDesc(DcrConstants.YES);
 			} else if (securityZone.equalsIgnoreCase(DcrConstants.NO)) {
 				pi.setSecurityZone(false);
-				//pi.setSecurityZoneDesc(DcrConstants.NO);
+				// pi.setSecurityZoneDesc(DcrConstants.NO);
 			} else
 				pl.addError(DxfFileConstants.SECURITY_ZONE,
 						DxfFileConstants.SECURITY_ZONE + " cannot be accepted , should be either YES/NO.");
@@ -280,7 +287,7 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 			if (openingBelow2mside.equalsIgnoreCase(DcrConstants.YES)) {
 				// pi.setOpeningOnSideBelow2mts(true);
 				pi.setOpeningOnSide(true);
-				//pi.setOpeningOnSideBelow2mtsDesc(DcrConstants.YES);
+				// pi.setOpeningOnSideBelow2mtsDesc(DcrConstants.YES);
 			} /*
 				 * else if (openingBelow2mside.equalsIgnoreCase(DcrConstants.NO)) //
 				 * pi.setOpeningOnSideBelow2mts(false);
@@ -315,32 +322,34 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 			if (openingAbove2mside.equalsIgnoreCase(DcrConstants.YES)) {
 				// pi.setOpeningOnSideAbove2mts(true);
 				pi.setOpeningOnSide(true);
-				//pi.setOpeningOnSideAbove2mtsDesc(DcrConstants.YES);
-			} /*else if (openingAbove2mside.equalsIgnoreCase(DcrConstants.NO))
-				// pi.setOpeningOnSideAbove2mts(false);
-				pi.setOpeningOnSideAbove2mtsDesc(DcrConstants.NO);
-			else
-				// pi.setOpeningOnSideAbove2mts(null);
-				pi.setOpeningOnSideAbove2mtsDesc(DcrConstants.NA);*/
-		} /*else
-			// pi.setOpeningOnSideAbove2mts(null);
-			pi.setOpeningOnSideAbove2mtsDesc(DcrConstants.NA);
-*/
+				// pi.setOpeningOnSideAbove2mtsDesc(DcrConstants.YES);
+			} /*
+				 * else if (openingAbove2mside.equalsIgnoreCase(DcrConstants.NO)) //
+				 * pi.setOpeningOnSideAbove2mts(false);
+				 * pi.setOpeningOnSideAbove2mtsDesc(DcrConstants.NO); else //
+				 * pi.setOpeningOnSideAbove2mts(null);
+				 * pi.setOpeningOnSideAbove2mtsDesc(DcrConstants.NA);
+				 */
+		} /*
+			 * else // pi.setOpeningOnSideAbove2mts(null);
+			 * pi.setOpeningOnSideAbove2mtsDesc(DcrConstants.NA);
+			 */
 		// Labels changed check
-		/*String openingBelow2mrear = planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_REAR_LESS_1M);
-		if (StringUtils.isNotBlank(openingBelow2mrear)) {
-			if (openingBelow2mrear.equalsIgnoreCase(DcrConstants.YES))
-				// pi.setOpeningOnRearBelow2mts(true);
-				pi.setOpeningOnRearBelow2mtsDesc(DcrConstants.YES);
-			else if (openingBelow2mrear.equalsIgnoreCase(DcrConstants.NO))
-				// pi.setOpeningOnRearBelow2mts(false);
-				pi.setOpeningOnRearBelow2mtsDesc(DcrConstants.NO);
-			else
-				// pi.setOpeningOnRearBelow2mts(null);
-				pi.setOpeningOnRearBelow2mtsDesc(DcrConstants.NA);
-		} else
-			// pi.setOpeningOnRearBelow2mts(null);
-			pi.setOpeningOnRearBelow2mtsDesc(DcrConstants.NA);*/
+		/*
+		 * String openingBelow2mrear =
+		 * planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_REAR_LESS_1M);
+		 * if (StringUtils.isNotBlank(openingBelow2mrear)) { if
+		 * (openingBelow2mrear.equalsIgnoreCase(DcrConstants.YES)) //
+		 * pi.setOpeningOnRearBelow2mts(true);
+		 * pi.setOpeningOnRearBelow2mtsDesc(DcrConstants.YES); else if
+		 * (openingBelow2mrear.equalsIgnoreCase(DcrConstants.NO)) //
+		 * pi.setOpeningOnRearBelow2mts(false);
+		 * pi.setOpeningOnRearBelow2mtsDesc(DcrConstants.NO); else //
+		 * pi.setOpeningOnRearBelow2mts(null);
+		 * pi.setOpeningOnRearBelow2mtsDesc(DcrConstants.NA); } else //
+		 * pi.setOpeningOnRearBelow2mts(null);
+		 * pi.setOpeningOnRearBelow2mtsDesc(DcrConstants.NA);
+		 */
 
 		// Labels changed check
 		String nocAbutSide = planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_SIDE);
@@ -418,10 +427,10 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		if (StringUtils.isNotBlank(depthCutting))
 			if (depthCutting.equalsIgnoreCase(DcrConstants.YES)) {
 				pi.setDepthCutting(true);
-				//pi.setDepthCuttingDesc(DcrConstants.YES);
+				// pi.setDepthCuttingDesc(DcrConstants.YES);
 			} else if (depthCutting.equalsIgnoreCase(DcrConstants.NO)) {
 				pi.setDepthCutting(false);
-				//pi.setDepthCuttingDesc(DcrConstants.NO);
+				// pi.setDepthCuttingDesc(DcrConstants.NO);
 			} else
 				pl.addError(DxfFileConstants.DEPTH_CUTTING,
 						DxfFileConstants.DEPTH_CUTTING + " cannot be accepted , should be either YES/NO.");
@@ -469,6 +478,14 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		else
 			pl.addError(DxfFileConstants.AREA_TYPE,
 					getLocaleMessage(OBJECTNOTDEFINED, DxfFileConstants.AREA_TYPE + " of PLAN_INFO layer"));
+
+		// fetch Development Zone from Plan Info Layer
+		String developmentZone = planInfoProperties.get(DxfFileConstants.DEVELOPMENT_ZONE);
+		if (StringUtils.isNotBlank(developmentZone))
+			pi.setDevelopmentZone(developmentZone);
+		else
+			pl.addError(DxfFileConstants.DEVELOPMENT_ZONE,
+					getLocaleMessage(OBJECTNOTDEFINED, DxfFileConstants.DEVELOPMENT_ZONE + " of PLAN_INFO layer"));
 
 		String plotDepth = planInfoProperties.get(DxfFileConstants.AVG_PLOT_DEPTH);
 		if (StringUtils.isNotBlank(plotDepth)) {
@@ -625,7 +642,6 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 			pi.setFireProtectionAndFireSafetyRequirements(DcrConstants.NA);
 
 		String barrierFreeAccessForPhyChlngdPpl = planInfoProperties
-
 				.get(DxfFileConstants.BARRIER_FREE_ACCESS_FOR_PHYSICALLY_CHALLENGED_PEOPLE);
 		if (StringUtils.isNotBlank(barrierFreeAccessForPhyChlngdPpl)) {
 			if (barrierFreeAccessForPhyChlngdPpl.equalsIgnoreCase(DcrConstants.YES))
@@ -682,6 +698,20 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 				pi.setRwhDeclared(DcrConstants.NA);
 		} else
 			pi.setRwhDeclared(DcrConstants.NA);
+
+		String tenementResidential = planInfoProperties.get(DxfFileConstants.TENEMENT_FOR_RESIDENTIAL);
+		if (StringUtils.isNotBlank(tenementResidential)) {
+			tenementResidential = tenementResidential.replaceAll(digitsRegex, "");
+			if (getNumericValue(tenementResidential, pl, DxfFileConstants.TENEMENT_FOR_RESIDENTIAL.toString()) != null)
+				pi.setTenementResidential(Integer.valueOf(tenementResidential));
+		}
+
+		String tenementCommertial = planInfoProperties.get(DxfFileConstants.TENEMENT_FOR_COMMERCIAL);
+		if (StringUtils.isNotBlank(tenementCommertial)) {
+			tenementCommertial = tenementCommertial.replaceAll(digitsRegex, "");
+			if (getNumericValue(tenementCommertial, pl, DxfFileConstants.TENEMENT_FOR_COMMERCIAL.toString()) != null)
+				pi.setTenementResidential(Integer.valueOf(tenementCommertial));
+		}
 
 		return pi;
 	}

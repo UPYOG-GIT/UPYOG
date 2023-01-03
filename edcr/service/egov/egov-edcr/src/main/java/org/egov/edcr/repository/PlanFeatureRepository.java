@@ -115,6 +115,7 @@ import org.egov.edcr.feature.SegregatedToilet;
 import org.egov.edcr.feature.SegregationOfWaste;
 import org.egov.edcr.feature.SepticTank;
 import org.egov.edcr.feature.SetBackService;
+import org.egov.edcr.feature.SetBackService_Birgaon;
 import org.egov.edcr.feature.Solar;
 import org.egov.edcr.feature.SolarWaterHeating;
 import org.egov.edcr.feature.SolidLiquidWasteTreatment;
@@ -176,8 +177,9 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(RiverDistance.class);
         features.add(pf);
 
-        pf = new PlanFeature(SepticTank.class);
-        features.add(pf);
+        //put below WaterTank Service
+//		pf = new PlanFeature(SepticTank.class);
+//		features.add(pf);
 
         pf = new PlanFeature(Plantation.class);
         features.add(pf);
@@ -194,8 +196,9 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(Balcony.class);
         features.add(pf);
 
-        pf = new PlanFeature(PlantationGreenStrip.class);
-        features.add(pf);
+      //not required in cg ulb
+//        pf = new PlanFeature(PlantationGreenStrip.class);
+//        features.add(pf);
 
         pf = new PlanFeature(RoofTank.class);
         features.add(pf);
@@ -206,8 +209,8 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(Chimney.class);
         features.add(pf);
 
-        pf = new PlanFeature(HeightOfRoom.class);
-        features.add(pf);
+//        pf = new PlanFeature(HeightOfRoom.class);
+//        features.add(pf);
 
         pf = new PlanFeature(Kitchen.class);
         features.add(pf);
@@ -230,8 +233,8 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(GeneralStair.class);
         features.add(pf);
 
-        pf = new PlanFeature(RampService.class);
-        features.add(pf);
+//        pf = new PlanFeature(RampService.class);
+//        features.add(pf);
 
         pf = new PlanFeature(CommonFeature.class);
         features.add(pf);
@@ -248,14 +251,14 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(Solar.class);
         features.add(pf);
 
-        pf = new PlanFeature(ExitWidth.class);
-        features.add(pf);
+//        pf = new PlanFeature(ExitWidth.class);
+//        features.add(pf);
 
         pf = new PlanFeature(SegregatedToilet.class);
         features.add(pf);
 
-        pf = new PlanFeature(Sanitation.class);
-        features.add(pf);
+//        pf = new PlanFeature(Sanitation.class);
+//        features.add(pf);
 
         pf = new PlanFeature(MeanOfAccess.class);
         features.add(pf);
@@ -293,19 +296,24 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(RecreationalSpace.class);
         features.add(pf);
 
-        pf = new PlanFeature(TravelDistanceToExit.class);
-        features.add(pf);
+//        pf = new PlanFeature(TravelDistanceToExit.class);
+//        features.add(pf);
 
         pf = new PlanFeature(AdditionalFeature.class);
         features.add(pf);
 
-        pf = new PlanFeature(FireTenderMovement.class);
-        features.add(pf);
+      //not use in cg ulb
+//        pf = new PlanFeature(FireTenderMovement.class);
+//        features.add(pf);
 
+      //not use in cg ulb
         pf = new PlanFeature(SurrenderRoad.class);
         features.add(pf);
 
         pf = new PlanFeature(WaterTankCapacity.class);
+        features.add(pf);
+        
+        pf = new PlanFeature(SepticTank.class);
         features.add(pf);
 
         pf = new PlanFeature(NorthDirection.class);
@@ -317,6 +325,7 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(HeadRoom.class);
         features.add(pf);
 
+      //not use in cg ulb
         pf = new PlanFeature(OverHangs.class);
         features.add(pf);
 
@@ -326,6 +335,7 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(DepthCuttingService.class);
         features.add(pf);
 
+      //not use in cg ulb
         pf = new PlanFeature(PetrolFillingStation.class);
         features.add(pf);
 
@@ -335,6 +345,7 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(Ventilation.class);
         features.add(pf);
         
+        //not required in cg ulb
         pf = new PlanFeature(VehicleRamp.class);
         features.add(pf);
         
@@ -359,8 +370,8 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(GateService.class);
         features.add(pf);
 
-        pf = new PlanFeature(ConstructedArea.class);
-        features.add(pf);
+//        pf = new PlanFeature(ConstructedArea.class);
+//        features.add(pf);
         
         pf = new PlanFeature(FootpathService.class);
         features.add(pf);
@@ -383,7 +394,7 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(DxfToPdfConverter.class);
         features.add(pf);
         
-        
+
         return features;
     }
 

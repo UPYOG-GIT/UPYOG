@@ -66,6 +66,7 @@ public class Utility extends Measurement {
     private List<Measurement> solarWaterHeatingSystems = new ArrayList<>();
     private List<Measurement> segregationOfWaste = new ArrayList<>();
     private BigDecimal waterTankCapacity;
+    private BigDecimal septicTankCapacity;
     private SupplyLine supplyLine;
 
     public void setBiometricWasteTreatment(List<BiometricWasteTreatment> biometricWasteTreatment) {
@@ -218,4 +219,14 @@ public class Utility extends Measurement {
         this.supplyLine = supplyLine;
     }
 
+	public BigDecimal getSepticTankCapacity() {
+		return septicTankCapacity;
+	}
+
+	public void setSepticTankCapacity(BigDecimal septicTankCapacity) {
+		this.septicTankCapacity = septicTankCapacity;
+	}
+
+    
+    
 }

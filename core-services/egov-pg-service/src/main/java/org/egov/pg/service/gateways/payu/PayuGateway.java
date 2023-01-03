@@ -72,6 +72,7 @@ public class PayuGateway implements Gateway {
         hashSequence = hashSequence.replace("firstname", transaction.getUser().getName());
         hashSequence = hashSequence.replace("email", Objects.toString(transaction.getUser().getEmailId(), ""));
 
+        log.info("hashSequence: "+hashSequence);
         String hash = hashCal(hashSequence);
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -85,19 +86,30 @@ public class PayuGateway implements Gateway {
         params.add("surl", transaction.getCallbackUrl());
         params.add("furl", transaction.getCallbackUrl());
         params.add("hash", hash);
+        
+        log.info("params: "+params);
 
         UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host(MERCHANT_URL_PAY).path
                 (MERCHANT_PATH_PAY).build();
-
+        
+        log.info("uriComponents: "+uriComponents);
+        log.info("uriComponents: "+uriComponents.toUriString());
+        
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            
+            log.info("headers: "+headers);
 
             HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
 
+            log.info("entity: "+ entity);
+            
             URI redirectUri = restTemplate.postForLocation(
                     uriComponents.toUriString(), entity
             );
+            
+            log.info("redirectUri: "+ redirectUri);
 
             if(isNull(redirectUri))
                 throw new CustomException("PAYU_REDIRECT_URI_GEN_FAILED", "Failed to generate redirect URI");

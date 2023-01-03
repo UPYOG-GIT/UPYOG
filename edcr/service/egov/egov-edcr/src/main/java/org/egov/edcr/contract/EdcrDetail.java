@@ -88,8 +88,18 @@ public class EdcrDetail {
     private String applicationSubType;
 
     private String comparisonEdcrNumber;
+    
+//    private String areaCategory;  //add for areaCategory used in Coverage feature
+//
+//    public String getAreaCategory() {
+//		return areaCategory;
+//	}
+//
+//	public void setAreaCategory(String areaCategory) {
+//		this.areaCategory = areaCategory;
+//	}
 
-    public String getPlanReport() {
+	public String getPlanReport() {
         return planReport;
     }
 

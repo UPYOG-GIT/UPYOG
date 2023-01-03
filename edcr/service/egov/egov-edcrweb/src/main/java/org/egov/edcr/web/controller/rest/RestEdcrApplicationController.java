@@ -81,6 +81,7 @@ import org.egov.infra.microservice.models.UserInfo;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.web.rest.error.ErrorResponse;
+import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -241,6 +242,10 @@ public class RestEdcrApplicationController {
 
             String applicationType = edcr.getAppliactionType();
             String serviceType = edcr.getApplicationSubType();
+            
+//            String areaCategory=edcr.getAreaCategory();  //add for areaCategory fetch
+//            LOGGER.info("Category Type : "+areaCategory);
+            
             Map<String, List<Object>> masterData = new HashMap<>();
             Boolean mdmsEnabled = mdmsConfiguration.getMdmsEnabled();
             if (mdmsEnabled != null && mdmsEnabled) {

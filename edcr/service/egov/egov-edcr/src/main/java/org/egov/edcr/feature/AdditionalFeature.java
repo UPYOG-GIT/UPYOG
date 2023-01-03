@@ -165,22 +165,22 @@ public class AdditionalFeature extends FeatureProcess {
     @Override
     public Plan process(Plan pl) {
         HashMap<String, String> errors = new HashMap<>();
-        validate(pl);
+//        validate(pl);
 
-        String typeOfArea = pl.getPlanInformation().getTypeOfArea();
-        BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
-
-        if (StringUtils.isNotBlank(typeOfArea) && roadWidth != null) {
-            validateNumberOfFloors(pl, errors, typeOfArea, roadWidth);
-            validateHeightOfBuilding(pl, errors, typeOfArea, roadWidth);
-        }
-
-        validatePlinthHeight(pl, errors);
-        // validateIntCourtYard(pl, errors);
-        validateBarrierFreeAccess(pl, errors);
-        validateBasement(pl, errors);
-        validateGreenBuildingsAndSustainability(pl, errors);
-        validateFireDeclaration(pl, errors);
+//        String typeOfArea = pl.getPlanInformation().getTypeOfArea();
+//        BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
+//
+//        if (StringUtils.isNotBlank(typeOfArea) && roadWidth != null) {
+//            validateNumberOfFloors(pl, errors, typeOfArea, roadWidth);
+//            validateHeightOfBuilding(pl, errors, typeOfArea, roadWidth);
+//        }
+//
+//        validatePlinthHeight(pl, errors);
+//        // validateIntCourtYard(pl, errors);
+//        validateBarrierFreeAccess(pl, errors);
+//        validateBasement(pl, errors);
+//        validateGreenBuildingsAndSustainability(pl, errors);
+//        validateFireDeclaration(pl, errors);
 
         return pl;
     }

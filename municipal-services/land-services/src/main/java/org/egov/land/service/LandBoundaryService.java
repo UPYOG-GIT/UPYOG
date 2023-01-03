@@ -20,7 +20,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class LandBoundaryService {
 
 	private ServiceRequestRepository serviceRequestRepository;
@@ -40,10 +43,8 @@ public class LandBoundaryService {
 	/**
 	 * Enriches the locality object by calling the location service
 	 * 
-	 * @param request
-	 *            LandRequest for create
-	 * @param hierarchyTypeCode
-	 *            HierarchyTypeCode of the boundaries
+	 * @param request           LandRequest for create
+	 * @param hierarchyTypeCode HierarchyTypeCode of the boundaries
 	 */
 	@SuppressWarnings("rawtypes")
 	public void getAreaType(LandInfoRequest request, String hierarchyTypeCode) {
@@ -73,15 +74,24 @@ public class LandBoundaryService {
 		}
 		LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, request.getRequestInfo());
 		if (CollectionUtils.isEmpty(responseMap))
-			throw new CustomException(LandConstants.BOUNDARY_ERROR, "The response from location service is empty or null");
+			throw new CustomException(LandConstants.BOUNDARY_ERROR,
+					"The response from location service is empty or null");
 		String jsonString = new JSONObject(responseMap).toString();
+
+		log.info("jsonString : " + jsonString);
 
 		Map<String, String> propertyIdToJsonPath = getJsonpath(request);
 
+		log.info("propertyIdToJsonPath : " + propertyIdToJsonPath);
+		
 		DocumentContext context = JsonPath.parse(jsonString);
+		
+		log.info("context : " + context);
 
 		List<String> boundaryObject = context.read(propertyIdToJsonPath.get(request.getLandInfo().getId()));
 
+		log.info("boundaryObject : " + boundaryObject);
+		
 		if (boundaryObject != null && CollectionUtils.isEmpty((boundaryObject)))
 			throw new CustomException(LandConstants.BOUNDARY_MDMS_DATA_ERROR, "The boundary data was not found");
 
@@ -94,11 +104,9 @@ public class LandBoundaryService {
 	}
 
 	/**
-	 * Prepares map of landInfoId to jsonpath which contains the code of the
-	 * land
+	 * Prepares map of landInfoId to jsonpath which contains the code of the land
 	 * 
-	 * @param request
-	 *            landRequest for create
+	 * @param request landRequest for create
 	 * @return Map of landInfoId to jsonPath with land locality code
 	 */
 	private Map<String, String> getJsonpath(LandInfoRequest request) {

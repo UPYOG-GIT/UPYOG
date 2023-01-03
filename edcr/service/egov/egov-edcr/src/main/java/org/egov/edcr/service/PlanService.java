@@ -90,6 +90,10 @@ public class PlanService {
         Plan plan = extractService.extract(dcrApplication.getSavedDxfFile(), amd, asOnDate,
                 featureService.getFeatures());
         plan.setMdmsMasterData(dcrApplication.getMdmsMasterData());
+        
+//        //add areaCategory in Plan class
+//        plan.setAreaCategory(dcrApplication.getAreaCategory());
+        
         plan = applyRules(plan, amd, cityDetails);
 
         String comparisonDcrNumber = dcrApplication.getEdcrApplicationDetails().get(0).getComparisonDcrNumber();

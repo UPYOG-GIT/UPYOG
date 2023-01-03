@@ -111,6 +111,7 @@ public class EdcrApplicationDetail extends AbstractAuditable {
 
     @Transient
     private PlanInformation planInformation;
+    
 
     @Length(min = 1, max = 128)
     private String comparisonDcrNumber;
@@ -220,5 +221,10 @@ public class EdcrApplicationDetail extends AbstractAuditable {
     public void setComparisonDcrNumber(String comparisonDcrNumber) {
         this.comparisonDcrNumber = comparisonDcrNumber;
     }
+
+
+	
+    
+    
 
 }

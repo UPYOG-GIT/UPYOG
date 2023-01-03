@@ -95,8 +95,19 @@ public class EdcrRequest {
     private Integer limit;
     
     private String orderBy;
+    
+//    private String areaCategory;  //add for areaCategory used in Coverage feature
+//
+//
+//	public String getAreaCategory() {
+//		return areaCategory;
+//	}
+//
+//	public void setAreaCategory(String areaCategory) {
+//		this.areaCategory = areaCategory;
+//	}
 
-    public RequestInfo getRequestInfo() {
+	public RequestInfo getRequestInfo() {
         return requestInfo;
     }
 

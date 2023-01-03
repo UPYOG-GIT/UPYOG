@@ -79,6 +79,7 @@ public class ParkingDetails implements Serializable {
 	private Integer validSpecialSlots = 0;
 	private List<Measurement> stilts = new ArrayList<>();
 	private List<Measurement> mechanicalLifts = new ArrayList<>();
+	private List<Measurement> lowerGroundFloor = new ArrayList<>(); //add for Lower Ground Floor Parking
 
 	public List<Measurement> getCars() {
 		return cars;
@@ -240,4 +241,13 @@ public class ParkingDetails implements Serializable {
 		this.mechanicalLifts = mechanicalLifts;
 	}
 
+	public List<Measurement> getLowerGroundFloor() {
+		return lowerGroundFloor;
+	}
+
+	public void setLowerGroundFloor(List<Measurement> lowerGroundFloor) {
+		this.lowerGroundFloor = lowerGroundFloor;
+	}
+
+	
 }

@@ -146,6 +146,7 @@ public class Coverage extends FeatureProcess {
        BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
        if(roadWidth != null && roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) >= 0
 				&& roadWidth.compareTo(ROAD_WIDTH_THIRTY_POINTFIVE) <= 0) {
+    	   
         processCoverage(pl, StringUtils.EMPTY, totalCoverage, Forty);
        }
 		/*

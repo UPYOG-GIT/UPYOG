@@ -200,8 +200,19 @@ public class Plan implements Serializable {
     private transient Map<String, List<Object>> mdmsMasterData;
     private transient Boolean mainDcrPassed = false;
     private List<ICT> icts = new ArrayList<>();
+    
+//  //add for coverage areaCategory
+//    private transient String areaCategory;
+//
+//    public String getAreaCategory() {
+//		return areaCategory;
+//	}
+//
+//	public void setAreaCategory(String areaCategory) {
+//		this.areaCategory = areaCategory;
+//	}
 
-    public List<BigDecimal> getCanopyDistanceFromPlotBoundary() {
+	public List<BigDecimal> getCanopyDistanceFromPlotBoundary() {
         return canopyDistanceFromPlotBoundary;
     }
 

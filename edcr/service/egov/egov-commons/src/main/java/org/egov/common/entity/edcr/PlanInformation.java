@@ -166,6 +166,14 @@ public class PlanInformation implements Serializable {
     private String district;
     //YES/NO/NA.Extracted from Plan info. Rain water declared in plan.
     private transient String rwhDeclared = NA;
+    //Extracted from Plan info. Development Zone for Coverage feature. 
+  	private transient String developmentZone;
+  	//no. of tenement in residential occupancy
+  	private transient int tenementResidential;
+  	//no. of tenement in commercial occupancy
+  	private transient int tenementCommercial;
+  	//used for comparison in septic tank feature
+  	private transient BigDecimal requiredWaterTankCapacity=BigDecimal.ZERO;
 
 
     public Boolean getGovernmentOrAidedSchool() {
@@ -624,4 +632,39 @@ public class PlanInformation implements Serializable {
         this.rwhDeclared = rwhDeclared;
     }
 
+	public String getDevelopmentZone() {
+		return developmentZone;
+	}
+
+	public void setDevelopmentZone(String developmentZone) {
+		this.developmentZone = developmentZone;
+	}
+
+	public int getTenementResidential() {
+		return tenementResidential;
+	}
+
+	public void setTenementResidential(int tenementResidential) {
+		this.tenementResidential = tenementResidential;
+	}
+
+	public int getTenementCommercial() {
+		return tenementCommercial;
+	}
+
+	public void setTenementCommercial(int tenementCommercial) {
+		this.tenementCommercial = tenementCommercial;
+	}
+
+	public BigDecimal getRequiredWaterTankCapacity() {
+		return requiredWaterTankCapacity;
+	}
+
+	public void setRequiredWaterTankCapacity(BigDecimal requiredWaterTankCapacity) {
+		this.requiredWaterTankCapacity = requiredWaterTankCapacity;
+	}
+
+	
+    
+    
 }
