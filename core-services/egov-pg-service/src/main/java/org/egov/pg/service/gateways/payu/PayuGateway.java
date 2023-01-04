@@ -97,7 +97,7 @@ public class PayuGateway implements Gateway {
         
         try {
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.ALL);
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             
             log.info("headers: "+headers);
 
