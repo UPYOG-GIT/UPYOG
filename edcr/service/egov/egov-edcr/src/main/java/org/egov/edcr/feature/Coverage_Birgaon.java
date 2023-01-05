@@ -183,7 +183,7 @@ public class Coverage_Birgaon extends Coverage {
 		}
 
 		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0) {
-			processCoverage(pl, mostRestrictiveOccupancy.getType().getName(), totalCoverage, permissibleCoverageValue);
+			processCoverage(pl, mostRestrictiveOccupancy.getType().getName(), totalCoverage, permissibleCoverageValue, developmentZone);
 		}
 
 //		if (roadWidth != null && roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) >= 0
@@ -329,17 +329,18 @@ public class Coverage_Birgaon extends Coverage {
 		return permissibleCoverage;
 	}
 
-	private void processCoverage(Plan pl, String occupancy, BigDecimal coverage, BigDecimal upperLimit) {
+	private void processCoverage(Plan pl, String occupancy, BigDecimal coverage, BigDecimal upperLimit, String developmentZone) {
 		LOG.info("inside processCoverage()");
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.setKey("Common_Coverage");
 		scrutinyDetail.setHeading("Coverage in Percentage");
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, OCCUPANCY);
-		scrutinyDetail.addColumnHeading(4, PERMISSIBLE);
-		scrutinyDetail.addColumnHeading(5, PROVIDED);
-		scrutinyDetail.addColumnHeading(6, STATUS);
+		scrutinyDetail.addColumnHeading(2, DEVELOPMENT_ZONE);
+		scrutinyDetail.addColumnHeading(3, DESCRIPTION);
+		scrutinyDetail.addColumnHeading(4, OCCUPANCY);
+		scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
+		scrutinyDetail.addColumnHeading(6, PROVIDED);
+		scrutinyDetail.addColumnHeading(7, STATUS);
 
 		String desc = getLocaleMessage(RULE_DESCRIPTION_KEY, upperLimit.toString());
 		String actualResult = getLocaleMessage(RULE_ACTUAL_KEY, coverage.toString());
@@ -347,6 +348,7 @@ public class Coverage_Birgaon extends Coverage {
 		if (coverage.doubleValue() <= upperLimit.doubleValue()) {
 			Map<String, String> details = new HashMap<>();
 			details.put(RULE_NO, RULE_38);
+			details.put(DEVELOPMENT_ZONE, developmentZone);
 			details.put(DESCRIPTION, desc);
 			details.put(OCCUPANCY, occupancy);
 			details.put(PERMISSIBLE, expectedResult);
@@ -358,6 +360,7 @@ public class Coverage_Birgaon extends Coverage {
 		} else {
 			Map<String, String> details = new HashMap<>();
 			details.put(RULE_NO, RULE_38);
+			details.put(DEVELOPMENT_ZONE, developmentZone);
 			details.put(DESCRIPTION, desc);
 			details.put(OCCUPANCY, occupancy);
 			details.put(PERMISSIBLE, expectedResult);

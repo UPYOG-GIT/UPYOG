@@ -76,6 +76,7 @@ public abstract class FeatureProcess {
 	public static final String AREA_TYPE = "Area Type";
 	public static final String ROAD_WIDTH = "Road Width";
 	public static final String PLOT_AREA = "Plot Area";
+	public static final String DEVELOPMENT_ZONE = "Development Zone";
 
 	public abstract Map<String, Date> getAmendments();
 
