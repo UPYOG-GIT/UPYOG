@@ -173,8 +173,7 @@ public class Coverage_BhilaiCharoda extends Coverage {
 
 		// get coverage permissible value from method and store in
 		// permissibleCoverageValue
-		if (area.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null
-				&& developmentZone != null) {
+		if (area.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null && developmentZone != null) {
 //			occupancyType = mostRestrictiveOccupancy.getType().getCode();
 			if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
 				permissibleCoverageValue = getPermissibleCoverageForResidential(area, developmentZone);
@@ -184,7 +183,7 @@ public class Coverage_BhilaiCharoda extends Coverage {
 		}
 
 		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0) {
-			processCoverage(pl, StringUtils.EMPTY, totalCoverage, permissibleCoverageValue);
+			processCoverage(pl, mostRestrictiveOccupancy.getType().getName(), totalCoverage, permissibleCoverageValue);
 		}
 
 //		if (roadWidth != null && roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) >= 0
@@ -205,20 +204,20 @@ public class Coverage_BhilaiCharoda extends Coverage {
 		LOG.info("inside getPermissibleCoverageForResidential()");
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
 
-		switch (developmentZone) {
-
-		case "DA-01":
-			if (area.compareTo(BigDecimal.valueOf(240)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(60);
-			} else if (area.compareTo(BigDecimal.valueOf(240)) > 0 && area.compareTo(BigDecimal.valueOf(750)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(50);
-			} else if (area.compareTo(BigDecimal.valueOf(750)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(40);
-			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
-				permissibleCoverage = BigDecimal.valueOf(35);
-			}
-			break;
+//		switch (developmentZone) {
+//
+//		case "DA-01":
+		if (area.compareTo(BigDecimal.valueOf(240)) <= 0) {
+			permissibleCoverage = BigDecimal.valueOf(60);
+		} else if (area.compareTo(BigDecimal.valueOf(240)) > 0 && area.compareTo(BigDecimal.valueOf(750)) <= 0) {
+			permissibleCoverage = BigDecimal.valueOf(50);
+		} else if (area.compareTo(BigDecimal.valueOf(750)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+			permissibleCoverage = BigDecimal.valueOf(40);
+		} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
+			permissibleCoverage = BigDecimal.valueOf(35);
 		}
+//			break;
+//		}
 		LOG.info("return from getPermissibleCoverageForResidential()");
 		return permissibleCoverage;
 	}
@@ -231,24 +230,24 @@ public class Coverage_BhilaiCharoda extends Coverage {
 		LOG.info("inside getPermissibleCoverageForCommercial()");
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
 
-		switch (developmentZone) {
-
-		case "DA-01":
-			if (area.compareTo(BigDecimal.valueOf(150)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(60);
-			} else if (area.compareTo(BigDecimal.valueOf(150)) > 0 && area.compareTo(BigDecimal.valueOf(240)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(55);
-			} else if (area.compareTo(BigDecimal.valueOf(240)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(50);
-			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(750)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(45);
-			} else if (area.compareTo(BigDecimal.valueOf(750)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(40);
-			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0) {
-				permissibleCoverage = BigDecimal.valueOf(35);
-			}
-			break;
+//		switch (developmentZone) {
+//
+//		case "DA-01":
+		if (area.compareTo(BigDecimal.valueOf(150)) <= 0) {
+			permissibleCoverage = BigDecimal.valueOf(60);
+		} else if (area.compareTo(BigDecimal.valueOf(150)) > 0 && area.compareTo(BigDecimal.valueOf(240)) <= 0) {
+			permissibleCoverage = BigDecimal.valueOf(55);
+		} else if (area.compareTo(BigDecimal.valueOf(240)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
+			permissibleCoverage = BigDecimal.valueOf(50);
+		} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(750)) <= 0) {
+			permissibleCoverage = BigDecimal.valueOf(45);
+		} else if (area.compareTo(BigDecimal.valueOf(750)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+			permissibleCoverage = BigDecimal.valueOf(40);
+		} else if (area.compareTo(BigDecimal.valueOf(500)) > 0) {
+			permissibleCoverage = BigDecimal.valueOf(35);
 		}
+//			break;
+//		}
 		LOG.info("return from getPermissibleCoverageForCommercial()");
 		return permissibleCoverage;
 	}
@@ -260,7 +259,7 @@ public class Coverage_BhilaiCharoda extends Coverage {
 		scrutinyDetail.setHeading("Coverage in Percentage");
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-//		scrutinyDetail.addColumnHeading(3, OCCUPANCY);
+		scrutinyDetail.addColumnHeading(3, OCCUPANCY);
 		scrutinyDetail.addColumnHeading(4, PERMISSIBLE);
 		scrutinyDetail.addColumnHeading(5, PROVIDED);
 		scrutinyDetail.addColumnHeading(6, STATUS);
@@ -272,7 +271,7 @@ public class Coverage_BhilaiCharoda extends Coverage {
 			Map<String, String> details = new HashMap<>();
 			details.put(RULE_NO, RULE_38);
 			details.put(DESCRIPTION, desc);
-			// details.put(OCCUPANCY, occupancy);
+			details.put(OCCUPANCY, occupancy);
 			details.put(PERMISSIBLE, expectedResult);
 			details.put(PROVIDED, actualResult);
 			details.put(STATUS, Result.Accepted.getResultVal());
@@ -283,7 +282,7 @@ public class Coverage_BhilaiCharoda extends Coverage {
 			Map<String, String> details = new HashMap<>();
 			details.put(RULE_NO, RULE_38);
 			details.put(DESCRIPTION, desc);
-			// details.put(OCCUPANCY, occupancy);
+			details.put(OCCUPANCY, occupancy);
 			details.put(PERMISSIBLE, expectedResult);
 			details.put(PROVIDED, actualResult);
 			details.put(STATUS, Result.Not_Accepted.getResultVal());

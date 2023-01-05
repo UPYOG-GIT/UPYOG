@@ -139,7 +139,7 @@ public class RainWaterHarvesting_Birgaon extends FeatureProcess {
             if (pl.getUtility().getRainWaterHarvest() != null && !pl.getUtility().getRainWaterHarvest().isEmpty()) {
                 setReportOutputDetails(pl, subRule, subRuleDesc, null,
                         "Defined in the plan",
-                        Result.Verify.getResultVal());
+                        Result.Verified.getResultVal());
             } else {
                 setReportOutputDetails(pl, subRule, subRuleDesc, null,
                         "Not Defined in the plan",

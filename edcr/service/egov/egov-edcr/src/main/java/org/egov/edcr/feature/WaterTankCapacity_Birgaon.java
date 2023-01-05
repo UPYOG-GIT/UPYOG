@@ -56,6 +56,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
@@ -71,6 +73,7 @@ public class WaterTankCapacity_Birgaon extends WaterTankCapacity {
 //    private static final BigDecimal ONEHUNDRED_THIRTYFIVE = BigDecimal.valueOf(135);
     private static final BigDecimal FORTYFIVE = BigDecimal.valueOf(45);
     private static final BigDecimal FIVE = BigDecimal.valueOf(5);
+    private static final Logger LOGGER = LogManager.getLogger(WaterTankCapacity_Birgaon.class);
 
     @Override
     public Plan validate(Plan pl) {
@@ -79,6 +82,7 @@ public class WaterTankCapacity_Birgaon extends WaterTankCapacity {
 
     @Override
     public Plan process(Plan pl) {
+    	LOGGER.info("inside WaterTankCapacity_Birgaon process()");
         scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.addColumnHeading(1, RULE_NO);
         scrutinyDetail.addColumnHeading(2, DESCRIPTION);
@@ -106,6 +110,7 @@ public class WaterTankCapacity_Birgaon extends WaterTankCapacity {
 //          --------------added by manisha for water tank logic         
             int noOfFamilyInResidential= pl.getPlanInformation().getTenementResidential();
             int noOfFamilyInCommercial= pl.getPlanInformation().getTenementCommercial();
+//            String nn=pl.getPlanInfoProperties().get("TENEMENT_FOR_RESIDENTIAL");
 
             BigDecimal noOfPersonsR = BigDecimal.valueOf(noOfFamilyInResidential).multiply(FIVE.setScale(0, BigDecimal.ROUND_HALF_UP));
             BigDecimal noOfPersonsC = BigDecimal.valueOf(noOfFamilyInCommercial).multiply(FIVE.setScale(0, BigDecimal.ROUND_HALF_UP));
