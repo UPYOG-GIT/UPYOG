@@ -173,8 +173,7 @@ public class Coverage_Birgaon extends Coverage {
 
 		// get coverage permissible value from method and store in
 		// permissibleCoverageValue
-		if (area.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null 
-				&& developmentZone != null) {
+		if (area.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null && developmentZone != null) {
 //			occupancyType = mostRestrictiveOccupancy.getType().getCode();
 			if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
 				permissibleCoverageValue = getPermissibleCoverageForResidential(area, developmentZone);
@@ -184,7 +183,7 @@ public class Coverage_Birgaon extends Coverage {
 		}
 
 		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0) {
-			processCoverage(pl, StringUtils.EMPTY, totalCoverage, permissibleCoverageValue);
+			processCoverage(pl, mostRestrictiveOccupancy.getType().getName(), totalCoverage, permissibleCoverageValue);
 		}
 
 //		if (roadWidth != null && roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) >= 0
@@ -337,7 +336,7 @@ public class Coverage_Birgaon extends Coverage {
 		scrutinyDetail.setHeading("Coverage in Percentage");
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-//		scrutinyDetail.addColumnHeading(3, OCCUPANCY);
+		scrutinyDetail.addColumnHeading(3, OCCUPANCY);
 		scrutinyDetail.addColumnHeading(4, PERMISSIBLE);
 		scrutinyDetail.addColumnHeading(5, PROVIDED);
 		scrutinyDetail.addColumnHeading(6, STATUS);
@@ -349,7 +348,7 @@ public class Coverage_Birgaon extends Coverage {
 			Map<String, String> details = new HashMap<>();
 			details.put(RULE_NO, RULE_38);
 			details.put(DESCRIPTION, desc);
-			// details.put(OCCUPANCY, occupancy);
+			details.put(OCCUPANCY, occupancy);
 			details.put(PERMISSIBLE, expectedResult);
 			details.put(PROVIDED, actualResult);
 			details.put(STATUS, Result.Accepted.getResultVal());
@@ -360,7 +359,7 @@ public class Coverage_Birgaon extends Coverage {
 			Map<String, String> details = new HashMap<>();
 			details.put(RULE_NO, RULE_38);
 			details.put(DESCRIPTION, desc);
-			// details.put(OCCUPANCY, occupancy);
+			details.put(OCCUPANCY, occupancy);
 			details.put(PERMISSIBLE, expectedResult);
 			details.put(PROVIDED, actualResult);
 			details.put(STATUS, Result.Not_Accepted.getResultVal());

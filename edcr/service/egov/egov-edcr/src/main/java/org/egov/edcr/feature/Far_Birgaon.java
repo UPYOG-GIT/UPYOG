@@ -1029,11 +1029,11 @@ public class Far_Birgaon extends Far {
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.addColumnHeading(1, RULE_NO);
         scrutinyDetail.addColumnHeading(2, OCCUPANCY);
-        scrutinyDetail.addColumnHeading(3, AREA_TYPE);
-        scrutinyDetail.addColumnHeading(4, ROAD_WIDTH);
-        scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
-        scrutinyDetail.addColumnHeading(6, PROVIDED);
-        scrutinyDetail.addColumnHeading(7, STATUS);
+//        scrutinyDetail.addColumnHeading(3, AREA_TYPE);
+//        scrutinyDetail.addColumnHeading(4, ROAD_WIDTH);
+        scrutinyDetail.addColumnHeading(3, PERMISSIBLE);
+        scrutinyDetail.addColumnHeading(4, PROVIDED);
+        scrutinyDetail.addColumnHeading(5, STATUS);
         scrutinyDetail.setKey("Common_FAR");
 
         String actualResult = far.toString();
@@ -1041,8 +1041,8 @@ public class Far_Birgaon extends Far {
         Map<String, String> details = new HashMap<>();
         details.put(RULE_NO, RULE_38);
         details.put(OCCUPANCY, occupancyName);
-        details.put(AREA_TYPE, typeOfArea);
-        details.put(ROAD_WIDTH, roadWidth.toString());
+//        details.put(AREA_TYPE, typeOfArea);
+//        details.put(ROAD_WIDTH, roadWidth.toString());
         details.put(PERMISSIBLE, expectedResult);
         details.put(PROVIDED, actualResult);
         details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
@@ -1054,11 +1054,11 @@ public class Far_Birgaon extends Far {
     private ScrutinyDetail getFarScrutinyDetail(String key) {
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, "Area Type");
-        scrutinyDetail.addColumnHeading(3, "Road Width");
-        scrutinyDetail.addColumnHeading(4, PERMISSIBLE);
-        scrutinyDetail.addColumnHeading(5, PROVIDED);
-        scrutinyDetail.addColumnHeading(6, STATUS);
+//        scrutinyDetail.addColumnHeading(2, "Area Type");
+//        scrutinyDetail.addColumnHeading(3, "Road Width");
+        scrutinyDetail.addColumnHeading(2, PERMISSIBLE);
+        scrutinyDetail.addColumnHeading(3, PROVIDED);
+        scrutinyDetail.addColumnHeading(4, STATUS);
         scrutinyDetail.setKey(key);
         return scrutinyDetail;
     }

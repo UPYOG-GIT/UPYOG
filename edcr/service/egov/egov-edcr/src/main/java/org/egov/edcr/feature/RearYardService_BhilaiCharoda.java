@@ -62,6 +62,7 @@ import static org.egov.edcr.utility.DcrConstants.REAR_YARD_DESC;
 import static org.egov.edcr.utility.DcrConstants.YES;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -131,7 +132,7 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 
 	public void processRearYard(final Plan pl) {
 
-		LOG.info("inside RearYardService_BhilaiCharoda process");
+		LOG.info("inside RearYardService_BhilaiCharoda processRearYard");
 
 		HashMap<String, String> errors = new HashMap<>();
 		final Plot plot = pl.getPlot();
@@ -294,6 +295,7 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult, String subRule,
 			String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot, Boolean valid,
 			BigDecimal buildingHeight, BigDecimal roadWidth) {
+		double OneThirdHieght=0d;
 
 		if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) <= 0
 				&& roadWidth.compareTo(BigDecimal.valueOf(18)) <= 0) {
@@ -312,8 +314,8 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 				minVal = REARYARDMINIMUM_DISTANCE_3_5;
 			}
 		} else if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) >= 0) {
-			BigDecimal OneThirdHieght=buildingHeight.divide(BigDecimal.valueOf(3.0));
-			minVal = OneThirdHieght;
+			OneThirdHieght=buildingHeight.doubleValue()/3;
+			minVal = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
 		}
 
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
@@ -417,6 +419,7 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult, String subRule,
 			String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot, Boolean valid,
 			BigDecimal buildingHeight, BigDecimal roadWidth) {
+		double OneThirdHieght=0d;
 		if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) <= 0
 				&& roadWidth.compareTo(BigDecimal.valueOf(18)) <= 0) {
 			if (depthOfPlot.compareTo(BigDecimal.valueOf(9.0)) <= 0) {
@@ -428,8 +431,9 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 				minVal = REARYARDMINIMUM_DISTANCE_3;
 			}
 		} else if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) >= 0) {
-			BigDecimal OneThirdHieght=buildingHeight.divide(BigDecimal.valueOf(3.0));
-			minVal = OneThirdHieght;
+//			OneThirdHieght=buildingHeight.divide(BigDecimal.valueOf(3.0)).setScale(2, RoundingMode.UP);
+			OneThirdHieght=buildingHeight.doubleValue()/3;
+			minVal = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
 		}
 
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
@@ -454,6 +458,7 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 		BigDecimal meanVal = BigDecimal.ZERO;
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
 		BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
+		double OneThirdHieght=0d;
 
 		if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) <= 0
 				&& roadWidth.compareTo(BigDecimal.valueOf(18)) <= 0) {
@@ -469,8 +474,8 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 				minVal = REARYARDMINIMUM_DISTANCE_3;
 			}
 		} else if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) >= 0) {
-			BigDecimal OneThirdHieght=buildingHeight.divide(BigDecimal.valueOf(3.0));
-			minVal = OneThirdHieght;
+			OneThirdHieght=buildingHeight.doubleValue()/3;
+			minVal = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
 		}
 
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);

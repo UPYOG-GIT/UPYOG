@@ -270,21 +270,8 @@ public class Parking_Birgaon extends FeatureProcess {
 		BigDecimal basementParkingArea = BigDecimal.ZERO;
 		BigDecimal noOfBeds = BigDecimal.ZERO;
 		Integer noOfSeats = 0;
-		OccupancyTypeHelper occupancyTypeHelper=null;
-		for (Block block : pl.getBlocks()) {
-			
-			for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
-				occupancyTypeHelper=occupancy.getTypeHelper();
-				break;
-			}
-			
-			for (Floor floor : block.getBuilding().getFloors()) {
-				coverParkingArea = coverParkingArea.add(floor.getParking().getCoverCars().stream()
-						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
-				basementParkingArea = basementParkingArea.add(floor.getParking().getBasementCars().stream()
-						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
-			}
-		}
+		Double requiredCarParkArea = 0d;
+		Double requiredVisitorParkArea = 0d;
 		
 		BigDecimal openParkingArea = pl.getParkingDetails().getOpenCars().stream().map(Measurement::getArea)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -297,14 +284,38 @@ public class Parking_Birgaon extends FeatureProcess {
 
 		noOfBeds = pl.getPlanInformation().getNoOfBeds();
 		noOfSeats = pl.getPlanInformation().getNoOfSeats();
+		
+		OccupancyTypeHelper occupancyTypeHelper=null;
+		for (Block block : pl.getBlocks()) {
+			
+//			for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
+//				occupancyTypeHelper=occupancy.getTypeHelper();
+//				break;
+//			}
+			
+			for (Floor floor : block.getBuilding().getFloors()) {
+				coverParkingArea = coverParkingArea.add(floor.getParking().getCoverCars().stream()
+						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
+				basementParkingArea = basementParkingArea.add(floor.getParking().getBasementCars().stream()
+						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
+				
+				occupancyTypeHelper=floor.getOccupancies().get(0).getTypeHelper();
+				BigDecimal floorBuiltUpArea=floor.getOccupancies().get(0).getBuiltUpArea();
+				
+				requiredCarParkArea += getRequiredCarParkArea(floorBuiltUpArea, occupancyTypeHelper, coverParkingArea,
+						basementParkingArea, openParkingArea, stiltParkingArea, lowerGroungFloorParkingArea);
+//				
+			}
+		}
+		
+		
 
 		BigDecimal totalProvidedCarParkArea = openParkingArea.add(coverParkingArea).add(basementParkingArea)
 				.add(stiltParkingArea).add(lowerGroungFloorParkingArea);
 //		helper.totalRequiredCarParking += openParkingArea.doubleValue() / OPEN_ECS;
 //		helper.totalRequiredCarParking += coverParkingArea.doubleValue() / COVER_ECS;
 //		helper.totalRequiredCarParking += basementParkingArea.doubleValue() / BSMNT_ECS;
-		Double requiredCarParkArea = 0d;
-		Double requiredVisitorParkArea = 0d;
+		
 
 		BigDecimal providedVisitorParkArea = BigDecimal.ZERO;
 
@@ -313,8 +324,7 @@ public class Parking_Birgaon extends FeatureProcess {
 
 //		requiredCarParkArea = getRequiredCarParkArea(totalBuiltupArea, mostRestrictiveOccupancy, coverParkingArea,
 //				basementParkingArea, openParkingArea, stiltParkingArea, lowerGroungFloorParkingArea);
-		requiredCarParkArea = getRequiredCarParkArea(totalBuiltupArea, occupancyTypeHelper, coverParkingArea,
-				basementParkingArea, openParkingArea, stiltParkingArea, lowerGroungFloorParkingArea);
+		
 
 		// logics deleted from here
 

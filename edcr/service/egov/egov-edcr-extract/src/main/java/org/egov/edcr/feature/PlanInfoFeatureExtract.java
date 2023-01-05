@@ -710,7 +710,7 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		if (StringUtils.isNotBlank(tenementCommertial)) {
 			tenementCommertial = tenementCommertial.replaceAll(digitsRegex, "");
 			if (getNumericValue(tenementCommertial, pl, DxfFileConstants.TENEMENT_FOR_COMMERCIAL.toString()) != null)
-				pi.setTenementResidential(Integer.valueOf(tenementCommertial));
+				pi.setTenementCommercial(Integer.valueOf(tenementCommertial));
 		}
 
 		return pi;

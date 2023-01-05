@@ -618,7 +618,7 @@ public class Far_BhilaiCharoda extends Far {
 
 		if (mostRestrictiveOccupancyType != null && StringUtils.isNotBlank(typeOfArea) && roadWidth != null
 //				&& !processFarForSpecialOccupancy(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs)
-				) {
+		) {
 			if ((mostRestrictiveOccupancyType.getType() != null
 					&& DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode()))
 					|| (mostRestrictiveOccupancyType.getSubtype() != null
@@ -798,6 +798,7 @@ public class Far_BhilaiCharoda extends Far {
 				? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
 				: null;
 		String expectedResult = StringUtils.EMPTY;
+		BigDecimal plotArea = pl.getPlot().getArea();
 		boolean isAccepted = false;
 		if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getSubtype() != null) {
 			if (mostRestrictiveOccupancyType.getSubtype().getCode().equals(S_ECFG)
@@ -883,7 +884,7 @@ public class Far_BhilaiCharoda extends Far {
 				: occupancyType.getType().getName();
 
 		if (StringUtils.isNotBlank(expectedResult)) {
-			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted, plotArea);
 		}
 
 		return false;
@@ -913,7 +914,7 @@ public class Far_BhilaiCharoda extends Far {
 
 		String occupancyName = occupancyType.getType().getName();
 		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
-			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted, plotArea);
 		}
 	}
 
@@ -938,10 +939,10 @@ public class Far_BhilaiCharoda extends Far {
 		isAccepted = far.compareTo(farValue) <= 0;
 		pl.getFarDetails().setPermissableFar(farValue.doubleValue());
 		expectedResult = "<= " + farValue;
-		
+
 		String occupancyName = occupancyType.getType().getName();
 		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
-			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted, plotArea);
 		}
 	}
 
@@ -968,7 +969,7 @@ public class Far_BhilaiCharoda extends Far {
 				&& plotArea.compareTo(BigDecimal.valueOf(750.0)) <= 0) {
 			farValue = BigDecimal.valueOf(1.5);
 
-		}  else if (plotArea.compareTo(BigDecimal.valueOf(750.0)) > 0) {
+		} else if (plotArea.compareTo(BigDecimal.valueOf(750.0)) > 0) {
 			farValue = BigDecimal.valueOf(1.75);
 
 		}
@@ -976,11 +977,10 @@ public class Far_BhilaiCharoda extends Far {
 		isAccepted = far.compareTo(farValue) <= 0;
 		pl.getFarDetails().setPermissableFar(farValue.doubleValue());
 		expectedResult = "<= " + farValue;
-		
 
 		String occupancyName = occupancyType.getType().getName();
 		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
-			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted, plotArea);
 		}
 	}
 
@@ -1015,7 +1015,8 @@ public class Far_BhilaiCharoda extends Far {
 			}
 
 		}
-
+		
+		BigDecimal plotArea = pl.getPlot().getArea();
 		String occupancyName = occupancyType.getType().getName();
 
 		if (occupancyType.getSubtype() != null) {
@@ -1035,7 +1036,7 @@ public class Far_BhilaiCharoda extends Far {
 		}
 
 		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
-			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted, plotArea);
 		}
 	}
 
@@ -1044,6 +1045,7 @@ public class Far_BhilaiCharoda extends Far {
 
 		String expectedResult = StringUtils.EMPTY;
 		boolean isAccepted = false;
+		BigDecimal plotArea = pl.getPlot().getArea();
 
 		if (typeOfArea.equalsIgnoreCase(OLD)) {
 			if (roadWidth.compareTo(ROAD_WIDTH_TWO_POINTFOUR) < 0) {
@@ -1072,20 +1074,20 @@ public class Far_BhilaiCharoda extends Far {
 		String occupancyName = occupancyType.getType().getName();
 
 		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
-			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted, plotArea);
 		}
 	}
 
 	private void buildResult(Plan pl, String occupancyName, BigDecimal far, String typeOfArea, BigDecimal roadWidth,
-			String expectedResult, boolean isAccepted) {
+			String expectedResult, boolean isAccepted, BigDecimal plotArea) {
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, OCCUPANCY);
-		scrutinyDetail.addColumnHeading(3, AREA_TYPE);
-		scrutinyDetail.addColumnHeading(4, ROAD_WIDTH);
-		scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
-		scrutinyDetail.addColumnHeading(6, PROVIDED);
-		scrutinyDetail.addColumnHeading(7, STATUS);
+//		scrutinyDetail.addColumnHeading(3, AREA_TYPE);
+		scrutinyDetail.addColumnHeading(3, PLOT_AREA);
+		scrutinyDetail.addColumnHeading(4, PERMISSIBLE);
+		scrutinyDetail.addColumnHeading(5, PROVIDED);
+		scrutinyDetail.addColumnHeading(6, STATUS);
 		scrutinyDetail.setKey("Common_FAR");
 
 		String actualResult = far.toString();
@@ -1093,8 +1095,8 @@ public class Far_BhilaiCharoda extends Far {
 		Map<String, String> details = new HashMap<>();
 		details.put(RULE_NO, RULE_38);
 		details.put(OCCUPANCY, occupancyName);
-		details.put(AREA_TYPE, typeOfArea);
-		details.put(ROAD_WIDTH, roadWidth.toString());
+//		details.put(AREA_TYPE, typeOfArea);
+		details.put(PLOT_AREA, plotArea.toString());
 		details.put(PERMISSIBLE, expectedResult);
 		details.put(PROVIDED, actualResult);
 		details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
@@ -1106,11 +1108,11 @@ public class Far_BhilaiCharoda extends Far {
 	private ScrutinyDetail getFarScrutinyDetail(String key) {
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, "Area Type");
-		scrutinyDetail.addColumnHeading(3, "Road Width");
-		scrutinyDetail.addColumnHeading(4, PERMISSIBLE);
-		scrutinyDetail.addColumnHeading(5, PROVIDED);
-		scrutinyDetail.addColumnHeading(6, STATUS);
+//		scrutinyDetail.addColumnHeading(2, "Area Type");
+		scrutinyDetail.addColumnHeading(2, "Plot Area");
+		scrutinyDetail.addColumnHeading(3, PERMISSIBLE);
+		scrutinyDetail.addColumnHeading(4, PROVIDED);
+		scrutinyDetail.addColumnHeading(5, STATUS);
 		scrutinyDetail.setKey(key);
 		return scrutinyDetail;
 	}

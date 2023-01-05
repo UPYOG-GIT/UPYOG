@@ -63,6 +63,7 @@ import static org.egov.edcr.utility.DcrConstants.SIDE_YARD2_DESC;
 import static org.egov.edcr.utility.DcrConstants.SIDE_YARD_DESC;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -449,6 +450,7 @@ public class SideYardService_BhilaiCharoda extends SideYardService {
 			SideYardResult sideYard1Result, SideYardResult sideYard2Result, String rule, String subRule, Boolean valid2,
 			Boolean valid1, BigDecimal side2val, BigDecimal side1val, BigDecimal widthOfPlot, BigDecimal buildingHeight,
 			BigDecimal roadWidth) {
+		double OneThirdHieght=0d;
 		if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) <= 0
 				&& roadWidth.compareTo(BigDecimal.valueOf(18)) <= 0) {
 			if (widthOfPlot.compareTo(BigDecimal.valueOf(7.50)) <= 0) {
@@ -475,9 +477,9 @@ public class SideYardService_BhilaiCharoda extends SideYardService {
 				side1val = SIDEVALUE_FOUR;
 			}
 		} else if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) >= 0) {
-			BigDecimal OneThirdHieght=buildingHeight.divide(BigDecimal.valueOf(3.0));
-			side2val = OneThirdHieght;
-			side1val = OneThirdHieght;
+			OneThirdHieght=buildingHeight.doubleValue()/3;
+			side2val = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
+			side1val = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
 		}
 
 		if (max >= side1val.doubleValue())
@@ -606,6 +608,7 @@ public class SideYardService_BhilaiCharoda extends SideYardService {
 		BigDecimal side1val = BigDecimal.ZERO;
 		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
 		BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
+		double OneThirdHieght=0d;
 
 		if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) <= 0
 				&& roadWidth.compareTo(BigDecimal.valueOf(18)) <= 0) {
@@ -633,9 +636,9 @@ public class SideYardService_BhilaiCharoda extends SideYardService {
 				side1val = SIDEVALUE_FOURPOINTFIVE;
 			}
 		} else if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) >= 0) {
-			BigDecimal OneThirdHieght=buildingHeight.divide(BigDecimal.valueOf(3.0));
-			side2val = OneThirdHieght;
-			side1val = OneThirdHieght;
+			OneThirdHieght=buildingHeight.doubleValue()/3;
+			side2val = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
+			side1val = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
 		}
 
 		if (max >= side1val.doubleValue())
@@ -657,6 +660,7 @@ public class SideYardService_BhilaiCharoda extends SideYardService {
 			SideYardResult sideYard1Result, SideYardResult sideYard2Result, String rule, String subRule, Boolean valid2,
 			Boolean valid1, BigDecimal side2val, BigDecimal side1val, BigDecimal widthOfPlot, BigDecimal buildingHeight,
 			BigDecimal roadWidth) {
+		double OneThirdHieght=0d;
 		if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) <= 0
 				&& roadWidth.compareTo(BigDecimal.valueOf(18)) <= 0) {
 			if (widthOfPlot.compareTo(BigDecimal.valueOf(12.0)) <= 0) {
@@ -671,9 +675,9 @@ public class SideYardService_BhilaiCharoda extends SideYardService {
 				side1val = SIDEVALUE_THREE;
 			}
 		} else if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) >= 0) {
-			BigDecimal OneThirdHieght=buildingHeight.divide(BigDecimal.valueOf(3.0));
-			side2val = OneThirdHieght;
-			side1val = OneThirdHieght;
+			OneThirdHieght=buildingHeight.doubleValue()/3;
+			side2val = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
+			side1val = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
 		}
 
 		if (max >= side1val.doubleValue())
