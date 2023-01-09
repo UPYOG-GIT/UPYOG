@@ -101,6 +101,7 @@ public class MDMSService {
             List jsonOutput = JsonPath.read(mdmsData, BPACalculatorConstants.MDMS_CALCULATIONTYPE_PATH);
             LinkedHashMap responseMap = edcrService.getEDCRDetails(requestInfo, bpa);
             log.info("responseMap----"+responseMap);
+            log.info("mdmsData----"+mdmsData);
             String jsonString = new JSONObject(responseMap).toString();
     		DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
     		Map<String, String> additionalDetails = new HashMap<String, String>();
