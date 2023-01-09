@@ -135,6 +135,7 @@ public class MDMSService {
             if(calTypes.size() == 0) {
             		return defaultMap(feeType);
             }
+            log.info("calTypes:----"+calTypes);
             
              Object obj = calTypes.get(0);
            
