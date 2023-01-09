@@ -100,7 +100,7 @@ public class MDMSService {
         try {
             List jsonOutput = JsonPath.read(mdmsData, BPACalculatorConstants.MDMS_CALCULATIONTYPE_PATH);
             LinkedHashMap responseMap = edcrService.getEDCRDetails(requestInfo, bpa);
-            
+            log.info("responseMap----"+responseMap);
             String jsonString = new JSONObject(responseMap).toString();
     		DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
     		Map<String, String> additionalDetails = new HashMap<String, String>();
@@ -148,7 +148,7 @@ public class MDMSService {
         catch (Exception e){
             throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "Failed to get calculationType");
         }
-
+        log.info("calculationType-----"+calculationType);
         return calculationType;
     }
    
