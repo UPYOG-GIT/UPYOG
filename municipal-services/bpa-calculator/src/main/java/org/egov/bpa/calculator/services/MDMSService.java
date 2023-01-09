@@ -102,13 +102,14 @@ public class MDMSService {
             LinkedHashMap responseMap = edcrService.getEDCRDetails(requestInfo, bpa);
             log.info("responseMap----"+responseMap);
             log.info("mdmsData----"+mdmsData);
-
-            log.info("occ: "+ responseMap.edcrDetail.planDetail.planInformation.occupancy);
-
-           
             String jsonString = new JSONObject(responseMap).toString();
     		DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
     		Map<String, String> additionalDetails = new HashMap<String, String>();
+
+            log.info("context : "+ context);
+            log.info("context read: "+  context.read("edcrDetail.*.appliactionType"));
+            log.info("context read: "+  context.read("edcrDetail.*.planDetail.planInformation.occupancy"));
+            
     		JSONArray serviceType = context.read("edcrDetail.*.applicationSubType");
     		if (CollectionUtils.isEmpty(serviceType)) {
     			serviceType.add("NEW_CONSTRUCTION");
