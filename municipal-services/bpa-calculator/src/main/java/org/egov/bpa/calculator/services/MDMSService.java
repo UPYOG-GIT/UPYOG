@@ -111,7 +111,7 @@ public class MDMSService {
             log.info("context read: "+  context.read("edcrDetail.*.planDetail.planInformation.occupancy"));
             log.info("feeType: "+feeType);
             log.info("occupancy: "+ context.read("edcrDetail.*.planDetail.planInformation.occupancy"));    
-            log.info("builtUpArea: "+ context.read("edcrDetail.*.planDetail.blocks.building.floors.occupancies.builtUpArea"));
+            log.info("builtUpArea: "+ context.read("edcrDetail.*.planDetail.blocks.*.building.floors.*.occupancies.*.builtUpArea"));
             
     		JSONArray serviceType = context.read("edcrDetail.*.applicationSubType");
     		if (CollectionUtils.isEmpty(serviceType)) {
