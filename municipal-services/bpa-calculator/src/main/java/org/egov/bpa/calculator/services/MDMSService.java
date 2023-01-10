@@ -129,23 +129,27 @@ public class MDMSService {
             log.debug("serviceType is " + additionalDetails.get("serviceType"));
             String filterExp = "$.[?((@.applicationType == '"+ additionalDetails.get("applicationType")+"' || @.applicationType === 'ALL' ) &&  @.feeType == '"+feeType+"')]";
             List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
-            
+               log.info("calTypes0 :----"+calTypes);
             filterExp = "$.[?(@.serviceType == '"+ additionalDetails.get("serviceType")+"' || @.serviceType === 'ALL' )]";
             calTypes = JsonPath.read(calTypes, filterExp);
+             log.info("calTypes1 :----"+calTypes);
             
             filterExp = "$.[?(@.riskType == '"+bpa.getRiskType()+"' || @.riskType === 'ALL' )]";
             calTypes = JsonPath.read(calTypes, filterExp);
+             log.info("calTypes2:----"+calTypes);
 
-            filterExp = "$.[?(@.builtupAreaFrom <= '"+context.read("edcrDetail..planDetail.blocks.building.floors.occupancies.builtUpArea")+"' || @.builtupAreaTo >= '"+context.read("edcrDetail..planDetail.blocks.building.floors.occupancies.builtUpArea")+"')]";
+            filterExp = "$.[?(@.builtupAreaFrom <= '"+context.read("edcrDetail.*.planDetail.blocks.*.building.floors.*.occupancies.*.builtUpArea")+"' || @.builtupAreaTo >= '"+context.read("edcrDetail.*.planDetail.blocks.*.building.floors.*.occupancies.*.builtUpArea")+"')]";
             log.info("filterExp:  "+filterExp);
             
             if(calTypes.size() > 1){
 	            	filterExp = "$.[?(@.riskType == '"+bpa.getRiskType()+"' )]";
 	            	calTypes  = JsonPath.read(calTypes, filterExp);
+                     log.info("calTypes3:----"+calTypes);
             }
             
             if(calTypes.size() == 0) {
-            		return defaultMap(feeType);
+                 log.info("calTypes4:----"+calTypes);
+            		return defaultMap(feeType);     
             }
             log.info("calTypes:----"+calTypes);
             
