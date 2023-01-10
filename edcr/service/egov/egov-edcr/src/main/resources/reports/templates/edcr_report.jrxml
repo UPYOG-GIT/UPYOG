@@ -17,7 +17,7 @@
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$P{reportStatus} != null && !$P{reportStatus}.equalsIgnoreCase("Accepted")]]></conditionExpression>
-			<style forecolor="#FF0000"/>
+			<style forecolor="#009900"/>
 		</conditionalStyle>
 	</style>
 	<parameter name="resultOutput" class="java.lang.String"/>
