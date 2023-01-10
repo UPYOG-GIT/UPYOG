@@ -109,6 +109,9 @@ public class MDMSService {
             log.info("context : "+ context);
             log.info("context read: "+  context.read("edcrDetail.*.appliactionType"));
             log.info("context read: "+  context.read("edcrDetail.*.planDetail.planInformation.occupancy"));
+            log.info("feeType: "+feeType);
+            log.info("occupancy: "+ context.read("edcrDetail.*.planDetail.planInformation.occupancy"));    
+            log.info("builtUpArea: "+ context.read("edcrDetail.*.planDetail.blocks.building.floors.occupancies.builtUpArea"));
             
     		JSONArray serviceType = context.read("edcrDetail.*.applicationSubType");
     		if (CollectionUtils.isEmpty(serviceType)) {
@@ -132,6 +135,9 @@ public class MDMSService {
             
             filterExp = "$.[?(@.riskType == '"+bpa.getRiskType()+"' || @.riskType === 'ALL' )]";
             calTypes = JsonPath.read(calTypes, filterExp);
+
+            filterExp = "$.[?(@.builtupAreaFrom <= '"+context.read("edcrDetail..planDetail.blocks.building.floors.occupancies.builtUpArea")+"' || @.builtupAreaTo >= '"+context.read("edcrDetail..planDetail.blocks.building.floors.occupancies.builtUpArea")+"')]";
+            log.info("filterExp:  "+filterExp);
             
             if(calTypes.size() > 1){
 	            	filterExp = "$.[?(@.riskType == '"+bpa.getRiskType()+"' )]";
