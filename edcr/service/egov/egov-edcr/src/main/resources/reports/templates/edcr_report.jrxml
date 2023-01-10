@@ -13,7 +13,7 @@
 	<style name="report status style" forecolor="#FFFFFF">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$P{reportStatus} != null && $P{reportStatus}.equalsIgnoreCase("Accepted")]]></conditionExpression>
-			<style forecolor="#009900"/>
+			<style forecolor="#0091ff"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$P{reportStatus} != null && !$P{reportStatus}.equalsIgnoreCase("Accepted")]]></conditionExpression>
