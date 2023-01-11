@@ -123,12 +123,16 @@ public class MDMSService {
     			applicationType.add("permit");
     		}
 
-            JSONArray occupancyTypeEdcr = context.read("edcrDetail.*.appliactionType");
-            additionalDetails.put("occupancyTypeEdcr", occupancyTypeEdcr.get(0).toString());
+            JSONArray occupancyTypeEdcr = context.read("edcrDetail.*.planDetail.planInformation.occupancy");
+            	if (StringUtils.isEmpty(occupancyTypeEdcr)) {
+    			occupancyTypeEdcr.add("Residential");
+    		}
+            
             additionalDetails.put("serviceType", serviceType.get(0).toString());
     		additionalDetails.put("applicationType", applicationType.get(0).toString());
+            additionalDetails.put("occupancyTypeEdcr", occupancyTypeEdcr.get(0).toString());
 
-
+            log.info("occupancyTypeEdcr :== "+occupancyTypeEdcr.get(0).toString());
 
             log.debug("applicationType is " + additionalDetails.get("applicationType"));
             log.debug("serviceType is " + additionalDetails.get("serviceType"));
@@ -139,6 +143,7 @@ public class MDMSService {
             filterExp = "$.[?(@.serviceType == '"+ additionalDetails.get("serviceType")+"' || @.serviceType === 'ALL' )]";
             calTypes = JsonPath.read(calTypes, filterExp);
              log.info("calTypes1 :----"+calTypes);
+
 
             filterExp = "$.[?(@.occupancyType == '"+additionalDetails.get("occupancyTypeEdcr")+"')]";
 
