@@ -64,7 +64,7 @@ public class JasperReportService {
         detailStyle.setBorderTop(Border.THIN());
         detailStyle.setBorderBottom(Border.THIN());
         detailStyle.setTextColor(Color.BLACK);
-        detailStyle.setHorizontalAlign(HorizontalAlign.LEFT);
+        detailStyle.setHorizontalAlign(HorizontalAlign.CENTER);
         detailStyle.setVerticalAlign(VerticalAlign.TOP);
         detailStyle.setFont(new Font(8, Font._FONT_VERDANA, true));
         detailStyle.setTransparency(Transparency.OPAQUE);
