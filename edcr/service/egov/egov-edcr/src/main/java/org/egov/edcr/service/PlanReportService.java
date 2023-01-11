@@ -1188,7 +1188,7 @@ public class PlanReportService {
 
         fc = new FetchCondition(STATUS, "Accepted");
 
-        cs = new ConditionalStyle(fc, reportService.getDetailStyle(new Color(0, 145, 255)));
+        cs = new ConditionalStyle(fc, reportService.getDetailStyle(new Color(0, 128, 0)));
         conditionalStyles.add(cs);
 
         fc = new FetchCondition(STATUS, "Verified");
