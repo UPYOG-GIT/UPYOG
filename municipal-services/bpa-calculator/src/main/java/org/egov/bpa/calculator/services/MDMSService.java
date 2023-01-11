@@ -111,8 +111,9 @@ public class MDMSService {
             log.info("context read: "+  context.read("edcrDetail.*.planDetail.planInformation.occupancy"));
             log.info("feeType: "+feeType);
             log.info("occupancy: "+ context.read("edcrDetail.*.planDetail.planInformation.occupancy"));    
-            log.info("builtUpArea: "+ context.read("edcrDetail.*.planDetail.blocks.*.building.floors.*.occupancies.*.builtUpArea"));
-            
+            log.info("builtUpArea: "+ context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea"));
+        
+
     		JSONArray serviceType = context.read("edcrDetail.*.applicationSubType");
     		if (CollectionUtils.isEmpty(serviceType)) {
     			serviceType.add("NEW_CONSTRUCTION");
@@ -123,7 +124,6 @@ public class MDMSService {
     		}
     		additionalDetails.put("serviceType", serviceType.get(0).toString());
     		additionalDetails.put("applicationType", applicationType.get(0).toString());
-            
     		
             log.debug("applicationType is " + additionalDetails.get("applicationType"));
             log.debug("serviceType is " + additionalDetails.get("serviceType"));
@@ -133,22 +133,25 @@ public class MDMSService {
             filterExp = "$.[?(@.serviceType == '"+ additionalDetails.get("serviceType")+"' || @.serviceType === 'ALL' )]";
             calTypes = JsonPath.read(calTypes, filterExp);
              log.info("calTypes1 :----"+calTypes);
-            
-            filterExp = "$.[?(@.riskType == '"+bpa.getRiskType()+"' || @.riskType === 'ALL' )]";
-            calTypes = JsonPath.read(calTypes, filterExp);
-             log.info("calTypes2:----"+calTypes);
-
-            filterExp = "$.[?(@.builtupAreaTo >= '"+context.read("edcrDetail.*.planDetail.blocks.*.building.floors.*.occupancies..*builtUpArea")+"')]";
-            calTypes = JsonPath.read(calTypes, filterExp);
-            log.info("calTypes5 :----"+calTypes);
-
-            filterExp = "$.[?(@.builtupAreaFrom <= '"+context.read("edcrDetail.*.planDetail.blocks.*.building.floors.*.occupancies.*.builtUpArea")+"')]";
-            calTypes = JsonPath.read(calTypes, filterExp);
-            log.info("calTypes6 :----"+calTypes);
 
             filterExp = "$.[?(@.occupancyType == '"+context.read("edcrDetail.*.planDetail.planInformation.occupancy")+"')]";
             calTypes = JsonPath.read(calTypes, filterExp);
             log.info("calTypes7 :----"+calTypes);
+            log.info("filterExp occu :----"+filterExp);
+
+            filterExp = "$.[?(@.riskType == '"+bpa.getRiskType()+"' || @.riskType === 'ALL' )]";
+            calTypes = JsonPath.read(calTypes, filterExp);
+             log.info("calTypes2:----"+calTypes);
+
+            filterExp = "$.[?(@.builtupAreaTo >= '"+context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea")+"')]";
+            calTypes = JsonPath.read(calTypes, filterExp);
+            log.info("calTypes5 :----"+calTypes);
+
+            filterExp = "$.[?(@.builtupAreaFrom <= '"+context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea")+"')]";
+            calTypes = JsonPath.read(calTypes, filterExp);
+            log.info("calTypes6 :----"+calTypes);
+
+        
             
             if(calTypes.size() > 1){
 	            	filterExp = "$.[?(@.riskType == '"+bpa.getRiskType()+"' )]";
