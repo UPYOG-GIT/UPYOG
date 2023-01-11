@@ -180,7 +180,7 @@ public class MDMSService {
                  log.info("calTypes4:----"+calTypes);
             		return defaultMap(feeType);     
             }
-            log.info("calTypes:----"+calTypes);
+            log.info("calTypes--------:----"+calTypes);
             
              Object obj = calTypes.get(0);
            
