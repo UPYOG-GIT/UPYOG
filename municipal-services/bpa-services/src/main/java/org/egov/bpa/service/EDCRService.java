@@ -188,7 +188,10 @@ public class EDCRService {
 
 			List<String> riskTypes = JsonPath.read(jsonOutput, filterExp);
 
-			if (!CollectionUtils.isEmpty(riskTypes) && OccupancyType.equals(BPAConstants.RESIDENTIAL_OCCUPANCY)) {
+			if (!CollectionUtils.isEmpty(riskTypes) 
+			// && OccupancyType.equals(BPAConstants.RESIDENTIAL_OCCUPANCY)
+			) 
+			{
 				String expectedRiskType  = riskTypes.get(0);
 
 				if (expectedRiskType == null || !expectedRiskType.equals(riskType)) {
