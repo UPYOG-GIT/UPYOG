@@ -64,7 +64,7 @@ public class JasperReportService {
         detailStyle.setBorderTop(Border.THIN());
         detailStyle.setBorderBottom(Border.THIN());
         detailStyle.setTextColor(Color.BLACK);
-        detailStyle.setHorizontalAlign(HorizontalAlign.LEFT);
+        detailStyle.setHorizontalAlign(HorizontalAlign.CENTER);
         detailStyle.setVerticalAlign(VerticalAlign.TOP);
         detailStyle.setFont(new Font(8, Font._FONT_VERDANA, true));
         detailStyle.setTransparency(Transparency.OPAQUE);
@@ -78,7 +78,7 @@ public class JasperReportService {
         detailStyle.setBorderTop(Border.THIN());
         detailStyle.setBorderBottom(Border.THIN());
         detailStyle.setTextColor(color);
-        detailStyle.setHorizontalAlign(HorizontalAlign.LEFT);
+        detailStyle.setHorizontalAlign(HorizontalAlign.CENTER);
         detailStyle.setVerticalAlign(VerticalAlign.TOP);
         detailStyle.setFont(new Font(8, Font._FONT_VERDANA, true));
         detailStyle.setTransparency(Transparency.OPAQUE);
@@ -253,7 +253,7 @@ public class JasperReportService {
         final Style columnResultStyle = new Style("ColumnResultCss");
         columnResultStyle.setBorderLeft(Border.THIN());
         columnResultStyle.setBorderRight(Border.THIN());
-        columnResultStyle.setTextColor(Color.RED);
+        columnResultStyle.setTextColor(Color.blue);
         columnResultStyle.setHorizontalAlign(HorizontalAlign.CENTER);
         columnResultStyle.setFont(new Font(8, Font._FONT_TIMES_NEW_ROMAN, false));
         columnResultStyle.setBorderBottom(Border.THIN());

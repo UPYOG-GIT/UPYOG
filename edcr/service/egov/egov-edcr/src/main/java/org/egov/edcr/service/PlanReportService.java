@@ -1191,7 +1191,7 @@ public class PlanReportService {
         cs = new ConditionalStyle(fc, reportService.getDetailStyle(new Color(0, 145, 255)));
         conditionalStyles.add(cs);
 
-        fc = new FetchCondition(STATUS, "Verify");
+        fc = new FetchCondition(STATUS, "Verified");
 
         cs = new ConditionalStyle(fc, reportService.getDetailStyle(new Color(30, 144, 255)));
         conditionalStyles.add(cs);

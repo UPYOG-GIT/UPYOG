@@ -44,7 +44,7 @@ public class DxfFileConstants {
     public static final String D_A = "D-A"; // Religious
     public static final String D_AW = "D-AW";// Assembly Worship
     public static final String D_BT = "D-BT";// Bus Terminal
-    public static final String D_MHCT = "D-MHCT";//Meeting Hall/Cinema Theater   //add for birgaon requirement
+   
 
     public static final String E_PS = "E-PS";// Primary School
     public static final String E_SFMC = "E-SFMC";// School for Mentally Challenged
@@ -62,6 +62,7 @@ public class DxfFileConstants {
     public static final String F_LD = "F-LD";// Lodges
     public static final String F_CB = "F-CB";// Commercial Building
     public static final String F_IT = "F-IT";// IT / ITES Buildings
+    public static final String F_MHCT = "F-MHCT";//Meeting Hall/Cinema Theater   //add for birgaon requirement
     
 
 
