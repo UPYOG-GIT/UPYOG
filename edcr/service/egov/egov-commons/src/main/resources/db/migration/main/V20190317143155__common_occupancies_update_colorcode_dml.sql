@@ -21,7 +21,7 @@ update egbpa_sub_occupancy set colorcode=21, code='C-MA' where name='Medical Adm
 update egbpa_sub_occupancy set colorcode=16, code='D-AW' where name='Assembly Worship';
 update egbpa_sub_occupancy set colorcode=22, code='D-BT' where name='Bus Terminal';
 
-update egbpa_sub_occupancy set colorcode=7, code='E-OB' where name='Office/Business';
+update egbpa_sub_occupancy set colorcode=6, code='E-OB' where name='Office/Business';
 
 update egbpa_sub_occupancy set name='Parking Plaza' where code='F1';
 update egbpa_sub_occupancy set colorcode=17, code='F-PP' where name='Parking Plaza';
