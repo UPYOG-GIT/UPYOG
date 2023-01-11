@@ -122,17 +122,29 @@ public class MDMSService {
     		if (StringUtils.isEmpty(applicationType)) {
     			applicationType.add("permit");
     		}
-    		additionalDetails.put("serviceType", serviceType.get(0).toString());
+
+            JSONArray occupancyTypeEdcr = context.read("edcrDetail.*.appliactionType");
+            additionalDetails.put("occupancyTypeEdcr", occupancyTypeEdcr.get(0).toString());
+            additionalDetails.put("serviceType", serviceType.get(0).toString());
     		additionalDetails.put("applicationType", applicationType.get(0).toString());
-    		
+
+
+
             log.debug("applicationType is " + additionalDetails.get("applicationType"));
             log.debug("serviceType is " + additionalDetails.get("serviceType"));
+            
             String filterExp = "$.[?((@.applicationType == '"+ additionalDetails.get("applicationType")+"' || @.applicationType === 'ALL' ) &&  @.feeType == '"+feeType+"')]";
             List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
                log.info("calTypes0 :----"+calTypes);
             filterExp = "$.[?(@.serviceType == '"+ additionalDetails.get("serviceType")+"' || @.serviceType === 'ALL' )]";
             calTypes = JsonPath.read(calTypes, filterExp);
              log.info("calTypes1 :----"+calTypes);
+
+            filterExp = "$.[?(@.occupancyType == '"+additionalDetails.get("occupancyTypeEdcr")+"')]";
+
+            calTypes = JsonPath.read(calTypes, filterExp);
+
+            log.info("calTypes8 :----"+calTypes);
 
             filterExp = "$.[?(@.occupancyType == '"+context.read("edcrDetail.*.planDetail.planInformation.occupancy")+"')]";
             calTypes = JsonPath.read(calTypes, filterExp);
