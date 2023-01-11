@@ -138,8 +138,17 @@ public class MDMSService {
             calTypes = JsonPath.read(calTypes, filterExp);
              log.info("calTypes2:----"+calTypes);
 
-            filterExp = "$.[?(@.builtupAreaFrom <= '"+context.read("edcrDetail.*.planDetail.blocks.*.building.floors.*.occupancies.*.builtUpArea")+"' || @.builtupAreaTo >= '"+context.read("edcrDetail.*.planDetail.blocks.*.building.floors.*.occupancies.*.builtUpArea")+"')]";
-            log.info("filterExp:  "+filterExp);
+            filterExp = "$.[?(@.builtupAreaTo >= '"+context.read("edcrDetail.*.planDetail.blocks.*.building.floors.*.occupancies..*builtUpArea")+"')]";
+            calTypes = JsonPath.read(calTypes, filterExp);
+            log.info("calTypes5 :----"+calTypes);
+
+            filterExp = "$.[?(@.builtupAreaFrom <= '"+context.read("edcrDetail.*.planDetail.blocks.*.building.floors.*.occupancies.*.builtUpArea")+"')]";
+            calTypes = JsonPath.read(calTypes, filterExp);
+            log.info("calTypes6 :----"+calTypes);
+
+            filterExp = "$.[?(@.occupancyType == '"+context.read("edcrDetail.*.planDetail.planInformation.occupancy")+"')]";
+            calTypes = JsonPath.read(calTypes, filterExp);
+            log.info("calTypes7 :----"+calTypes);
             
             if(calTypes.size() > 1){
 	            	filterExp = "$.[?(@.riskType == '"+bpa.getRiskType()+"' )]";
