@@ -48,7 +48,7 @@
 package org.egov.common.entity.edcr;
 
 public enum Result {
-    Accepted("Accepted"), NA("N/A"), Not_Accepted("Not Accepted"), Verify("Verify");
+    Accepted("Accepted"), NA("N/A"), Not_Accepted("Not Accepted"), Verify("Verify"), Verified("Verified");
 
     private final String resultVal;
 
