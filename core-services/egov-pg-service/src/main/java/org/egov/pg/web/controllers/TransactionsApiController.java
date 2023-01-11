@@ -48,9 +48,13 @@ public class TransactionsApiController {
     public ResponseEntity<TransactionCreateResponse> transactionsV1CreatePost(@Valid @RequestBody TransactionRequest transactionRequest) {
 
         Transaction transaction = transactionService.initiateTransaction(transactionRequest);
+        log.info("transaction : -----"+transaction);
         ResponseInfo responseInfo = ResponseInfoFactory.createResponseInfoFromRequestInfo(transactionRequest
                 .getRequestInfo(), true);
+                log.info("responseInfo : -----"+responseInfo);
+
         TransactionCreateResponse response = new TransactionCreateResponse(responseInfo, transaction);
+        log.info("response : -----"+response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
