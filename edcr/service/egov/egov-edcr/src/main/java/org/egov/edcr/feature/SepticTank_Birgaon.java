@@ -107,11 +107,14 @@ public class SepticTank_Birgaon extends SepticTank {
 
 			BigDecimal RequiredSepticTankCapacity = waterTankCapacity.multiply(ONE_POINT_FIVE);
 
-			if (givenStCapacity.compareTo(RequiredSepticTankCapacity) >= 0) {
+			if (givenStCapacity.compareTo(RequiredSepticTankCapacity) >= 0
+					&& RequiredSepticTankCapacity.compareTo(BigDecimal.valueOf(0)) > 0) {
 				validSepticTankCapacity = true;
 
 				buildResult(pl, scrutinyDetail, validSepticTankCapacity, MIN_CAPACITY_SEPTIC_TANK,
 						RequiredSepticTankCapacity.toString(), givenStCapacity.toString());
+			} else if (RequiredSepticTankCapacity.compareTo(BigDecimal.valueOf(0)) == 0) {
+				
 			} else {
 				buildResult(pl, scrutinyDetail, validSepticTankCapacity, MIN_CAPACITY_SEPTIC_TANK,
 						RequiredSepticTankCapacity.toString(), givenStCapacity.toString());

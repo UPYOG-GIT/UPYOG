@@ -263,17 +263,20 @@ public class SideYardService_Birgaon extends SideYardService {
 						// road reserve calculation end
 
 						if (buildingHeight != null && (minlength > 0 || max > 0)) {
-							for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
+//							for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
+							final Occupancy occupancy = block.getBuilding().getTotalArea().get(0);
 								scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Side Setback");
 
-								if (setback.getLevel() < 0) {
-									scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Basement Side Yard");
-
-									checkSideYardBasement(pl, block.getBuilding(), buildingHeight, block.getName(),
-											setback.getLevel(), plot, minlength, max, minMeanlength, maxMeanLength,
-											occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
-
-								}
+								/*
+								 * if (setback.getLevel() < 0) { scrutinyDetail.setKey("Block_" +
+								 * block.getName() + "_" + "Basement Side Yard");
+								 * 
+								 * checkSideYardBasement(pl, block.getBuilding(), buildingHeight,
+								 * block.getName(), setback.getLevel(), plot, minlength, max, minMeanlength,
+								 * maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
+								 * 
+								 * }
+								 */
 
 								if (occupancy.getTypeHelper().getType() != null
 										&& (A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
@@ -298,7 +301,7 @@ public class SideYardService_Birgaon extends SideYardService {
 											maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
 								}
 
-							}
+//							} //for end
 
 							addSideYardResult(pl, errors, sideYard1Result, sideYard2Result);
 						}

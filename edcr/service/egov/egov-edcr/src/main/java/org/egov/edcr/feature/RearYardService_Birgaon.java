@@ -84,9 +84,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RearYardService_Birgaon extends RearYardService {
-	
+
 	private static final Logger LOG = LogManager.getLogger(RearYardService_Birgaon.class);
-	
+
 	private static final String RULE_35 = "35 Table-8";
 	private static final String RULE_36 = "36";
 	private static final String RULE_37_TWO_A = "37-2-A";
@@ -129,9 +129,9 @@ public class RearYardService_Birgaon extends RearYardService {
 	}
 
 	public void processRearYard(final Plan pl) {
-		
+
 		LOG.info("inside RearYardService_Birgaon process");
-		
+
 		HashMap<String, String> errors = new HashMap<>();
 		final Plot plot = pl.getPlot();
 		if (plot == null)
@@ -161,21 +161,21 @@ public class RearYardService_Birgaon extends RearYardService {
 							&& setback.getRearYard().getMean().compareTo(BigDecimal.ZERO) > 0) {
 						min = setback.getRearYard().getMinimumDistance();
 						mean = setback.getRearYard().getMean();
-						
-						//added for rear road reserve deduction from rear setback
+
+						// added for rear road reserve deduction from rear setback
 						List<Road> roadReserve = pl.getRoadReserves();
 						BigDecimal rearRoadReserve = BigDecimal.ZERO;
-						boolean roadReservePresent=false;
-						int rearRoadReserveIndex=-1;
-						
-						for(Road road:roadReserve) {
+						boolean roadReservePresent = false;
+						int rearRoadReserveIndex = -1;
+
+						for (Road road : roadReserve) {
 							rearRoadReserveIndex++;
-							if(road.getName().equals("ROAD_RESERVE_REAR")) {
-								roadReservePresent=true;
+							if (road.getName().equals("ROAD_RESERVE_REAR")) {
+								roadReservePresent = true;
 								break;
 							}
 						}
-						
+
 						if (roadReservePresent) {
 							rearRoadReserve = roadReserve.get(rearRoadReserveIndex).getShortestDistanceToRoad().get(0);
 						}
@@ -183,8 +183,7 @@ public class RearYardService_Birgaon extends RearYardService {
 						if (rearRoadReserve.compareTo(BigDecimal.ZERO) >= 0) {
 							min = min.subtract(rearRoadReserve);
 						}
-						//road reserve calculation end
-
+						// road reserve calculation end
 
 						// if height defined at rear yard level, then use elase use buidling height.
 						BigDecimal buildingHeight = setback.getRearYard().getHeight() != null
@@ -193,36 +192,41 @@ public class RearYardService_Birgaon extends RearYardService {
 										: block.getBuilding().getBuildingHeight();
 
 						if (buildingHeight != null && (min.doubleValue() > 0 || mean.doubleValue() > 0)) {
-							for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
+//							for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
+							final Occupancy occupancy = block.getBuilding().getTotalArea().get(0);
 								scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Rear Setback");
 
-								if (setback.getLevel() < 0) {
-									scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Basement Rear Setback");
-									checkRearYardBasement(pl, block.getBuilding(), block.getName(), setback.getLevel(),
-											plot, BSMT_REAR_YARD_DESC, min, mean, occupancy.getTypeHelper(),
-											rearYardResult);
+								/*
+								 * if (setback.getLevel() < 0) { scrutinyDetail.setKey("Block_" +
+								 * block.getName() + "_" + "Basement Rear Setback"); checkRearYardBasement(pl,
+								 * block.getBuilding(), block.getName(), setback.getLevel(), plot,
+								 * BSMT_REAR_YARD_DESC, min, mean, occupancy.getTypeHelper(), rearYardResult);
+								 * 
+								 * }
+								 */
 
-								}
-								if (occupancy.getTypeHelper().getType() != null && (A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
-										|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
+								if (occupancy.getTypeHelper().getType() != null
+										&& (A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
+												|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
 									checkRearYard(pl, block.getBuilding(), block, setback.getLevel(), plot,
 											REAR_YARD_DESC, min, mean, occupancy.getTypeHelper(), rearYardResult,
 											buildingHeight);
 
-								} 
+								}
 								/*
 								 * else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
 								 * checkRearYardForIndustrial(setback, block.getBuilding(), pl, block,
 								 * setback.getLevel(), plot, REAR_YARD_DESC, min, mean,
 								 * occupancy.getTypeHelper(), rearYardResult); }
 								 */
-								else if(occupancy.getTypeHelper().getType() != null && J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+								else if (occupancy.getTypeHelper().getType() != null
+										&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
 									processRearYardGovtOccupancies(setback, block.getBuilding(), pl, block,
 											setback.getLevel(), plot, REAR_YARD_DESC, min, mean,
 											occupancy.getTypeHelper(), rearYardResult, buildingHeight);
 								}
 
-							}
+//							} // for end
 							Map<String, String> details = new HashMap<>();
 							details.put(RULE_NO, rearYardResult.subRule);
 							details.put(LEVEL, rearYardResult.level != null ? rearYardResult.level.toString() : "");
@@ -232,13 +236,11 @@ public class RearYardService_Birgaon extends RearYardService {
 								details.put(FIELDVERIFIED, MINIMUMLABEL);
 								details.put(PERMISSIBLE, rearYardResult.expectedminimumDistance.toString());
 								details.put(PROVIDED, rearYardResult.actualMinDistance.toString());
-//								details.put(PROVIDED, rearYardResult.actualMeanDistance.toString());
 
 							} else {
 								details.put(FIELDVERIFIED, MINIMUMLABEL);
 								details.put(PERMISSIBLE, rearYardResult.expectedminimumDistance.toString());
 								details.put(PROVIDED, rearYardResult.actualMinDistance.toString());
-//								details.put(PROVIDED, rearYardResult.actualMeanDistance.toString());
 							}
 							if (rearYardResult.status) {
 								details.put(STATUS, Result.Accepted.getResultVal());
@@ -273,7 +275,7 @@ public class RearYardService_Birgaon extends RearYardService {
 					&& StringUtils.isNotBlank(pl.getPlanInformation().getLandUseZone())
 					&& DxfFileConstants.COMMERCIAL.equalsIgnoreCase(pl.getPlanInformation().getLandUseZone())
 //					&& pl.getPlanInformation().getRoadWidth().compareTo(ROAD_WIDTH_TWELVE_POINTTWO) < 0
-					) {
+			) {
 				valid = commercial(block, level, min, mean, mostRestrictiveOccupancy, rearYardResult,
 						DxfFileConstants.RULE_28, rule, minVal, meanVal, depthOfPlot, valid);
 			} else {

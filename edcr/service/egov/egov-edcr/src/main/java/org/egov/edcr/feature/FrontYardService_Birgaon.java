@@ -168,28 +168,29 @@ public class FrontYardService_Birgaon extends FrontYardService {
 						min = setback.getFrontYard().getMinimumDistance();
 						mean = setback.getFrontYard().getMean();
 
-						//added for front road reserve deduction from rear setback
+						// added for front road reserve deduction from rear setback
 						List<Road> roadReserve = pl.getRoadReserves();
 						BigDecimal frontRoadReserve = BigDecimal.ZERO;
-						boolean roadReservePresent=false;
-						int frontRoadReserveIndex=-1;
-						
-						for(Road road:roadReserve) {
+						boolean roadReservePresent = false;
+						int frontRoadReserveIndex = -1;
+
+						for (Road road : roadReserve) {
 							frontRoadReserveIndex++;
-							if(road.getName().equals("ROAD_RESERVE_FRONT")) {
-								roadReservePresent=true;
+							if (road.getName().equals("ROAD_RESERVE_FRONT")) {
+								roadReservePresent = true;
 								break;
 							}
 						}
-						
+
 						if (roadReservePresent) {
-							frontRoadReserve = roadReserve.get(frontRoadReserveIndex).getShortestDistanceToRoad().get(0);
+							frontRoadReserve = roadReserve.get(frontRoadReserveIndex).getShortestDistanceToRoad()
+									.get(0);
 						}
 
 						if (frontRoadReserve.compareTo(BigDecimal.ZERO) >= 0) {
 							min = min.subtract(frontRoadReserve);
 						}
-						//road reserve calculation end
+						// road reserve calculation end
 
 						// if height defined at frontyard level, then use elase use buidling height.
 						BigDecimal buildingHeight = setback.getFrontYard().getHeight() != null
@@ -198,16 +199,18 @@ public class FrontYardService_Birgaon extends FrontYardService {
 										: block.getBuilding().getBuildingHeight();
 
 						if (buildingHeight != null && (min.doubleValue() > 0 || mean.doubleValue() > 0)) {
-							for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
+//							for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
+								final Occupancy occupancy = block.getBuilding().getTotalArea().get(0);
 								scrutinyDetail.setKey("Block_" + block.getName() + "_" + FRONT_YARD_DESC);
 
-								if (setback.getLevel() < 0) {
-									scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Basement Front Yard");
-									checkFrontYardBasement(pl, block.getBuilding(), block.getName(), setback.getLevel(),
-											plot, BSMT_FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(),
-											frontYardResult);
-
-								}
+								/*
+								 * if (setback.getLevel() < 0) { scrutinyDetail.setKey("Block_" +
+								 * block.getName() + "_" + "Basement Front Yard"); checkFrontYardBasement(pl,
+								 * block.getBuilding(), block.getName(), setback.getLevel(), plot,
+								 * BSMT_FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(), frontYardResult);
+								 * 
+								 * }
+								 */
 
 //								if ((occupancy.getTypeHelper().getSubtype() != null
 //										&& (A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
@@ -238,7 +241,7 @@ public class FrontYardService_Birgaon extends FrontYardService {
 											occupancy.getTypeHelper(), frontYardResult);
 								}
 
-							}
+//							} // for end
 
 							if (errors.isEmpty()) {
 								Map<String, String> details = new HashMap<>();
@@ -249,7 +252,6 @@ public class FrontYardService_Birgaon extends FrontYardService {
 								details.put(FIELDVERIFIED, MINIMUMLABEL);
 								details.put(PERMISSIBLE, frontYardResult.expectedminimumDistance.toString());
 								details.put(PROVIDED, frontYardResult.actualMinDistance.toString());
-//								details.put(PROVIDED, frontYardResult.actualMeanDistance.toString());
 
 								if (frontYardResult.status) {
 									details.put(STATUS, Result.Accepted.getResultVal());
