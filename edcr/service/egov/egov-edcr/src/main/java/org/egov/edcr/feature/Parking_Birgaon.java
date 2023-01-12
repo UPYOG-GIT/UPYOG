@@ -56,7 +56,7 @@ import static org.egov.edcr.constants.DxfFileConstants.A_R;
 import static org.egov.edcr.constants.DxfFileConstants.B;
 import static org.egov.edcr.constants.DxfFileConstants.C_MPBLC;
 import static org.egov.edcr.constants.DxfFileConstants.C_MPVT;
-import static org.egov.edcr.constants.DxfFileConstants.F_MHCT;
+import static org.egov.edcr.constants.DxfFileConstants.D_MHCT;
 import static org.egov.edcr.constants.DxfFileConstants.E;
 import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.constants.DxfFileConstants.G;
@@ -406,7 +406,7 @@ public class Parking_Birgaon extends FeatureProcess {
 				&& C_MPBLC.equals(mostRestrictiveOccupancy.getSubtype().getCode())) {
 			// Medical Public
 			requiredEcs = totalBuiltupArea.doubleValue() / 15;
-		} else if (mostRestrictiveOccupancy != null && F_MHCT.equals(mostRestrictiveOccupancy.getSubtype().getCode())) {
+		} else if (mostRestrictiveOccupancy != null && D_MHCT.equals(mostRestrictiveOccupancy.getSubtype().getCode())) {
 			// Meeting Hall/Cinema Theater
 			requiredEcs = totalBuiltupArea.doubleValue() / 40;
 		}
