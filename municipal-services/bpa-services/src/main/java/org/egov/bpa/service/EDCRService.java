@@ -86,10 +86,13 @@ public class EDCRService {
 		RequestInfo edcrRequestInfo = new RequestInfo();
 		BeanUtils.copyProperties(request.getRequestInfo(), edcrRequestInfo);
 		Map<String, List<String>> masterData = mdmsValidator.getAttributeValues(mdmsData);
+
+		log.info("masterData: " + masterData);
 		LinkedHashMap responseMap = null;
 		try {
 			responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri,
 					new RequestInfoWrapper(edcrRequestInfo));
+			log.info("responseMap: " + responseMap);
 		} catch (ServiceCallException se) {
 			throw new CustomException(BPAErrorConstants.EDCR_ERROR, " EDCR Number is Invalid");
 		}
