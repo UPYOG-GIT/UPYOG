@@ -31,7 +31,10 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.TypeRef;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class EDCRService {
 
 	private ServiceRequestRepository serviceRequestRepository;
@@ -53,8 +56,7 @@ public class EDCRService {
 	/**
 	 * Validates the EDCR Plan based on the edcr Number and the RiskType
 	 * 
-	 * @param request
-	 *            BPARequest for create
+	 * @param request BPARequest for create
 	 * 
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -68,15 +70,16 @@ public class EDCRService {
 		BPASearchCriteria criteria = new BPASearchCriteria();
 		criteria.setEdcrNumber(bpa.getEdcrNumber());
 		List<BPA> bpas = bpaRepository.getBPAData(criteria, null);
-		if(bpas.size()>0){
-			for(int i=0; i<bpas.size(); i++){
-				if(!bpas.get(i).getStatus().equalsIgnoreCase(BPAConstants.STATUS_REJECTED) && !bpas.get(i).getStatus().equalsIgnoreCase(BPAConstants.STATUS_REVOCATED)){
+		if (bpas.size() > 0) {
+			for (int i = 0; i < bpas.size(); i++) {
+				if (!bpas.get(i).getStatus().equalsIgnoreCase(BPAConstants.STATUS_REJECTED)
+						&& !bpas.get(i).getStatus().equalsIgnoreCase(BPAConstants.STATUS_REVOCATED)) {
 					throw new CustomException(BPAErrorConstants.DUPLICATE_EDCR,
 							" Application already exists with EDCR Number " + bpa.getEdcrNumber());
 				}
 			}
 		}
-		
+
 		uri.append(config.getGetPlanEndPoint());
 		uri.append("?").append("tenantId=").append(bpa.getTenantId());
 		uri.append("&").append("edcrNumber=").append(edcrNo);
@@ -99,71 +102,74 @@ public class EDCRService {
 		List<String> edcrStatus = context.read("edcrDetail.*.status");
 		List<String> OccupancyTypes = context
 				.read("edcrDetail.*.planDetail.virtualBuilding.occupancyTypes.*.type.code");
-		TypeRef<List<Double>> typeRef = new TypeRef<List<Double>>(){};
-		Map<String, String> additionalDetails = bpa.getAdditionalDetails() != null ? (Map)bpa.getAdditionalDetails()
+		TypeRef<List<Double>> typeRef = new TypeRef<List<Double>>() {
+		};
+		Map<String, String> additionalDetails = bpa.getAdditionalDetails() != null ? (Map) bpa.getAdditionalDetails()
 				: new HashMap<String, String>();
 		LinkedList<String> serviceType = context.read("edcrDetail.*.applicationSubType");
-                if (serviceType != null && !serviceType.isEmpty() && additionalDetails.get(BPAConstants.SERVICETYPE) != null
-                        && !serviceType.get(0).equalsIgnoreCase(additionalDetails.get(BPAConstants.SERVICETYPE))) {
-                    throw new CustomException(BPAErrorConstants.INVALID_SERVICE_TYPE,
-                            "The service type is invalid, it is not matching with scrutinized plan service type "
-                                    + serviceType.get(0));
-                }
-		if(serviceType == null || serviceType.size() == 0){
+		if (serviceType != null && !serviceType.isEmpty() && additionalDetails.get(BPAConstants.SERVICETYPE) != null
+				&& !serviceType.get(0).equalsIgnoreCase(additionalDetails.get(BPAConstants.SERVICETYPE))) {
+			throw new CustomException(BPAErrorConstants.INVALID_SERVICE_TYPE,
+					"The service type is invalid, it is not matching with scrutinized plan service type "
+							+ serviceType.get(0));
+		}
+		if (serviceType == null || serviceType.size() == 0) {
 			serviceType.add("NEW_CONSTRUCTION");
 		}
 		LinkedList<String> applicationType = context.read("edcrDetail.*.appliactionType");
-                if (applicationType != null && !applicationType.isEmpty()
-                        && additionalDetails.get(BPAConstants.APPLICATIONTYPE) != null
-                        && !applicationType.get(0).equalsIgnoreCase(additionalDetails.get(BPAConstants.APPLICATIONTYPE))) {
-                    throw new CustomException(BPAErrorConstants.INVALID_APPLN_TYPE,
-                            "The application type is invalid, it is not matching with scrutinized plan application type "
-                                    + applicationType.get(0));
-                }
-		
-		if(applicationType == null || applicationType.size() == 0){
+		if (applicationType != null && !applicationType.isEmpty()
+				&& additionalDetails.get(BPAConstants.APPLICATIONTYPE) != null
+				&& !applicationType.get(0).equalsIgnoreCase(additionalDetails.get(BPAConstants.APPLICATIONTYPE))) {
+			throw new CustomException(BPAErrorConstants.INVALID_APPLN_TYPE,
+					"The application type is invalid, it is not matching with scrutinized plan application type "
+							+ applicationType.get(0));
+		}
+
+		if (applicationType == null || applicationType.size() == 0) {
 			applicationType.add("permit");
 		}
 		LinkedList<String> permitNumber = context.read("edcrDetail.*.permitNumber");
 		additionalDetails.put(BPAConstants.SERVICETYPE, serviceType.get(0));
 		additionalDetails.put(BPAConstants.APPLICATIONTYPE, applicationType.get(0));
-                if (!permitNumber.isEmpty()) {
-                    /*
-                     * Validating OC application, with submitted permit number is any OC
-                     * submitted without rejection. Using a permit number only one OC
-                     * application submission should allowed otherwise needs to throw
-                     * validation message for more one submission.
-                     * If the OC application is rejected for a permit then we need allow.
-                     */
-                    BPASearchCriteria ocCriteria = new BPASearchCriteria();
-                    ocCriteria.setPermitNumber(permitNumber.get(0));
-                    ocCriteria.setTenantId(bpa.getTenantId());
-                    List<BPA> ocApplns = bpaRepository.getBPAData(ocCriteria, null);
-                    if (!ocApplns.isEmpty()) {
-                        for (int i = 0; i < ocApplns.size(); i++) {
-                            if (!ocApplns.get(i).getStatus().equalsIgnoreCase(BPAConstants.STATUS_REJECTED)) {
-                                throw new CustomException(BPAErrorConstants.DUPLICATE_OC,
-                                        "Occupancy certificate application is already exists with permit approval Number "
-                                                + permitNumber.get(0));
-                            }
-                        }
-                    }
-                    additionalDetails.put(BPAConstants.PERMIT_NO, permitNumber.get(0));
-                }
+		if (!permitNumber.isEmpty()) {
+			/*
+			 * Validating OC application, with submitted permit number is any OC submitted
+			 * without rejection. Using a permit number only one OC application submission
+			 * should allowed otherwise needs to throw validation message for more one
+			 * submission. If the OC application is rejected for a permit then we need
+			 * allow.
+			 */
+			BPASearchCriteria ocCriteria = new BPASearchCriteria();
+			ocCriteria.setPermitNumber(permitNumber.get(0));
+			ocCriteria.setTenantId(bpa.getTenantId());
+			List<BPA> ocApplns = bpaRepository.getBPAData(ocCriteria, null);
+			if (!ocApplns.isEmpty()) {
+				for (int i = 0; i < ocApplns.size(); i++) {
+					if (!ocApplns.get(i).getStatus().equalsIgnoreCase(BPAConstants.STATUS_REJECTED)) {
+						throw new CustomException(BPAErrorConstants.DUPLICATE_OC,
+								"Occupancy certificate application is already exists with permit approval Number "
+										+ permitNumber.get(0));
+					}
+				}
+			}
+			additionalDetails.put(BPAConstants.PERMIT_NO, permitNumber.get(0));
+		}
 		List<Double> plotAreas = context.read("edcrDetail.*.planDetail.plot.area", typeRef);
 		List<Double> buildingHeights = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight",
 				typeRef);
 
 		if (CollectionUtils.isEmpty(edcrStatus) || !edcrStatus.get(0).equalsIgnoreCase("Accepted")) {
-			throw new CustomException(BPAErrorConstants.INVALID_EDCR_NUMBER, "The EDCR Number is not Accepted " + edcrNo);
+			throw new CustomException(BPAErrorConstants.INVALID_EDCR_NUMBER,
+					"The EDCR Number is not Accepted " + edcrNo);
 		}
 		this.validateOCEdcr(OccupancyTypes, plotAreas, buildingHeights, applicationType, masterData, riskType);
-		
+
 		return additionalDetails;
 	}
-	
+
 	/**
 	 * validate the ocEDCR values
+	 * 
 	 * @param OccupancyTypes
 	 * @param plotAreas
 	 * @param buildingHeights
@@ -171,10 +177,11 @@ public class EDCRService {
 	 * @param masterData
 	 * @param riskType
 	 */
-	private void validateOCEdcr(List<String> OccupancyTypes, List<Double> plotAreas,List<Double> buildingHeights, 
-			LinkedList<String> applicationType,Map<String, List<String>> masterData, String riskType) {
+	private void validateOCEdcr(List<String> OccupancyTypes, List<Double> plotAreas, List<Double> buildingHeights,
+			LinkedList<String> applicationType, Map<String, List<String>> masterData, String riskType) {
 		if (!CollectionUtils.isEmpty(OccupancyTypes) && !CollectionUtils.isEmpty(plotAreas)
-				&& !CollectionUtils.isEmpty(buildingHeights) && !applicationType.get(0).equalsIgnoreCase(BPAConstants.BUILDING_PLAN_OC)) {
+				&& !CollectionUtils.isEmpty(buildingHeights)
+				&& !applicationType.get(0).equalsIgnoreCase(BPAConstants.BUILDING_PLAN_OC)) {
 			Double buildingHeight = Collections.max(buildingHeights);
 			String OccupancyType = OccupancyTypes.get(0); // Assuming
 															// OccupancyType
@@ -186,16 +193,22 @@ public class EDCRService {
 					+ ") || ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
 					+ buildingHeight + "  ))].riskType";
 
+			log.info("filterExp: " + filterExp);
+
 			List<String> riskTypes = JsonPath.read(jsonOutput, filterExp);
 
-			if (!CollectionUtils.isEmpty(riskTypes) 
+			log.info("riskTypes: " + riskTypes);
+
+			if (!CollectionUtils.isEmpty(riskTypes)
 			// && OccupancyType.equals(BPAConstants.RESIDENTIAL_OCCUPANCY)
-			) 
-			{
-				String expectedRiskType  = riskTypes.get(0);
+			) {
+				String expectedRiskType = riskTypes.get(0);
+
+				log.info("expectedRiskType: " + expectedRiskType);
 
 				if (expectedRiskType == null || !expectedRiskType.equals(riskType)) {
-					throw new CustomException(BPAErrorConstants.INVALID_RISK_TYPE, "The Risk Type is not valid " + riskType);
+					throw new CustomException(BPAErrorConstants.INVALID_RISK_TYPE,
+							"The Risk Type is not valid " + riskType);
 				}
 			} else {
 				throw new CustomException(BPAErrorConstants.INVALID_OCCUPANCY,
@@ -206,6 +219,7 @@ public class EDCRService {
 
 	/**
 	 * fetch the edcrPdfUrl fron the bpa data
+	 * 
 	 * @param bpaRequest
 	 * @return
 	 */
@@ -233,9 +247,10 @@ public class EDCRService {
 
 		return CollectionUtils.isEmpty(planReports) ? null : planReports.get(0);
 	}
-	
+
 	/**
 	 * fetch the edcr details from the bpa
+	 * 
 	 * @param requestInfo
 	 * @param bpa
 	 * @return
@@ -276,7 +291,7 @@ public class EDCRService {
 		List<String> approvalNo = context.read("edcrDetail.*.permitNumber");
 		edcrDetails.put(BPAConstants.SERVICETYPE, serviceType.get(0).toString());
 		edcrDetails.put(BPAConstants.APPLICATIONTYPE, applicationType.get(0).toString());
-		if(approvalNo.size()>0 && approvalNo!=null){
+		if (approvalNo.size() > 0 && approvalNo != null) {
 			edcrDetails.put(BPAConstants.PERMIT_NO, approvalNo.get(0).toString());
 		}
 		return edcrDetails;
@@ -284,12 +299,14 @@ public class EDCRService {
 
 	/**
 	 * get edcrNumbers from the bpa search criteria
+	 * 
 	 * @param searchCriteria
 	 * @param requestInfo
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	public List<String> getEDCRNos(BPASearchCriteria searchCriteria, org.egov.common.contract.request.RequestInfo requestInfo) {
+	public List<String> getEDCRNos(BPASearchCriteria searchCriteria,
+			org.egov.common.contract.request.RequestInfo requestInfo) {
 
 		StringBuilder uri = new StringBuilder(config.getEdcrHost());
 		uri.append(config.getGetPlanEndPoint());
