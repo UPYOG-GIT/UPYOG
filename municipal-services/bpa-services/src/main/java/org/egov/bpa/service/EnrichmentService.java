@@ -45,7 +45,6 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.TypeRef;
 
-
 import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 
@@ -79,7 +78,7 @@ public class EnrichmentService {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private MDMSValidator mdmsValidator;
 	@Autowired
@@ -229,11 +228,11 @@ public class EnrichmentService {
 				uri.append("?").append("tenantId=").append(bpa.getTenantId().split("\\.")[0]);
 				uri.append("&").append("edcrNumber=").append(bpa.getEdcrNumber());
 				org.egov.bpa.web.model.edcr.RequestInfo edcrRequestInfo = new org.egov.bpa.web.model.edcr.RequestInfo();
-				
+
 				BeanUtils.copyProperties(bpaRequest.getRequestInfo(), edcrRequestInfo);
-				
+
 				LinkedHashMap responseMap = null;
-				
+
 				try {
 					responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri,
 							new RequestInfoWrapper(edcrRequestInfo));
@@ -242,33 +241,35 @@ public class EnrichmentService {
 				}
 
 				if (CollectionUtils.isEmpty(responseMap))
-					throw new CustomException(BPAErrorConstants.EDCR_ERROR, "The response from EDCR service is empty or null");
+					throw new CustomException(BPAErrorConstants.EDCR_ERROR,
+							"The response from EDCR service is empty or null");
 				String jsonString = new JSONObject(responseMap).toString();
-			
-				DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
-			
-			Integer	plotArea = context.read("edcrDetail[0].planDetail.planInformation.plotArea");
-			Double	buildingHeight = context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeight");
 
-			
+				DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
+
+				Integer plotArea = context.read("edcrDetail[0].planDetail.planInformation.plotArea");
+				Double buildingHeight = context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeight");
+
 				List jsonOutput = JsonPath.read(masterData, BPAConstants.RISKTYPE_COMPUTATION);
 				String filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
 						+ ") || ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
 						+ buildingHeight + "  ))].riskType";
 
+				log.info("filterExp: " + filterExp);
+
 				List<String> riskTypes = JsonPath.read(jsonOutput, filterExp);
-				                                                                                     
+
+				log.info("riskTypes: " + riskTypes.toString());
+
 				if (!CollectionUtils.isEmpty(riskTypes)) {
-					String	expectedRiskType  = riskTypes.get(0);
+					String expectedRiskType = riskTypes.get(0);
+					log.info("expectedRiskType: " + expectedRiskType);
+
 					bpa.setRiskType(expectedRiskType);
-				}else
-				{
-					throw new CustomException(BPAErrorConstants.INVALID_RISK_TYPE, "The Risk Type is not valid " );
+				} else {
+					throw new CustomException(BPAErrorConstants.INVALID_RISK_TYPE, "The Risk Type is not valid ");
 				}
-				
-				
-				
-				
+
 			}
 		}
 
@@ -366,7 +367,7 @@ public class EnrichmentService {
 	 */
 	public void enrichAssignes(BPA bpa) {
 		Workflow wf = bpa.getWorkflow();
-		Map<String,String> mobilenumberToUUIDs = new HashMap<>();
+		Map<String, String> mobilenumberToUUIDs = new HashMap<>();
 		Set<String> assignes = new HashSet<>();
 		if (wf != null && wf.getAssignes() != null)
 			assignes.addAll(wf.getAssignes());
@@ -375,13 +376,12 @@ public class EnrichmentService {
 
 			// Adding owners to assignes list
 			bpa.getLandInfo().getOwners().forEach(ownerInfo -> {
-			        if(ownerInfo.getUuid() != null && ownerInfo.getActive()) {
-							mobilenumberToUUIDs.put(ownerInfo.getMobileNumber(),ownerInfo.getUuid());
-					}
+				if (ownerInfo.getUuid() != null && ownerInfo.getActive()) {
+					mobilenumberToUUIDs.put(ownerInfo.getMobileNumber(), ownerInfo.getUuid());
+				}
 			});
 
-
-			Set<String> registeredUUIDS = userService.getUUidFromUserName(bpa,mobilenumberToUUIDs);
+			Set<String> registeredUUIDS = userService.getUUidFromUserName(bpa, mobilenumberToUUIDs);
 
 			if (!CollectionUtils.isEmpty(registeredUUIDS))
 				assignes.addAll(registeredUUIDS);
