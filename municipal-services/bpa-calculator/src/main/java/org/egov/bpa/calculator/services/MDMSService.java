@@ -95,108 +95,97 @@ public class MDMSService {
      * @return Map contianing the calculationType for TradeUnit and accessory
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	public Map getCalculationType(RequestInfo requestInfo,BPA bpa,Object mdmsData, String feeType){
-        HashMap<String,Object> calculationType = new HashMap<>();
-        try {
-            List jsonOutput = JsonPath.read(mdmsData, BPACalculatorConstants.MDMS_CALCULATIONTYPE_PATH);
-            LinkedHashMap responseMap = edcrService.getEDCRDetails(requestInfo, bpa);
-            log.info("responseMap----"+responseMap);
-            log.info("mdmsData----"+mdmsData);
-            String jsonString = new JSONObject(responseMap).toString();
-    		DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
-    		Map<String, String> additionalDetails = new HashMap<String, String>();
-
-            log.info("context : "+ context);
-            log.info("context read: "+  context.read("edcrDetail.*.appliactionType"));
-            log.info("context read: "+  context.read("edcrDetail.*.planDetail.planInformation.occupancy"));
-            log.info("feeType: "+feeType);
-            log.info("occupancy: "+ context.read("edcrDetail.*.planDetail.planInformation.occupancy"));    
-            log.info("builtUpArea: "+ context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea"));
-        
-
-    		JSONArray serviceType = context.read("edcrDetail.*.applicationSubType");
-    		if (CollectionUtils.isEmpty(serviceType)) {
-    			serviceType.add("NEW_CONSTRUCTION");
-    		}
-    		JSONArray applicationType = context.read("edcrDetail.*.appliactionType");
-    		if (StringUtils.isEmpty(applicationType)) {
-    			applicationType.add("permit");
-    		}
-
-            JSONArray occupancyTypeEdcr = context.read("edcrDetail.*.planDetail.planInformation.occupancy");
-            	if (StringUtils.isEmpty(occupancyTypeEdcr)) {
-    			occupancyTypeEdcr.add("Residential");
-    		}
-            
-            additionalDetails.put("serviceType", serviceType.get(0).toString());
-    		additionalDetails.put("applicationType", applicationType.get(0).toString());
-            additionalDetails.put("occupancyTypeEdcr", occupancyTypeEdcr.get(0).toString());
-
-            log.info("occupancyTypeEdcr :== "+occupancyTypeEdcr.get(0).toString());
-
-            log.debug("applicationType is " + additionalDetails.get("applicationType"));
-            log.debug("serviceType is " + additionalDetails.get("serviceType"));
-            
-            String filterExp = "$.[?((@.applicationType == '"+ additionalDetails.get("applicationType")+"' || @.applicationType === 'ALL' ) &&  @.feeType == '"+feeType+"')]";
-            List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
-               log.info("calTypes0 :----"+calTypes);
-            filterExp = "$.[?(@.serviceType == '"+ additionalDetails.get("serviceType")+"' || @.serviceType === 'ALL' )]";
-            calTypes = JsonPath.read(calTypes, filterExp);
-             log.info("calTypes1 :----"+calTypes);
-
-
-            filterExp = "$.[?(@.occupancyType == '"+additionalDetails.get("occupancyTypeEdcr")+"')]";
-
-            calTypes = JsonPath.read(calTypes, filterExp);
-
-            log.info("calTypes8 :----"+calTypes);
-
-            filterExp = "$.[?(@.occupancyType == '"+context.read("edcrDetail.*.planDetail.planInformation.occupancy")+"')]";
-            calTypes = JsonPath.read(calTypes, filterExp);
-            log.info("calTypes7 :----"+calTypes);
-            log.info("filterExp occu :----"+filterExp);
-
-            filterExp = "$.[?(@.riskType == '"+bpa.getRiskType()+"' || @.riskType === 'ALL' )]";
-            calTypes = JsonPath.read(calTypes, filterExp);
-             log.info("calTypes2:----"+calTypes);
-
-            filterExp = "$.[?(@.builtupAreaTo >= '"+context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea")+"')]";
-            calTypes = JsonPath.read(calTypes, filterExp);
-            log.info("calTypes5 :----"+calTypes);
-
-            filterExp = "$.[?(@.builtupAreaFrom <= '"+context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea")+"')]";
-            calTypes = JsonPath.read(calTypes, filterExp);
-            log.info("calTypes6 :----"+calTypes);
-
-        
-            
-            if(calTypes.size() > 1){
-	            	filterExp = "$.[?(@.riskType == '"+bpa.getRiskType()+"' )]";
-	            	calTypes  = JsonPath.read(calTypes, filterExp);
-                     log.info("calTypes3:----"+calTypes);
-            }
-            
-            if(calTypes.size() == 0) {
-                 log.info("calTypes4:----"+calTypes);
-            		return defaultMap(feeType);     
-            }
-            log.info("calTypes--------:----"+calTypes);
-            
-             Object obj = calTypes.get(0);
+  public Map getCalculationType(RequestInfo requestInfo,BPA bpa,Object mdmsData, String feeType){
+         HashMap<String,Object> calculationType = new HashMap<>();
+         try {
+             List jsonOutput = JsonPath.read(mdmsData, BPACalculatorConstants.MDMS_CALCULATIONTYPE_PATH);
+             LinkedHashMap responseMap = edcrService.getEDCRDetails(requestInfo, bpa);
+             
+             log.info("jsonOutput logg :======= "+jsonOutput);
+             
+             String jsonString = new JSONObject(responseMap).toString();
+      DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
+      Map<String, String> additionalDetails = new HashMap<String, String>();
+     
+      log.info("context logg:======= "+context);
+     
+//     JSONArray serviceType = context.read("edcrDetail.*.applicationSubType");
+//     if (CollectionUtils.isEmpty(serviceType)) {
+//     serviceType.add("NEW_CONSTRUCTION");
+//     }
+//     JSONArray applicationType = context.read("edcrDetail.*.appliactionType");
+//     if (StringUtils.isEmpty(applicationType)) {
+//     applicationType.add("permit");
+//     }
+//     additionalDetails.put("applicationType", applicationType.get(0).toString());
+ 
+      JSONArray occupancyType = context.read("edcrDetail[0].planDetail.planInformation.occupancy");
+     
+      JSONArray totalBuitUpArea = context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea");
+     
+      additionalDetails.put("occupancyType", occupancyType.get(0).toString());
+      additionalDetails.put("totalBuitUpArea", totalBuitUpArea.get(0).toString());
+     
+      log.info("JSONArray occupancyType ki value :--------- "+occupancyType.get(0).toString()+"=========JSONArray totalBuitUpArea ki value:----"+totalBuitUpArea.get(0).toString());
+             log.info("occupancyType form additional=====:  "+additionalDetails.get("occupancyType"));
+             log.info("totalBuitUpArea form additional=====:  "+additionalDetails.get("totalBuitUpArea"));
+//             log.debug("applicationType is " + additionalDetails.get("applicationType"));
+//             log.debug("serviceType is " + additionalDetails.get("serviceType"));
+             
+             
+//             String filterExp = "$.[?((@.applicationType == '"+ additionalDetails.get("applicationType")+"' || @.applicationType === 'ALL' ) &&  @.feeType == '"+feeType+"')]";
+//             List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
+//            
+//             filterExp = "$.[?(@.serviceType == '"+ additionalDetails.get("serviceType")+"' || @.serviceType === 'ALL' )]";
+//             calTypes = JsonPath.read(calTypes, filterExp);
+//            
+//             filterExp = "$.[?(@.riskType == '"+bpa.getRiskType()+"' || @.riskType === 'ALL' )]";
+//             calTypes = JsonPath.read(calTypes, filterExp);
+             
+             
+//             ----added by manisha for filter amount-------
+             String filterExp = "$.[?(@.occupancyType == '"+additionalDetails.get("occupancyType")+"')]";
+             log.info("filterExp:------ "+filterExp);
+             List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
+             
+             filterExp = "$.[?(@.builtupAreaFrom <="+ additionalDetails.get("totalBuitUpArea")+"&& @.builtupAreaTo >="+additionalDetails.get("totalBuitUpArea")+")]";
+             log.info("filterExp:------ "+filterExp);
+             calTypes = JsonPath.read(calTypes, filterExp);
+             
+             
+             
+//             ----added by manisha for filter amount-------
+             
+             
+             
+             if(calTypes.size() > 1){
+              filterExp = "$.[?(@.riskType == '"+bpa.getRiskType()+"' )]";
+              calTypes  = JsonPath.read(calTypes, filterExp);
+             }
+             
+             if(calTypes.size() == 0) {
+            log.info("================should not enter==========");
+              return defaultMap(feeType);
+             }
+             
+             log.info("calTypes--------------"+calTypes+"==========calTypes.get(0)=========="+calTypes.get(0));
+              Object obj = calTypes.get(0);
            
-            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-            
-           String financialYear = currentYear + "-" + (currentYear + 1);
-           System.out.println(financialYear);
-            
-            calculationType = (HashMap<String, Object>) obj;
-        }
-        catch (Exception e){
-            throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "Failed to get calculationType");
-        }
-        log.info("calculationType-----"+calculationType);
-        return calculationType;
-    }
+             int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+             
+            String financialYear = currentYear + "-" + (currentYear + 1);
+            System.out.println(financialYear);
+             
+             calculationType = (HashMap<String, Object>) obj;
+         }
+         catch (Exception e){
+             throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "Failed to get calculationType");
+         }
+         
+         log.info("calculationType-----------"+calculationType);
+         return calculationType;
+     } 
+
    
     /**
      * Creates and return default calculationType values as map
