@@ -110,7 +110,7 @@ public class OCService {
 			Double plotArea = (Double) ((List) JsonPath.read(edcrDetail, "$.edcrDetail.*.planDetail.plot.area")).get(0);
 
 			String filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
-					+ ") && ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
+					+ ") || ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
 					+ buildingHeight + "  ))].riskType";
 
 			log.info("filterExp: " + filterExp);
