@@ -119,11 +119,13 @@ public class MDMSService {
 //     }
 //     additionalDetails.put("applicationType", applicationType.get(0).toString());
 
+			String occ = context.read("edcrDetail[0].planDetail.planInformation.occupancy");
+			log.info("occ: " + occ);
 			JSONArray occupancyType = context.read("edcrDetail[0].planDetail.planInformation.occupancy");
 			log.info("occupancyType: " + occupancyType);
 			JSONArray totalBuitUpArea = context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea");
-			log.info("totalBuitUpArea: "+totalBuitUpArea);
-			
+			log.info("totalBuitUpArea: " + totalBuitUpArea);
+
 			additionalDetails.put("occupancyType", occupancyType.get(0).toString());
 			additionalDetails.put("totalBuitUpArea", totalBuitUpArea.get(0).toString());
 
