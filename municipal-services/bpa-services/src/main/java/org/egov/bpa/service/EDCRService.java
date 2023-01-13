@@ -191,7 +191,9 @@ public class EDCRService {
 															// would be same in
 															// the list
 			Double plotArea = plotAreas.get(0);
+			log.info("masterData: " + masterData);
 			List jsonOutput = JsonPath.read(masterData, BPAConstants.RISKTYPE_COMPUTATION);
+			log.info("jsonOutput: " + jsonOutput);
 			String filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
 					+ ") || ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
 					+ buildingHeight + "  ))].riskType";

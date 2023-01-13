@@ -107,7 +107,7 @@ public class MDMSService {
 			DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
 			Map<String, String> additionalDetails = new HashMap<String, String>();
 
-			log.info("context logg:======= " + context.toString());
+			log.info("context logg:======= " + context.jsonString());
 
 //     JSONArray serviceType = context.read("edcrDetail.*.applicationSubType");
 //     if (CollectionUtils.isEmpty(serviceType)) {
@@ -121,8 +121,11 @@ public class MDMSService {
 
 			String occ = context.read("edcrDetail[0].planDetail.planInformation.occupancy");
 			log.info("occ: " + occ);
-			JSONArray occupancyType = context.read("edcrDetail[0].planDetail.planInformation.occupancy");
+//			JSONArray occupancyType = context.read("edcrDetail[0].planDetail.planInformation.occupancy");
+			log.info("context occupancy: " + context.read("edcrDetail.*.planDetail.planInformation.occupancy"));
+			JSONArray occupancyType = context.read("edcrDetail.*.planDetail.planInformation.occupancy");
 			log.info("occupancyType: " + occupancyType);
+			log.info("context totalBuiltupare" + context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea"));
 			JSONArray totalBuitUpArea = context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea");
 			log.info("totalBuitUpArea: " + totalBuitUpArea);
 
