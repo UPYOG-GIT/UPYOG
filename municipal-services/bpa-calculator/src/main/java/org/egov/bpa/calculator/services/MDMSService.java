@@ -101,6 +101,8 @@ public class MDMSService {
 			LinkedHashMap responseMap = edcrService.getEDCRDetails(requestInfo, bpa);
 
 			log.info("jsonOutput logg :======= " + jsonOutput);
+
+			log.info("feeType: " + feeType);
 //			log.info("responseMap: " + responseMap);
 
 			String jsonString = new JSONObject(responseMap).toString();
