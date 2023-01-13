@@ -109,16 +109,16 @@ public class MDMSService {
 
 //			log.info("context logg:======= " + context.jsonString());
 
-     JSONArray serviceType = context.read("edcrDetail.*.applicationSubType");
-     if (CollectionUtils.isEmpty(serviceType)) {
-     serviceType.add("NEW_CONSTRUCTION");
-     }
-     JSONArray applicationType = context.read("edcrDetail.*.appliactionType");
-     if (StringUtils.isEmpty(applicationType)) {
-     applicationType.add("permit");
-     }
-     additionalDetails.put("applicationType", applicationType.get(0).toString());
-     additionalDetails.put("serviceType", serviceType.get(0).toString());
+			JSONArray serviceType = context.read("edcrDetail.*.applicationSubType");
+			if (CollectionUtils.isEmpty(serviceType)) {
+				serviceType.add("NEW_CONSTRUCTION");
+			}
+			JSONArray applicationType = context.read("edcrDetail.*.appliactionType");
+			if (StringUtils.isEmpty(applicationType)) {
+				applicationType.add("permit");
+			}
+			additionalDetails.put("applicationType", applicationType.get(0).toString());
+			additionalDetails.put("serviceType", serviceType.get(0).toString());
 
 //			String occ = context.read("edcrDetail[0].planDetail.planInformation.occupancy");
 //			log.info("occ: " + occ);
@@ -140,14 +140,17 @@ public class MDMSService {
 			log.info("totalBuitUpArea form additional=====:  " + additionalDetails.get("totalBuitUpArea"));
 //             log.debug("applicationType is " + additionalDetails.get("applicationType"));
 //             log.debug("serviceType is " + additionalDetails.get("serviceType"));
+			log.info("applicationType: " + additionalDetails.get("applicationType"));
+			String filterExp = "$.[?((@.applicationType == '" + additionalDetails.get("applicationType")
+					+ "' || @.applicationType === 'ALL' ) &&  @.feeType == '" + feeType + "')]";
+			List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
+			log.info("calTypes10: " + calTypes);
 
-             String filterExp = "$.[?((@.applicationType == '"+ additionalDetails.get("applicationType")+"' || @.applicationType === 'ALL' ) &&  @.feeType == '"+feeType+"')]";
-             List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
-             log.info("calTypes10: "+calTypes);
-            
-             filterExp = "$.[?(@.serviceType == '"+ additionalDetails.get("serviceType")+"' || @.serviceType === 'ALL' )]";
-             calTypes = JsonPath.read(calTypes, filterExp);
-             log.info("calTypes11: "+calTypes);
+			log.info("serviceType: " + additionalDetails.get("serviceType"));
+			filterExp = "$.[?(@.serviceType == '" + additionalDetails.get("serviceType")
+					+ "' || @.serviceType === 'ALL' )]";
+			calTypes = JsonPath.read(calTypes, filterExp);
+			log.info("calTypes11: " + calTypes);
 //            
 //             filterExp = "$.[?(@.riskType == '"+bpa.getRiskType()+"' || @.riskType === 'ALL' )]";
 //             calTypes = JsonPath.read(calTypes, filterExp);
@@ -156,14 +159,14 @@ public class MDMSService {
 			filterExp = "$.[?(@.occupancyType == '" + additionalDetails.get("occupancyType") + "')]";
 			log.info("filterExp:------ " + filterExp);
 			calTypes = JsonPath.read(calTypes, filterExp);
-			log.info("calTypes12: "+calTypes);
+			log.info("calTypes12: " + calTypes);
 //			log.info("calTypes(JsonPath.read(jsonOutput, filterExp) : " + calTypes);
 
 			filterExp = "$.[?(@.builtupAreaFrom <=" + additionalDetails.get("totalBuitUpArea") + "&& @.builtupAreaTo >="
 					+ additionalDetails.get("totalBuitUpArea") + ")]";
 			log.info("filterExp:------ " + filterExp);
 			calTypes = JsonPath.read(calTypes, filterExp);
-			log.info("calTypes14: "+calTypes);
+			log.info("calTypes14: " + calTypes);
 
 //			log.info("calTypes = JsonPath.read(calTypes, filterExp): " + calTypes);
 
@@ -172,9 +175,9 @@ public class MDMSService {
 			if (calTypes.size() > 1) {
 				filterExp = "$.[?(@.riskType == '" + bpa.getRiskType() + "' )]";
 				calTypes = JsonPath.read(calTypes, filterExp);
-				log.info("calTypes15: "+calTypes);
+				log.info("calTypes15: " + calTypes);
 			}
-			
+
 			if (calTypes.size() == 0) {
 				log.info("================should not enter==========");
 				return defaultMap(feeType);
