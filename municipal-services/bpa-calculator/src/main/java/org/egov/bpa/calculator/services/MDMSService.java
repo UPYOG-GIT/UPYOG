@@ -101,13 +101,13 @@ public class MDMSService {
 			LinkedHashMap responseMap = edcrService.getEDCRDetails(requestInfo, bpa);
 
 			log.info("jsonOutput logg :======= " + jsonOutput);
-			log.info("responseMap: " + responseMap);
+//			log.info("responseMap: " + responseMap);
 
 			String jsonString = new JSONObject(responseMap).toString();
 			DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
 			Map<String, String> additionalDetails = new HashMap<String, String>();
 
-			log.info("context logg:======= " + context.jsonString());
+//			log.info("context logg:======= " + context.jsonString());
 
 //     JSONArray serviceType = context.read("edcrDetail.*.applicationSubType");
 //     if (CollectionUtils.isEmpty(serviceType)) {
@@ -125,7 +125,8 @@ public class MDMSService {
 			log.info("context occupancy: " + context.read("edcrDetail.*.planDetail.planInformation.occupancy"));
 			JSONArray occupancyType = context.read("edcrDetail.*.planDetail.planInformation.occupancy");
 			log.info("occupancyType: " + occupancyType);
-			log.info("context totalBuiltupare" + context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea"));
+			log.info("context totalBuiltupare"
+					+ context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea"));
 			Double totalBuitUpArea = context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea");
 			log.info("totalBuitUpArea: " + totalBuitUpArea);
 
@@ -152,11 +153,14 @@ public class MDMSService {
 			String filterExp = "$.[?(@.occupancyType == '" + additionalDetails.get("occupancyType") + "')]";
 			log.info("filterExp:------ " + filterExp);
 			List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
+			log.info("calTypes(JsonPath.read(jsonOutput, filterExp) : " + calTypes);
 
 			filterExp = "$.[?(@.builtupAreaFrom <=" + additionalDetails.get("totalBuitUpArea") + "&& @.builtupAreaTo >="
 					+ additionalDetails.get("totalBuitUpArea") + ")]";
 			log.info("filterExp:------ " + filterExp);
 			calTypes = JsonPath.read(calTypes, filterExp);
+
+			log.info("calTypes = JsonPath.read(calTypes, filterExp): " + calTypes);
 
 //             ----added by manisha for filter amount-------
 
@@ -176,7 +180,7 @@ public class MDMSService {
 			int currentYear = Calendar.getInstance().get(Calendar.YEAR);
 
 			String financialYear = currentYear + "-" + (currentYear + 1);
-			System.out.println(financialYear);
+//			System.out.println(financialYear);
 
 			calculationType = (HashMap<String, Object>) obj;
 		} catch (Exception e) {
