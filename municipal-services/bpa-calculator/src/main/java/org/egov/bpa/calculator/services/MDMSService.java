@@ -119,21 +119,21 @@ public class MDMSService {
 //     }
 //     additionalDetails.put("applicationType", applicationType.get(0).toString());
 
-			String occ = context.read("edcrDetail[0].planDetail.planInformation.occupancy");
-			log.info("occ: " + occ);
+//			String occ = context.read("edcrDetail[0].planDetail.planInformation.occupancy");
+//			log.info("occ: " + occ);
 //			JSONArray occupancyType = context.read("edcrDetail[0].planDetail.planInformation.occupancy");
 			log.info("context occupancy: " + context.read("edcrDetail.*.planDetail.planInformation.occupancy"));
 			JSONArray occupancyType = context.read("edcrDetail.*.planDetail.planInformation.occupancy");
 			log.info("occupancyType: " + occupancyType);
 			log.info("context totalBuiltupare" + context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea"));
-			JSONArray totalBuitUpArea = context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea");
+			Double totalBuitUpArea = context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea");
 			log.info("totalBuitUpArea: " + totalBuitUpArea);
 
 			additionalDetails.put("occupancyType", occupancyType.get(0).toString());
-			additionalDetails.put("totalBuitUpArea", totalBuitUpArea.get(0).toString());
+			additionalDetails.put("totalBuitUpArea", totalBuitUpArea.toString());
 
 			log.info("JSONArray occupancyType ki value :--------- " + occupancyType.get(0).toString()
-					+ "=========JSONArray totalBuitUpArea ki value:----" + totalBuitUpArea.get(0).toString());
+					+ "=========JSONArray totalBuitUpArea ki value:----" + totalBuitUpArea.toString());
 			log.info("occupancyType form additional=====:  " + additionalDetails.get("occupancyType"));
 			log.info("totalBuitUpArea form additional=====:  " + additionalDetails.get("totalBuitUpArea"));
 //             log.debug("applicationType is " + additionalDetails.get("applicationType"));
