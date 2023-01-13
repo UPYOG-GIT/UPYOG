@@ -181,7 +181,8 @@ public class CalculationService {
 
 		Map calculationTypeMap = mdmsService.getCalculationType(requestInfo, bpa, mdmsData,
 				calulationCriteria.getFeeType());
-		int calculatedAmout = 0;
+//		int calculatedAmout = 0;
+		Double calculatedAmout = 0d;
 		ArrayList<TaxHeadEstimate> estimates = new ArrayList<TaxHeadEstimate>();
 		if (calculationTypeMap.containsKey("calsiLogic")) {
 			LinkedHashMap ocEdcr = edcrService.getEDCRDetails(requestInfo, bpa);
@@ -221,12 +222,12 @@ public class CalculationService {
 						Integer uom = (Integer) diff.get("uom");
 						Integer mf = (Integer) diff.get("MF");
 						if (diffInBuildArea >= from && diffInBuildArea <= to) {
-							calculatedAmout = (int) (diffInBuildArea * mf * uom);
+							calculatedAmout = (Double) (diffInBuildArea * mf * uom);
 							break;
 						}
 					}
 				} else {
-					calculatedAmout = 0;
+					calculatedAmout = 0d;
 				}
 				TaxHeadEstimate estimate = new TaxHeadEstimate();
 				BigDecimal totalTax = BigDecimal.valueOf(calculatedAmout);
@@ -242,8 +243,11 @@ public class CalculationService {
 			}
 		} else {
 			TaxHeadEstimate estimate = new TaxHeadEstimate();
-			calculatedAmout = Integer
-					.parseInt(calculationTypeMap.get(BPACalculatorConstants.MDMS_CALCULATIONTYPE_AMOUNT).toString());
+			
+//			calculatedAmout = Integer
+//					.parseInt(calculationTypeMap.get(BPACalculatorConstants.MDMS_CALCULATIONTYPE_AMOUNT).toString());
+			calculatedAmout = Double
+					.parseDouble(calculationTypeMap.get(BPACalculatorConstants.MDMS_CALCULATIONTYPE_AMOUNT).toString());
 
 			BigDecimal totalTax = BigDecimal.valueOf(calculatedAmout);
 			if (totalTax.compareTo(BigDecimal.ZERO) == -1)
