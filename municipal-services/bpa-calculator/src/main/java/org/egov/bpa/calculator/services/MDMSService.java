@@ -105,12 +105,28 @@ public class MDMSService {
 			log.info("feeType: " + feeType);
 //			log.info("responseMap: " + responseMap);
 
+			
 			String jsonString = new JSONObject(responseMap).toString();
 			DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
 			Map<String, String> additionalDetails = new HashMap<String, String>();
 
 //			log.info("context logg:======= " + context.jsonString());
+			
+			Double plotArea = context.read("edcrDetail[0].planDetail.planInformation.plotArea");
 
+//			JSONArray occupancyType = context.read("edcrDetail[0].planDetail.planInformation.occupancy");
+			log.info("context occupancy: " + context.read("edcrDetail.*.planDetail.planInformation.occupancy"));
+			JSONArray occupancyType = context.read("edcrDetail.*.planDetail.planInformation.occupancy");
+			log.info("occupancyType: " + occupancyType);
+			
+			if((plotArea <= 500.00) && (occupancyType.get(0).toString()=="Residential")) {
+	     		   String filterExp = "$.[?((@.applicationType == '"+ additionalDetails.get("applicationType")+"' || @.applicationType === 'ALL' ) &&  @.feeType == '"+feeType+"')]";
+	               List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
+	               Object obj = calTypes.get(0);
+	               calculationType = (HashMap<String, Object>) obj;      
+	     	}
+			else {
+		
 			JSONArray serviceType = context.read("edcrDetail.*.applicationSubType");
 			if (CollectionUtils.isEmpty(serviceType)) {
 				serviceType.add("NEW_CONSTRUCTION");
@@ -122,12 +138,7 @@ public class MDMSService {
 			additionalDetails.put("applicationType", applicationType.get(0).toString());
 			additionalDetails.put("serviceType", serviceType.get(0).toString());
 
-//			String occ = context.read("edcrDetail[0].planDetail.planInformation.occupancy");
-//			log.info("occ: " + occ);
-//			JSONArray occupancyType = context.read("edcrDetail[0].planDetail.planInformation.occupancy");
-			log.info("context occupancy: " + context.read("edcrDetail.*.planDetail.planInformation.occupancy"));
-			JSONArray occupancyType = context.read("edcrDetail.*.planDetail.planInformation.occupancy");
-			log.info("occupancyType: " + occupancyType);
+
 			log.info("context totalBuiltupare"
 					+ context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea"));
 			Double totalBuitUpArea = context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea");
@@ -194,6 +205,7 @@ public class MDMSService {
 //			System.out.println(financialYear);
 
 			calculationType = (HashMap<String, Object>) obj;
+			}
 		} catch (Exception e) {
 			log.error("Exception :" + e);
 			throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "Failed to get calculationType");
