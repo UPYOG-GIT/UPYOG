@@ -121,8 +121,8 @@ public class MDMSService {
 			log.info("occupancyType: " + occupancyType);
 			additionalDetails.put("occupancyType", occupancyType.get(0).toString());
 
-			log.info("occupancy Condition: "+additionalDetails.get("occupancyType")=="Residential");
-			log.info("plotArea Condition: "+plotArea <= 500.00);
+			log.info("occupancy Condition: "+(additionalDetails.get("occupancyType")=="Residential"));
+			log.info("plotArea Condition: "+(plotArea <= 500.00));
 			log.info("occupancy Condition:(equals) "+additionalDetails.get("occupancyType").equals("Residential"));
 			
 			if(((plotArea <= 500.00) && (additionalDetails.get("occupancyType")=="Residential"))) {
