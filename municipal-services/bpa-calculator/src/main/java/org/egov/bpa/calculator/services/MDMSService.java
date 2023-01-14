@@ -113,15 +113,17 @@ public class MDMSService {
 //			log.info("context logg:======= " + context.jsonString());
 			
 			Double plotArea = context.read("edcrDetail[0].planDetail.planInformation.plotArea");
-
+			log.info("plotArea context.read -----"+context.read("edcrDetail[0].planDetail.planInformation.plotArea"));
+			log.info("plotArea  ---  "+plotArea);
 //			JSONArray occupancyType = context.read("edcrDetail[0].planDetail.planInformation.occupancy");
 			log.info("context occupancy: " + context.read("edcrDetail.*.planDetail.planInformation.occupancy"));
 			JSONArray occupancyType = context.read("edcrDetail.*.planDetail.planInformation.occupancy");
 			log.info("occupancyType: " + occupancyType);
 			
 			if((plotArea <= 500.00) && (occupancyType.get(0).toString()=="Residential")) {
-	     		   String filterExp = "$.[?((@.applicationType == '"+ additionalDetails.get("applicationType")+"' || @.applicationType === 'ALL' ) &&  @.feeType == '"+feeType+"')]";
+	     		   String filterExp = "$.[?(@.amount==1)]";
 	               List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
+	               log.info("calTypes  ----  "+calTypes);
 	               Object obj = calTypes.get(0);
 	               calculationType = (HashMap<String, Object>) obj;      
 	     	}
