@@ -119,11 +119,12 @@ public class MDMSService {
 			log.info("context occupancy: " + context.read("edcrDetail.*.planDetail.planInformation.occupancy"));
 			JSONArray occupancyType = context.read("edcrDetail.*.planDetail.planInformation.occupancy");
 			log.info("occupancyType: " + occupancyType);
+			additionalDetails.put("occupancyType", occupancyType.get(0).toString());
 			
-			if((plotArea <= 500.00) && (occupancyType.get(0).toString()=="Residential")) {
+			if(((plotArea <= 500.00) && (additionalDetails.get("occupancyType")=="Residential"))) {
 	     		   String filterExp = "$.[?(@.amount==1)]";
 	               List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
-	               log.info("calTypes  ----  "+calTypes);
+	               log.info("calTypes plotArea ----  "+calTypes);
 	               Object obj = calTypes.get(0);
 	               calculationType = (HashMap<String, Object>) obj;      
 	     	}
@@ -146,7 +147,7 @@ public class MDMSService {
 			Double totalBuitUpArea = context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea");
 			log.info("totalBuitUpArea: " + totalBuitUpArea);
 
-			additionalDetails.put("occupancyType", occupancyType.get(0).toString());
+			
 			additionalDetails.put("totalBuitUpArea", totalBuitUpArea.toString());
 
 			log.info("JSONArray occupancyType ki value :--------- " + occupancyType.get(0).toString()
