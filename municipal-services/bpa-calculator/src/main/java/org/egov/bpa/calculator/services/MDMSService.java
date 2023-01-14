@@ -125,7 +125,7 @@ public class MDMSService {
 			//log.info("plotArea Condition: "+(plotArea <= 500.00));
 			//log.info("occupancy Condition:(equals) "+additionalDetails.get("occupancyType").equals("Residential"));
 			
-			if(((plotArea <= 500.00) && (additionalDetails.get("occupancyType").equals("Residential"))) {
+			if(((plotArea <= 500.00) && (additionalDetails.get("occupancyType").equals("Residential")))) {
 	     		   String filterExp = "$.[?(@.amount==1)]";
 	               List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
 	               log.info("calTypes plotArea ----  "+calTypes);
