@@ -99,7 +99,7 @@ public class CcavenueGateway implements Gateway {
 		DataInputStream vInput = null;
 		StringBuffer vStringBuffer = null;
 		try {
-			url = new URL(WS_URL);
+			url = new URL(WS_URL + "?" + wsDataBuff);
 			if (url.openConnection() instanceof HttpsURLConnection) {
 				vHttpUrlConnection = (HttpsURLConnection) url.openConnection();
 			} else if (url.openConnection() instanceof HttpsURLConnection) {
