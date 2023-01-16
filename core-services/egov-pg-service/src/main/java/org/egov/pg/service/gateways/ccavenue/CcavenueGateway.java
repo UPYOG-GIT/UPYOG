@@ -49,6 +49,7 @@ public class CcavenueGateway implements Gateway {
 	private final String MERCHANT_URL_STATUS;
 	private final String MERCHANT_PATH_PAY;
 	private final String MERCHANT_PATH_STATUS;
+	private final String MERCHANT_ID;
 	private final String COMMAND;
 	private final String REQUEST_TYPE;
 	private final String RESPONSE_TYPE;
@@ -69,6 +70,7 @@ public class CcavenueGateway implements Gateway {
 		this.MERCHANT_URL_STATUS = environment.getRequiredProperty("payu.url.status");
 		this.MERCHANT_PATH_PAY = environment.getRequiredProperty("payu.path.pay");
 		this.MERCHANT_PATH_STATUS = environment.getRequiredProperty("payu.path.status");
+		this.MERCHANT_ID = environment.getRequiredProperty("ccavenue.merchant.id");
 		this.WS_URL = environment.getRequiredProperty("ccavenue.path.wsurl");
 		this.COMMAND = "initiatTransaction";
 		this.REQUEST_TYPE = "JSON";
@@ -81,7 +83,11 @@ public class CcavenueGateway implements Gateway {
 		Random random = new Random();
 		int orderNumber = random.nextInt(90000000) + 10000000;
 
-		String jsonData = "{ \"reference_no\":\"103001198924\", \"order_no\":\"" + orderNumber + "\" }";
+//		String jsonData = "{ \"merchant_id\":\""+MERCHANT_ID+"\", \"order_id\":\"" + orderNumber + "\" }";
+		String jsonData = "{ \"merchant_id\":\"" + MERCHANT_ID + "\", \"order_id\":\"" + orderNumber
+				+ "\" ,\"currency\":\"INR\",\"amount\":\"1\","
+				+ "\"redirect_url\":\"https://www.niwaspass.com/digit-ui/citizen/payment\","
+				+ "\"cancel_url\":\"https://www.niwaspass.com/digit-ui/citizen/payment\"," + "\"language\":\"EN\"}";
 
 		String encrypteJsonData = "";
 		StringBuffer wsDataBuff = new StringBuffer();
@@ -94,32 +100,32 @@ public class CcavenueGateway implements Gateway {
 				+ "&response_type=" + RESPONSE_TYPE + "&request_type=" + REQUEST_TYPE + "&version=" + "1.1");
 
 		URL url = null;
-		URLConnection vHttpUrlConnection = null;
+		URLConnection httpUrlConnection = null;
 		DataOutputStream vPrintout = null;
 		DataInputStream vInput = null;
 		StringBuffer vStringBuffer = null;
 		try {
-			url = new URL(WS_URL + "?" + wsDataBuff);
+			url = new URL(WS_URL);
 			if (url.openConnection() instanceof HttpsURLConnection) {
-				vHttpUrlConnection = (HttpsURLConnection) url.openConnection();
+				httpUrlConnection = (HttpsURLConnection) url.openConnection();
 			} else if (url.openConnection() instanceof HttpsURLConnection) {
-				vHttpUrlConnection = (HttpsURLConnection) url.openConnection();
+				httpUrlConnection = (HttpsURLConnection) url.openConnection();
 			} else {
-				vHttpUrlConnection = (URLConnection) url.openConnection();
+				httpUrlConnection = (URLConnection) url.openConnection();
 			}
-			vHttpUrlConnection.setDoInput(true);
-			vHttpUrlConnection.setDoOutput(true);
-			vHttpUrlConnection.setUseCaches(false);
-			vHttpUrlConnection.connect();
-			vPrintout = new DataOutputStream(vHttpUrlConnection.getOutputStream());
+			httpUrlConnection.setDoInput(true);
+			httpUrlConnection.setDoOutput(true);
+			httpUrlConnection.setUseCaches(false);
+			httpUrlConnection.connect();
+			vPrintout = new DataOutputStream(httpUrlConnection.getOutputStream());
 			vPrintout.writeBytes(wsDataBuff.toString());
 			vPrintout.flush();
 			vPrintout.close();
 //			if (isNull(url))
-			if (isNull(vHttpUrlConnection.getURL()))
+			if (isNull(httpUrlConnection.getURL()))
 				throw new CustomException("CCAVENUE_REDIRECT_URI_GEN_FAILED", "Failed to generate redirect URI");
 			else
-				return vHttpUrlConnection.getURL().toURI();
+				return httpUrlConnection.getURL().toURI();
 //			return url.toURI();
 		} catch (Exception e) {
 			log.error("Unable to retrieve redirect URI from gateway", e);
