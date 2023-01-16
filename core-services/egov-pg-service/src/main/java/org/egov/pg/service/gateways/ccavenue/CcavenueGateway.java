@@ -89,14 +89,14 @@ public class CcavenueGateway implements Gateway {
 				+ "\"redirect_url\":\"https://www.niwaspass.com/digit-ui/citizen/payment\","
 				+ "\"cancel_url\":\"https://www.niwaspass.com/digit-ui/citizen/payment\"," + "\"language\":\"EN\"}";
 
-		String encrypteJsonData = "";
+		String encryptedJsonData = "";
 		StringBuffer wsDataBuff = new StringBuffer();
 
 		if (WORKING_KEY != null && !WORKING_KEY.equals("") && jsonData != null && !jsonData.equals("")) {
 			CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
-			encrypteJsonData = ccavenueUtis.encrypt(jsonData);
+			encryptedJsonData = ccavenueUtis.encrypt(jsonData);
 		}
-		wsDataBuff.append("enc_request=" + encrypteJsonData + "&access_code=" + ACCESS_CODE + "&command=" + COMMAND
+		wsDataBuff.append("enc_request=" + encryptedJsonData + "&access_code=" + ACCESS_CODE 
 				+ "&response_type=" + RESPONSE_TYPE + "&request_type=" + REQUEST_TYPE + "&version=" + "1.1");
 
 		URL url = null;
@@ -107,8 +107,6 @@ public class CcavenueGateway implements Gateway {
 		try {
 			url = new URL(WS_URL);
 			if (url.openConnection() instanceof HttpsURLConnection) {
-				httpUrlConnection = (HttpsURLConnection) url.openConnection();
-			} else if (url.openConnection() instanceof HttpsURLConnection) {
 				httpUrlConnection = (HttpsURLConnection) url.openConnection();
 			} else {
 				httpUrlConnection = (URLConnection) url.openConnection();
