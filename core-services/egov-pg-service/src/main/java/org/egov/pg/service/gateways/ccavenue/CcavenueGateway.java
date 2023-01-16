@@ -70,7 +70,7 @@ public class CcavenueGateway implements Gateway {
 		this.MERCHANT_PATH_PAY = environment.getRequiredProperty("payu.path.pay");
 		this.MERCHANT_PATH_STATUS = environment.getRequiredProperty("payu.path.status");
 		this.WS_URL = environment.getRequiredProperty("ccavenue.path.wsurl");
-		this.COMMAND = "orderStatusTracker";
+		this.COMMAND = "initiatTransaction";
 		this.REQUEST_TYPE = "JSON";
 		this.RESPONSE_TYPE = "JSON";
 	}
