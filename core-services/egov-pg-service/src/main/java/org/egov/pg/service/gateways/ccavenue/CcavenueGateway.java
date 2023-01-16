@@ -2,24 +2,21 @@ package org.egov.pg.service.gateways.ccavenue;
 
 import static java.util.Objects.isNull;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Random;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import org.egov.pg.models.Transaction;
 import org.egov.pg.service.Gateway;
-import org.egov.pg.utils.Utils;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,19 +66,22 @@ public class CcavenueGateway implements Gateway {
 		this.ACCESS_CODE = environment.getRequiredProperty("ccavenue.access.code");
 		this.WORKING_KEY = environment.getRequiredProperty("ccavenue.working.key");
 		this.MERCHANT_URL_PAY = environment.getRequiredProperty("ccavenue.url");
-		this.MERCHANT_URL_STATUS = environment.getRequiredProperty("ccavenue.url.status");
-		this.MERCHANT_PATH_PAY = environment.getRequiredProperty("ccavenue.path.pay");
-		this.MERCHANT_PATH_STATUS = environment.getRequiredProperty("ccavenue.path.status");
+		this.MERCHANT_URL_STATUS = environment.getRequiredProperty("payu.url.status");
+		this.MERCHANT_PATH_PAY = environment.getRequiredProperty("payu.path.pay");
+		this.MERCHANT_PATH_STATUS = environment.getRequiredProperty("payu.path.status");
+		this.WS_URL = environment.getRequiredProperty("ccavenue.path.wsurl");
 		this.COMMAND = "orderStatusTracker";
 		this.REQUEST_TYPE = "JSON";
 		this.RESPONSE_TYPE = "JSON";
-		this.WS_URL = "https://180.179.175.17/apis/servlet/DoWebTrans";
 	}
 
 	@Override
 	public URI generateRedirectURI(Transaction transaction) {
 
-		String jsonData = "{ \"reference_no\":\"103001198924\", \"order_no\":\"77141516\" }";
+		Random random = new Random();
+		int orderNumber = random.nextInt(90000000) + 10000000;
+
+		String jsonData = "{ \"reference_no\":\"103001198924\", \"order_no\":\"" + orderNumber + "\" }";
 
 		String encrypteJsonData = "";
 		StringBuffer wsDataBuff = new StringBuffer();
@@ -100,33 +100,31 @@ public class CcavenueGateway implements Gateway {
 		StringBuffer vStringBuffer = null;
 		try {
 			url = new URL(WS_URL);
-			if(url.openConnection() instanceof HttpsURLConnection)
-			{
-				vHttpUrlConnection = (HttpsURLConnection)url.openConnection();
-			} 
-			else if(url.openConnection() instanceof HttpsURLConnection)
-			{
-				vHttpUrlConnection = (HttpsURLConnection)url.openConnection();
-			} else
-			{
-				vHttpUrlConnection = (URLConnection)url.openConnection();
+			if (url.openConnection() instanceof HttpsURLConnection) {
+				vHttpUrlConnection = (HttpsURLConnection) url.openConnection();
+			} else if (url.openConnection() instanceof HttpsURLConnection) {
+				vHttpUrlConnection = (HttpsURLConnection) url.openConnection();
+			} else {
+				vHttpUrlConnection = (URLConnection) url.openConnection();
 			}
 			vHttpUrlConnection.setDoInput(true);
 			vHttpUrlConnection.setDoOutput(true);
 			vHttpUrlConnection.setUseCaches(false);
 			vHttpUrlConnection.connect();
-			vPrintout = new DataOutputStream (vHttpUrlConnection.getOutputStream());
+			vPrintout = new DataOutputStream(vHttpUrlConnection.getOutputStream());
 			vPrintout.writeBytes(wsDataBuff.toString());
 			vPrintout.flush();
 			vPrintout.close();
-			if (isNull(url))
+//			if (isNull(url))
+			if (isNull(vHttpUrlConnection.getURL()))
 				throw new CustomException("CCAVENUE_REDIRECT_URI_GEN_FAILED", "Failed to generate redirect URI");
 			else
-				return url.toURI();
+				return vHttpUrlConnection.getURL().toURI();
+//			return url.toURI();
 		} catch (Exception e) {
 			log.error("Unable to retrieve redirect URI from gateway", e);
 			throw new ServiceCallException("Redirect URI generation failed, invalid response received from gateway");
-		
+
 		}
 
 		/*
@@ -141,11 +139,7 @@ public class CcavenueGateway implements Gateway {
 		 * 
 		 * }
 		 */
-		
-		
-		
-		
-		
+
 	}
 
 	@Override
