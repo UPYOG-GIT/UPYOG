@@ -83,14 +83,20 @@ public class CcavenueGateway implements Gateway {
 		log.info("Inside CCAvenue generateRedirectURI()");
 		Random random = new Random();
 		int orderNumber = random.nextInt(90000000) + 10000000;
-
+		Double amount = Double.parseDouble(transaction.getTxnAmount());
 //		String jsonData = "{ \"merchant_id\":\""+MERCHANT_ID+"\", \"order_id\":\"" + orderNumber + "\" }";
-		String jsonData = "{ \"merchant_id\":\"" + MERCHANT_ID + "\",\"tid\":\"1673976281580\", \"order_id\":\"" + orderNumber
-				+ "\" ,\"currency\":\"INR\",\"amount\":\"1.00\","
-				+ "\"redirect_url\":\"https://www.niwaspass.com/digit-ui/citizen/payment\","
-				+ "\"cancel_url\":\"https://www.niwaspass.com/digit-ui/citizen/payment\"," + "\"language\":\"EN\"}";
+		String jsonData = "{ \"merchant_id\":\"1941257\", \"order_id\":\"" + orderNumber
+				+ "\" ,\"currency\":\"INR\",\"amount\":\"" + amount + "\"}";
 
-		log.info("jsonData: " +jsonData);
+		//		String jsonData = "{ \"merchant_id\":\"" + MERCHANT_ID + "\", \"order_id\":\"" + orderNumber
+//				+ "\" ,\"currency\":\"INR\",\"amount\":\"" + amount + "\"}";
+
+//		String jsonData = "{ \"merchant_id\":\"" + MERCHANT_ID + "\",\"tid\":\"1673976281580\", \"order_id\":\"" + orderNumber
+//				+ "\" ,\"currency\":\"INR\",\"amount\":\"1.00\","
+//				+ "\"redirect_url\":\"https://www.niwaspass.com/digit-ui/citizen/payment\","
+//				+ "\"cancel_url\":\"https://www.niwaspass.com/digit-ui/citizen/payment\"," + "\"language\":\"EN\"}";
+
+		log.info("jsonData: " + jsonData);
 		String encryptedJsonData = "";
 		StringBuffer wsDataBuff = new StringBuffer();
 
