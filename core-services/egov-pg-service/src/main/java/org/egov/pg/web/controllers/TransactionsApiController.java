@@ -54,7 +54,7 @@ public class TransactionsApiController {
                 log.info("responseInfo : -----"+responseInfo.toString());
 
         TransactionCreateResponse response = new TransactionCreateResponse(responseInfo, transaction);
-        log.info("response : -----"+response);
+        log.info("response : -----"+response.toString());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
