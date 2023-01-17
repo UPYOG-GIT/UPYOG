@@ -66,7 +66,7 @@ public class GatewayService {
      * @return Redirect URI to the gateway
      */
     URI initiateTxn(Transaction transaction) {
-        log.info("Gateway:" + transaction.getGateway());
+        log.info("Gateway: " + transaction.getGateway());
         if (!isGatewayActive(transaction.getGateway()))
             throw new CustomException("INVALID_PAYMENT_GATEWAY", "Invalid or inactive payment gateway provided");
 
