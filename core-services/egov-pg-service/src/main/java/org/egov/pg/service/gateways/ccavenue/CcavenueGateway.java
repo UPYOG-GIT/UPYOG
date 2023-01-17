@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.servlet.http.HttpServletResponse;
 
 import org.egov.pg.models.Transaction;
 import org.egov.pg.service.Gateway;
@@ -88,7 +89,8 @@ public class CcavenueGateway implements Gateway {
 		String jsonData = "{ \"merchant_id\":1941257, \"order_id\":\"" + orderNumber
 				+ "\" ,\"currency\":\"INR\",\"amount\":" + amount + "}";
 
-		//		String jsonData = "{ \"merchant_id\":\"" + MERCHANT_ID + "\", \"order_id\":\"" + orderNumber
+		// String jsonData = "{ \"merchant_id\":\"" + MERCHANT_ID + "\",
+		// \"order_id\":\"" + orderNumber
 //				+ "\" ,\"currency\":\"INR\",\"amount\":\"" + amount + "\"}";
 
 //		String jsonData = "{ \"merchant_id\":\"" + MERCHANT_ID + "\",\"tid\":\"1673976281580\", \"order_id\":\"" + orderNumber
@@ -131,8 +133,11 @@ public class CcavenueGateway implements Gateway {
 			log.info("httpUrlConnection.getURL().toURI(): " + httpUrlConnection.getURL().toURI());
 			if (isNull(httpUrlConnection.getURL()))
 				throw new CustomException("CCAVENUE_REDIRECT_URI_GEN_FAILED", "Failed to generate redirect URI");
-			else
+			else {
+//				HttpServletResponse response;
+//				response.sendRedirect(httpUrlConnection.getURL().toURI().toString());
 				return httpUrlConnection.getURL().toURI();
+			}
 //			return url.toURI();
 		} catch (Exception e) {
 			log.error("Unable to retrieve redirect URI from gateway", e);

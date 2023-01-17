@@ -51,7 +51,7 @@ public class TransactionsApiController {
         log.info("transaction : -----"+transaction);
         ResponseInfo responseInfo = ResponseInfoFactory.createResponseInfoFromRequestInfo(transactionRequest
                 .getRequestInfo(), true);
-                log.info("responseInfo : -----"+responseInfo);
+                log.info("responseInfo : -----"+responseInfo.toString());
 
         TransactionCreateResponse response = new TransactionCreateResponse(responseInfo, transaction);
         log.info("response : -----"+response);
