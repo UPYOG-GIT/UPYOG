@@ -45,7 +45,7 @@ public class CcavenueGateway implements Gateway {
 	private final String GATEWAY_NAME = "CCAVENUE";
 	private final String ACCESS_CODE;
 	private final String WORKING_KEY;
-	private final String MERCHANT_URL_PAY;
+//	private final String MERCHANT_URL_PAY;
 	private final String MERCHANT_URL_STATUS;
 	private final String MERCHANT_PATH_PAY;
 	private final String MERCHANT_PATH_STATUS;
@@ -66,7 +66,7 @@ public class CcavenueGateway implements Gateway {
 		this.ACTIVE = Boolean.valueOf(environment.getRequiredProperty("ccavenue.active"));
 		this.ACCESS_CODE = environment.getRequiredProperty("ccavenue.access.code");
 		this.WORKING_KEY = environment.getRequiredProperty("ccavenue.working.key");
-		this.MERCHANT_URL_PAY = environment.getRequiredProperty("ccavenue.url");
+//		this.MERCHANT_URL_PAY = environment.getRequiredProperty("ccavenue.url");
 		this.MERCHANT_URL_STATUS = environment.getRequiredProperty("payu.url.status");
 		this.MERCHANT_PATH_PAY = environment.getRequiredProperty("payu.path.pay");
 		this.MERCHANT_PATH_STATUS = environment.getRequiredProperty("payu.path.status");
@@ -96,8 +96,8 @@ public class CcavenueGateway implements Gateway {
 			CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
 			encryptedJsonData = ccavenueUtis.encrypt(jsonData);
 		}
-		wsDataBuff.append("enc_request=" + encryptedJsonData + "&access_code=" + ACCESS_CODE 
-				+ "&response_type=" + RESPONSE_TYPE + "&request_type=" + REQUEST_TYPE + "&version=" + "1.1");
+		wsDataBuff.append("enc_request=" + encryptedJsonData + "&access_code=" + ACCESS_CODE + "&response_type="
+				+ RESPONSE_TYPE + "&request_type=" + REQUEST_TYPE + "&version=" + "1.1");
 
 		URL url = null;
 		URLConnection httpUrlConnection = null;
@@ -120,6 +120,7 @@ public class CcavenueGateway implements Gateway {
 			vPrintout.flush();
 			vPrintout.close();
 //			if (isNull(url))
+			log.info("httpUrlConnection.getURL().toURI(): " + httpUrlConnection.getURL().toURI());
 			if (isNull(httpUrlConnection.getURL()))
 				throw new CustomException("CCAVENUE_REDIRECT_URI_GEN_FAILED", "Failed to generate redirect URI");
 			else
