@@ -51,10 +51,10 @@ public class TransactionsApiController {
         log.info("transaction : -----"+transaction);
         ResponseInfo responseInfo = ResponseInfoFactory.createResponseInfoFromRequestInfo(transactionRequest
                 .getRequestInfo(), true);
-                log.info("responseInfo : -----"+responseInfo.toString());
+                log.info("responseInfo Status : -----"+responseInfo.getStatus());
 
         TransactionCreateResponse response = new TransactionCreateResponse(responseInfo, transaction);
-        log.info("response : -----"+response.toString());
+        log.info("response TxnStatusMsg: -----"+response.getTransaction().getTxnStatusMsg());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
