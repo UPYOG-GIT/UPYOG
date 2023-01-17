@@ -85,11 +85,12 @@ public class CcavenueGateway implements Gateway {
 		int orderNumber = random.nextInt(90000000) + 10000000;
 
 //		String jsonData = "{ \"merchant_id\":\""+MERCHANT_ID+"\", \"order_id\":\"" + orderNumber + "\" }";
-		String jsonData = "{ \"merchant_id\":\"" + MERCHANT_ID + "\", \"order_id\":\"" + orderNumber
-				+ "\" ,\"currency\":\"INR\",\"amount\":\"1\","
+		String jsonData = "{ \"merchant_id\":\"" + MERCHANT_ID + "\",\"tid\":\"1673976281580\", \"order_id\":\"" + orderNumber
+				+ "\" ,\"currency\":\"INR\",\"amount\":\"1.00\","
 				+ "\"redirect_url\":\"https://www.niwaspass.com/digit-ui/citizen/payment\","
 				+ "\"cancel_url\":\"https://www.niwaspass.com/digit-ui/citizen/payment\"," + "\"language\":\"EN\"}";
 
+		log.info("jsonData: " +jsonData);
 		String encryptedJsonData = "";
 		StringBuffer wsDataBuff = new StringBuffer();
 
@@ -97,8 +98,8 @@ public class CcavenueGateway implements Gateway {
 			CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
 			encryptedJsonData = ccavenueUtis.encrypt(jsonData);
 		}
-		wsDataBuff.append("enc_request=" + encryptedJsonData + "&access_code=" + ACCESS_CODE + "&response_type="
-				+ RESPONSE_TYPE + "&request_type=" + REQUEST_TYPE + "&version=" + "1.1");
+		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE + "&response_type="
+				+ RESPONSE_TYPE + "&request_type=" + REQUEST_TYPE);
 
 		URL url = null;
 		URLConnection httpUrlConnection = null;
