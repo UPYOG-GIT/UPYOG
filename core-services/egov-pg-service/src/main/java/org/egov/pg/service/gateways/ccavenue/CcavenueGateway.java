@@ -106,7 +106,7 @@ public class CcavenueGateway implements Gateway {
 		DataInputStream vInput = null;
 		StringBuffer vStringBuffer = null;
 		try {
-			url = new URL(WS_URL);
+			url = new URL(WS_URL + "&" + wsDataBuff);
 			if (url.openConnection() instanceof HttpsURLConnection) {
 				httpUrlConnection = (HttpsURLConnection) url.openConnection();
 			} else {
