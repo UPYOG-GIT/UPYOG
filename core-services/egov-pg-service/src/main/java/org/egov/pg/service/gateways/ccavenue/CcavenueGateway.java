@@ -5,6 +5,7 @@ import static java.util.Objects.isNull;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
@@ -14,7 +15,6 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.servlet.http.HttpServletResponse;
 
 import org.egov.pg.models.Transaction;
 import org.egov.pg.service.Gateway;
@@ -110,17 +110,21 @@ public class CcavenueGateway implements Gateway {
 				+ RESPONSE_TYPE + "&request_type=" + REQUEST_TYPE);
 
 		URL url = null;
-		URLConnection httpUrlConnection = null;
+//		URLConnection httpUrlConnection = null;
+		HttpURLConnection httpUrlConnection = null;
 		DataOutputStream vPrintout = null;
 		DataInputStream vInput = null;
 		StringBuffer vStringBuffer = null;
 		try {
 			url = new URL(WS_URL + "&" + wsDataBuff);
+			
 			if (url.openConnection() instanceof HttpsURLConnection) {
 				httpUrlConnection = (HttpsURLConnection) url.openConnection();
-			} else {
-				httpUrlConnection = (URLConnection) url.openConnection();
-			}
+				httpUrlConnection.setRequestMethod("POST");
+			} 
+//			else {
+//				httpUrlConnection = (URLConnection) url.openConnection();
+//			}
 			httpUrlConnection.setDoInput(true);
 			httpUrlConnection.setDoOutput(true);
 			httpUrlConnection.setUseCaches(false);
