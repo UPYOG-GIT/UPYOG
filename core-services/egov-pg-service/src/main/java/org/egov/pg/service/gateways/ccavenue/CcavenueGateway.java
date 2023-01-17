@@ -86,8 +86,8 @@ public class CcavenueGateway implements Gateway {
 		int orderNumber = random.nextInt(90000000) + 10000000;
 		Double amount = Double.parseDouble(transaction.getTxnAmount());
 //		String jsonData = "{ \"merchant_id\":\""+MERCHANT_ID+"\", \"order_id\":\"" + orderNumber + "\" }";
-		String jsonData = "{ \"merchant_id\": 1941257, \"order_id\": \"" + orderNumber
-				+ "\" ,\"currency\": \"INR\",\"amount\": " + amount + "}";
+		String jsonData = "{ \"merchant_id\":1941257, \"order_id\":\"" + orderNumber
+				+ "\" ,\"currency\":\"INR\",\"amount\":" + amount + "}";
 
 		// String jsonData = "{ \"merchant_id\":\"" + MERCHANT_ID + "\",
 		// \"order_id\":\"" + orderNumber
