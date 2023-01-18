@@ -103,7 +103,7 @@ public class CcavenueGateway implements Gateway {
 //				+ "\"merchant_param3\":\"\",\"merchant_param4\":\"\",\"merchant_param5\":\"\"}";
 		String jsonData = "merchant_id=" + MERCHANT_ID + "&order_id=" + orderNumber
 				+ "&currency=INR&amount=" + amount + "&redirect_url="
-				+ callBackUrl + "&cancel_url=" + callBackUrl + ""
+				+ "www.google.co.in" + "&cancel_url=" + "www.gmail.com" + ""
 				+ "&language=EN&billing_name=&billing_address=&"
 				+ "billing_city=&billing_state=&billing_zip=&"
 				+ "billing_country=&billing_tel=&billing_email=&"
