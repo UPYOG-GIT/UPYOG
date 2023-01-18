@@ -86,7 +86,7 @@ export const SelectPaymentType = (props) => {
     try {
       const data = await Digit.PaymentService.createCitizenReciept(tenantId, filterData);
       const redirectUrl = data?.Transaction?.redirectUrl;
-      if (d?.paymentType == "AXIS") {
+      if (d?.paymentType == "CCAVENUE") {
         window.location = redirectUrl;
       } else {
         // new payment gatewayfor UPYOG pay
@@ -170,11 +170,11 @@ export const SelectPaymentType = (props) => {
     }
   };
 
-  if (authorization === "true" && !userInfo.access_token) {
-    localStorage.clear();
-    sessionStorage.clear();
-    return <Redirect to={`/digit-ui/citizen/login?from=${encodeURIComponent(pathname + search)}`} />;
-  }
+//   if (authorization === "true" && !userInfo.access_token) {
+//     localStorage.clear();
+//     sessionStorage.clear();
+//     return <Redirect to={`/digit-ui/citizen/login?from=${encodeURIComponent(pathname + search)}`} />;
+//   }
 
   if (isLoading || paymentLoading) {
     return <Loader />;
