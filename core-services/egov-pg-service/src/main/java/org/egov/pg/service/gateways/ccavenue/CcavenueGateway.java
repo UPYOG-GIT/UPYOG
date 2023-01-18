@@ -91,9 +91,10 @@ public class CcavenueGateway implements Gateway {
 //		String jsonData = "{ \"merchant_id\":1941257, \"order_id\":\"" + orderNumber
 //				+ "\" ,\"currency\":\"INR\",\"amount\":" + amount + "}";
 
-		String jsonData = "{ \"merchant_id\":" + MERCHANT_ID + ",\"order_id\":\"" + orderNumber + "\"," + "\"amount\":"
-				+ amount + ",\"currency\":\"INR\"," + "\"redirect_url\":\"" + callBackUrl + "\"," + "\"cancel_url\":\""
-				+ callBackUrl + "\"," + "\"language\":\"EN\",\"billing_name\":\"\",\"billing_address\":\"\","
+		String jsonData = "{ \"merchant_id\":" + MERCHANT_ID + ",\"order_id\":\"" + orderNumber
+				+ "\",\"currency\":\"INR\"," + "\"amount\":" + amount + "," + "\"redirect_url\":\""
+				+ callBackUrl + "\"," + "\"cancel_url\":\"" + callBackUrl + "\","
+				+ "\"language\":\"EN\",\"billing_name\":\"\",\"billing_address\":\"\","
 				+ "\"billing_city\":\"\",\"billing_state\":\"\",\"billing_zip\":\"\","
 				+ "\"billing_country\":\"\",\"billing_tel\":,\"billing_email\":\"\","
 				+ "\"delivery_name\":\"\",\"delivery_address\":\"\",\"delivery_city\":\"\","
@@ -114,12 +115,13 @@ public class CcavenueGateway implements Gateway {
 			CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
 			encryptedJsonData = ccavenueUtis.encrypt(jsonData);
 		}
-		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE + "&response_type="
-				+ RESPONSE_TYPE + "&request_type=" + REQUEST_TYPE);
+		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE);
+//		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE + "&response_type="
+//				+ RESPONSE_TYPE + "&request_type=" + REQUEST_TYPE);
 
 		URL url = null;
-		URLConnection httpUrlConnection = null;
-//		HttpURLConnection httpUrlConnection = null;
+//		URLConnection httpUrlConnection = null;
+		HttpURLConnection httpUrlConnection = null;
 		DataOutputStream vPrintout = null;
 		DataInputStream vInput = null;
 		StringBuffer vStringBuffer = null;
@@ -128,10 +130,11 @@ public class CcavenueGateway implements Gateway {
 
 			if (url.openConnection() instanceof HttpsURLConnection) {
 				httpUrlConnection = (HttpsURLConnection) url.openConnection();
-//				httpUrlConnection.setRequestMethod("POST");
-			} else {
-				httpUrlConnection = (URLConnection) url.openConnection();
-			}
+				httpUrlConnection.setRequestMethod("POST");
+			} 
+//			else {
+//				httpUrlConnection = (URLConnection) url.openConnection();
+//			}
 			httpUrlConnection.setDoInput(true);
 			httpUrlConnection.setDoOutput(true);
 			httpUrlConnection.setUseCaches(false);

@@ -85,9 +85,9 @@ public class GatewayService {
 	}
 
 	public boolean isGatewayActive(String gateway) {
-		log.info("GATEWAY_MAP: " + GATEWAY_MAP.toString());
-		log.info("" + GATEWAY_MAP.containsKey(gateway));
-		log.info("" + GATEWAY_MAP.get(gateway).isActive());
+//		log.info("GATEWAY_MAP: " + GATEWAY_MAP.toString());
+//		log.info("" + GATEWAY_MAP.containsKey(gateway));
+//		log.info("" + GATEWAY_MAP.get(gateway).isActive());
 		return GATEWAY_MAP.containsKey(gateway) && GATEWAY_MAP.get(gateway).isActive();
 	}
 
