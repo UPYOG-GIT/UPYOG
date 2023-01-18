@@ -5,7 +5,6 @@ import static java.util.Objects.isNull;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
@@ -54,11 +53,44 @@ public class CcavenueGateway implements Gateway {
 	private final String COMMAND;
 	private final String REQUEST_TYPE;
 	private final String RESPONSE_TYPE;
+	private final String RETURN_URL;
 	private final String WS_URL;
 	private final boolean ACTIVE;
 
 	private RestTemplate restTemplate;
 	private ObjectMapper objectMapper;
+	
+	
+//	private final String MESSAGE_TYPE;
+//
+//    private final String CURRENCY_CODE;
+//	private final String REDIRECT_URL;
+//    private final String ORIGINAL_RETURN_URL_KEY;
+//
+//    private final String MESSAGE_TYPE_KEY = "messageType";
+//    private final String MERCHANT_ID_KEY = "merchant_id";
+//
+//    private final String SERVICE_ID_KEY = "serviceId";
+//    private final String ORDER_ID_KEY = "order_id";
+//    private final String CUSTOMER_ID_KEY = "customerId";
+//    private final String TRANSACTION_AMOUNT_KEY = "amount";
+//    private final String CURRENCY_CODE_KEY = "currency";
+//    private final String REQUEST_DATE_TIME_KEY = "requestDateTime";
+//    private final String SUCCESS_URL_KEY = "redirect_url";
+//    private final String FAIL_URL_KEY = "cancel_url";
+//    private final String ADDITIONAL_FIELD1_KEY = "merchant_param1";
+//    private final String ADDITIONAL_FIELD2_KEY = "merchant_param2";
+//    private final String ADDITIONAL_FIELD3_KEY = "merchant_param3";
+//    private final String ADDITIONAL_FIELD4_KEY = "merchant_param4";
+//    private final String ADDITIONAL_FIELD5_KEY = "merchant_param5";
+//    private final String ADDITIONAL_FIELD_VALUE = "111111";
+//    private final String GATEWAY_TRANSACTION_STATUS_URL;
+//    private final String GATEWAY_URL;
+//    private final String CITIZEN_URL;
+//    private static final String SEPERATOR ="|";
+//    private String TX_DATE_FORMAT;
+//    private  final RequestInfo requestInfo;
+//    private PgDetailRepository pgDetailRepository;
 
 	@Autowired
 	public CcavenueGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper) {
@@ -73,6 +105,7 @@ public class CcavenueGateway implements Gateway {
 		this.MERCHANT_PATH_STATUS = environment.getRequiredProperty("payu.path.status");
 		this.MERCHANT_ID = environment.getRequiredProperty("ccavenue.merchant.id");
 		this.WS_URL = environment.getRequiredProperty("ccavenue.path.wsurl");
+		this.RETURN_URL = environment.getRequiredProperty("ccavenue.redirect.url");
 		this.COMMAND = "initiatTransaction";
 		this.REQUEST_TYPE = "JSON";
 		this.RESPONSE_TYPE = "JSON";
@@ -103,7 +136,7 @@ public class CcavenueGateway implements Gateway {
 //				+ "\"merchant_param3\":\"\",\"merchant_param4\":\"\",\"merchant_param5\":\"\"}";
 		String jsonData = "merchant_id=" + MERCHANT_ID + "&order_id=" + orderNumber
 				+ "&currency=INR&amount=" + amount + "&redirect_url="
-				+ callBackUrl + "&cancel_url=" + callBackUrl + ""
+				+ RETURN_URL + "&cancel_url=" + RETURN_URL + ""
 				+ "&language=EN&billing_name=&billing_address=&"
 				+ "billing_city=&billing_state=&billing_zip=&"
 				+ "billing_country=&billing_tel=&billing_email=&"
@@ -326,8 +359,8 @@ public class CcavenueGateway implements Gateway {
 
 	@Override
 	public String generateRedirectFormData(Transaction transaction) {
-		// TODO Auto-generated method stub
-		return null;
+		
+        return null;
 	}
 
 }

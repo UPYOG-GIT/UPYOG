@@ -25,72 +25,80 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RedirectController {
 
-    @Value("${egov.default.citizen.url}")
-    private String defaultURL;
+	@Value("${egov.default.citizen.url}")
+	private String defaultURL;
 
-    @Value("${paygov.original.return.url.key}")
-    private String returnUrlKey;
+	@Value("${paygov.original.return.url.key}")
+	private String returnUrlKey;
 
-    @Value("${paygov.citizen.redirect.domain.name}")
-    private String citizenRedirectDomain;
+	@Value("${paygov.citizen.redirect.domain.name}")
+	private String citizenRedirectDomain;
 
+	@Value("${ccavenue.citizen.redirect.domain.name}")
+	private String niwaspassRedirectDomain;
 
-    private final TransactionService transactionService;
+	private final TransactionService transactionService;
 
+	@Autowired
+	public RedirectController(TransactionService transactionService) {
+		this.transactionService = transactionService;
+	}
 
-    @Autowired
-    public RedirectController(TransactionService transactionService) {
-        this.transactionService = transactionService;
-    }
+	@PostMapping(value = "/transaction/v1/_redirect", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public ResponseEntity<Object> method(@RequestBody MultiValueMap<String, String> formData) {
+		String returnURL = formData.get(returnUrlKey).get(0);
+		MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
 
-    @PostMapping(value = "/transaction/v1/_redirect", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<Object> method(@RequestBody MultiValueMap<String, String> formData) {
-        String returnURL = formData.get(returnUrlKey).get(0);
-        MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
+		/*
+		 * From redirect URL get transaction id. And using transaction id fetch
+		 * transaction details. And from transaction details get the GATEWAY info.
+		 */
+		String gateway = null;
+		if (!params.isEmpty()) {
+			List<String> txnId = params.get(PgConstants.PG_TXN_IN_LABEL);
+			TransactionCriteria critria = new TransactionCriteria();
+			critria.setTxnId(txnId.get(0));
+			List<Transaction> transactions = transactionService.getTransactions(critria);
+			if (!transactions.isEmpty())
+				gateway = transactions.get(0).getGateway();
+		}
+		HttpHeaders httpHeaders = new HttpHeaders();
+		/*
+		 * The NSDL PAYGOV integration is not allowing multiple schems or protocols (ex:
+		 * HTTP, HTTPS) in the success or fail or redirect URL after completing payment
+		 * from payment gateway used for posting response. Example the URL resposne
+		 * getting as follows,
+		 * https://test.org/pg-service/transaction/v1/_redirect?originalreturnurl=/digit
+		 * -ui/citizen/payment/success/PT/PG-PT-2022-03-10-006063/pg.citya?eg_pg_txnid=
+		 * PB_PG_2022_07_12_002082_48 Here we are reading originalreturnurl value and
+		 * then forming redirect URL with domain name.
+		 */
+		if (gateway != null && gateway.equalsIgnoreCase("PAYGOV")) {
+			StringBuilder redirectURL = new StringBuilder();
+			redirectURL.append(citizenRedirectDomain).append(returnURL);
+			formData.remove(returnUrlKey);
+			httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString()).queryParams(formData)
+					.build().encode().toUri());
+		} else if (gateway != null && gateway.equalsIgnoreCase("CCAVENUE")) {
+			StringBuilder redirectURL = new StringBuilder();
+			redirectURL.append(niwaspassRedirectDomain).append(returnURL);
+			formData.remove(returnUrlKey);
+			httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString()).queryParams(formData)
+					.build().encode().toUri());
+		} else {
+			httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
+					.queryParams(formData).build().encode().toUri());
+		}
 
-        /*
-         * From redirect URL get transaction id.
-         * And using transaction id fetch transaction details.
-         * And from transaction details get the GATEWAY info.
-         */
-        String gateway = null;
-        if(!params.isEmpty()) {
-            List<String> txnId = params.get(PgConstants.PG_TXN_IN_LABEL);
-            TransactionCriteria critria = new TransactionCriteria();
-            critria.setTxnId(txnId.get(0));
-            List<Transaction> transactions = transactionService.getTransactions(critria);
-            if(!transactions.isEmpty())
-                gateway = transactions.get(0).getGateway();
-        }
-        HttpHeaders httpHeaders = new HttpHeaders();
-        /*
-         * The NSDL PAYGOV integration is not allowing multiple schems or protocols (ex: HTTP, HTTPS)
-         * in the success or fail or redirect URL after completing payment from payment gateway
-         * used for posting response.
-         * Example the URL resposne getting as follows,
-         * https://test.org/pg-service/transaction/v1/_redirect?originalreturnurl=/digit-ui/citizen/payment/success/PT/PG-PT-2022-03-10-006063/pg.citya?eg_pg_txnid=PB_PG_2022_07_12_002082_48
-         * Here we are reading originalreturnurl value and then forming redirect URL with domain name.
-         */
-        if(gateway != null && gateway.equalsIgnoreCase("PAYGOV")) {
-            StringBuilder redirectURL = new StringBuilder();
-            redirectURL.append(citizenRedirectDomain).append(returnURL);
-            formData.remove(returnUrlKey);
-            httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString())
-                    .queryParams(formData).build().encode().toUri());
-        } else {
-            httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
-                    .queryParams(formData).build().encode().toUri());
-        }
+		return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);
+	}
 
-        return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleError(Exception e) {
-        log.error("EXCEPTION_WHILE_REDIRECTING", e);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(defaultURL).build().encode().toUri());
-        return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);
-    }
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<Object> handleError(Exception e) {
+		log.error("EXCEPTION_WHILE_REDIRECTING", e);
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(defaultURL).build().encode().toUri());
+		return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);
+	}
 
 }
