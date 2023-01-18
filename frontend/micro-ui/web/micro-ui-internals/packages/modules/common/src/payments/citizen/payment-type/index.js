@@ -170,11 +170,11 @@ export const SelectPaymentType = (props) => {
     }
   };
 
-  if (authorization === "true" && !userInfo.access_token) {
-    localStorage.clear();
-    sessionStorage.clear();
-    return <Redirect to={`/digit-ui/citizen/login?from=${encodeURIComponent(pathname + search)}`} />;
-  }
+//   if (authorization === "true" && !userInfo.access_token) {
+//     localStorage.clear();
+//     sessionStorage.clear();
+//     return <Redirect to={`/digit-ui/citizen/login?from=${encodeURIComponent(pathname + search)}`} />;
+//   }
 
   if (isLoading || paymentLoading) {
     return <Loader />;
