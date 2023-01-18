@@ -282,7 +282,7 @@
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="12" isBold="true" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ulbName}+ " Municipal Corporation"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="142" y="309" width="146" height="21" uuid="1688cff2-ebdb-4833-8ad4-58856fa1fa1f"/>
