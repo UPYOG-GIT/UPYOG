@@ -83,15 +83,23 @@ public class CcavenueGateway implements Gateway {
 
 		log.info("Inside CCAvenue generateRedirectURI()");
 		Random random = new Random();
-		int orderNumber = random.nextInt(90000000) + 10000000;
+		int randomNumber = random.nextInt(90000000) + 10000000;
+		String orderNumber = "CG" + randomNumber;
 		Double amount = Double.parseDouble(transaction.getTxnAmount());
+		String callBackUrl = transaction.getCallbackUrl();
 //		String jsonData = "{ \"merchant_id\":\""+MERCHANT_ID+"\", \"order_id\":\"" + orderNumber + "\" }";
-		String jsonData = "{ \"merchant_id\":1941257, \"order_id\":\"" + orderNumber
-				+ "\" ,\"currency\":\"INR\",\"amount\":" + amount + "}";
+//		String jsonData = "{ \"merchant_id\":1941257, \"order_id\":\"" + orderNumber
+//				+ "\" ,\"currency\":\"INR\",\"amount\":" + amount + "}";
 
-		// String jsonData = "{ \"merchant_id\":\"" + MERCHANT_ID + "\",
-		// \"order_id\":\"" + orderNumber
-//				+ "\" ,\"currency\":\"INR\",\"amount\":\"" + amount + "\"}";
+		String jsonData = "{ \"merchant_id\":" + MERCHANT_ID + ",\"order_id\":\"" + orderNumber + "\"," + "\"amount\":"
+				+ amount + ",\"currency\":\"INR\"," + "\"redirect_url\":\"" + callBackUrl + "\"," + "\"cancel_url\":\""
+				+ callBackUrl + "\"," + "\"language\":\"EN\",\"billing_name\":\"\",\"billing_address\":\"\","
+				+ "\"billing_city\":\"\",\"billing_state\":\"\",\"billing_zip\":\"\","
+				+ "\"billing_country\":\"\",\"billing_tel\":,\"billing_email\":\"\","
+				+ "\"delivery_name\":\"\",\"delivery_address\":\"\",\"delivery_city\":\"\","
+				+ "\"delivery_state\":\"\",\"delivery_zip\":\"\",\"delivery_country\":\"\","
+				+ "\"delivery_tel\":,\"merchant_param1\":\"\",\"merchant_param2\":\"\","
+				+ "\"merchant_param3\":\"\",\"merchant_param4\":\"\",\"merchant_param5\":\"\"}";
 
 //		String jsonData = "{ \"merchant_id\":\"" + MERCHANT_ID + "\",\"tid\":\"1673976281580\", \"order_id\":\"" + orderNumber
 //				+ "\" ,\"currency\":\"INR\",\"amount\":\"1.00\","
@@ -110,21 +118,20 @@ public class CcavenueGateway implements Gateway {
 				+ RESPONSE_TYPE + "&request_type=" + REQUEST_TYPE);
 
 		URL url = null;
-//		URLConnection httpUrlConnection = null;
-		HttpURLConnection httpUrlConnection = null;
+		URLConnection httpUrlConnection = null;
+//		HttpURLConnection httpUrlConnection = null;
 		DataOutputStream vPrintout = null;
 		DataInputStream vInput = null;
 		StringBuffer vStringBuffer = null;
 		try {
 			url = new URL(WS_URL + "&" + wsDataBuff);
-			
+
 			if (url.openConnection() instanceof HttpsURLConnection) {
 				httpUrlConnection = (HttpsURLConnection) url.openConnection();
-				httpUrlConnection.setRequestMethod("POST");
-			} 
-//			else {
-//				httpUrlConnection = (URLConnection) url.openConnection();
-//			}
+//				httpUrlConnection.setRequestMethod("POST");
+			} else {
+				httpUrlConnection = (URLConnection) url.openConnection();
+			}
 			httpUrlConnection.setDoInput(true);
 			httpUrlConnection.setDoOutput(true);
 			httpUrlConnection.setUseCaches(false);
