@@ -130,8 +130,8 @@ public class CcavenueGateway implements Gateway {
 //				+ RESPONSE_TYPE + "&request_type=" + REQUEST_TYPE);
 
 		URL url = null;
-//		URLConnection httpUrlConnection = null;
-		HttpURLConnection httpUrlConnection = null;
+		URLConnection httpUrlConnection = null;
+//		HttpURLConnection httpUrlConnection = null;
 		DataOutputStream vPrintout = null;
 		DataInputStream vInput = null;
 		StringBuffer vStringBuffer = null;
@@ -140,11 +140,10 @@ public class CcavenueGateway implements Gateway {
 
 			if (url.openConnection() instanceof HttpsURLConnection) {
 				httpUrlConnection = (HttpsURLConnection) url.openConnection();
-				httpUrlConnection.setRequestMethod("POST");
-			} 
-//			else {
-//				httpUrlConnection = (URLConnection) url.openConnection();
-//			}
+//				httpUrlConnection.setRequestMethod("POST");
+			} else {
+				httpUrlConnection = (URLConnection) url.openConnection();
+			}
 			httpUrlConnection.setDoInput(true);
 			httpUrlConnection.setDoOutput(true);
 			httpUrlConnection.setUseCaches(false);
