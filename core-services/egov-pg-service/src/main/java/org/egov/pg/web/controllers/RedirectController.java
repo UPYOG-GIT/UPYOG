@@ -75,7 +75,7 @@ public class RedirectController {
 			String d1[] = d.split("=");
 			log.info("d1 : " + d1.toString());
 			for (int i = 0; i < d1.length; i++) {
-				if (d1[0].equals("cancel_url")) {
+				if (d1[0].equals("merchant_param1")) {
 					returnURL = d1[1] + "=" + d1[2];
 				}
 			}
