@@ -120,7 +120,7 @@ public class CcavenueGateway implements Gateway {
 		this.CURRENCY_CODE = environment.getRequiredProperty("ccavenue.currency");
 		this.CITIZEN_URL = environment.getRequiredProperty("ccavenue.default.citizen.url");
 		this.ORIGINAL_RETURN_URL_KEY = environment.getRequiredProperty("ccavenue.original.return.url.key");
-		this.TX_DATE_FORMAT =environment.getRequiredProperty("ccavenue.dateformat");
+		this.TX_DATE_FORMAT = environment.getRequiredProperty("ccavenue.dateformat");
 		this.COMMAND = "initiatTransaction";
 		this.REQUEST_TYPE = "JSON";
 		this.RESPONSE_TYPE = "JSON";
@@ -211,72 +211,74 @@ public class CcavenueGateway implements Gateway {
 			else {
 //				HttpServletResponse response;
 //				response.sendRedirect(httpUrlConnection.getURL().toURI().toString());
-				
+
 				HashMap<String, String> queryMap = new HashMap<>();
-		        queryMap.put(MESSAGE_TYPE_KEY, MESSAGE_TYPE);
-		        queryMap.put(MERCHANT_ID_KEY, MERCHANT_ID);
-		        queryMap.put(ORDER_ID_KEY, transaction.getTxnId());
-		        queryMap.put(CUSTOMER_ID_KEY, transaction.getUser().getUuid());
-		        queryMap.put(TRANSACTION_AMOUNT_KEY, String.valueOf( transaction.getTxnAmount()));
-		        queryMap.put(CURRENCY_CODE_KEY,CURRENCY_CODE);
-		        SimpleDateFormat format = new SimpleDateFormat(TX_DATE_FORMAT);
-		        Date currentDate = new Date();
-		        queryMap.put(REQUEST_DATE_TIME_KEY, format.format(currentDate));
-		        String returnUrl = transaction.getCallbackUrl().replace(CITIZEN_URL, "");
+				queryMap.put(MESSAGE_TYPE_KEY, MESSAGE_TYPE);
+				queryMap.put(MERCHANT_ID_KEY, MERCHANT_ID);
+				queryMap.put(ORDER_ID_KEY, orderNumber);
+				queryMap.put(CUSTOMER_ID_KEY, transaction.getUser().getUuid());
+				queryMap.put(TRANSACTION_AMOUNT_KEY, amount.toString());
+				queryMap.put(CURRENCY_CODE_KEY, CURRENCY_CODE);
+				SimpleDateFormat format = new SimpleDateFormat(TX_DATE_FORMAT);
+				Date currentDate = new Date();
+				queryMap.put(REQUEST_DATE_TIME_KEY, format.format(currentDate));
+				String returnUrl = transaction.getCallbackUrl().replace(CITIZEN_URL, "");
 
-		        queryMap.put(SERVICE_ID_KEY, getModuleCode(transaction));
-		        String domainName =  returnUrl.replaceAll("http(s)?://|www\\.|/.*", "");
-		        String citizenReturnURL = returnUrl.split(domainName)[1];
-		        log.info("returnUrl::::"+getReturnUrl(citizenReturnURL, REDIRECT_URL));
-		        queryMap.put(SUCCESS_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
-		        queryMap.put(FAIL_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
-		        StringBuffer userDetail = new StringBuffer();
-		        if( transaction.getUser()!=null) {
-		            if(!StringUtils.isEmpty(transaction.getUser().getMobileNumber())) {
-		                userDetail.append(transaction.getUser().getMobileNumber());
-		            }
+				queryMap.put(SERVICE_ID_KEY, getModuleCode(transaction));
+				String domainName = returnUrl.replaceAll("http(s)?://|www\\.|/.*", "");
+				String citizenReturnURL = returnUrl.split(domainName)[1];
+//		        log.info("returnUrl::::"+getReturnUrl(citizenReturnURL, REDIRECT_URL));
+				queryMap.put(SUCCESS_URL_KEY, RETURN_URL);
+				queryMap.put(FAIL_URL_KEY, RETURN_URL);
+//		        log.info("returnUrl::::"+getReturnUrl(citizenReturnURL, REDIRECT_URL));
+//		        queryMap.put(SUCCESS_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
+//		        queryMap.put(FAIL_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
+				StringBuffer userDetail = new StringBuffer();
+				if (transaction.getUser() != null) {
+					if (!StringUtils.isEmpty(transaction.getUser().getMobileNumber())) {
+						userDetail.append(transaction.getUser().getMobileNumber());
+					}
 
-		            /*
-		             * if(!StringUtils.isEmpty(transaction.getUser().getEmailId())) { if(userDetail.length()>0) { userDetail.append("^");
-		             * } userDetail.append(transaction.getUser().getEmailId()); }
-		             */
-		        }
-		        if(userDetail.length() == 0) {
-		            userDetail.append(ADDITIONAL_FIELD_VALUE);
-		        }
-		        queryMap.put(ADDITIONAL_FIELD1_KEY, userDetail.toString());
-		        queryMap.put(ADDITIONAL_FIELD2_KEY, ADDITIONAL_FIELD_VALUE); //Not in use
-		        queryMap.put(ADDITIONAL_FIELD3_KEY, ADDITIONAL_FIELD_VALUE); //Not in use
-		        queryMap.put(ADDITIONAL_FIELD4_KEY, transaction.getConsumerCode());
-		        queryMap.put(ADDITIONAL_FIELD5_KEY, getModuleCode(transaction));
+					/*
+					 * if(!StringUtils.isEmpty(transaction.getUser().getEmailId())) {
+					 * if(userDetail.length()>0) { userDetail.append("^"); }
+					 * userDetail.append(transaction.getUser().getEmailId()); }
+					 */
+				}
+				if (userDetail.length() == 0) {
+					userDetail.append(ADDITIONAL_FIELD_VALUE);
+				}
+				queryMap.put(ADDITIONAL_FIELD1_KEY, userDetail.toString());
+				queryMap.put(ADDITIONAL_FIELD2_KEY, ADDITIONAL_FIELD_VALUE); // Not in use
+				queryMap.put(ADDITIONAL_FIELD3_KEY, ADDITIONAL_FIELD_VALUE); // Not in use
+				queryMap.put(ADDITIONAL_FIELD4_KEY, transaction.getConsumerCode());
+				queryMap.put(ADDITIONAL_FIELD5_KEY, getModuleCode(transaction));
 
+				// Generate Checksum for params
+				ArrayList<String> fields = new ArrayList<String>();
+				fields.add(queryMap.get(MESSAGE_TYPE_KEY));
+				fields.add(queryMap.get(MERCHANT_ID_KEY));
+				fields.add(queryMap.get(SERVICE_ID_KEY));
+				fields.add(queryMap.get(ORDER_ID_KEY));
+				fields.add(queryMap.get(CUSTOMER_ID_KEY));
+				fields.add(queryMap.get(TRANSACTION_AMOUNT_KEY));
+				fields.add(queryMap.get(CURRENCY_CODE_KEY));
+				fields.add(queryMap.get(REQUEST_DATE_TIME_KEY));
+				fields.add(queryMap.get(SUCCESS_URL_KEY));
+				fields.add(queryMap.get(FAIL_URL_KEY));
+				fields.add(queryMap.get(ADDITIONAL_FIELD1_KEY));
+				fields.add(queryMap.get(ADDITIONAL_FIELD2_KEY));
+				fields.add(queryMap.get(ADDITIONAL_FIELD3_KEY));
+				fields.add(queryMap.get(ADDITIONAL_FIELD4_KEY));
+				fields.add(queryMap.get(ADDITIONAL_FIELD5_KEY));
 
-
-		        //Generate Checksum for params
-		        ArrayList<String> fields = new ArrayList<String>();
-		        fields.add(queryMap.get(MESSAGE_TYPE_KEY));
-		        fields.add(queryMap.get(MERCHANT_ID_KEY));
-		        fields.add(queryMap.get(SERVICE_ID_KEY));
-		        fields.add(queryMap.get(ORDER_ID_KEY));
-		        fields.add(queryMap.get(CUSTOMER_ID_KEY));
-		        fields.add(queryMap.get(TRANSACTION_AMOUNT_KEY));
-		        fields.add(queryMap.get(CURRENCY_CODE_KEY));
-		        fields.add(queryMap.get(REQUEST_DATE_TIME_KEY));
-		        fields.add(queryMap.get(SUCCESS_URL_KEY));
-		        fields.add(queryMap.get(FAIL_URL_KEY));
-		        fields.add(queryMap.get(ADDITIONAL_FIELD1_KEY));
-		        fields.add(queryMap.get(ADDITIONAL_FIELD2_KEY));
-		        fields.add(queryMap.get(ADDITIONAL_FIELD3_KEY));
-		        fields.add(queryMap.get(ADDITIONAL_FIELD4_KEY));
-		        fields.add(queryMap.get(ADDITIONAL_FIELD5_KEY));
-
-		        String message = String.join("|", fields);
-		        queryMap.put("checksum", CcavenueUtils.generateCRC32Checksum(message, WORKING_KEY));
-		        queryMap.put("txURL",httpUrlConnection.getURL().toURI().toString());
-		        SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyyHH:mm:SSS");
-		        queryMap.put(REQUEST_DATE_TIME_KEY, format1.format(currentDate));
-		        log.info("REQUEST_DATE_TIME_KEY::"+queryMap.get(REQUEST_DATE_TIME_KEY));
-		        ObjectMapper mapper = new ObjectMapper();
+				String message = String.join("|", fields);
+				queryMap.put("checksum", CcavenueUtils.generateCRC32Checksum(message, WORKING_KEY));
+				queryMap.put("txURL", httpUrlConnection.getURL().toURI().toString());
+				SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyyHH:mm:SSS");
+				queryMap.put(REQUEST_DATE_TIME_KEY, format1.format(currentDate));
+				log.info("REQUEST_DATE_TIME_KEY::" + queryMap.get(REQUEST_DATE_TIME_KEY));
+				ObjectMapper mapper = new ObjectMapper();
 //		        try {
 ////		            urlData= mapper.writeValueAsString(queryMap);
 //		        } catch (Exception e) {
@@ -286,16 +288,13 @@ public class CcavenueGateway implements Gateway {
 //		                    "PAYGOV URL generation failed, gateway redirect URI cannot be generated");
 //		        }
 
+				MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+				queryMap.forEach(params::add);
+				UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(WS_URL + "&" + wsDataBuff)
+						.queryParams(params).build();
 
-		        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		        queryMap.forEach(params::add);
-		        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(WS_URL + "&" + wsDataBuff).queryParams(params)
-		                .build();
-				
-				
-				
-				
-				
+				log.info("uriComponents: " + uriComponents.toUri().toString());
+
 				return uriComponents.toUri();
 //				return httpUrlConnection.getURL().toURI();
 			}
@@ -553,25 +552,28 @@ public class CcavenueGateway implements Gateway {
 		}
 		return urlData;
 	}
-	
-	 private String getModuleCode(Transaction transaction) {
-	        String moduleCode ="------";
-	        if(!StringUtils.isEmpty(transaction.getModule())) {
-	            /*
-	             * if(transaction.getModule().length() < 6) { moduleCode= transaction.getModule() +
-	             * moduleCode.substring(transaction.getModule().length()-1); }else { moduleCode =transaction.getModule(); }
-	             */
-	            if (transaction.getModule().equals("BPAREG")) {
-	                moduleCode = "BPA001";
-	            } else {
-	                moduleCode = transaction.getModule().concat("001").toUpperCase();
-	            }
-	        }
-	        return moduleCode;
-	    }
-	
+
+	private String getModuleCode(Transaction transaction) {
+		String moduleCode = "------";
+		if (!StringUtils.isEmpty(transaction.getModule())) {
+			/*
+			 * if(transaction.getModule().length() < 6) { moduleCode=
+			 * transaction.getModule() +
+			 * moduleCode.substring(transaction.getModule().length()-1); }else { moduleCode
+			 * =transaction.getModule(); }
+			 */
+			if (transaction.getModule().equals("BPAREG")) {
+				moduleCode = "BPA001";
+			} else {
+				moduleCode = transaction.getModule().concat("001").toUpperCase();
+			}
+		}
+		return moduleCode;
+	}
+
 	private String getReturnUrl(String callbackUrl, String baseurl) {
-        return UriComponentsBuilder.fromHttpUrl(baseurl).queryParam(ORIGINAL_RETURN_URL_KEY, callbackUrl).build().toUriString();
-    }
+		return UriComponentsBuilder.fromHttpUrl(baseurl).queryParam(ORIGINAL_RETURN_URL_KEY, callbackUrl).build()
+				.toUriString();
+	}
 
 }
