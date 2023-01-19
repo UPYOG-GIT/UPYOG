@@ -102,7 +102,7 @@ public class CcavenueGateway implements Gateway {
 	private PgDetailRepository pgDetailRepository;
 
 	@Autowired
-	public CcavenueGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper) {
+	public CcavenueGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper, PgDetailRepository pgDetailRepository) {
 		this.restTemplate = restTemplate;
 		this.objectMapper = objectMapper;
 		this.ACTIVE = Boolean.valueOf(environment.getRequiredProperty("ccavenue.active"));
