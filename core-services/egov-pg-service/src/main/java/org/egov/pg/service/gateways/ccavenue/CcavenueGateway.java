@@ -99,10 +99,10 @@ public class CcavenueGateway implements Gateway {
 	private static final String SEPERATOR = "|";
 	private String TX_DATE_FORMAT;
 	private final RequestInfo requestInfo;
-	private PgDetailRepository pgDetailRepository;
+//	private PgDetailRepository pgDetailRepository;
 
 	@Autowired
-	public CcavenueGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper, PgDetailRepository pgDetailRepository) {
+	public CcavenueGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper) {
 		this.restTemplate = restTemplate;
 		this.objectMapper = objectMapper;
 		this.ACTIVE = Boolean.valueOf(environment.getRequiredProperty("ccavenue.active"));
@@ -128,7 +128,7 @@ public class CcavenueGateway implements Gateway {
 				.build();
 
 		requestInfo = new RequestInfo("", "", 0L, "", "", "", "", "", "", userInfo);
-		this.pgDetailRepository = pgDetailRepository;
+//		this.pgDetailRepository = pgDetailRepository;
 	}
 
 	@Override
@@ -378,7 +378,7 @@ public class CcavenueGateway implements Gateway {
 	public String generateRedirectFormData(Transaction transaction) {
 
 		log.info("inside CCAvenue.generateRedirectFormData()");
-		PgDetail pgDetail = pgDetailRepository.getPgDetailByTenantId(requestInfo, transaction.getTenantId());
+//		PgDetail pgDetail = pgDetailRepository.getPgDetailByTenantId(requestInfo, transaction.getTenantId());
 
 		/*
 		 *
