@@ -86,12 +86,13 @@ export const SelectPaymentType = (props) => {
     try {
       const data = await Digit.PaymentService.createCitizenReciept(tenantId, filterData);
       const redirectUrl = data?.Transaction?.redirectUrl;
-      if (d?.paymentType == "CCAVENUE") {
+      if (d?.paymentType == "AXIS") {
         window.location = redirectUrl;
       } else {
         // new payment gatewayfor UPYOG pay
         try {
 
+          // console.log(redirectUrl);
           const gatewayParam = redirectUrl
             ?.split("?")
             ?.slice(1)
@@ -102,36 +103,44 @@ export const SelectPaymentType = (props) => {
               curr[d[0]] = d[1];
               return curr;
             }, {});
+
+            console.log(gatewayParam);
+            console.log(gatewayParam.txURL+"="+gatewayParam.command);
+
+
           var newForm = $("<form>", {
-            action: gatewayParam.txURL,
+            action: gatewayParam.txURL+"="+gatewayParam.command,
             method: "POST",
             target: "_top",
           });
           
           const orderForNDSLPaymentSite = [
-            "checksum",
-            "messageType",
-            "merchantId",
-            "serviceId",
-            "orderId",
-            "customerId",
-            "transactionAmount",
-            "currencyCode",
-            "requestDateTime",
-            "successUrl",
-            "failUrl",
-            "additionalField1",
-            "additionalField2",
-            "additionalField3",
-            "additionalField4",
-            "additionalField5",
+            "encRequest",
+            "access_code",
+            // "checksum",
+            // "messageType",
+            // "merchant_id",
+            // "serviceId",
+            // "order_id",
+            // "customerId",
+            // "amount",
+            // "currency",
+            // "requestDateTime",
+            // "redirect_url",
+            // "cancel_url",
+            // "additionalField1",
+            // "additionalField2",
+            // "additionalField3",
+            // "additionalField4",
+            // "additionalField5",
           ];
 
           // override default date for UPYOG Custom pay
           gatewayParam["requestDateTime"] = gatewayParam["requestDateTime"]?.split(new Date().getFullYear()).join(`${new Date().getFullYear()} `);
         
-          gatewayParam["successUrl"]= redirectUrl?.split("successUrl=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
-          gatewayParam["failUrl"]= redirectUrl?.split("failUrl=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
+          // gatewayParam["redirect_url"]= redirectUrl?.split("redirect_url=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
+          gatewayParam["redirect_url"]= redirectUrl;
+          gatewayParam["cancel_url"]= redirectUrl?.split("cancel_url=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
           // gatewayParam["successUrl"]= data?.Transaction?.callbackUrl;
           // gatewayParam["failUrl"]= data?.Transaction?.callbackUrl;
           
