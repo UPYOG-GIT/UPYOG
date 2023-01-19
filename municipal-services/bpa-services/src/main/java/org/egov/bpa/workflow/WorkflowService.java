@@ -1,142 +1,124 @@
 package org.egov.bpa.workflow;
 
-import org.egov.bpa.config.BPAConfiguration;
-import org.egov.bpa.repository.ServiceRequestRepository;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.bpa.util.BPAConstants;
-import org.egov.bpa.util.BPAErrorConstants;
 import org.egov.bpa.web.model.BPA;
-import org.egov.bpa.web.model.RequestInfoWrapper;
+import org.egov.bpa.web.model.BPARequest;
+import org.egov.bpa.web.model.workflow.Action;
 import org.egov.bpa.web.model.workflow.BusinessService;
-import org.egov.bpa.web.model.workflow.BusinessServiceResponse;
 import org.egov.bpa.web.model.workflow.State;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Service
-public class WorkflowService {
+@Component
+public class ActionValidator {
 
-	private BPAConfiguration config;
 
-	private ServiceRequestRepository serviceRequestRepository;
-
-	private ObjectMapper mapper;
+	private WorkflowService workflowService;
 
 	@Autowired
-	public WorkflowService(BPAConfiguration config, ServiceRequestRepository serviceRequestRepository,
-			ObjectMapper mapper) {
-		this.config = config;
-		this.serviceRequestRepository = serviceRequestRepository;
-		this.mapper = mapper;
+	public ActionValidator(WorkflowService workflowService) {
+		this.workflowService = workflowService;
 	}
 
 	/**
-	 * Get the workflow config for the given tenant
+	 * Validates create request
 	 * 
-	 * @param tenantId
-	 *            The tenantId for which businessService is requested
-	 * @param requestInfo
-	 *            The RequestInfo object of the request
-	 * @return BusinessService for the the given tenantId
+	 * @param request
+	 *            The BPA Create request
 	 */
-	public BusinessService getBusinessService(BPA bpa, RequestInfo requestInfo, String applicationNo) {
-		StringBuilder url = getSearchURLWithParams(bpa, true, null);
-		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-		Object result = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
-		BusinessServiceResponse response = null;
-		try {
-			response = mapper.convertValue(result, BusinessServiceResponse.class);
-		} catch (IllegalArgumentException e) {
-			throw new CustomException(BPAErrorConstants.PARSING_ERROR, "Failed to parse response of calculate");
-		}
-		return response.getBusinessServices().get(0);
-	
-	}
-	log.info("getBusinessServic----" + getBusinessService(BPA bpa, RequestInfo requestInfo, String applicationNo));
+	public void validateCreateRequest(BPARequest request) {
+		Map<String, String> errorMap = new HashMap<>();
 
-	/**
-	 * Creates url for search based on given tenantId
-	 *
-	 * @param tenantId
-	 *            The tenantId for which url is generated
-	 * @return The search url
-	 */
-	private StringBuilder getSearchURLWithParams(BPA bpa, boolean businessService, String applicationNo) {
-		StringBuilder url = new StringBuilder(config.getWfHost());
-		if (businessService) {
-			url.append(config.getWfBusinessServiceSearchPath());
-		} else {
-			url.append(config.getWfProcessPath());
-		}
-		url.append("?tenantId=");
-		url.append(bpa.getTenantId());
-		if (businessService) {
-				url.append("&businessServices=");
-				url.append(bpa.getBusinessService());
-		} else {
-			url.append("&businessIds=");
-			url.append(applicationNo);
-		}
-		return url;
+		if (!errorMap.isEmpty())
+			throw new CustomException(errorMap);
 	}
 
 	/**
-	 * Returns boolean value to specifying if the state is updatable
+	 * Validates the update request
 	 * 
-	 * @param statusEnum
-	 *            The stateCode of the bpa
-	 * @param businessService
-	 *            The BusinessService of the application flow
-	 * @return State object to be fetched
+	 * @param request
+	 *            The BPA update request
 	 */
-	public Boolean isStateUpdatable(String status, BusinessService businessService) {
-		for (org.egov.bpa.web.model.workflow.State state : businessService.getStates()) {
-			if (state.getApplicationStatus() != null
-					&& state.getApplicationStatus().equalsIgnoreCase(status.toString()))
-				return state.getIsStateUpdatable();
-		}
-		return Boolean.FALSE;
+	public void validateUpdateRequest(BPARequest request, BusinessService businessService) {
+		validateRoleAction(request,businessService);
+//		validateAction(request);
+		validateIds(request, businessService);
 	}
-	log.info("stateUpdatable---" + isStateUpdatable(String status, BusinessService businessService));
 
 	/**
-	 * Returns State name fo the current state of the document
+	 * Validates if the role of the logged in user can perform the given action
 	 * 
-	 * @param statusEnum
-	 *            The stateCode of the bpa
-	 * @param businessService
-	 *            The BusinessService of the application flow
-	 * @return State String to be fetched
+	 * @param request
+	 *            The bpa create or update request
 	 */
-	public String getCurrentState(String status, BusinessService businessService) {
-		for (State state : businessService.getStates()) {
-			if (state.getApplicationStatus() != null
-					&& state.getApplicationStatus().equalsIgnoreCase(status.toString()))
-				return state.getState();
+	private void validateRoleAction(BPARequest request, BusinessService businessService) {
+		BPA bpa = request.getBPA();
+		Map<String, String> errorMap = new HashMap<>();
+		RequestInfo requestInfo = request.getRequestInfo();
+//		}
+		State state = workflowService.getCurrentStateObj(bpa.getStatus(), businessService);
+		if(state != null ) {
+			List<Action> actions = state.getActions();
+			List<Role> roles = requestInfo.getUserInfo().getRoles();
+			List<String> validActions = new LinkedList<>();
+			
+			roles.forEach(role -> {
+				actions.forEach(action -> {
+					if (action.getRoles().contains(role.getCode())) {
+						validActions.add(action.getAction());
+					}
+				});
+			});
+
+			if (!validActions.contains(bpa.getWorkflow().getAction())) {
+				errorMap.put("UNAUTHORIZED UPDATE", "The action cannot be performed by this user");
+			}
+		}else {
+			errorMap.put("UNAUTHORIZED UPDATE", "No workflow state configured for the current status of the application");
 		}
 		
-		log.info("getCurrentStatee----" + getCurrentState(String status, BusinessService businessService));
-		return null;
+		if (!errorMap.isEmpty()) {
+			throw new CustomException(errorMap);
+		}
+			
 	}
 
 	/**
-	 * Returns State Obj fo the current state of the document
+	 * Validates if the any new object is added in the request
 	 * 
-	 * @param statusEnum
-	 *            The stateCode of the bpa
-	 * @param businessService
-	 *            The BusinessService of the application flow
-	 * @return State object to be fetched
+	 * @param request
+	 *            The bpa update request
 	 */
-	public State getCurrentStateObj(String status, BusinessService businessService) {
-		for (State state : businessService.getStates()) {
-			if (state.getApplicationStatus() != null
-					&& state.getApplicationStatus().equalsIgnoreCase(status.toString()))
-				return state;
+	private void validateIds(BPARequest request, BusinessService businessService) {
+		Map<String, String> errorMap = new HashMap<>();
+		BPA bpa = request.getBPA();
+		
+		if( !workflowService.isStateUpdatable(bpa.getStatus(), businessService)) {
+			if(bpa.getId() == null) {
+				errorMap.put(BPAConstants.INVALID_UPDATE, "Id of Application cannot be null");
+			}
+			
+			 if(!CollectionUtils.isEmpty(bpa.getDocuments())){
+				 bpa.getDocuments().forEach(document -> {
+                     if(document.getId()==null)
+                         errorMap.put(BPAConstants.INVALID_UPDATE, "Id of applicationDocument cannot be null");
+                 });
+             }
+			
 		}
-		return null;
+		if (!errorMap.isEmpty())
+			throw new CustomException(errorMap);
 	}
+
+
 }
