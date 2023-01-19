@@ -119,7 +119,8 @@ public class CcavenueGateway implements Gateway {
 		this.MESSAGE_TYPE = environment.getRequiredProperty("ccavenue.messagetype");
 		this.CURRENCY_CODE = environment.getRequiredProperty("ccavenue.currency");
 		this.CITIZEN_URL = environment.getRequiredProperty("ccavenue.default.citizen.url");
-		ORIGINAL_RETURN_URL_KEY = environment.getRequiredProperty("ccavenue.original.return.url.key");
+		this.ORIGINAL_RETURN_URL_KEY = environment.getRequiredProperty("ccavenue.original.return.url.key");
+		this.TX_DATE_FORMAT =environment.getRequiredProperty("ccavenue.dateformat");
 		this.COMMAND = "initiatTransaction";
 		this.REQUEST_TYPE = "JSON";
 		this.RESPONSE_TYPE = "JSON";
@@ -271,7 +272,7 @@ public class CcavenueGateway implements Gateway {
 
 		        String message = String.join("|", fields);
 		        queryMap.put("checksum", CcavenueUtils.generateCRC32Checksum(message, WORKING_KEY));
-		        queryMap.put("txURL",WS_URL + "&" + wsDataBuff);
+		        queryMap.put("txURL",httpUrlConnection.getURL().toURI().toString());
 		        SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyyHH:mm:SSS");
 		        queryMap.put(REQUEST_DATE_TIME_KEY, format1.format(currentDate));
 		        log.info("REQUEST_DATE_TIME_KEY::"+queryMap.get(REQUEST_DATE_TIME_KEY));
