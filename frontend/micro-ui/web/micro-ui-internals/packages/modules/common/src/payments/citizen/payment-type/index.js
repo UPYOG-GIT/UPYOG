@@ -86,7 +86,7 @@ export const SelectPaymentType = (props) => {
     try {
       const data = await Digit.PaymentService.createCitizenReciept(tenantId, filterData);
       const redirectUrl = data?.Transaction?.redirectUrl;
-      if (d?.paymentType == "AXIS") {
+      if (d?.paymentType == "CCAVENUE") {
         window.location = redirectUrl;
       } else {
         // new payment gatewayfor UPYOG pay
