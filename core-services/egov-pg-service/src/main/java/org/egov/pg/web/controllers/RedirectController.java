@@ -53,12 +53,13 @@ public class RedirectController {
 	@Autowired
 	public RedirectController(TransactionService transactionService) {
 		this.transactionService = transactionService;
-		SecretKeySpec skey = new SecretKeySpec(getMD5(workingKey), "AES");
-		this.setupCrypto(skey);
+		
 	}
 
 	@PostMapping(value = "/transaction/v1/_redirect", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public ResponseEntity<Object> method(@RequestBody MultiValueMap<String, String> formData) {
+		SecretKeySpec skey = new SecretKeySpec(getMD5(workingKey), "AES");
+		this.setupCrypto(skey);
 		log.info("inside /transaction/v1/_redirect controller");
 		log.info("formData: " + formData.toString());
 //		CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
