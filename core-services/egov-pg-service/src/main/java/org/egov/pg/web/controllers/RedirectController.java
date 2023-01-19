@@ -70,7 +70,7 @@ public class RedirectController {
 		for(String d:data) {
 			String d1[]=d.split("=");
 			for(int i=0;i<d1.length;i++) {
-				if(d1[0].equals("redirect_url")) {
+				if(d1[0].equals("cancel_url")) {
 					returnURL=d1[1]+"="+d1[2];
 				}
 			}
