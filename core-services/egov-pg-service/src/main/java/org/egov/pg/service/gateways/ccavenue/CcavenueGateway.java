@@ -10,12 +10,21 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import org.egov.pg.models.PgDetail;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.pg.models.Transaction;
+import org.egov.pg.repository.PgDetailRepository;
 import org.egov.pg.service.Gateway;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
@@ -28,6 +37,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
@@ -59,38 +69,37 @@ public class CcavenueGateway implements Gateway {
 
 	private RestTemplate restTemplate;
 	private ObjectMapper objectMapper;
-	
-	
-//	private final String MESSAGE_TYPE;
-//
-//    private final String CURRENCY_CODE;
-//	private final String REDIRECT_URL;
-//    private final String ORIGINAL_RETURN_URL_KEY;
-//
-//    private final String MESSAGE_TYPE_KEY = "messageType";
-//    private final String MERCHANT_ID_KEY = "merchant_id";
-//
-//    private final String SERVICE_ID_KEY = "serviceId";
-//    private final String ORDER_ID_KEY = "order_id";
-//    private final String CUSTOMER_ID_KEY = "customerId";
-//    private final String TRANSACTION_AMOUNT_KEY = "amount";
-//    private final String CURRENCY_CODE_KEY = "currency";
-//    private final String REQUEST_DATE_TIME_KEY = "requestDateTime";
-//    private final String SUCCESS_URL_KEY = "redirect_url";
-//    private final String FAIL_URL_KEY = "cancel_url";
-//    private final String ADDITIONAL_FIELD1_KEY = "merchant_param1";
-//    private final String ADDITIONAL_FIELD2_KEY = "merchant_param2";
-//    private final String ADDITIONAL_FIELD3_KEY = "merchant_param3";
-//    private final String ADDITIONAL_FIELD4_KEY = "merchant_param4";
-//    private final String ADDITIONAL_FIELD5_KEY = "merchant_param5";
-//    private final String ADDITIONAL_FIELD_VALUE = "111111";
-//    private final String GATEWAY_TRANSACTION_STATUS_URL;
-//    private final String GATEWAY_URL;
-//    private final String CITIZEN_URL;
-//    private static final String SEPERATOR ="|";
-//    private String TX_DATE_FORMAT;
-//    private  final RequestInfo requestInfo;
-//    private PgDetailRepository pgDetailRepository;
+
+	private final String MESSAGE_TYPE;
+
+	private final String CURRENCY_CODE;
+	private final String REDIRECT_URL;
+	private final String ORIGINAL_RETURN_URL_KEY;
+
+	private final String MESSAGE_TYPE_KEY = "messageType";
+	private final String MERCHANT_ID_KEY = "merchant_id";
+
+	private final String SERVICE_ID_KEY = "serviceId";
+	private final String ORDER_ID_KEY = "order_id";
+	private final String CUSTOMER_ID_KEY = "customerId";
+	private final String TRANSACTION_AMOUNT_KEY = "amount";
+	private final String CURRENCY_CODE_KEY = "currency";
+	private final String REQUEST_DATE_TIME_KEY = "requestDateTime";
+	private final String SUCCESS_URL_KEY = "redirect_url";
+	private final String FAIL_URL_KEY = "cancel_url";
+	private final String ADDITIONAL_FIELD1_KEY = "merchant_param1";
+	private final String ADDITIONAL_FIELD2_KEY = "merchant_param2";
+	private final String ADDITIONAL_FIELD3_KEY = "merchant_param3";
+	private final String ADDITIONAL_FIELD4_KEY = "merchant_param4";
+	private final String ADDITIONAL_FIELD5_KEY = "merchant_param5";
+	private final String ADDITIONAL_FIELD_VALUE = "111111";
+//	private final String GATEWAY_TRANSACTION_STATUS_URL;
+//	private final String GATEWAY_URL;
+	private final String CITIZEN_URL;
+	private static final String SEPERATOR = "|";
+	private String TX_DATE_FORMAT;
+	private final RequestInfo requestInfo;
+	private PgDetailRepository pgDetailRepository;
 
 	@Autowired
 	public CcavenueGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper) {
@@ -106,9 +115,20 @@ public class CcavenueGateway implements Gateway {
 		this.MERCHANT_ID = environment.getRequiredProperty("ccavenue.merchant.id");
 		this.WS_URL = environment.getRequiredProperty("ccavenue.path.wsurl");
 		this.RETURN_URL = environment.getRequiredProperty("ccavenue.redirect.url");
+		this.REDIRECT_URL = environment.getRequiredProperty("ccavenue.redirect.url");
+		this.MESSAGE_TYPE = environment.getRequiredProperty("ccavenue.messagetype");
+		this.CURRENCY_CODE = environment.getRequiredProperty("ccavenue.currency");
+		this.CITIZEN_URL = environment.getRequiredProperty("ccavenue.default.citizen.url");
+		ORIGINAL_RETURN_URL_KEY = environment.getRequiredProperty("ccavenue.original.return.url.key");
 		this.COMMAND = "initiatTransaction";
 		this.REQUEST_TYPE = "JSON";
 		this.RESPONSE_TYPE = "JSON";
+
+		User userInfo = User.builder().uuid("PG_DETAIL_GET").type("SYSTEM").roles(Collections.emptyList()).id(0L)
+				.build();
+
+		requestInfo = new RequestInfo("", "", 0L, "", "", "", "", "", "", userInfo);
+		this.pgDetailRepository = pgDetailRepository;
 	}
 
 	@Override
@@ -134,13 +154,10 @@ public class CcavenueGateway implements Gateway {
 //				+ "\"delivery_state\":\"\",\"delivery_zip\":\"\",\"delivery_country\":\"\","
 //				+ "\"delivery_tel\":,\"merchant_param1\":\"\",\"merchant_param2\":\"\","
 //				+ "\"merchant_param3\":\"\",\"merchant_param4\":\"\",\"merchant_param5\":\"\"}";
-		String jsonData = "merchant_id=" + MERCHANT_ID + "&order_id=" + orderNumber
-				+ "&currency=INR&amount=" + amount + "&redirect_url="
-				+ RETURN_URL + "&cancel_url=" + RETURN_URL + ""
-				+ "&language=EN&billing_name=&billing_address=&"
-				+ "billing_city=&billing_state=&billing_zip=&"
-				+ "billing_country=&billing_tel=&billing_email=&"
-				+ "delivery_name=&delivery_address=&delivery_city="
+		String jsonData = "merchant_id=" + MERCHANT_ID + "&order_id=" + orderNumber + "&currency=INR&amount=" + amount
+				+ "&redirect_url=" + RETURN_URL + "&cancel_url=" + RETURN_URL + ""
+				+ "&language=EN&billing_name=&billing_address=&" + "billing_city=&billing_state=&billing_zip=&"
+				+ "billing_country=&billing_tel=&billing_email=&" + "delivery_name=&delivery_address=&delivery_city="
 				+ "&delivery_state=&delivery_zip=&delivery_country="
 				+ "&delivery_tel=&merchant_param1=&merchant_param2="
 				+ "&merchant_param3=&merchant_param4=&merchant_param5=";
@@ -359,8 +376,114 @@ public class CcavenueGateway implements Gateway {
 
 	@Override
 	public String generateRedirectFormData(Transaction transaction) {
-		
-        return null;
+
+		log.info("inside CCAvenue.generateRedirectFormData()");
+		PgDetail pgDetail = pgDetailRepository.getPgDetailByTenantId(requestInfo, transaction.getTenantId());
+
+		/*
+		 *
+		 * messageType|merchantId|serviceId|orderId|customerId|transactionAmount|
+		 * currencyCode|r equestDateTime|successUrl|failUrl|additionalField1|
+		 * additionalField2| additionalField3| additionalField4| additionalField5
+		 */
+		String urlData = null;
+		HashMap<String, String> queryMap = new HashMap<>();
+		queryMap.put(MESSAGE_TYPE_KEY, MESSAGE_TYPE);
+		queryMap.put(MERCHANT_ID_KEY, MERCHANT_ID);
+		queryMap.put(SERVICE_ID_KEY, getModuleCode(transaction));
+		queryMap.put(ORDER_ID_KEY, transaction.getTxnId());
+		queryMap.put(CUSTOMER_ID_KEY, transaction.getUser().getUuid());
+		queryMap.put(TRANSACTION_AMOUNT_KEY, String.valueOf(transaction.getTxnAmount()));
+		queryMap.put(CURRENCY_CODE_KEY, CURRENCY_CODE);
+		SimpleDateFormat format = new SimpleDateFormat(TX_DATE_FORMAT);
+		queryMap.put(REQUEST_DATE_TIME_KEY, format.format(new Date()));
+		String returnUrl = transaction.getCallbackUrl().replace(CITIZEN_URL, "");
+
+		String domainName = returnUrl.replaceAll("http(s)?://|www\\.|/.*", "");
+		String citizenReturnURL = returnUrl.split(domainName)[1];
+		String moduleCode = "------";
+		if (!StringUtils.isEmpty(transaction.getModule())) {
+			if (transaction.getModule().length() < 6) {
+				moduleCode = transaction.getModule() + moduleCode.substring(transaction.getModule().length() - 1);
+			} else {
+				moduleCode = transaction.getModule();
+			}
+		}
+
+		log.info("returnUrl::::" + getReturnUrl(citizenReturnURL, REDIRECT_URL));
+		queryMap.put(SUCCESS_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
+		queryMap.put(FAIL_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
+		StringBuffer userDetail = new StringBuffer();
+		if (transaction.getUser() != null) {
+			if (!StringUtils.isEmpty(transaction.getUser().getMobileNumber())) {
+				userDetail.append(transaction.getUser().getMobileNumber());
+			}
+
+			/*
+			 * if(!StringUtils.isEmpty(transaction.getUser().getEmailId())) {
+			 * if(userDetail.length()>0) { userDetail.append("^"); }
+			 * userDetail.append(transaction.getUser().getEmailId()); }
+			 */
+		}
+		if (userDetail.length() == 0) {
+			userDetail.append(ADDITIONAL_FIELD_VALUE);
+		}
+		queryMap.put(ADDITIONAL_FIELD1_KEY, userDetail.toString());
+		queryMap.put(ADDITIONAL_FIELD2_KEY, ADDITIONAL_FIELD_VALUE); // Not in use
+		queryMap.put(ADDITIONAL_FIELD3_KEY, ADDITIONAL_FIELD_VALUE); // Not in use
+		queryMap.put(ADDITIONAL_FIELD4_KEY, transaction.getConsumerCode());
+		queryMap.put(ADDITIONAL_FIELD5_KEY, moduleCode);
+
+		// Generate Checksum for params
+		ArrayList<String> fields = new ArrayList<String>();
+		fields.add(queryMap.get(MESSAGE_TYPE_KEY));
+		fields.add(queryMap.get(MERCHANT_ID_KEY));
+		fields.add(queryMap.get(SERVICE_ID_KEY));
+		fields.add(queryMap.get(ORDER_ID_KEY));
+		fields.add(queryMap.get(CUSTOMER_ID_KEY));
+		fields.add(queryMap.get(TRANSACTION_AMOUNT_KEY));
+		fields.add(queryMap.get(CURRENCY_CODE_KEY));
+		fields.add(queryMap.get(REQUEST_DATE_TIME_KEY));
+		fields.add(queryMap.get(SUCCESS_URL_KEY));
+		fields.add(queryMap.get(FAIL_URL_KEY));
+		fields.add(queryMap.get(ADDITIONAL_FIELD1_KEY));
+		fields.add(queryMap.get(ADDITIONAL_FIELD2_KEY));
+		fields.add(queryMap.get(ADDITIONAL_FIELD3_KEY));
+		fields.add(queryMap.get(ADDITIONAL_FIELD4_KEY));
+		fields.add(queryMap.get(ADDITIONAL_FIELD5_KEY));
+
+		String message = String.join("|", fields);
+		queryMap.put("checksum", CcavenueUtils.generateCRC32Checksum(message, WORKING_KEY));
+		queryMap.put("txURL", WS_URL);
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			urlData = mapper.writeValueAsString(queryMap);
+		} catch (Exception e) {
+			log.error("CCAVENUE URL generation failed", e);
+			throw new CustomException("URL_GEN_FAILED",
+					"CCAVENUE URL generation failed, gateway redirect URI cannot be generated");
+		}
+		return urlData;
 	}
+	
+	 private String getModuleCode(Transaction transaction) {
+	        String moduleCode ="------";
+	        if(!StringUtils.isEmpty(transaction.getModule())) {
+	            /*
+	             * if(transaction.getModule().length() < 6) { moduleCode= transaction.getModule() +
+	             * moduleCode.substring(transaction.getModule().length()-1); }else { moduleCode =transaction.getModule(); }
+	             */
+	            if (transaction.getModule().equals("BPAREG")) {
+	                moduleCode = "BPA001";
+	            } else {
+	                moduleCode = transaction.getModule().concat("001").toUpperCase();
+	            }
+	        }
+	        return moduleCode;
+	    }
+	
+	private String getReturnUrl(String callbackUrl, String baseurl) {
+        return UriComponentsBuilder.fromHttpUrl(baseurl).queryParam(ORIGINAL_RETURN_URL_KEY, callbackUrl).build().toUriString();
+    }
 
 }

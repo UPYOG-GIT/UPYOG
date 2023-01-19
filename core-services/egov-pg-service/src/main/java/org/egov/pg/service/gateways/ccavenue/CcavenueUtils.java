@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.spec.AlgorithmParameterSpec;
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -163,4 +165,17 @@ class CcavenueUtils {
 		}
 		return ba;
 	}
+	
+	public static String generateCRC32Checksum(String message, String secretKey) {
+        String msg = message + "|" + secretKey;
+        System.out.println("Input Key : "+ msg);
+        byte bytes[] = msg.getBytes();
+        Checksum checksum = new CRC32();
+        // update the current checksum with the specified array of bytes
+        checksum.update(bytes, 0, bytes.length);
+        // get the current checksum value
+        long checksumValue = checksum.getValue();
+        System.out.println("CRC32 checksum for input string is: " + 	checksumValue);
+        return String.valueOf(checksumValue);
+    }
 }
