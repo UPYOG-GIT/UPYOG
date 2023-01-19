@@ -290,8 +290,19 @@ public class CcavenueGateway implements Gateway {
 
 				MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 				queryMap.forEach(params::add);
+
+				String paramsString = "checksum$"+CcavenueUtils.generateCRC32Checksum(message, WORKING_KEY)+""
+						+ "*txURL$"+httpUrlConnection.getURL().toURI().toString()+"*"+MESSAGE_TYPE_KEY+"$"+MESSAGE_TYPE+""
+						+ "*"+MERCHANT_ID_KEY+"$"+MERCHANT_ID+"*"+ORDER_ID_KEY+"$"+orderNumber+""
+						+ "*"+CUSTOMER_ID_KEY+"$"+transaction.getUser().getUuid()+"*"+TRANSACTION_AMOUNT_KEY+"$"+amount+""
+						+ "*"+CURRENCY_CODE_KEY+"$"+CURRENCY_CODE+"*"+REQUEST_DATE_TIME_KEY+"$"+format.format(currentDate)+""
+						+ "*"+SERVICE_ID_KEY+"$"+getModuleCode(transaction)+"*"+SUCCESS_URL_KEY+"$"+RETURN_URL+""
+						+ "*"+FAIL_URL_KEY+"$"+RETURN_URL+"*"+ADDITIONAL_FIELD1_KEY+"$"+userDetail.toString()+""
+						+ "*"+ADDITIONAL_FIELD2_KEY+"$"+ADDITIONAL_FIELD_VALUE+"*"+ADDITIONAL_FIELD3_KEY+"$"+ADDITIONAL_FIELD_VALUE+""
+						+ "*"+"ADDITIONAL_FIELD4_KEY"+"$"+transaction.getConsumerCode()+"*"+ADDITIONAL_FIELD5_KEY+"$"+getModuleCode(transaction);
+
 				UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(WS_URL + "&" + wsDataBuff)
-						.queryParams(params).build();
+						.query(paramsString).build();
 
 				log.info("uriComponents: " + uriComponents.toUri().toString());
 
