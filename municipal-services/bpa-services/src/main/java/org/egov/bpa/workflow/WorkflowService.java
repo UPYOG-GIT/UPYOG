@@ -100,6 +100,7 @@ public class WorkflowService {
 		}
 		return Boolean.FALSE;
 	}
+	log.info("stateUpdatable---" + isStateUpdatable(String status, BusinessService businessService));
 
 	/**
 	 * Returns State name fo the current state of the document
