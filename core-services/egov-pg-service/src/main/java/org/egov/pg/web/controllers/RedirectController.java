@@ -47,6 +47,7 @@ public class RedirectController {
 	@PostMapping(value = "/transaction/v1/_redirect", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public ResponseEntity<Object> method(@RequestBody MultiValueMap<String, String> formData) {
 		log.info("inside /transaction/v1/_redirect controller");
+		log.info("formData: " + formData.toString());
 		String returnURL = formData.get(returnUrlKey).get(0);
 		log.info("returnURL: " + returnURL);
 		MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
