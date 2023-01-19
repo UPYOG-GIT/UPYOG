@@ -67,6 +67,8 @@ public class ActionValidator {
 		RequestInfo requestInfo = request.getRequestInfo();
 //		}
 		State state = workflowService.getCurrentStateObj(bpa.getStatus(), businessService);
+		log.info("current state: " + state);
+		
 		if(state != null ) {
 			List<Action> actions = state.getActions();
 			List<Role> roles = requestInfo.getUserInfo().getRoles();
