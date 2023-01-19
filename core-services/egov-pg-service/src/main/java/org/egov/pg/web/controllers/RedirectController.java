@@ -46,7 +46,9 @@ public class RedirectController {
 
 	@PostMapping(value = "/transaction/v1/_redirect", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public ResponseEntity<Object> method(@RequestBody MultiValueMap<String, String> formData) {
+		log.info("inside /transaction/v1/_redirect controller");
 		String returnURL = formData.get(returnUrlKey).get(0);
+		log.info("returnURL: " + returnURL);
 		MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
 
 		/*
@@ -80,6 +82,7 @@ public class RedirectController {
 			httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString()).queryParams(formData)
 					.build().encode().toUri());
 		} else if (gateway != null && gateway.equalsIgnoreCase("CCAVENUE")) {
+			log.info("inside CCAvenue condition");
 			StringBuilder redirectURL = new StringBuilder();
 			redirectURL.append(niwaspassRedirectDomain).append(returnURL);
 			formData.remove(returnUrlKey);
