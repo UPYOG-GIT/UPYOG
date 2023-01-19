@@ -1,6 +1,13 @@
 package org.egov.pg.web.controllers;
 
+import java.security.MessageDigest;
+import java.security.spec.AlgorithmParameterSpec;
 import java.util.List;
+
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.egov.pg.constants.PgConstants;
 import org.egov.pg.models.Transaction;
@@ -36,19 +43,39 @@ public class RedirectController {
 
 	@Value("${ccavenue.citizen.redirect.domain.name}")
 	private String niwaspassRedirectDomain;
+	
+	@Value("${ccavenue.working.key}")
+	private String workingKey;
 
 	private final TransactionService transactionService;
 
+	private Cipher dcipher;
 	@Autowired
 	public RedirectController(TransactionService transactionService) {
 		this.transactionService = transactionService;
+		SecretKeySpec skey = new SecretKeySpec(getMD5(workingKey), "AES");
+		this.setupCrypto(skey);
 	}
 
 	@PostMapping(value = "/transaction/v1/_redirect", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public ResponseEntity<Object> method(@RequestBody MultiValueMap<String, String> formData) {
 		log.info("inside /transaction/v1/_redirect controller");
 		log.info("formData: " + formData.toString());
-		String returnURL = formData.get(returnUrlKey).get(0);
+//		CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
+		String encResp = formData.get("encResp").get(0);
+		String plainText=decrypt(encResp);
+		String data[]=plainText.split("&");
+		String returnURL="";
+		for(String d:data) {
+			String d1[]=d.split("=");
+			for(int i=0;i<d1.length;i++) {
+				if(d1[0].equals("redirect_url")) {
+					returnURL=d1[1]+"="+d1[2];
+				}
+			}
+		}
+		
+//		String returnURL = formData.get(returnUrlKey).get(0);
 		log.info("returnURL: " + returnURL);
 		MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
 
@@ -104,5 +131,57 @@ public class RedirectController {
 		httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(defaultURL).build().encode().toUri());
 		return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);
 	}
+	
+	public String decrypt(String hexCipherText){
+		
+		try{
+			String plaintext = new String(dcipher.doFinal(hexToByte(hexCipherText)), "UTF-8");
+			return  plaintext;
+		} catch (Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
 
+	public static byte[] hexToByte( String hexString){
+		int len = hexString.length();
+		byte[] ba = new byte[len / 2];
+		for (int i = 0; i < len; i += 2) {
+			ba[i/2] = (byte) ((Character.digit(hexString.charAt(i), 16) << 4) + Character.digit(hexString.charAt(i+1), 16));
+		}
+		return ba;
+	}
+	
+	private void setupCrypto(SecretKey key){
+		// Create an 8-byte initialization vector
+		byte[] iv = new byte[]
+				{
+				0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09,0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
+				};
+
+		AlgorithmParameterSpec paramSpec = new IvParameterSpec(iv);
+		try
+		{
+//			ecipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			dcipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+
+			// CBC requires an initialization vector
+//			ecipher.init(Cipher.ENCRYPT_MODE, key, paramSpec);
+			dcipher.init(Cipher.DECRYPT_MODE, key, paramSpec);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	private static byte[] getMD5(String input){
+		try{
+			byte[] bytesOfMessage = input.getBytes("UTF-8");
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			return md.digest(bytesOfMessage);
+		}  catch (Exception e){
+			return null;
+		}
+	}
 }
