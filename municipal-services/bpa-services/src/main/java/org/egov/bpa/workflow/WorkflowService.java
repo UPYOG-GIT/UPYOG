@@ -53,7 +53,9 @@ public class WorkflowService {
 			throw new CustomException(BPAErrorConstants.PARSING_ERROR, "Failed to parse response of calculate");
 		}
 		return response.getBusinessServices().get(0);
+	
 	}
+	log.info("getBusinessServic----" + getBusinessService(BPA bpa, RequestInfo requestInfo, String applicationNo));
 
 	/**
 	 * Creates url for search based on given tenantId
@@ -98,6 +100,7 @@ public class WorkflowService {
 		}
 		return Boolean.FALSE;
 	}
+	log.info("stateUpdatable---" + isStateUpdatable(String status, BusinessService businessService));
 
 	/**
 	 * Returns State name fo the current state of the document
@@ -114,6 +117,8 @@ public class WorkflowService {
 					&& state.getApplicationStatus().equalsIgnoreCase(status.toString()))
 				return state.getState();
 		}
+		
+		log.info("getCurrentStatee----" + getCurrentState(String status, BusinessService businessService));
 		return null;
 	}
 

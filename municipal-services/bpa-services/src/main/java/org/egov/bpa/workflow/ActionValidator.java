@@ -18,8 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 public class ActionValidator {
 
 
@@ -67,6 +69,8 @@ public class ActionValidator {
 		RequestInfo requestInfo = request.getRequestInfo();
 //		}
 		State state = workflowService.getCurrentStateObj(bpa.getStatus(), businessService);
+		log.info("current state: " + state);
+		
 		if(state != null ) {
 			List<Action> actions = state.getActions();
 			List<Role> roles = requestInfo.getUserInfo().getRoles();
