@@ -72,11 +72,13 @@ public class RedirectController {
 		log.info("data : " + data.toString());
 		String returnURL = "";
 		for (String d : data) {
+			log.info("d: " + d);
 			String d1[] = d.split("=");
 			log.info("d1 : " + d1.toString());
 			for (int i = 0; i < d1.length; i++) {
 				if (d1[0].equals("merchant_param1")) {
-					returnURL = d1[1] + "=" + d1[2];
+					log.info("merchant_param1: " + d1[0]);
+//					returnURL = d1[1] + "=" + d1[2];
 				}
 			}
 		}
@@ -126,7 +128,7 @@ public class RedirectController {
 			httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
 					.queryParams(formData).build().encode().toUri());
 		}
-		log.info("httpHeaders: "+httpHeaders.toString());
+		log.info("httpHeaders: " + httpHeaders.toString());
 		return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);
 	}
 
