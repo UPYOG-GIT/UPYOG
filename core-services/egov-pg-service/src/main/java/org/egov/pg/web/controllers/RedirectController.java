@@ -126,7 +126,7 @@ public class RedirectController {
 			httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
 					.queryParams(formData).build().encode().toUri());
 		}
-
+		log.info("httpHeaders: "+httpHeaders.toString());
 		return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);
 	}
 
