@@ -143,9 +143,9 @@ public class RedirectController {
 //			redirectURL.append(niwaspassRedirectDomain).append(returnURL);
 				redirectURL.append(returnURL);
 				formData.remove(returnUrlKey);
-				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(returnURL).build().encode().toUri());
-//			httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString()).queryParams(formData)
-//					.build().encode().toUri());
+//				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(returnURL).build().encode().toUri());
+			httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString()).queryParams(params)
+					.build().encode().toUri());
 			} else {
 				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
 						.queryParams(formData).build().encode().toUri());
