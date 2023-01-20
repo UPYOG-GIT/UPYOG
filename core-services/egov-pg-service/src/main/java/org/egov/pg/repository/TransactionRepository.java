@@ -14,26 +14,29 @@ import java.util.List;
 @Slf4j
 public class TransactionRepository {
 
-    private final JdbcTemplate jdbcTemplate;
-    private static final TransactionRowMapper rowMapper = new TransactionRowMapper();
+	private final JdbcTemplate jdbcTemplate;
+	private static final TransactionRowMapper rowMapper = new TransactionRowMapper();
 
-    @Autowired
-    TransactionRepository(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+	@Autowired
+	TransactionRepository(JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+	}
 
-    public List<Transaction> fetchTransactions(TransactionCriteria transactionCriteria) {
-        List<Object> params = new ArrayList<>();
-        String query = TransactionQueryBuilder.getPaymentSearchQueryByCreatedTimeRange(transactionCriteria, params);
-        log.debug(query);
-        return jdbcTemplate.query(query, params.toArray(), rowMapper);
-    }
+	public List<Transaction> fetchTransactions(TransactionCriteria transactionCriteria) {
+		List<Object> params = new ArrayList<>();
+		String query = TransactionQueryBuilder.getPaymentSearchQueryByCreatedTimeRange(transactionCriteria, params);
+		log.info("query :" + query);
+		log.debug(query);
+		return jdbcTemplate.query(query, params.toArray(), rowMapper);
+	}
 
-    public List<Transaction> fetchTransactionsByTimeRange(TransactionCriteria transactionCriteria, Long startTime, Long endTime) {
-        List<Object> params = new ArrayList<>();
-        String query = TransactionQueryBuilder.getPaymentSearchQueryByCreatedTimeRange(transactionCriteria, startTime, endTime, params);
-        log.debug(query);
-        return jdbcTemplate.query(query, params.toArray(), rowMapper);
-    }
+	public List<Transaction> fetchTransactionsByTimeRange(TransactionCriteria transactionCriteria, Long startTime,
+			Long endTime) {
+		List<Object> params = new ArrayList<>();
+		String query = TransactionQueryBuilder.getPaymentSearchQueryByCreatedTimeRange(transactionCriteria, startTime,
+				endTime, params);
+		log.debug(query);
+		return jdbcTemplate.query(query, params.toArray(), rowMapper);
+	}
 
 }

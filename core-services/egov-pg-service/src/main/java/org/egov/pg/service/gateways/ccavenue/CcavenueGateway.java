@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.HttpsURLConnection;
 
 import org.egov.pg.models.PgDetail;
@@ -332,35 +333,33 @@ public class CcavenueGateway implements Gateway {
 
 	@Override
 	public Transaction fetchStatus(Transaction currentStatus, Map<String, String> params) {
-		PayuResponse resp = objectMapper.convertValue(params, PayuResponse.class);
-		if (!isNull(resp.getHash()) && !isNull(resp.getStatus()) && !isNull(resp.getTxnid())
-				&& !isNull(resp.getAmount()) && !isNull(resp.getProductinfo()) && !isNull(resp.getFirstname())) {
-			resp.setTransaction_amount(resp.getAmount());
-			String checksum = resp.getHash();
-
-			String hashSequence = "SALT|status||||||udf5|udf4|udf3|udf2|udf1|email|firstname|productinfo|amount|txnid|";
-			hashSequence = hashSequence.concat(ACCESS_CODE);
-			hashSequence = hashSequence.replace("SALT", WORKING_KEY);
-			hashSequence = hashSequence.replace("status", resp.getStatus());
-			hashSequence = hashSequence.replace("udf5", resp.getUdf5());
-			hashSequence = hashSequence.replace("udf4", resp.getUdf4());
-			hashSequence = hashSequence.replace("udf3", resp.getUdf3());
-			hashSequence = hashSequence.replace("udf2", resp.getUdf2());
-			hashSequence = hashSequence.replace("udf1", resp.getUdf1());
-			hashSequence = hashSequence.replace("email", resp.getEmail());
-			hashSequence = hashSequence.replace("firstname", resp.getFirstname());
-			hashSequence = hashSequence.replace("productinfo", resp.getProductinfo());
-			hashSequence = hashSequence.replace("amount", resp.getTransaction_amount());
-			hashSequence = hashSequence.replace("txnid", resp.getTxnid());
-			String hash = hashCal(hashSequence);
-
-			if (checksum.equalsIgnoreCase(hash)) {
-				Transaction txn = transformRawResponse(resp, currentStatus);
-				if (txn.getTxnStatus().equals(Transaction.TxnStatusEnum.PENDING)
-						|| txn.getTxnStatus().equals(Transaction.TxnStatusEnum.FAILURE)) {
-					return txn;
+		CcavenueResponse resp = objectMapper.convertValue(params, CcavenueResponse.class);
+		if (!isNull(resp.getEncResp()) && !isNull(resp.getOrderNo()))
+			;
+//			String checksum = resp.getHash();
+		String encResp = resp.getEncResp();
+		String orderNo = resp.getOrderNo();
+		CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
+		String decryptedData = ccavenueUtis.decrypt(encResp);
+//			log.info("plainText: " + plainText);
+		String encRespString[] = decryptedData.split("&");
+		Map<String, String> resMap = new HashMap<String, String>();
+		for (String s : encRespString) {
+			String s2[] = s.split("=");
+			if (!s2[0].equals("merchant_param1")) {
+				String key = s2[0];
+				String value = "";
+				if (s2.length > 1) {
+					value = s2[1];
 				}
+				resMap.put(key, value);
 			}
+		}
+
+		Transaction txn = transformRawResponse(resMap, currentStatus);
+		if (txn.getTxnStatus().equals(Transaction.TxnStatusEnum.PENDING)
+				|| txn.getTxnStatus().equals(Transaction.TxnStatusEnum.FAILURE)) {
+			return txn;
 		}
 
 		return fetchStatusFromGateway(currentStatus);
@@ -381,23 +380,23 @@ public class CcavenueGateway implements Gateway {
 		return "txnid";
 	}
 
-	private Transaction transformRawResponse(PayuResponse resp, Transaction currentStatus) {
+	private Transaction transformRawResponse(Map<String, String> resp, Transaction currentStatus) {
 
 		Transaction.TxnStatusEnum status;
 
-		String gatewayStatus = resp.getStatus();
+		String gatewayStatus = resp.get("order_status");
 
 		if (gatewayStatus.equalsIgnoreCase("success")) {
 			status = Transaction.TxnStatusEnum.SUCCESS;
-			return Transaction.builder().txnId(currentStatus.getTxnId()).txnAmount(resp.getTransaction_amount())
-					.txnStatus(status).gatewayTxnId(resp.getMihpayid()).gatewayPaymentMode(resp.getMode())
-					.gatewayStatusCode(resp.getUnmappedstatus()).gatewayStatusMsg(resp.getStatus()).responseJson(resp)
+			return Transaction.builder().txnId(currentStatus.getTxnId()).txnAmount(resp.get("amount"))
+					.txnStatus(status).gatewayTxnId(resp.get("tracking_id")).gatewayPaymentMode(resp.get("payment_mode"))
+					.gatewayStatusCode(resp.get("status_code")).gatewayStatusMsg(resp.get("status_message")).responseJson(resp)
 					.build();
 		} else {
 			status = Transaction.TxnStatusEnum.FAILURE;
-			return Transaction.builder().txnId(currentStatus.getTxnId()).txnAmount(resp.getTransaction_amount())
-					.txnStatus(status).gatewayTxnId(resp.getMihpayid()).gatewayStatusCode(resp.getError_code())
-					.gatewayStatusMsg(resp.getError_Message()).responseJson(resp).build();
+			return Transaction.builder().txnId(currentStatus.getTxnId()).txnAmount(resp.get("amount"))
+					.txnStatus(status).gatewayTxnId(resp.get("tracking_id")).gatewayStatusCode(resp.get("status_code"))
+					.gatewayStatusMsg(resp.get("failure_message")).responseJson(resp).build();
 		}
 
 	}
@@ -436,9 +435,10 @@ public class CcavenueGateway implements Gateway {
 			if (status.isNull())
 				throw new CustomException("FAILED_TO_FETCH_STATUS_FROM_GATEWAY",
 						"Unable to fetch status from payment gateway for txnid: " + currentStatus.getTxnId());
-			PayuResponse payuResponse = objectMapper.treeToValue(status, PayuResponse.class);
+			CcavenueResponse payuResponse = objectMapper.treeToValue(status, CcavenueResponse.class);
 
-			return transformRawResponse(payuResponse, currentStatus);
+//			return transformRawResponse(payuResponse, currentStatus);
+			return null;
 
 		} catch (RestClientException | IOException e) {
 			log.error("Unable to fetch status from payment gateway for txnid: " + currentStatus.getTxnId(), e);
