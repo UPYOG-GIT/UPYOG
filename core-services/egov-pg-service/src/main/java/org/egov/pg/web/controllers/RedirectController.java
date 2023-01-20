@@ -69,15 +69,21 @@ public class RedirectController {
 		String plainText = decrypt(encResp);
 		log.info("plainText: " + plainText);
 		String data[] = plainText.split("&");
-		log.info("data : " + data.toString());
+		log.info("data : " + data);
 		String returnURL = "";
+		String gateway1 = null;
 		for (String d : data) {
 			log.info("d: " + d);
 			String d1[] = d.split("=");
-			log.info("d1 : " + d1.toString());
+			log.info("d1 : " + d1);
 			for (int i = 0; i < d1.length; i++) {
 				if (d1[0].equals("merchant_param1")) {
 					log.info("merchant_param1: " + d1[0]);
+//					returnURL = d1[1] + "=" + d1[2];
+				} else if (d1[0].equals("merchant_param2")) {
+					log.info("merchant_param2: " + d1[0]);
+					gateway1 = d1[1];
+					log.info("gateway1: " + gateway1);
 //					returnURL = d1[1] + "=" + d1[2];
 				}
 			}
@@ -120,7 +126,8 @@ public class RedirectController {
 		} else if (gateway != null && gateway.equalsIgnoreCase("CCAVENUE")) {
 			log.info("inside CCAvenue condition");
 			StringBuilder redirectURL = new StringBuilder();
-			redirectURL.append(niwaspassRedirectDomain).append(returnURL);
+//			redirectURL.append(niwaspassRedirectDomain).append(returnURL);
+			redirectURL.append(returnURL);
 			formData.remove(returnUrlKey);
 			httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString()).queryParams(formData)
 					.build().encode().toUri());
