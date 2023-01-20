@@ -75,11 +75,11 @@ public class RedirectController {
 		String ss1 = s2[0] + "?eg_pg_txnid=" + s2[1];
 		String returnURL = ss1.substring(0, 4 + 1) + ":" + ss1.substring(4 + 1);
 		log.info("returnURL: " + returnURL);
-		
+
 		String gatewayString[] = plainText.split("&merchant_param2=");
-		String gatewayString1[]=gatewayString[1].split("&");
+		String gatewayString1[] = gatewayString[1].split("&");
 		String gateway1 = gatewayString1[0];
-		log.info("gateway1: "+gateway1);
+		log.info("gateway1: " + gateway1);
 
 //		String data[] = plainText.split("&");
 //		log.info("data : " + data);
@@ -103,7 +103,7 @@ public class RedirectController {
 //		}
 
 //		String returnURL = formData.get(returnUrlKey).get(0);
-		
+
 		MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
 
 		/*
@@ -130,24 +130,28 @@ public class RedirectController {
 		 * PB_PG_2022_07_12_002082_48 Here we are reading originalreturnurl value and
 		 * then forming redirect URL with domain name.
 		 */
-		if (gateway1 != null && gateway1.equalsIgnoreCase("PAYGOV")) {
-			StringBuilder redirectURL = new StringBuilder();
-			redirectURL.append(citizenRedirectDomain).append(returnURL);
-			formData.remove(returnUrlKey);
-			httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString()).queryParams(formData)
-					.build().encode().toUri());
-		} else if (gateway1 != null && gateway1.equalsIgnoreCase("CCAVENUE")) {
-			log.info("inside CCAvenue condition");
-			StringBuilder redirectURL = new StringBuilder();
+		try {
+			if (gateway1 != null && gateway1.equalsIgnoreCase("PAYGOV")) {
+				StringBuilder redirectURL = new StringBuilder();
+				redirectURL.append(citizenRedirectDomain).append(returnURL);
+				formData.remove(returnUrlKey);
+				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString()).queryParams(formData)
+						.build().encode().toUri());
+			} else if (gateway1 != null && gateway1.equalsIgnoreCase("CCAVENUE")) {
+				log.info("inside CCAvenue condition");
+				StringBuilder redirectURL = new StringBuilder();
 //			redirectURL.append(niwaspassRedirectDomain).append(returnURL);
-			redirectURL.append(returnURL);
-			formData.remove(returnUrlKey);
-			httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(returnURL).build().encode().toUri());
+				redirectURL.append(returnURL);
+				formData.remove(returnUrlKey);
+				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(returnURL).build().encode().toUri());
 //			httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString()).queryParams(formData)
 //					.build().encode().toUri());
-		} else {
-			httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
-					.queryParams(formData).build().encode().toUri());
+			} else {
+				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
+						.queryParams(formData).build().encode().toUri());
+			}
+		} catch (Exception ex) {
+			log.error("Exception : " + ex);
 		}
 		log.info("httpHeaders: " + httpHeaders.toString());
 		return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);
