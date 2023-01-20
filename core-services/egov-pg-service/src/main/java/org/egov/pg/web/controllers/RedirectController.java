@@ -2,6 +2,7 @@ package org.egov.pg.web.controllers;
 
 import java.security.MessageDigest;
 import java.security.spec.AlgorithmParameterSpec;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.crypto.Cipher;
@@ -20,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -72,8 +74,10 @@ public class RedirectController {
 		String s[] = plainText.split("&merchant_param1=");
 		String s1[] = s[1].split("&");
 		String s2[] = s1[0].split("eg_pg_txnid");
-		String ss1 = s2[0] + "?eg_pg_txnid=" + s2[1];
-		String returnURL = ss1.substring(0, 4 + 1) + ":" + ss1.substring(4 + 1);
+//		String ss1 = s2[0] + "?eg_pg_txnid=" + s2[1];
+		String ss1 = s2[0];
+		String param="eg_pg_txnid=" + s2[1];
+		String returnURL = ss1.substring(0, 4 + 1) + ":/" + ss1.substring(4 + 1);
 		log.info("returnURL: " + returnURL);
 
 		String gatewayString[] = plainText.split("&merchant_param2=");
@@ -104,7 +108,11 @@ public class RedirectController {
 
 //		String returnURL = formData.get(returnUrlKey).get(0);
 
-		MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
+//		MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
+		HashMap<String, String> queryMap = new HashMap<>();
+		queryMap.put("eg_pg_txnid", param);
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		queryMap.forEach(params::add);
 
 		/*
 		 * From redirect URL get transaction id. And using transaction id fetch
