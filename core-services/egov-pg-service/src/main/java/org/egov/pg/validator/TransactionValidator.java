@@ -74,7 +74,7 @@ public class TransactionValidator {
 	 * @return
 	 */
 	public Transaction validateUpdateTxn(Map<String, String> requestParams) {
-
+		log.info("requestParams: " + requestParams);
 		Optional<String> optional = gatewayService.getTxnId(requestParams);
 		log.info("Optional :" + optional.get());
 		if (!optional.isPresent())
