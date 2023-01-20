@@ -71,15 +71,15 @@ public class RedirectController {
 
 		String s[] = plainText.split("&merchant_param1=");
 		String s1[] = s[1].split("&");
-//		System.out.println(s1[0]);
 		String s2[] = s1[0].split("eg_pg_txnid");
 		String ss1 = s2[0] + "?eg_pg_txnid=" + s2[1];
 		String returnURL = ss1.substring(0, 4 + 1) + ":" + ss1.substring(4 + 1);
+		log.info("returnURL: " + returnURL);
 		
 		String gatewayString[] = plainText.split("&merchant_param2=");
 		String gatewayString1[]=gatewayString[1].split("&");
 		String gateway1 = gatewayString1[0];
-//		System.out.println(newString);
+		log.info("gateway1: "+gateway1);
 
 //		String data[] = plainText.split("&");
 //		log.info("data : " + data);
@@ -103,7 +103,7 @@ public class RedirectController {
 //		}
 
 //		String returnURL = formData.get(returnUrlKey).get(0);
-		log.info("returnURL: " + returnURL);
+		
 		MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
 
 		/*
