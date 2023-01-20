@@ -68,26 +68,39 @@ public class RedirectController {
 		log.info("encResp: " + encResp);
 		String plainText = decrypt(encResp);
 		log.info("plainText: " + plainText);
-		String data[] = plainText.split("&");
-		log.info("data : " + data);
-		String returnURL = "";
-		String gateway1 = null;
-		for (String d : data) {
-			log.info("d: " + d);
-			String d1[] = d.split("=");
-			log.info("d1 : " + d1);
-			for (int i = 0; i < d1.length; i++) {
-				if (d1[0].equals("merchant_param1")) {
-					log.info("merchant_param1: " + d1[0]);
-//					returnURL = d1[1] + "=" + d1[2];
-				} else if (d1[0].equals("merchant_param2")) {
-					log.info("merchant_param2: " + d1[0]);
-					gateway1 = d1[1];
-					log.info("gateway1: " + gateway1);
-//					returnURL = d1[1] + "=" + d1[2];
-				}
-			}
-		}
+
+		String s[] = plainText.split("&merchant_param1=");
+		String s1[] = s[1].split("&");
+//		System.out.println(s1[0]);
+		String s2[] = s1[0].split("eg_pg_txnid");
+		String ss1 = s2[0] + "?eg_pg_txnid=" + s2[1];
+		String returnURL = ss1.substring(0, 4 + 1) + ":" + ss1.substring(4 + 1);
+		
+		String gatewayString[] = plainText.split("&merchant_param2=");
+		String gatewayString1[]=gatewayString[1].split("&");
+		String gateway1 = gatewayString1[0];
+//		System.out.println(newString);
+
+//		String data[] = plainText.split("&");
+//		log.info("data : " + data);
+//		String returnURL = "";
+//		String gateway1 = null;
+//		for (String d : data) {
+//			log.info("d: " + d);
+//			String d1[] = d.split("=");
+//			log.info("d1 : " + d1);
+//			for (int i = 0; i < d1.length-1; i++) {
+//				if (d1[0].equals("merchant_param1")) {
+//					log.info("merchant_param1: " + d1[0]);
+////					returnURL = d1[1] + "=" + d1[2];
+//				} else if (d1[0].equals("merchant_param2")) {
+//					log.info("merchant_param2: " + d1[0]);
+//					gateway1 = d1[1];
+//					log.info("gateway1: " + gateway1);
+////					returnURL = d1[1] + "=" + d1[2];
+//				}
+//			}
+//		}
 
 //		String returnURL = formData.get(returnUrlKey).get(0);
 		log.info("returnURL: " + returnURL);
@@ -98,14 +111,14 @@ public class RedirectController {
 		 * transaction details. And from transaction details get the GATEWAY info.
 		 */
 		String gateway = null;
-		if (!params.isEmpty()) {
-			List<String> txnId = params.get(PgConstants.PG_TXN_IN_LABEL);
-			TransactionCriteria critria = new TransactionCriteria();
-			critria.setTxnId(txnId.get(0));
-			List<Transaction> transactions = transactionService.getTransactions(critria);
-			if (!transactions.isEmpty())
-				gateway = transactions.get(0).getGateway();
-		}
+//		if (!params.isEmpty()) {
+//			List<String> txnId = params.get(PgConstants.PG_TXN_IN_LABEL);
+//			TransactionCriteria critria = new TransactionCriteria();
+//			critria.setTxnId(txnId.get(0));
+//			List<Transaction> transactions = transactionService.getTransactions(critria);
+//			if (!transactions.isEmpty())
+//				gateway = transactions.get(0).getGateway();
+//		}
 		HttpHeaders httpHeaders = new HttpHeaders();
 		/*
 		 * The NSDL PAYGOV integration is not allowing multiple schems or protocols (ex:
@@ -117,13 +130,13 @@ public class RedirectController {
 		 * PB_PG_2022_07_12_002082_48 Here we are reading originalreturnurl value and
 		 * then forming redirect URL with domain name.
 		 */
-		if (gateway != null && gateway.equalsIgnoreCase("PAYGOV")) {
+		if (gateway1 != null && gateway1.equalsIgnoreCase("PAYGOV")) {
 			StringBuilder redirectURL = new StringBuilder();
 			redirectURL.append(citizenRedirectDomain).append(returnURL);
 			formData.remove(returnUrlKey);
 			httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString()).queryParams(formData)
 					.build().encode().toUri());
-		} else if (gateway != null && gateway.equalsIgnoreCase("CCAVENUE")) {
+		} else if (gateway1 != null && gateway1.equalsIgnoreCase("CCAVENUE")) {
 			log.info("inside CCAvenue condition");
 			StringBuilder redirectURL = new StringBuilder();
 //			redirectURL.append(niwaspassRedirectDomain).append(returnURL);
