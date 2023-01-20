@@ -26,6 +26,7 @@ public class TransactionRepository {
 		List<Object> params = new ArrayList<>();
 		String query = TransactionQueryBuilder.getPaymentSearchQueryByCreatedTimeRange(transactionCriteria, params);
 		log.info("query :" + query);
+		log.info("rowMapper: "+rowMapper );
 		log.debug(query);
 		return jdbcTemplate.query(query, params.toArray(), rowMapper);
 	}
