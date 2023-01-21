@@ -104,7 +104,7 @@ public class PaymentUpdateService {
 					 */
 					wfIntegrator.callWorkFlow(updateRequest);
 
-					log.debug(" the status of the application is : " + updateRequest.getBPA().getStatus());
+					log.info(" the status of the application is : " + updateRequest.getBPA().getStatus());
 
 					/*
 					 * calling repository to update the object in eg_bpa_buildingpaln tables
