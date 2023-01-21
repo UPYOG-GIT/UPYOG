@@ -72,7 +72,7 @@ public class ActionValidator {
 			List<Role> roles = requestInfo.getUserInfo().getRoles();
 			List<String> validActions = new LinkedList<>();
 
-			log.info("requestInfo.getUserInfo().getRoles(): " + requestInfo.getUserInfo().getRoles());
+			log.info("requestInfo.getUserInfo().getRoles().size(): " + requestInfo.getUserInfo().getRoles().size());
 
 			roles.forEach(role -> {
 				actions.forEach(action -> {
