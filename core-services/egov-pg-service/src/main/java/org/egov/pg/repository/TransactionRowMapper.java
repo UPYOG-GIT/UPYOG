@@ -32,7 +32,7 @@ public class TransactionRowMapper implements RowMapper<Transaction> {
 	public Transaction mapRow(ResultSet resultSet, int i) throws SQLException {
 
 		log.info("Inside TransactionRowMapper.mapRow().....");
-		log.info("resultSet.size: " + resultSet);
+		log.info("resultSet: " + resultSet);
 		AuditDetails auditDetails = new AuditDetails(resultSet.getString("created_by"),
 				resultSet.getLong("created_time"), resultSet.getString("last_modified_by"),
 				resultSet.getLong("last_modified_time"));
@@ -56,7 +56,9 @@ public class TransactionRowMapper implements RowMapper<Transaction> {
 				throw new CustomException("TXN_FETCH_FAILED", "Failed to deserialize data");
 			}
 		}
-
+		log.info("resultSet.getString(\"txn_id\"): " + resultSet.getString("txn_id"));
+		log.info("resultSet.getString(\"txn_status\"): " + resultSet.getString("txn_status"));
+		log.info("Return from TransactionRowMapper.mapRow().....");
 		return Transaction.builder().txnId(resultSet.getString("txn_id")).txnAmount(resultSet.getString("txn_amount"))
 				.txnStatus(Transaction.TxnStatusEnum.fromValue(resultSet.getString("txn_status")))
 				.txnStatusMsg(resultSet.getString("txn_status_msg")).gateway(resultSet.getString("gateway"))
