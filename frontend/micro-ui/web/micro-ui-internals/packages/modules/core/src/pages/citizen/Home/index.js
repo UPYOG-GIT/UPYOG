@@ -37,30 +37,31 @@ const Home = () => {
     },
     options: [
       {
+        name: t("CS_COMMON_INBOX_BPA"),
+        Icon: <OBPSIcon />,
+        onClick: () => history.push("/digit-ui/citizen/obps-home"),
+      },
+      {
         name: t("ES_PGR_HEADER_COMPLAINT"),
         Icon: <ComplaintIcon />,
         onClick: () => history.push("/digit-ui/citizen/pgr-home"),
       },
-      {
-        name: t("MODULE_PT"),
-        Icon: <PTIcon className="fill-path-primary-main" />,
-        onClick: () => history.push("/digit-ui/citizen/pt-home"),
-      },
-      {
-        name: t("MODULE_TL"),
-        Icon: <CaseIcon className="fill-path-primary-main" />,
-        onClick: () => history.push("/digit-ui/citizen/tl-home"),
-      },
+      // {
+      //   name: t("MODULE_PT"),
+      //   Icon: <PTIcon className="fill-path-primary-main" />,
+      //   onClick: () => history.push("/digit-ui/citizen/pt-home"),
+      // },
+      // {
+      //   name: t("MODULE_TL"),
+      //   Icon: <CaseIcon className="fill-path-primary-main" />,
+      //   onClick: () => history.push("/digit-ui/citizen/tl-home"),
+      // },
       // {
       //     name: t("ACTION_TEST_WATER_AND_SEWERAGE"),
       //     Icon: <DropIcon/>,
       //     onClick: () => history.push("/digit-ui/citizen")
       // },
-      {
-        name: t("CS_COMMON_INBOX_BPA"),
-        Icon: <OBPSIcon />,
-        onClick: () => history.push("/digit-ui/citizen/obps-home"),
-      },
+      
     ],
     styles: { display: "flex", flexWrap: "wrap", justifyContent: "flex-start", width: "100%" },
   };
@@ -75,16 +76,16 @@ const Home = () => {
         name: t("CS_HEADER_MYCITY"),
         Icon: <HomeIcon />,
       },
-      {
-        name: t("EVENTS_EVENTS_HEADER"),
-        Icon: <Calender />,
-        onClick: () => history.push("/digit-ui/citizen/engagement/events"),
-      },
-      {
-        name: t("CS_COMMON_DOCUMENTS"),
-        Icon: <DocumentIcon />,
-        onClick: () => history.push("/digit-ui/citizen/engagement/docs"),
-      },
+      // {
+      //   name: t("EVENTS_EVENTS_HEADER"),
+      //   Icon: <Calender />,
+      //   onClick: () => history.push("/digit-ui/citizen/engagement/events"),
+      // },
+      // {
+      //   name: t("CS_COMMON_DOCUMENTS"),
+      //   Icon: <DocumentIcon />,
+      //   onClick: () => history.push("/digit-ui/citizen/engagement/docs"),
+      // },
       {
         name: t("CS_COMMON_SURVEYS"),
         Icon: <DocumentIcon />,

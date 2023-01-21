@@ -93,6 +93,10 @@ const OBPSLinks = ({ matchPath, userType }) => {
       link: `${matchPath}/home`,
       i18nKey: t("BPA_CITIZEN_HOME_ARCHITECT_LOGIN_LABEL"),
     },
+    {
+      link: `/digit-ui/employee/user/login`,
+      i18nKey: t("Employee Login"),
+    },
   ];
 
   return (
