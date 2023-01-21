@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
-
 @Service
 @Slf4j
 public class WorkflowService {
@@ -39,10 +38,8 @@ public class WorkflowService {
 	/**
 	 * Get the workflow config for the given tenant
 	 * 
-	 * @param tenantId
-	 *            The tenantId for which businessService is requested
-	 * @param requestInfo
-	 *            The RequestInfo object of the request
+	 * @param tenantId    The tenantId for which businessService is requested
+	 * @param requestInfo The RequestInfo object of the request
 	 * @return BusinessService for the the given tenantId
 	 */
 	public BusinessService getBusinessService(BPA bpa, RequestInfo requestInfo, String applicationNo) {
@@ -61,8 +58,7 @@ public class WorkflowService {
 	/**
 	 * Creates url for search based on given tenantId
 	 *
-	 * @param tenantId
-	 *            The tenantId for which url is generated
+	 * @param tenantId The tenantId for which url is generated
 	 * @return The search url
 	 */
 	private StringBuilder getSearchURLWithParams(BPA bpa, boolean businessService, String applicationNo) {
@@ -75,8 +71,8 @@ public class WorkflowService {
 		url.append("?tenantId=");
 		url.append(bpa.getTenantId());
 		if (businessService) {
-				url.append("&businessServices=");
-				url.append(bpa.getBusinessService());
+			url.append("&businessServices=");
+			url.append(bpa.getBusinessService());
 		} else {
 			url.append("&businessIds=");
 			url.append(applicationNo);
@@ -87,14 +83,14 @@ public class WorkflowService {
 	/**
 	 * Returns boolean value to specifying if the state is updatable
 	 * 
-	 * @param statusEnum
-	 *            The stateCode of the bpa
-	 * @param businessService
-	 *            The BusinessService of the application flow
+	 * @param statusEnum      The stateCode of the bpa
+	 * @param businessService The BusinessService of the application flow
 	 * @return State object to be fetched
 	 */
 	public Boolean isStateUpdatable(String status, BusinessService businessService) {
+		log.info("status: " + status);
 		for (org.egov.bpa.web.model.workflow.State state : businessService.getStates()) {
+			log.info("state.getApplicationStatus(): " + state.getApplicationStatus());
 			if (state.getApplicationStatus() != null
 					&& state.getApplicationStatus().equalsIgnoreCase(status.toString()))
 				return state.getIsStateUpdatable();
@@ -105,10 +101,8 @@ public class WorkflowService {
 	/**
 	 * Returns State name fo the current state of the document
 	 * 
-	 * @param statusEnum
-	 *            The stateCode of the bpa
-	 * @param businessService
-	 *            The BusinessService of the application flow
+	 * @param statusEnum      The stateCode of the bpa
+	 * @param businessService The BusinessService of the application flow
 	 * @return State String to be fetched
 	 */
 	public String getCurrentState(String status, BusinessService businessService) {
@@ -123,10 +117,8 @@ public class WorkflowService {
 	/**
 	 * Returns State Obj fo the current state of the document
 	 * 
-	 * @param statusEnum
-	 *            The stateCode of the bpa
-	 * @param businessService
-	 *            The BusinessService of the application flow
+	 * @param statusEnum      The stateCode of the bpa
+	 * @param businessService The BusinessService of the application flow
 	 * @return State object to be fetched
 	 */
 	public State getCurrentStateObj(String status, BusinessService businessService) {

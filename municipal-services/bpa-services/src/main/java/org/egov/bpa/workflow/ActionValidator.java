@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ActionValidator {
 
-
 	private WorkflowService workflowService;
 
 	@Autowired
@@ -35,8 +34,7 @@ public class ActionValidator {
 	/**
 	 * Validates create request
 	 * 
-	 * @param request
-	 *            The BPA Create request
+	 * @param request The BPA Create request
 	 */
 	public void validateCreateRequest(BPARequest request) {
 		Map<String, String> errorMap = new HashMap<>();
@@ -48,11 +46,10 @@ public class ActionValidator {
 	/**
 	 * Validates the update request
 	 * 
-	 * @param request
-	 *            The BPA update request
+	 * @param request The BPA update request
 	 */
 	public void validateUpdateRequest(BPARequest request, BusinessService businessService) {
-		validateRoleAction(request,businessService);
+		validateRoleAction(request, businessService);
 //		validateAction(request);
 		validateIds(request, businessService);
 	}
@@ -60,8 +57,7 @@ public class ActionValidator {
 	/**
 	 * Validates if the role of the logged in user can perform the given action
 	 * 
-	 * @param request
-	 *            The bpa create or update request
+	 * @param request The bpa create or update request
 	 */
 	private void validateRoleAction(BPARequest request, BusinessService businessService) {
 		BPA bpa = request.getBPA();
@@ -70,15 +66,20 @@ public class ActionValidator {
 //		}
 		State state = workflowService.getCurrentStateObj(bpa.getStatus(), businessService);
 		log.info("current state: " + state);
-		
-		if(state != null ) {
+
+		if (state != null) {
 			List<Action> actions = state.getActions();
 			List<Role> roles = requestInfo.getUserInfo().getRoles();
 			List<String> validActions = new LinkedList<>();
-			
+
+			log.info("requestInfo.getUserInfo().getRoles(): " + requestInfo.getUserInfo().getRoles());
+
 			roles.forEach(role -> {
 				actions.forEach(action -> {
+					log.info("action.getRoles().contains(role.getCode()): "
+							+ action.getRoles().contains(role.getCode()));
 					if (action.getRoles().contains(role.getCode())) {
+						log.info("action.getAction(): " + action.getAction());
 						validActions.add(action.getAction());
 					}
 				});
@@ -87,42 +88,41 @@ public class ActionValidator {
 			if (!validActions.contains(bpa.getWorkflow().getAction())) {
 				errorMap.put("UNAUTHORIZED UPDATE", "The action cannot be performed by this user");
 			}
-		}else {
-			errorMap.put("UNAUTHORIZED UPDATE", "No workflow state configured for the current status of the application");
+		} else {
+			errorMap.put("UNAUTHORIZED UPDATE",
+					"No workflow state configured for the current status of the application");
 		}
-		
+
 		if (!errorMap.isEmpty()) {
 			throw new CustomException(errorMap);
 		}
-			
+
 	}
 
 	/**
 	 * Validates if the any new object is added in the request
 	 * 
-	 * @param request
-	 *            The bpa update request
+	 * @param request The bpa update request
 	 */
 	private void validateIds(BPARequest request, BusinessService businessService) {
 		Map<String, String> errorMap = new HashMap<>();
 		BPA bpa = request.getBPA();
-		
-		if( !workflowService.isStateUpdatable(bpa.getStatus(), businessService)) {
-			if(bpa.getId() == null) {
+
+		if (!workflowService.isStateUpdatable(bpa.getStatus(), businessService)) {
+			if (bpa.getId() == null) {
 				errorMap.put(BPAConstants.INVALID_UPDATE, "Id of Application cannot be null");
 			}
-			
-			 if(!CollectionUtils.isEmpty(bpa.getDocuments())){
-				 bpa.getDocuments().forEach(document -> {
-                     if(document.getId()==null)
-                         errorMap.put(BPAConstants.INVALID_UPDATE, "Id of applicationDocument cannot be null");
-                 });
-             }
-			
+
+			if (!CollectionUtils.isEmpty(bpa.getDocuments())) {
+				bpa.getDocuments().forEach(document -> {
+					if (document.getId() == null)
+						errorMap.put(BPAConstants.INVALID_UPDATE, "Id of applicationDocument cannot be null");
+				});
+			}
+
 		}
 		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
 	}
-
 
 }
