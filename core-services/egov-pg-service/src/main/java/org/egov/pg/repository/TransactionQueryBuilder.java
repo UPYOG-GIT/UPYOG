@@ -60,14 +60,16 @@ class TransactionQueryBuilder {
 		}
 
 		if (!Objects.isNull(transactionCriteria.getTxnId())) {
-			String getTxnId=transactionCriteria.getTxnId();
+			String getTxnId = transactionCriteria.getTxnId();
+			log.info("getTxnId: " + getTxnId);
 			String txnId;
-			if(getTxnId.contains("eg_pg_txnid=")) {
-				String txnArr[]=getTxnId.split("eg_pg_txnid=");
-				txnId=txnArr[0];
+			if (getTxnId.contains("eg_pg_txnid=")) {
+				String txnArr[] = getTxnId.split("eg_pg_txnid=");
+				txnId = txnArr[0];
 			} else {
-				txnId=getTxnId;
+				txnId = getTxnId;
 			}
+			log.info("txnId: " + txnId);
 			queryParams.put("pg.txn_id", txnId);
 //			queryParams.put("pg.txn_id", transactionCriteria.getTxnId());
 		}
@@ -92,7 +94,6 @@ class TransactionQueryBuilder {
 			queryParams.put("pg.receipt", transactionCriteria.getReceipt());
 		}
 
-		
 		if (!queryParams.isEmpty()) {
 
 			builder.append(" WHERE ");
@@ -103,6 +104,7 @@ class TransactionQueryBuilder {
 				builder.append(entry.getKey()).append(" = ? ");
 
 				preparedStmtList.add(entry.getValue());
+				log.info("entry.getValue(): " + entry.getValue());
 
 				if (iterator.hasNext())
 					builder.append(" AND ");
