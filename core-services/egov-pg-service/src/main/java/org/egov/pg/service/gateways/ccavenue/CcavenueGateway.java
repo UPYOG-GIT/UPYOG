@@ -333,15 +333,17 @@ public class CcavenueGateway implements Gateway {
 
 	@Override
 	public Transaction fetchStatus(Transaction currentStatus, Map<String, String> params) {
+		log.info("inside CcavenueGateway.fetchStatus().....");
 		CcavenueResponse resp = objectMapper.convertValue(params, CcavenueResponse.class);
 		if (!isNull(resp.getEncResp()) && !isNull(resp.getOrderNo()))
 			;
 //			String checksum = resp.getHash();
 		String encResp = resp.getEncResp();
 		String orderNo = resp.getOrderNo();
+		log.info("encResp: " + encResp);
 		CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
 		String decryptedData = ccavenueUtis.decrypt(encResp);
-//			log.info("plainText: " + plainText);
+		log.info("decryptedData: " + decryptedData);
 		String encRespString[] = decryptedData.split("&");
 		Map<String, String> resMap = new HashMap<String, String>();
 		for (String s : encRespString) {
@@ -381,28 +383,28 @@ public class CcavenueGateway implements Gateway {
 	}
 
 	private Transaction transformRawResponse(Map<String, String> resp, Transaction currentStatus) {
-
+		log.info("inside CcavenueGateway.transformRawResponse().....");
 		Transaction.TxnStatusEnum status;
 
 		String gatewayStatus = resp.get("order_status");
 
 		if (gatewayStatus.equalsIgnoreCase("success")) {
 			status = Transaction.TxnStatusEnum.SUCCESS;
-			return Transaction.builder().txnId(currentStatus.getTxnId()).txnAmount(resp.get("amount"))
-					.txnStatus(status).gatewayTxnId(resp.get("tracking_id")).gatewayPaymentMode(resp.get("payment_mode"))
-					.gatewayStatusCode(resp.get("status_code")).gatewayStatusMsg(resp.get("status_message")).responseJson(resp)
-					.build();
+			return Transaction.builder().txnId(currentStatus.getTxnId()).txnAmount(resp.get("amount")).txnStatus(status)
+					.gatewayTxnId(resp.get("tracking_id")).gatewayPaymentMode(resp.get("payment_mode"))
+					.gatewayStatusCode(resp.get("status_code")).gatewayStatusMsg(resp.get("status_message"))
+					.responseJson(resp).build();
 		} else {
 			status = Transaction.TxnStatusEnum.FAILURE;
-			return Transaction.builder().txnId(currentStatus.getTxnId()).txnAmount(resp.get("amount"))
-					.txnStatus(status).gatewayTxnId(resp.get("tracking_id")).gatewayStatusCode(resp.get("status_code"))
+			return Transaction.builder().txnId(currentStatus.getTxnId()).txnAmount(resp.get("amount")).txnStatus(status)
+					.gatewayTxnId(resp.get("tracking_id")).gatewayStatusCode(resp.get("status_code"))
 					.gatewayStatusMsg(resp.get("failure_message")).responseJson(resp).build();
 		}
 
 	}
 
 	private Transaction fetchStatusFromGateway(Transaction currentStatus) {
-
+		log.info("inside CcavenueGateway.fetchStatusFromGateway().....");
 		String txnRef = currentStatus.getTxnId();
 		String hash = hashCal(ACCESS_CODE + "|" + "verify_payment" + "|" + txnRef + "|" + WORKING_KEY);
 

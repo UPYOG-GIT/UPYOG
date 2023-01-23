@@ -80,7 +80,9 @@ public class GatewayService {
 	 * @return Updated live transaction status
 	 */
 	Transaction getLiveStatus(Transaction currentStatus, Map<String, String> params) {
+		log.info("inside GatewayService.getLiveStatus......");
 		Gateway gateway = getGateway(currentStatus.getGateway());
+		log.info("gateway: " + gateway);
 		return gateway.fetchStatus(currentStatus, params);
 	}
 

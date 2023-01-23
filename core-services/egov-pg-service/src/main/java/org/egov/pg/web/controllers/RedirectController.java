@@ -3,17 +3,14 @@ package org.egov.pg.web.controllers;
 import java.security.MessageDigest;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.egov.pg.constants.PgConstants;
-import org.egov.pg.models.Transaction;
 import org.egov.pg.service.TransactionService;
-import org.egov.pg.web.models.TransactionCriteria;
+import org.egov.pg.service.gateways.ccavenue.CcavenueResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -66,8 +63,12 @@ public class RedirectController {
 		log.info("inside /transaction/v1/_redirect controller");
 		log.info("formData: " + formData.toString());
 //		CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
+		CcavenueResponse ccavenueResponse=new CcavenueResponse();
 		String encResp = formData.get("encResp").get(0);
+		String orderNo = formData.get("orderNo").get(0);
 		log.info("encResp: " + encResp);
+		ccavenueResponse.setEncResp(encResp);
+		ccavenueResponse.setOrderNo(orderNo);
 		String plainText = decrypt(encResp);
 		log.info("plainText: " + plainText);
 

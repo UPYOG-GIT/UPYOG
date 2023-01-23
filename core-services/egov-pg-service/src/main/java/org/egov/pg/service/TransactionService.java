@@ -126,10 +126,11 @@ public class TransactionService {
 	 */
 	public List<Transaction> updateTransaction(RequestInfo requestInfo, Map<String, String> requestParams) {
 
+		log.info("inside TransactionService.updateTransaction()........");
 		Transaction currentTxnStatus = validator.validateUpdateTxn(requestParams);
 
-		log.info(currentTxnStatus.toString());
-		log.info(requestParams.toString());
+		log.info("currentTxnStatus.toString() :" + currentTxnStatus.toString());
+		log.info("requestParams.toString(): " + requestParams.toString());
 
 		Transaction newTxn = null;
 
