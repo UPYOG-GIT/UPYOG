@@ -128,8 +128,8 @@ public class TransactionService {
 
 		Transaction currentTxnStatus = validator.validateUpdateTxn(requestParams);
 
-		log.debug(currentTxnStatus.toString());
-		log.debug(requestParams.toString());
+		log.info(currentTxnStatus.toString());
+		log.info(requestParams.toString());
 
 		Transaction newTxn = null;
 

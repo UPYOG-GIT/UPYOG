@@ -60,7 +60,16 @@ class TransactionQueryBuilder {
 		}
 
 		if (!Objects.isNull(transactionCriteria.getTxnId())) {
-			queryParams.put("pg.txn_id", transactionCriteria.getTxnId());
+			String getTxnId=transactionCriteria.getTxnId();
+			String txnId;
+			if(getTxnId.contains("eg_pg_txnid=")) {
+				String txnArr[]=getTxnId.split("eg_pg_txnid=");
+				txnId=txnArr[0];
+			} else {
+				txnId=getTxnId;
+			}
+			queryParams.put("pg.txn_id", txnId);
+//			queryParams.put("pg.txn_id", transactionCriteria.getTxnId());
 		}
 
 		if (!Objects.isNull(transactionCriteria.getUserUuid())) {

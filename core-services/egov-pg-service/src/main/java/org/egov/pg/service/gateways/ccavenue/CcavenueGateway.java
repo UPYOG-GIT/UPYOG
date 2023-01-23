@@ -156,7 +156,7 @@ public class CcavenueGateway implements Gateway {
 //				+ "\"delivery_state\":\"\",\"delivery_zip\":\"\",\"delivery_country\":\"\","
 //				+ "\"delivery_tel\":,\"merchant_param1\":\"\",\"merchant_param2\":\"\","
 //				+ "\"merchant_param3\":\"\",\"merchant_param4\":\"\",\"merchant_param5\":\"\"}";
-		String jsonData = "merchant_id=" + MERCHANT_ID + "&order_id=" + orderNumber + "&currency=INR&amount=" + amount
+		String data = "merchant_id=" + MERCHANT_ID + "&order_id=" + orderNumber + "&currency=INR&amount=" + amount
 				+ "&redirect_url=" + RETURN_URL + "&cancel_url=" + RETURN_URL + ""
 				+ "&language=EN&billing_name=&billing_address=&" + "billing_city=&billing_state=&billing_zip=&"
 				+ "billing_country=&billing_tel=&billing_email=&" + "delivery_name=&delivery_address=&delivery_city="
@@ -168,13 +168,13 @@ public class CcavenueGateway implements Gateway {
 //				+ "\"redirect_url\":\"https://www.niwaspass.com/digit-ui/citizen/payment\","
 //				+ "\"cancel_url\":\"https://www.niwaspass.com/digit-ui/citizen/payment\"," + "\"language\":\"EN\"}";
 
-		log.info("jsonData: " + jsonData);
+		log.info("jsonData: " + data);
 		String encryptedJsonData = "";
 		StringBuffer wsDataBuff = new StringBuffer();
 
-		if (WORKING_KEY != null && !WORKING_KEY.equals("") && jsonData != null && !jsonData.equals("")) {
+		if (WORKING_KEY != null && !WORKING_KEY.equals("") && data != null && !data.equals("")) {
 			CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
-			encryptedJsonData = ccavenueUtis.encrypt(jsonData);
+			encryptedJsonData = ccavenueUtis.encrypt(data);
 		}
 		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE);
 //		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE + "&response_type="
