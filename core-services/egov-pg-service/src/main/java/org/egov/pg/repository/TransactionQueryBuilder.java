@@ -61,14 +61,15 @@ class TransactionQueryBuilder {
 
 		if (!Objects.isNull(transactionCriteria.getTxnId())) {
 			String getTxnId = transactionCriteria.getTxnId();
+			
 			log.info("getTxnId: " + getTxnId);
-			String txnId;
-			if (getTxnId.contains("eg_pg_txnid=")) {
-				String txnArr[] = getTxnId.split("eg_pg_txnid=");
-				txnId = txnArr[0];
-			} else {
-				txnId = getTxnId;
-			}
+			String txnId=getTxnId.replaceAll("eg_pg_txnid=", "");
+//			if (getTxnId.contains("eg_pg_txnid=")) {
+//				String txnArr[] = getTxnId.split("eg_pg_txnid=");
+//				txnId = txnArr[0];
+//			} else {
+//				txnId = getTxnId;
+//			}
 			log.info("txnId: " + txnId);
 			queryParams.put("pg.txn_id", txnId);
 //			queryParams.put("pg.txn_id", transactionCriteria.getTxnId());
