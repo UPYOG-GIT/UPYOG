@@ -77,7 +77,8 @@ public class RedirectController {
 		String s2[] = s1[0].split("eg_pg_txnid");
 //		String ss1 = s2[0] + "?eg_pg_txnid=" + s2[1];
 		String ss1 = s2[0];
-		String param = "eg_pg_txnid=" + s2[1];
+//		String param = "eg_pg_txnid=" + s2[1];
+		String param = s2[1];
 		String returnURL = ss1.substring(0, 4 + 1) + ":/" + ss1.substring(4 + 1);
 		log.info("returnURL: " + returnURL);
 
