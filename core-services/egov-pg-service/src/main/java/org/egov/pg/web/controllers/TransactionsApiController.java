@@ -90,7 +90,7 @@ public class TransactionsApiController {
 	public ResponseEntity<TransactionResponse> transactionsV1UpdatePost(
 			@RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam Map<String, String> params) {
 		log.info("inside /transaction/v1/_update api......");
-		log.info("params.size(): " + params.size());
+		log.info("params.toString(): " + params.toString());
 		List<Transaction> transactions = transactionService.updateTransaction(requestInfoWrapper.getRequestInfo(),
 				params);
 		ResponseInfo responseInfo = ResponseInfoFactory

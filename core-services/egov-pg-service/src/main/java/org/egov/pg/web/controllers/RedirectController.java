@@ -154,7 +154,7 @@ public class RedirectController {
 //			redirectURL.append(niwaspassRedirectDomain).append(returnURL);
 				redirectURL.append(returnURL);
 				formData.remove(returnUrlKey);
-				log.info("params: " + params.getFirst("encResp"));
+//				log.info("params: " + params.getFirst("encResp"));
 //				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(returnURL).build().encode().toUri());
 				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString()).queryParams(params)
 						.build().encode().toUri());

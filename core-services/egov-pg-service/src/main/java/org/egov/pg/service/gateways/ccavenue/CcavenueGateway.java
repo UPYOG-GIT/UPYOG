@@ -334,7 +334,8 @@ public class CcavenueGateway implements Gateway {
 	@Override
 	public Transaction fetchStatus(Transaction currentStatus, Map<String, String> params) {
 		log.info("inside CcavenueGateway.fetchStatus().....");
-		CcavenueResponse resp = objectMapper.convertValue(params, CcavenueResponse.class);
+//		CcavenueResponse resp = objectMapper.convertValue(params, CcavenueResponse.class);
+		CcavenueResponse resp = new CcavenueResponse();
 		if (!isNull(resp.getEncResp()) && !isNull(resp.getOrderNo()))
 			;
 //			String checksum = resp.getHash();
