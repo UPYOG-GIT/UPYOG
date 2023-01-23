@@ -98,6 +98,7 @@ public class TransactionsApiController {
         ResponseInfo responseInfo = ResponseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper
                 .getRequestInfo(), true);
         TransactionResponse response = new TransactionResponse(responseInfo, transactions);
+        log.info("response :"+response.getTransactions().get(0).getTxnId());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

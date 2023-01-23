@@ -63,7 +63,7 @@ public class RedirectController {
 		log.info("inside /transaction/v1/_redirect controller");
 		log.info("formData: " + formData.toString());
 //		CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
-		CcavenueResponse ccavenueResponse=new CcavenueResponse();
+		CcavenueResponse ccavenueResponse = new CcavenueResponse();
 		String encResp = formData.get("encResp").get(0);
 		String orderNo = formData.get("orderNo").get(0);
 		log.info("encResp: " + encResp);
@@ -77,7 +77,7 @@ public class RedirectController {
 		String s2[] = s1[0].split("eg_pg_txnid");
 //		String ss1 = s2[0] + "?eg_pg_txnid=" + s2[1];
 		String ss1 = s2[0];
-		String param="eg_pg_txnid=" + s2[1];
+		String param = "eg_pg_txnid=" + s2[1];
 		String returnURL = ss1.substring(0, 4 + 1) + ":/" + ss1.substring(4 + 1);
 		log.info("returnURL: " + returnURL);
 
@@ -153,9 +153,10 @@ public class RedirectController {
 //			redirectURL.append(niwaspassRedirectDomain).append(returnURL);
 				redirectURL.append(returnURL);
 				formData.remove(returnUrlKey);
+				log.info("params: " + params.getFirst("encResp"));
 //				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(returnURL).build().encode().toUri());
-			httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString()).queryParams(params)
-					.build().encode().toUri());
+				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString()).queryParams(params)
+						.build().encode().toUri());
 			} else {
 				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
 						.queryParams(formData).build().encode().toUri());
