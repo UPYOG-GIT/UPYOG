@@ -40,4 +40,15 @@ public class TransactionRepository {
 		return jdbcTemplate.query(query, params.toArray(), rowMapper);
 	}
 
+	public void insertResponse(String txnId, String encResp) {
+		String sql = "insert into eg_pg_resp(txn_id, txn_response) values(" + txnId + "," + encResp + ")";
+		log.info("Reponse insert sql query: " + sql);
+		jdbcTemplate.execute(sql);
+	}
+
+	public String fetchResponse(String txnId) {
+		String sql = "select txn_response from eg_pg_resp where txn_id=?";
+		return jdbcTemplate.queryForObject(sql, new Object[] { txnId }, String.class);
+	}
+
 }

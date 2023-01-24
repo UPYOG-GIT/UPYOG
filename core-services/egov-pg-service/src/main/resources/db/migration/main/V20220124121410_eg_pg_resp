@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS  eg_pg_resp;
+
+CREATE TABLE "eg_pg_resp" (
+	"txn_id" VARCHAR(128) NOT NULL,
+	"txn_response" VARCHAR NULL,
+	PRIMARY KEY ("txn_id")
+);
+

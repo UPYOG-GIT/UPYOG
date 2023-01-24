@@ -339,8 +339,10 @@ public class CcavenueGateway implements Gateway {
 		if (!isNull(resp.getEncResp()) && !isNull(resp.getOrderNo()))
 			;
 //			String checksum = resp.getHash();
-		String encResp = resp.getEncResp();
-		String orderNo = resp.getOrderNo();
+		
+//		String encResp = resp.getEncResp();
+		String encResp = params.get("encResp");
+//		String orderNo = resp.getOrderNo();
 		log.info("encResp: " + encResp);
 		CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
 		String decryptedData = ccavenueUtis.decrypt(encResp);

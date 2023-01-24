@@ -161,4 +161,18 @@ public class TransactionService {
 		return Collections.singletonList(newTxn);
 	}
 
+	public void updateResponse(String txnId, String encResp) {
+		log.info("inside updateResponse");
+		try {
+			transactionRepository.insertResponse(txnId, encResp);
+		} catch (Exception ex) {
+			log.error("Exception: " + ex);
+//			throw new CustomException("FETCH_TXNS_FAILED", "Unable to fetch transactions from store");
+		}
+	}
+
+	public String getResponse(String txnId) {
+		return transactionRepository.fetchResponse(txnId);
+	}
+
 }

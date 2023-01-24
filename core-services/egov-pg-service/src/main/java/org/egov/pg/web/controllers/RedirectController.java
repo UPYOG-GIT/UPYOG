@@ -95,7 +95,7 @@ public class RedirectController {
 		queryMap.put("encResp", encResp);
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		queryMap.forEach(params::add);
-
+		transactionService.updateResponse(txnId, encResp);
 		log.info("params:" + params.toString());
 		/*
 		 * From redirect URL get transaction id. And using transaction id fetch
