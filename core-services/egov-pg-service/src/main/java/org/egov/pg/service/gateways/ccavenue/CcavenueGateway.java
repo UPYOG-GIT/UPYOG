@@ -339,7 +339,7 @@ public class CcavenueGateway implements Gateway {
 		if (!isNull(resp.getEncResp()) && !isNull(resp.getOrderNo()))
 			;
 //			String checksum = resp.getHash();
-		
+
 //		String encResp = resp.getEncResp();
 		String encResp = params.get("encResp");
 //		String orderNo = resp.getOrderNo();
@@ -361,13 +361,17 @@ public class CcavenueGateway implements Gateway {
 			}
 		}
 
+		log.info("resMap: " + resMap.toString());
 		Transaction txn = transformRawResponse(resMap, currentStatus);
+//		log.info("txn:" + txn.getTxnAmount());
+		log.info("txn.getTxnStatus():" + txn.getTxnStatus());
 		if (txn.getTxnStatus().equals(Transaction.TxnStatusEnum.PENDING)
 				|| txn.getTxnStatus().equals(Transaction.TxnStatusEnum.FAILURE)) {
 			return txn;
 		}
 
-		return fetchStatusFromGateway(currentStatus);
+//		return fetchStatusFromGateway(currentStatus);
+		return txn;
 	}
 
 	@Override
@@ -390,6 +394,7 @@ public class CcavenueGateway implements Gateway {
 		Transaction.TxnStatusEnum status;
 
 		String gatewayStatus = resp.get("order_status");
+		log.info("gatewayStatus: " + gatewayStatus);
 
 		if (gatewayStatus.equalsIgnoreCase("success")) {
 			status = Transaction.TxnStatusEnum.SUCCESS;
