@@ -96,6 +96,7 @@ public class RedirectController {
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		queryMap.forEach(params::add);
 
+		log.info("params:" + params.toString());
 		/*
 		 * From redirect URL get transaction id. And using transaction id fetch
 		 * transaction details. And from transaction details get the GATEWAY info.
