@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Category {
     OTP("OTP"), TRANSACTION("TRANSACTION"), PROMOTION("PROMOTION"),
-    NOTIFICATION("NOTIFICATION"), OTHERS("OTHERS");
+    NOTIFICATION("NOTIFICATION"), OTHERS("OTHERS"), LOGIN("Login OTP in BPMS");
 
     private String value;
 

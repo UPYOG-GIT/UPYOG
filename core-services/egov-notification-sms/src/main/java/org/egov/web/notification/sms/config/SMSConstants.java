@@ -12,6 +12,10 @@ public class SMSConstants {
 
     public static final String SENDER_MESSAGE_IDENTIFIER = "senderMessageId";
     public static final String SENDER_MOBNO_IDENTIFIER = "senderMobileNoId";
+    public static final String TEMPLATE_ID = "templateid";
+    public static final String TYPE = "type";
+    public static final String ROUTEID = "routeid";
+    public static final String CAMPAIGN = "campaign";
 
 
 }

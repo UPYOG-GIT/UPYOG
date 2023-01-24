@@ -23,8 +23,8 @@ import java.util.Map;
 
 @Service
 @Slf4j
-@ConditionalOnProperty(value = "sms.provider.class", matchIfMissing = true, havingValue = "MSDG")
-public class MSDGSMSServiceImpl extends BaseSMSService {
+@ConditionalOnProperty(value = "sms.provider.class", matchIfMissing = true, havingValue = "WEBLINTO")
+public class WeblintoSMSServiceImpl extends BaseSMSService {
 
     @Autowired
     private SMSProperties smsProperties;
@@ -74,17 +74,18 @@ public class MSDGSMSServiceImpl extends BaseSMSService {
     }
 
     protected void submitToExternalSmsService(Sms sms) {
-        String finalmessage = "";
-        for (int i = 0; i < sms.getMessage().length(); i++) {
-            char ch = sms.getMessage().charAt(i);
-            int j = (int) ch;
-            String sss = "&#" + j + ";";
-            finalmessage = finalmessage + sss;
-        }
+//        String finalmessage = "";
+//        for (int i = 0; i < sms.getMessage().length(); i++) {
+//            char ch = sms.getMessage().charAt(i);
+//            int j = (int) ch;
+//            String sss = "&#" + j + ";";
+//            finalmessage = finalmessage + sss;
+//        }
+        String finalmessage = sms.getMessage();
         sms.setMessage(finalmessage);
         String url = smsProperties.getUrl();
         final MultiValueMap<String, String> requestBody = bodyBuilder.getSmsRequestBody(sms);
-        postProcessor(requestBody);
+//        postProcessor(requestBody);
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(requestBody, getHttpHeaders());
         executeAPI(URI.create(url), HttpMethod.POST, request, String.class);
     }
@@ -144,11 +145,11 @@ public class MSDGSMSServiceImpl extends BaseSMSService {
                     configMap.put(SMSConstants.SENDER_PASSWORD_IDENTIFIER, key);
                 else if (value.equals("$senderid"))
                     configMap.put(SMSConstants.SENDER_SENDERID_IDENTIFIER, key);
-                else if (value.equals("$secureKey"))
+                else if (value.equals("$key"))
                     configMap.put(SMSConstants.SENDER_SECUREKEY_IDENTIFIER, key);
-                else if (value.equals("$mobileno"))
+                else if (value.equals("$contacts"))
                     configMap.put(SMSConstants.SENDER_MOBNO_IDENTIFIER, key);
-                else if (value.equals("$message"))
+                else if (value.equals("$msg"))
                     configMap.put(SMSConstants.SENDER_MESSAGE_IDENTIFIER, key);
                 else if (value.equals("$templateid"))
                 	configMap.put(SMSConstants.TEMPLATE_ID, key);

@@ -87,27 +87,6 @@ public class RedirectController {
 		String gateway1 = gatewayString1[0];
 		log.info("gateway1: " + gateway1);
 
-//		String data[] = plainText.split("&");
-//		log.info("data : " + data);
-//		String returnURL = "";
-//		String gateway1 = null;
-//		for (String d : data) {
-//			log.info("d: " + d);
-//			String d1[] = d.split("=");
-//			log.info("d1 : " + d1);
-//			for (int i = 0; i < d1.length-1; i++) {
-//				if (d1[0].equals("merchant_param1")) {
-//					log.info("merchant_param1: " + d1[0]);
-////					returnURL = d1[1] + "=" + d1[2];
-//				} else if (d1[0].equals("merchant_param2")) {
-//					log.info("merchant_param2: " + d1[0]);
-//					gateway1 = d1[1];
-//					log.info("gateway1: " + gateway1);
-////					returnURL = d1[1] + "=" + d1[2];
-//				}
-//			}
-//		}
-
 //		String returnURL = formData.get(returnUrlKey).get(0);
 
 //		MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();

@@ -78,7 +78,7 @@ public class SMSProperties {
     @Value("${sms.provider.entityid}")
     public String smsEntityId;
 
-    @Value("${sms.default.tmplid:1}")
+    @Value("${sms.default.tmplid}")
     public String smsDefaultTmplid;
 
     @Value("${sms.debug.msggateway:false}")

@@ -25,7 +25,8 @@ public class TestController {
 
         //Sms sms = new Sms(number, sms, Category.OTP, expirytime);
 
-        Sms sms = new Sms(number, msg, category, expirytime, "123");
+        Sms sms = new Sms(number, msg, category, expirytime, "1207167359714025316");
+//        Sms sms = new Sms("8827889058", "Hello", category, expirytime, "1307161597131238274");
 
         smsService.sendSMS(sms);
 
