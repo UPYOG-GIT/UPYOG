@@ -41,7 +41,7 @@ public class TransactionRepository {
 	}
 
 	public void insertResponse(String txnId, String encResp) {
-		String sql = "insert into eg_pg_resp(txn_id, txn_response) values(" + txnId + "," + encResp + ")";
+		String sql = "insert into eg_pg_resp(txn_id, txn_response) values('" + txnId + "','" + encResp + "')";
 		log.info("Reponse insert sql query: " + sql);
 		jdbcTemplate.execute(sql);
 	}
