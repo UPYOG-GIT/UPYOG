@@ -247,7 +247,7 @@ public class EnrichmentService {
 
 				DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
 
-				Integer plotArea = context.read("edcrDetail[0].planDetail.planInformation.plotArea");
+				Double plotArea = context.read("edcrDetail[0].planDetail.planInformation.plotArea");
 				Double buildingHeight = context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeight");
 
 				List jsonOutput = JsonPath.read(masterData, BPAConstants.RISKTYPE_COMPUTATION);
