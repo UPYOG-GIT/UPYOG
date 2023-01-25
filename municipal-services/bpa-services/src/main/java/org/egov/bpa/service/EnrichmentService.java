@@ -219,9 +219,9 @@ public class EnrichmentService {
 		}
 
 		if (StringUtils.isEmpty(bpa.getRiskType())) {
-			if (bpa.getBusinessService().equals(BPAConstants.BPA_LOW_MODULE_CODE)) {
-				bpa.setRiskType(BPAConstants.LOW_RISKTYPE);
-			} else {
+//			if (bpa.getBusinessService().equals(BPAConstants.BPA_LOW_MODULE_CODE)) {
+//				bpa.setRiskType(BPAConstants.LOW_RISKTYPE);
+//			} else {
 				Map<String, List<String>> masterData = mdmsValidator.getAttributeValues(mdmsData);
 				StringBuilder uri = new StringBuilder(config.getEdcrHost());
 				uri.append(config.getGetPlanEndPoint());
@@ -270,7 +270,7 @@ public class EnrichmentService {
 					throw new CustomException(BPAErrorConstants.INVALID_RISK_TYPE, "The Risk Type is not valid ");
 				}
 
-			}
+//			}
 		}
 
 		log.info("Application state is : " + state);
