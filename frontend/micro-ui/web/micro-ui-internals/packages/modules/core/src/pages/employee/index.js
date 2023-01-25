@@ -107,7 +107,10 @@ const EmployeeApp = ({
                 <span style={{ margin: "0 10px" }}>|</span>
                 <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
                 <span style={{ margin: "0 10px" }}>|</span>
-                <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href={pdfUrl} target='_blank'>UPYOG License</a>
+                  <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href={pdfUrl} target='_blank'>Developed by </a>
+          <img style={{ cursor: "pointer", display: "inline-flex", height: '1.4em' }} alt={"Developed By Entit Consulatncy Services"} src={`${sourceUrl}/entit-logo.png`} onError={"this.src='./../entit-logo.png'"} onClick={() => {
+            window.open('https://www.entitcs.com/', '_blank').focus();
+          }}></img>
               </div>
             </div>
           </div>
