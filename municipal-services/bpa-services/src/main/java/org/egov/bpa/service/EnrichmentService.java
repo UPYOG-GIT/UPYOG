@@ -246,9 +246,11 @@ public class EnrichmentService {
 				String jsonString = new JSONObject(responseMap).toString();
 
 				DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
-
-				Double plotArea = Double.valueOf(context.read("edcrDetail[0].planDetail.planInformation.plotArea"));
-				Double buildingHeight = Double.valueOf(context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeight"));
+				
+				String plotAreaStr=context.read("edcrDetail[0].planDetail.planInformation.plotArea");
+				String buildingHeightStr=context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeight");
+				Double plotArea = Double.valueOf(plotAreaStr);
+				Double buildingHeight = Double.valueOf(buildingHeightStr);
 
 				List jsonOutput = JsonPath.read(masterData, BPAConstants.RISKTYPE_COMPUTATION);
 				String filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
