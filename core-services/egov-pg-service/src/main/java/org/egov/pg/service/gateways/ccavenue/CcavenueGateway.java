@@ -139,42 +139,30 @@ public class CcavenueGateway implements Gateway {
 		log.info("Inside CCAvenue generateRedirectURI()");
 		Random random = new Random();
 		int randomNumber = random.nextInt(90000000) + 10000000;
-		String orderNumber = "CG" + randomNumber;
+		
+		log.info("transaction.getTxnId() : " + transaction.getTxnId());
+//		String orderNumber = "CG" + randomNumber;
+		String orderNumber = transaction.getTxnId();
 		Double amount = Double.parseDouble(transaction.getTxnAmount());
 		String callBackUrl = transaction.getCallbackUrl();
 //		String jsonData = "{ \"merchant_id\":\""+MERCHANT_ID+"\", \"order_id\":\"" + orderNumber + "\" }";
 //		String jsonData = "{ \"merchant_id\":1941257, \"order_id\":\"" + orderNumber
 //				+ "\" ,\"currency\":\"INR\",\"amount\":" + amount + "}";
 
-//		String jsonData = "{ \"merchant_id\":" + MERCHANT_ID + ",\"order_id\":\"" + orderNumber
-//				+ "\",\"currency\":\"INR\"," + "\"amount\":" + amount + "," + "\"redirect_url\":\""
-//				+ callBackUrl + "\"," + "\"cancel_url\":\"" + callBackUrl + "\","
-//				+ "\"language\":\"EN\",\"billing_name\":\"\",\"billing_address\":\"\","
-//				+ "\"billing_city\":\"\",\"billing_state\":\"\",\"billing_zip\":\"\","
-//				+ "\"billing_country\":\"\",\"billing_tel\":,\"billing_email\":\"\","
-//				+ "\"delivery_name\":\"\",\"delivery_address\":\"\",\"delivery_city\":\"\","
-//				+ "\"delivery_state\":\"\",\"delivery_zip\":\"\",\"delivery_country\":\"\","
-//				+ "\"delivery_tel\":,\"merchant_param1\":\"\",\"merchant_param2\":\"\","
-//				+ "\"merchant_param3\":\"\",\"merchant_param4\":\"\",\"merchant_param5\":\"\"}";
-		String data = "merchant_id=" + MERCHANT_ID + "&order_id=" + orderNumber + "&currency=INR&amount=" + amount
-				+ "&redirect_url=" + RETURN_URL + "&cancel_url=" + RETURN_URL + ""
+		String requestString = "merchant_id=" + MERCHANT_ID + "&order_id=" + orderNumber + "&currency=INR&amount="
+				+ amount + "&redirect_url=" + RETURN_URL + "&cancel_url=" + RETURN_URL + ""
 				+ "&language=EN&billing_name=&billing_address=&" + "billing_city=&billing_state=&billing_zip=&"
 				+ "billing_country=&billing_tel=&billing_email=&" + "delivery_name=&delivery_address=&delivery_city="
 				+ "&delivery_state=&delivery_zip=&delivery_country=" + "&delivery_tel=&merchant_param1=" + callBackUrl
 				+ "&merchant_param2=CCAVENUE" + "&merchant_param3=&merchant_param4=&merchant_param5=";
 
-//		String jsonData = "{ \"merchant_id\":\"" + MERCHANT_ID + "\",\"tid\":\"1673976281580\", \"order_id\":\"" + orderNumber
-//				+ "\" ,\"currency\":\"INR\",\"amount\":\"1.00\","
-//				+ "\"redirect_url\":\"https://www.niwaspass.com/digit-ui/citizen/payment\","
-//				+ "\"cancel_url\":\"https://www.niwaspass.com/digit-ui/citizen/payment\"," + "\"language\":\"EN\"}";
-
-		log.info("jsonData: " + data);
+		log.info("requestString : " + requestString);
 		String encryptedJsonData = "";
 		StringBuffer wsDataBuff = new StringBuffer();
 
-		if (WORKING_KEY != null && !WORKING_KEY.equals("") && data != null && !data.equals("")) {
+		if (WORKING_KEY != null && !WORKING_KEY.equals("") && requestString != null && !requestString.equals("")) {
 			CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
-			encryptedJsonData = ccavenueUtis.encrypt(data);
+			encryptedJsonData = ccavenueUtis.encrypt(requestString);
 		}
 		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE);
 //		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE + "&response_type="
@@ -188,7 +176,9 @@ public class CcavenueGateway implements Gateway {
 		StringBuffer vStringBuffer = null;
 		try {
 //			WS_URL+="&" + wsDataBuff;
-			url = new URL(WS_URL + "&" + wsDataBuff);
+			String urlString = WS_URL + "&" + wsDataBuff;
+//			url = new URL(WS_URL + "&" + wsDataBuff);
+			url = new URL(urlString);
 
 			if (url.openConnection() instanceof HttpsURLConnection) {
 				httpUrlConnection = (HttpsURLConnection) url.openConnection();
@@ -301,8 +291,7 @@ public class CcavenueGateway implements Gateway {
 //						+ "*"+ADDITIONAL_FIELD2_KEY+"$"+ADDITIONAL_FIELD_VALUE+"*"+ADDITIONAL_FIELD3_KEY+"$"+ADDITIONAL_FIELD_VALUE+""
 //						+ "*"+"ADDITIONAL_FIELD4_KEY"+"$"+transaction.getConsumerCode()+"*"+ADDITIONAL_FIELD5_KEY+"$"+getModuleCode(transaction);
 
-				UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(WS_URL + "&" + wsDataBuff)
-						.queryParams(params).build();
+				UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(urlString).queryParams(params).build();
 
 				log.info("uriComponents: " + uriComponents.toUri().toString());
 
