@@ -2,9 +2,12 @@ package org.egov.pg.service.gateways.ccavenue;
 
 import static java.util.Objects.isNull;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
@@ -18,14 +21,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.HttpsURLConnection;
 
-import org.egov.pg.models.PgDetail;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.pg.models.Transaction;
-import org.egov.pg.repository.PgDetailRepository;
 import org.egov.pg.service.Gateway;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
@@ -166,7 +166,8 @@ public class CcavenueGateway implements Gateway {
 		}
 //		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE);
 //		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE );
-		wsDataBuff.append("?command=initiateTransaction&encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE);
+		wsDataBuff
+				.append("?command=initiateTransaction&encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE);
 //		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE + "&response_type="
 //				+ RESPONSE_TYPE + "&request_type=" + REQUEST_TYPE);
 
@@ -405,18 +406,77 @@ public class CcavenueGateway implements Gateway {
 	private Transaction fetchStatusFromGateway(Transaction currentStatus, Map<String, String> resMap) {
 		log.info("inside CcavenueGateway.fetchStatusFromGateway().....");
 
-		String refNo = resMap.get("bank_ref_no");
+		String refNo = resMap.get("tracking_id");
 		String orderNo = resMap.get("order_id");
 		String txnRef = currentStatus.getTxnId();
 		String orderStatusQueryJson = "{ \"reference_no\":\"" + refNo + "\", \"order_no\":\"" + orderNo + "\" }";
-		
+
 		String encryptedJsonData = "";
 		StringBuffer wsDataBuff = new StringBuffer();
 
-		if (WORKING_KEY != null && !WORKING_KEY.equals("") && orderStatusQueryJson != null && !orderStatusQueryJson.equals("")) {
+		if (WORKING_KEY != null && !WORKING_KEY.equals("") && orderStatusQueryJson != null
+				&& !orderStatusQueryJson.equals("")) {
 			CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
 			encryptedJsonData = ccavenueUtis.encrypt(orderStatusQueryJson);
 		}
+
+		URL url = null;
+		HttpURLConnection vHttpUrlConnection = null;
+		DataOutputStream vPrintout = null;
+		DataInputStream vInput = null;
+		String urlStr = "https://logintest.ccavenue.com/apis/servlet/DoWebTrans?enc_request=" + encryptedJsonData
+				+ "&access_code=" + ACCESS_CODE
+				+ "&request_type=JSON&response_type=JSON&command=orderStatusTracker&version=1.2";
+		StringBuffer vStringBuffer = null;
+		wsDataBuff.append("&enc_request=" + encryptedJsonData + "&access_code=" + ACCESS_CODE
+				+ "&request_type=JSON&response_type=JSON&version=1.2");
+
+		try {
+			url = new URL(urlStr);
+			if (url.openConnection() instanceof HttpsURLConnection) {
+
+				vHttpUrlConnection = (HttpsURLConnection) url.openConnection();
+				vHttpUrlConnection.setRequestMethod("POST");
+				System.out.println(vHttpUrlConnection.getRequestMethod());
+
+			}
+			vHttpUrlConnection.setDoInput(true);
+			vHttpUrlConnection.setDoOutput(true);
+			vHttpUrlConnection.setUseCaches(false);
+
+			vHttpUrlConnection.connect();
+			vPrintout = new DataOutputStream(vHttpUrlConnection.getOutputStream());
+//			vPrintout.writeBytes(wsDataBuff.toString());
+			vPrintout.writeChars(wsDataBuff.toString());
+			vPrintout.flush();
+			vPrintout.close();
+			try {
+				BufferedReader bufferedreader = new BufferedReader(
+						new InputStreamReader(vHttpUrlConnection.getInputStream()));
+				vStringBuffer = new StringBuffer();
+				String vRespData;
+				while ((vRespData = bufferedreader.readLine()) != null)
+					if (vRespData.length() != 0)
+						vStringBuffer.append(vRespData.trim());
+				bufferedreader.close();
+				bufferedreader = null;
+			} finally {
+				if (vInput != null)
+					vInput.close();
+			}
+
+			System.out.println("url: " + vHttpUrlConnection.getURL().toURI());
+			System.out.println("vStringBuffer: " + vStringBuffer);
+			if (isNull(vHttpUrlConnection.getURL().toURI()))
+				System.out.println("CCAVENUE_REDIRECT_URI_GEN_FAILED");
+			else {
+
+			}
+		} catch (Exception e) {
+			System.out.println("Unable to retrieve redirect URI from gateway: " + e);
+
+		}
+
 		String queryUrl = "https://login.ccavenue.com/apis/servlet/DoWebTrans";
 		String hash = hashCal(ACCESS_CODE + "|" + "verify_payment" + "|" + txnRef + "|" + WORKING_KEY);
 
