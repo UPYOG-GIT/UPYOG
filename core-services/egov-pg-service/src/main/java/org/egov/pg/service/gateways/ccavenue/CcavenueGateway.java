@@ -165,7 +165,8 @@ public class CcavenueGateway implements Gateway {
 			encryptedJsonData = ccavenueUtis.encrypt(requestString);
 		}
 //		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE);
-		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE + "&version=1.2");
+//		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE );
+		wsDataBuff.append("?command=initiateTransaction&encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE);
 //		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE + "&response_type="
 //				+ RESPONSE_TYPE + "&request_type=" + REQUEST_TYPE);
 
@@ -177,7 +178,7 @@ public class CcavenueGateway implements Gateway {
 		StringBuffer vStringBuffer = null;
 		try {
 //			WS_URL+="&" + wsDataBuff;
-			String urlString = WS_URL + "&" + wsDataBuff;
+			String urlString = WS_URL + wsDataBuff;
 //			url = new URL(WS_URL + "&" + wsDataBuff);
 			url = new URL(urlString);
 
@@ -360,7 +361,7 @@ public class CcavenueGateway implements Gateway {
 			return txn;
 		}
 
-//		return fetchStatusFromGateway(currentStatus);
+//		return fetchStatusFromGateway(currentStatus, resMap);
 		return txn;
 	}
 
@@ -401,9 +402,22 @@ public class CcavenueGateway implements Gateway {
 
 	}
 
-	private Transaction fetchStatusFromGateway(Transaction currentStatus) {
+	private Transaction fetchStatusFromGateway(Transaction currentStatus, Map<String, String> resMap) {
 		log.info("inside CcavenueGateway.fetchStatusFromGateway().....");
+
+		String refNo = resMap.get("bank_ref_no");
+		String orderNo = resMap.get("order_id");
 		String txnRef = currentStatus.getTxnId();
+		String orderStatusQueryJson = "{ \"reference_no\":\"" + refNo + "\", \"order_no\":\"" + orderNo + "\" }";
+		
+		String encryptedJsonData = "";
+		StringBuffer wsDataBuff = new StringBuffer();
+
+		if (WORKING_KEY != null && !WORKING_KEY.equals("") && orderStatusQueryJson != null && !orderStatusQueryJson.equals("")) {
+			CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
+			encryptedJsonData = ccavenueUtis.encrypt(orderStatusQueryJson);
+		}
+		String queryUrl = "https://login.ccavenue.com/apis/servlet/DoWebTrans";
 		String hash = hashCal(ACCESS_CODE + "|" + "verify_payment" + "|" + txnRef + "|" + WORKING_KEY);
 
 		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
