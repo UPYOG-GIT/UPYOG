@@ -103,7 +103,7 @@ public class EnrichmentService {
 			if (!bpaRequest.getBPA().getRiskType().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)) {
 				bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_MODULE_CODE);
 			} else {
-				bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_MODULE_CODE);
+				bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_LOW_MODULE_CODE);
 			}
 		} else {
 			bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_OC_MODULE_CODE);
