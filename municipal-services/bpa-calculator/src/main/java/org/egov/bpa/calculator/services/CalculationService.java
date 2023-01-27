@@ -139,7 +139,7 @@ public class CalculationService {
 		if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.LOW_RISK_PERMIT_FEE_TYPE)) {
 
 //			 stopping Application fee for lowrisk applicaiton according to BBI-391
-			calulationCriteria.setFeeType(BPACalculatorConstants.MDMS_CALCULATIONTYPE_APL_FEETYPE);
+			calulationCriteria.setFeeType(BPACalculatorConstants.MDMS_CALCULATIONTYPE_LOW_APL_FEETYPE);
 			estimatesAndSlabs = getBaseTax(calulationCriteria, requestInfo, mdmsData);
 
 			estimates.addAll(estimatesAndSlabs.getEstimates());
