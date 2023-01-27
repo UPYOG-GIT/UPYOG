@@ -144,10 +144,10 @@ public class CalculationService {
 
 			estimates.addAll(estimatesAndSlabs.getEstimates());
 
-			calulationCriteria.setFeeType(BPACalculatorConstants.MDMS_CALCULATIONTYPE_LOW_SANC_FEETYPE);
-			estimatesAndSlabs = getBaseTax(calulationCriteria, requestInfo, mdmsData);
-
-			estimates.addAll(estimatesAndSlabs.getEstimates());
+//			calulationCriteria.setFeeType(BPACalculatorConstants.MDMS_CALCULATIONTYPE_LOW_SANC_FEETYPE);
+//			estimatesAndSlabs = getBaseTax(calulationCriteria, requestInfo, mdmsData);
+//
+//			estimates.addAll(estimatesAndSlabs.getEstimates());
 
 			calulationCriteria.setFeeType(BPACalculatorConstants.LOW_RISK_PERMIT_FEE_TYPE);
 
