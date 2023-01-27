@@ -55,7 +55,7 @@ const BpaApplicationDetail = () => {
 
   if(data && data?.applicationData?.businessService === "BPA_LOW")
   {
-    businessService = ["BPA.LOW_RISK_PERMIT_FEE"]
+    businessService = ["BPA.NC_APP_FEE","BPA.NC_SAN_FEE"]
   }
   else if(data && data?.applicationData?.businessService === "BPA" && data?.applicationData?.riskType === "HIGH")
   {
