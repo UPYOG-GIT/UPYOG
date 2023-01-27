@@ -144,7 +144,7 @@ public class CalculationService {
 
 			estimates.addAll(estimatesAndSlabs.getEstimates());
 
-			calulationCriteria.setFeeType(BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE);
+			calulationCriteria.setFeeType(BPACalculatorConstants.MDMS_CALCULATIONTYPE_LOW_SANC_FEETYPE);
 			estimatesAndSlabs = getBaseTax(calulationCriteria, requestInfo, mdmsData);
 
 			estimates.addAll(estimatesAndSlabs.getEstimates());
