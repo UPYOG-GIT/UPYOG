@@ -52,7 +52,22 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
         {
             Header: t("ES_INBOX_SLA_DAYS_REMAINING"),
             accessor: row => GetStatusCell(row?.sla),
-        }
+        },
+        {
+            Header: t("Add Charges"),
+            accessor: "PostFee",
+            disableSortBy: true,
+            Cell: ({ row }) => {
+                
+            return (
+                <div>
+                <Link to={`${parentRoute}/addnew/paytype/${row.original["applicationId"]}`}>
+                    <button type="button" className="link">go</button>
+                </Link>
+                </div>
+            );
+            },
+        },
         ]
     })
 
