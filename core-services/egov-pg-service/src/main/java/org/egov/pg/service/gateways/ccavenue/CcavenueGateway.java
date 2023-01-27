@@ -139,7 +139,7 @@ public class CcavenueGateway implements Gateway {
 		log.info("Inside CCAvenue generateRedirectURI()");
 		Random random = new Random();
 		int randomNumber = random.nextInt(90000000) + 10000000;
-		
+
 		log.info("transaction.getTxnId() : " + transaction.getTxnId());
 //		String orderNumber = "CG" + randomNumber;
 		String orderNumber = transaction.getTxnId();
@@ -164,7 +164,8 @@ public class CcavenueGateway implements Gateway {
 			CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
 			encryptedJsonData = ccavenueUtis.encrypt(requestString);
 		}
-		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE);
+//		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE);
+		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE + "&version=1.2");
 //		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE + "&response_type="
 //				+ RESPONSE_TYPE + "&request_type=" + REQUEST_TYPE);
 

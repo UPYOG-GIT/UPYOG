@@ -219,58 +219,62 @@ public class EnrichmentService {
 		}
 
 		if (StringUtils.isEmpty(bpa.getRiskType())) {
-			if (bpa.getBusinessService().equals(BPAConstants.BPA_LOW_MODULE_CODE)) {
-				bpa.setRiskType(BPAConstants.LOW_RISKTYPE);
-			} else {
-				Map<String, List<String>> masterData = mdmsValidator.getAttributeValues(mdmsData);
-				StringBuilder uri = new StringBuilder(config.getEdcrHost());
-				uri.append(config.getGetPlanEndPoint());
-				uri.append("?").append("tenantId=").append(bpa.getTenantId().split("\\.")[0]);
-				uri.append("&").append("edcrNumber=").append(bpa.getEdcrNumber());
-				org.egov.bpa.web.model.edcr.RequestInfo edcrRequestInfo = new org.egov.bpa.web.model.edcr.RequestInfo();
+//			if (bpa.getBusinessService().equals(BPAConstants.BPA_LOW_MODULE_CODE)) {
+//				bpa.setRiskType(BPAConstants.LOW_RISKTYPE);
+//			} else {
+			Map<String, List<String>> masterData = mdmsValidator.getAttributeValues(mdmsData);
+			StringBuilder uri = new StringBuilder(config.getEdcrHost());
+			uri.append(config.getGetPlanEndPoint());
+			uri.append("?").append("tenantId=").append(bpa.getTenantId().split("\\.")[0]);
+			uri.append("&").append("edcrNumber=").append(bpa.getEdcrNumber());
+			org.egov.bpa.web.model.edcr.RequestInfo edcrRequestInfo = new org.egov.bpa.web.model.edcr.RequestInfo();
 
-				BeanUtils.copyProperties(bpaRequest.getRequestInfo(), edcrRequestInfo);
+			BeanUtils.copyProperties(bpaRequest.getRequestInfo(), edcrRequestInfo);
 
-				LinkedHashMap responseMap = null;
+			LinkedHashMap responseMap = null;
 
-				try {
-					responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri,
-							new RequestInfoWrapper(edcrRequestInfo));
-				} catch (ServiceCallException se) {
-					throw new CustomException(BPAErrorConstants.EDCR_ERROR, " EDCR Number is Invalid");
-				}
-
-				if (CollectionUtils.isEmpty(responseMap))
-					throw new CustomException(BPAErrorConstants.EDCR_ERROR,
-							"The response from EDCR service is empty or null");
-				String jsonString = new JSONObject(responseMap).toString();
-
-				DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
-
-				Integer plotArea = context.read("edcrDetail[0].planDetail.planInformation.plotArea");
-				Double buildingHeight = context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeight");
-
-				List jsonOutput = JsonPath.read(masterData, BPAConstants.RISKTYPE_COMPUTATION);
-				String filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
-						+ ") || ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
-						+ buildingHeight + "  ))].riskType";
-
-				log.info("filterExp: " + filterExp);
-
-				List<String> riskTypes = JsonPath.read(jsonOutput, filterExp);
-
-				log.info("riskTypes: " + riskTypes.toString());
-
-				if (!CollectionUtils.isEmpty(riskTypes)) {
-					String expectedRiskType = riskTypes.get(0);
-					log.info("expectedRiskType: " + expectedRiskType);
-
-					bpa.setRiskType(expectedRiskType);
-				} else {
-					throw new CustomException(BPAErrorConstants.INVALID_RISK_TYPE, "The Risk Type is not valid ");
-				}
-
+			try {
+				responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri,
+						new RequestInfoWrapper(edcrRequestInfo));
+			} catch (ServiceCallException se) {
+				throw new CustomException(BPAErrorConstants.EDCR_ERROR, " EDCR Number is Invalid");
 			}
+
+			if (CollectionUtils.isEmpty(responseMap))
+				throw new CustomException(BPAErrorConstants.EDCR_ERROR,
+						"The response from EDCR service is empty or null");
+			String jsonString = new JSONObject(responseMap).toString();
+
+			DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
+
+			String plotAreaStr = "" + context.read("edcrDetail[0].planDetail.planInformation.plotArea");
+			String buildingHeightStr = "" + context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeight");
+			Double plotArea = Double.valueOf(plotAreaStr);
+//				Double plotArea = context.read("edcrDetail[0].planDetail.planInformation.plotArea");
+			Double buildingHeight = Double.valueOf(buildingHeightStr);
+//				Double buildingHeight = context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeight");
+
+			List jsonOutput = JsonPath.read(masterData, BPAConstants.RISKTYPE_COMPUTATION);
+			String filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
+					+ ") || ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
+					+ buildingHeight + "  ))].riskType";
+
+			log.info("filterExp: " + filterExp);
+
+			List<String> riskTypes = JsonPath.read(jsonOutput, filterExp);
+
+			log.info("riskTypes: " + riskTypes.toString());
+
+			if (!CollectionUtils.isEmpty(riskTypes)) {
+				String expectedRiskType = riskTypes.get(0);
+				log.info("expectedRiskType: " + expectedRiskType);
+
+				bpa.setRiskType(expectedRiskType);
+			} else {
+				throw new CustomException(BPAErrorConstants.INVALID_RISK_TYPE, "The Risk Type is not valid ");
+			}
+
+//			}
 		}
 
 		log.info("Application state is : " + state);

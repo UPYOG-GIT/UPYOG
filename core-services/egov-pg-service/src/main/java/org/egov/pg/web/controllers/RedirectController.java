@@ -92,7 +92,7 @@ public class RedirectController {
 //		MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
 		HashMap<String, String> queryMap = new HashMap<>();
 		queryMap.put("eg_pg_txnid", txnId);
-		queryMap.put("encResp", encResp);
+//		queryMap.put("encResp", encResp);
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		queryMap.forEach(params::add);
 		transactionService.updateResponse(txnId, encResp);
