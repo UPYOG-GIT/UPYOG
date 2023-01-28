@@ -186,6 +186,7 @@ public class CalculationService {
 		Double calculatedAmout = 0d;
 		ArrayList<TaxHeadEstimate> estimates = new ArrayList<TaxHeadEstimate>();
 		if (calculationTypeMap.containsKey("calsiLogic")) {
+			log.info("inside if condition");
 			LinkedHashMap ocEdcr = edcrService.getEDCRDetails(requestInfo, bpa);
 			String jsonString = new JSONObject(ocEdcr).toString();
 			DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
@@ -243,13 +244,14 @@ public class CalculationService {
 				estimates.add(estimate);
 			}
 		} else {
+			log.info("inside else condition");
 			TaxHeadEstimate estimate = new TaxHeadEstimate();
 			
 //			calculatedAmout = Integer
 //					.parseInt(calculationTypeMap.get(BPACalculatorConstants.MDMS_CALCULATIONTYPE_AMOUNT).toString());
 			calculatedAmout = Double
 					.parseDouble(calculationTypeMap.get(BPACalculatorConstants.MDMS_CALCULATIONTYPE_AMOUNT).toString());
-
+			log.info("calculatedAmout: "+calculatedAmout);
 			BigDecimal totalTax = BigDecimal.valueOf(calculatedAmout);
 			if (totalTax.compareTo(BigDecimal.ZERO) == -1)
 				throw new CustomException(BPACalculatorConstants.INVALID_AMOUNT, "Tax amount is negative");
