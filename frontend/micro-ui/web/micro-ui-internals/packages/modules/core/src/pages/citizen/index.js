@@ -35,7 +35,7 @@ const Home = ({
   const { t } = useTranslation();
   const { path } = useRouteMatch();
   sourceUrl = "https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com";
-  const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf"
+  const pdfUrl = "https://www.entitcs.com/";
 
   const appRoutes = modules.map(({ code, tenants }, index) => {
     const Module = Digit.ComponentRegistryService.getComponent(`${code}Module`);
