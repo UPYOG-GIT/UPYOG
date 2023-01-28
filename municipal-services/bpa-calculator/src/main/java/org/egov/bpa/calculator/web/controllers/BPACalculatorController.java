@@ -37,27 +37,29 @@ public class BPACalculatorController {
 
 	@Autowired
 	public BPACalculatorController(ObjectMapper objectMapper, HttpServletRequest request,
-								CalculationService calculationService,DemandService demandService) {
+			CalculationService calculationService, DemandService demandService) {
 		this.objectMapper = objectMapper;
 		this.request = request;
-		this.calculationService=calculationService;
-		this.demandService=demandService;
+		this.calculationService = calculationService;
+		this.demandService = demandService;
 	}
 
 	/**
 	 * Calulates the tradeLicense fee and creates Demand
+	 * 
 	 * @param calculationReq The calculation Request
 	 * @return Calculation Response
 	 */
 	@RequestMapping(value = "/_calculate", method = RequestMethod.POST)
 	public ResponseEntity<CalculationRes> calculate(@Valid @RequestBody CalculationReq calculationReq) {
 		log.debug("CalculationReaquest:: " + calculationReq);
-		log.info("calculationReq : "+calculationReq);
-		 List<Calculation> calculations = calculationService.calculate(calculationReq);
-		 log.info("calculations : "+calculations);
-		 CalculationRes calculationRes = CalculationRes.builder().calculations(calculations).build();
-		 return new ResponseEntity<CalculationRes>(calculationRes,HttpStatus.OK);
+//		log.info("calculationReq : " + calculationReq);
+		log.info("calculationReq.getCalulationCriteria().get(0).getFeeType() : "
+				+ calculationReq.getCalulationCriteria().get(0).getFeeType());
+		List<Calculation> calculations = calculationService.calculate(calculationReq);
+		log.info("calculations : " + calculations);
+		CalculationRes calculationRes = CalculationRes.builder().calculations(calculations).build();
+		return new ResponseEntity<CalculationRes>(calculationRes, HttpStatus.OK);
 	}
-
 
 }

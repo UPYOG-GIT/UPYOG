@@ -68,11 +68,16 @@ public class SepticTank extends FeatureProcess {
 
 	private static final Logger LOG = LogManager.getLogger(SepticTank.class);
 	private static final String RULE_45_E = "45-e";
-	public static final String DISTANCE_FROM_WATERSOURCE = "Distance from watersource";
-	public static final String DISTANCE_FROM_BUILDING = "Distance from Building";
-	public static final String MIN_DISTANCE_FROM_GOVTBUILDING_DESC = "Minimum distance fcrom government building";
-	public static final BigDecimal MIN_DIS_WATERSRC = BigDecimal.valueOf(18);
-	public static final BigDecimal MIN_DIS_BUILDING = BigDecimal.valueOf(6);
+//	public static final String DISTANCE_FROM_WATERSOURCE = "Distance from watersource";
+//	public static final String DISTANCE_FROM_BUILDING = "Distance from Building";
+//	public static final String MIN_DISTANCE_FROM_GOVTBUILDING_DESC = "Minimum distance fcrom government building";
+//	public static final BigDecimal MIN_DIS_WATERSRC = BigDecimal.valueOf(18);
+//	public static final BigDecimal MIN_DIS_BUILDING = BigDecimal.valueOf(6);
+
+//	added by manisha yadu-------------------------------------
+	public static final String MIN_CAPACITY_SEPTIC_TANK = "Minimum capacity of septic tank";
+	public static final BigDecimal ONE_POINT_FIVE = BigDecimal.valueOf(1.5);
+//	added by manisha yadu--end-----------------------------------
 
 	@Override
 	public Plan validate(Plan pl) {
@@ -86,45 +91,72 @@ public class SepticTank extends FeatureProcess {
 		scrutinyDetail.setKey("Common_Septic Tank ");
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, PERMITTED);
+		scrutinyDetail.addColumnHeading(3, REQUIRED);
 		scrutinyDetail.addColumnHeading(4, PROVIDED);
 		scrutinyDetail.addColumnHeading(5, STATUS);
-		List<org.egov.common.entity.edcr.SepticTank> septicTanks = pl.getSepticTanks();
 
-		for (org.egov.common.entity.edcr.SepticTank septicTank : septicTanks) {
-			boolean validWaterSrcDistance = false;
-			boolean validBuildingDistance = false;
+//		added by manisha yadu-------------------------------------
+		if (pl.getUtility() != null && pl.getVirtualBuilding() != null
+				&& pl.getUtility().getSepticTankCapacity() != null) {
+			BigDecimal givenStCapacity = pl.getUtility().getSepticTankCapacity();
 
-			if (!septicTank.getDistanceFromWaterSource().isEmpty()) {
-				BigDecimal minDistWaterSrc = septicTank.getDistanceFromWaterSource().stream().reduce(BigDecimal::min)
-						.get();
-				if (minDistWaterSrc != null && minDistWaterSrc.compareTo(MIN_DIS_WATERSRC) >= 0) {
-					validWaterSrcDistance = true;
-				}
-				buildResult(pl, scrutinyDetail, validWaterSrcDistance, DISTANCE_FROM_WATERSOURCE, ">= 18",
-						minDistWaterSrc.toString());
+			BigDecimal waterTankCapacity = pl.getPlanInformation().getRequiredWaterTankCapacity();// ------------------this
+																									// will give water
+																									// tank capacity
+			boolean validSepticTankCapacity = false;
+
+			BigDecimal RequiredSepticTankCapacity = waterTankCapacity.multiply(ONE_POINT_FIVE);
+
+			if (givenStCapacity.compareTo(RequiredSepticTankCapacity) >= 0
+					&& RequiredSepticTankCapacity.compareTo(BigDecimal.valueOf(0)) > 0) {
+				validSepticTankCapacity = true;
+
+				buildResult(pl, scrutinyDetail, validSepticTankCapacity, MIN_CAPACITY_SEPTIC_TANK,
+						RequiredSepticTankCapacity.toString(), givenStCapacity.toString());
+			} else if (RequiredSepticTankCapacity.compareTo(BigDecimal.valueOf(0)) == 0) {
+				
+			} else {
+				buildResult(pl, scrutinyDetail, validSepticTankCapacity, MIN_CAPACITY_SEPTIC_TANK,
+						RequiredSepticTankCapacity.toString(), givenStCapacity.toString());
+
 			}
+//		added by manisha yadu--end-----------------------------------
 
-			if (!septicTank.getDistanceFromBuilding().isEmpty()) {
-				BigDecimal minDistBuilding = septicTank.getDistanceFromBuilding().stream().reduce(BigDecimal::min)
-						.get();
-				if (minDistBuilding != null && minDistBuilding.compareTo(MIN_DIS_BUILDING) >= 0) {
-					validBuildingDistance = true;
-				}
-				buildResult(pl, scrutinyDetail, validBuildingDistance, DISTANCE_FROM_BUILDING, ">= 6",
-						minDistBuilding.toString());
-			}
+//		List<org.egov.common.entity.edcr.SepticTank> septicTanks = pl.getSepticTanks();
+//		for (org.egov.common.entity.edcr.SepticTank septicTank : septicTanks) {
+//			boolean validWaterSrcDistance = false;
+//			boolean validBuildingDistance = false;
+//
+//			if (!septicTank.getDistanceFromWaterSource().isEmpty()) {
+//				BigDecimal minDistWaterSrc = septicTank.getDistanceFromWaterSource().stream().reduce(BigDecimal::min)
+//						.get();
+//				if (minDistWaterSrc != null && minDistWaterSrc.compareTo(MIN_DIS_WATERSRC) >= 0) {
+//					validWaterSrcDistance = true;
+//				}
+//				buildResult(pl, scrutinyDetail, validWaterSrcDistance, DISTANCE_FROM_WATERSOURCE, ">= 18",
+//						minDistWaterSrc.toString());
+//			}
+//
+//			if (!septicTank.getDistanceFromBuilding().isEmpty()) {
+//				BigDecimal minDistBuilding = septicTank.getDistanceFromBuilding().stream().reduce(BigDecimal::min)
+//						.get();
+//				if (minDistBuilding != null && minDistBuilding.compareTo(MIN_DIS_BUILDING) >= 0) {
+//					validBuildingDistance = true;
+//				}
+//				buildResult(pl, scrutinyDetail, validBuildingDistance, DISTANCE_FROM_BUILDING, ">= 6",
+//						minDistBuilding.toString());
+//			}
+//		}
 		}
-
 		return pl;
 	}
 
-	private void buildResult(Plan pl, ScrutinyDetail scrutinyDetail, boolean valid, String description, String permited,
+	private void buildResult(Plan pl, ScrutinyDetail scrutinyDetail, boolean valid, String description, String required,
 			String provided) {
 		Map<String, String> details = new HashMap<>();
 		details.put(RULE_NO, RULE_45_E);
 		details.put(DESCRIPTION, description);
-		details.put(PERMITTED, permited);
+		details.put(REQUIRED, required);
 		details.put(PROVIDED, provided);
 		details.put(STATUS, valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 		scrutinyDetail.getDetail().add(details);

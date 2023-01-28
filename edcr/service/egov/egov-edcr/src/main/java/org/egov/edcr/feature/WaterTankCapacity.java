@@ -55,6 +55,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
@@ -63,11 +65,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class WaterTankCapacity extends FeatureProcess {
-    private static final String RULE_59_10_vii = "59-10-vii";
+	private static final String RULE_59_10_vii = "59-10-vii";
     private static final String RULE_59_10_vii_DESCRIPTION = "Water tank capacity";
     private static final String WATER_TANK_CAPACITY = "Minimum capacity of Water tank";
     private static final BigDecimal TWELVE_POINTFIVE = BigDecimal.valueOf(12.5);
-    private static final BigDecimal ONEHUNDRED_THIRTYFIVE = BigDecimal.valueOf(135);
+//    private static final BigDecimal ONEHUNDRED_THIRTYFIVE = BigDecimal.valueOf(135);
+    private static final BigDecimal FORTYFIVE = BigDecimal.valueOf(45);
+    private static final BigDecimal FIVE = BigDecimal.valueOf(5);
+    private static final Logger LOGGER = LogManager.getLogger(WaterTankCapacity_Birgaon.class);
 
     @Override
     public Plan validate(Plan pl) {
@@ -76,6 +81,7 @@ public class WaterTankCapacity extends FeatureProcess {
 
     @Override
     public Plan process(Plan pl) {
+    	LOGGER.info("inside WaterTankCapacity process()");
         scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.addColumnHeading(1, RULE_NO);
         scrutinyDetail.addColumnHeading(2, DESCRIPTION);
@@ -85,20 +91,44 @@ public class WaterTankCapacity extends FeatureProcess {
         scrutinyDetail.setKey("Common_Water tank capacity");
         String subRule = RULE_59_10_vii;
         String subRuleDesc = RULE_59_10_vii_DESCRIPTION;
+        BigDecimal expectedWaterTankCapacityR = BigDecimal.ZERO;
+        BigDecimal expectedWaterTankCapacityC = BigDecimal.ZERO;
         BigDecimal expectedWaterTankCapacity = BigDecimal.ZERO;
 
         if (pl.getUtility() != null && pl.getVirtualBuilding() != null
                 && pl.getUtility().getWaterTankCapacity() != null) {
             // No of persons = total builtup area / 12.5(occupant load)
             // Required Water tank capacity = 135 * no of persons
+
             Boolean valid = false;
             BigDecimal totalBuitUpArea = pl.getVirtualBuilding().getTotalBuitUpArea();
-            BigDecimal noOfPersons = totalBuitUpArea.divide(TWELVE_POINTFIVE, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+            
+//            BigDecimal noOfPersons = totalBuitUpArea.divide(TWELVE_POINTFIVE, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+//                    DcrConstants.ROUNDMODE_MEASUREMENTS);//--------COMENTED BY ME
+
+//          --------------added by manisha for water tank logic         
+            int noOfFamilyInResidential= pl.getPlanInformation().getTenementResidential();
+            int noOfFamilyInCommercial= pl.getPlanInformation().getTenementCommercial();
+//            String nn=pl.getPlanInfoProperties().get("TENEMENT_FOR_RESIDENTIAL");
+
+            BigDecimal noOfPersonsR = BigDecimal.valueOf(noOfFamilyInResidential).multiply(FIVE.setScale(0, BigDecimal.ROUND_HALF_UP));
+            BigDecimal noOfPersonsC = BigDecimal.valueOf(noOfFamilyInCommercial).multiply(FIVE.setScale(0, BigDecimal.ROUND_HALF_UP));
+         
+            expectedWaterTankCapacityR = FORTYFIVE
+                  .multiply(noOfPersonsR.setScale(0, BigDecimal.ROUND_HALF_UP));
+            
+            expectedWaterTankCapacityC = FORTYFIVE
+                    .multiply(noOfPersonsC.setScale(0, BigDecimal.ROUND_HALF_UP));
+            
+            expectedWaterTankCapacityR = expectedWaterTankCapacityR.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
                     DcrConstants.ROUNDMODE_MEASUREMENTS);
-            expectedWaterTankCapacity = ONEHUNDRED_THIRTYFIVE
-                    .multiply(noOfPersons.setScale(0, BigDecimal.ROUND_HALF_UP));
-            expectedWaterTankCapacity = expectedWaterTankCapacity.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+            expectedWaterTankCapacityC = expectedWaterTankCapacityC.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
                     DcrConstants.ROUNDMODE_MEASUREMENTS);
+            expectedWaterTankCapacity = expectedWaterTankCapacityR.add(expectedWaterTankCapacityC);
+            
+            
+            pl.getPlanInformation().setRequiredWaterTankCapacity(expectedWaterTankCapacity);
+//          --------------added by manisha for water tank logic end          
             BigDecimal providedWaterTankCapacity = pl.getUtility().getWaterTankCapacity();
             providedWaterTankCapacity = providedWaterTankCapacity.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
                     DcrConstants.ROUNDMODE_MEASUREMENTS);
