@@ -4,6 +4,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.spec.AlgorithmParameterSpec;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.StringTokenizer;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
@@ -178,4 +181,25 @@ class CcavenueUtils {
         System.out.println("CRC32 checksum for input string is: " + 	checksumValue);
         return String.valueOf(checksumValue);
     }
+	
+	public static HashMap tokenizeToHashMap(String msg, String delimPairValue, String delimKeyPair) {
+		HashMap keyPair = new HashMap();
+		ArrayList respList = new ArrayList();
+		String part = "";
+		StringTokenizer strTkn = new StringTokenizer(msg, delimPairValue, true);
+		while (strTkn.hasMoreTokens()) {
+			part = (String) strTkn.nextElement();
+			if (part.equals(delimPairValue)) {
+				part = null;
+			} else {
+				String str[] = part.split(delimKeyPair, 2);
+				keyPair.put(str[0], str.length > 1 ? (str[1].equals("") ? null : str[1]) : null);
+			}
+			if (part == null)
+				continue;
+			if (strTkn.hasMoreTokens())
+				strTkn.nextElement();
+		}
+		return keyPair.size() > 0 ? keyPair : null;
+	}
 }

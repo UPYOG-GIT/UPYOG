@@ -412,13 +412,10 @@ public class CcavenueGateway implements Gateway {
 		String orderStatusQueryJson = "{ \"reference_no\":\"" + refNo + "\", \"order_no\":\"" + orderNo + "\" }";
 
 		String encryptedJsonData = "";
-		StringBuffer wsDataBuff = new StringBuffer();
+//		StringBuffer wsDataBuff = new StringBuffer();
 
-		if (WORKING_KEY != null && !WORKING_KEY.equals("") && orderStatusQueryJson != null
-				&& !orderStatusQueryJson.equals("")) {
-			CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
-			encryptedJsonData = ccavenueUtis.encrypt(orderStatusQueryJson);
-		}
+		CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
+		encryptedJsonData = ccavenueUtis.encrypt(orderStatusQueryJson);
 
 		URL url = null;
 		HttpURLConnection vHttpUrlConnection = null;
@@ -428,8 +425,8 @@ public class CcavenueGateway implements Gateway {
 				+ "&access_code=" + ACCESS_CODE
 				+ "&request_type=JSON&response_type=JSON&command=orderStatusTracker&version=1.2";
 		StringBuffer vStringBuffer = null;
-		wsDataBuff.append("&enc_request=" + encryptedJsonData + "&access_code=" + ACCESS_CODE
-				+ "&request_type=JSON&response_type=JSON&version=1.2");
+//		wsDataBuff.append("&enc_request=" + encryptedJsonData + "&access_code=" + ACCESS_CODE
+//				+ "&request_type=JSON&response_type=JSON&version=1.2");
 
 		try {
 			url = new URL(urlStr);
@@ -437,7 +434,7 @@ public class CcavenueGateway implements Gateway {
 
 				vHttpUrlConnection = (HttpsURLConnection) url.openConnection();
 				vHttpUrlConnection.setRequestMethod("POST");
-				System.out.println(vHttpUrlConnection.getRequestMethod());
+//				System.out.println(vHttpUrlConnection.getRequestMethod());
 
 			}
 			vHttpUrlConnection.setDoInput(true);
@@ -445,11 +442,6 @@ public class CcavenueGateway implements Gateway {
 			vHttpUrlConnection.setUseCaches(false);
 
 			vHttpUrlConnection.connect();
-			vPrintout = new DataOutputStream(vHttpUrlConnection.getOutputStream());
-//			vPrintout.writeBytes(wsDataBuff.toString());
-			vPrintout.writeChars(wsDataBuff.toString());
-			vPrintout.flush();
-			vPrintout.close();
 			try {
 				BufferedReader bufferedreader = new BufferedReader(
 						new InputStreamReader(vHttpUrlConnection.getInputStream()));
@@ -468,13 +460,35 @@ public class CcavenueGateway implements Gateway {
 			System.out.println("url: " + vHttpUrlConnection.getURL().toURI());
 			System.out.println("vStringBuffer: " + vStringBuffer);
 			if (isNull(vHttpUrlConnection.getURL().toURI()))
-				System.out.println("CCAVENUE_REDIRECT_URI_GEN_FAILED");
+				log.info("CCAVENUE_REDIRECT_URI_GEN_FAILED");
 			else {
 
 			}
 		} catch (Exception e) {
-			System.out.println("Unable to retrieve redirect URI from gateway: " + e);
+			log.info("Unable to retrieve redirect URI from gateway: " + e);
 
+		}
+
+		String vResponse = vStringBuffer.toString();
+		String encResXML;
+		if (vResponse != null && !vResponse.equals("")) {
+			Map hm = CcavenueUtils.tokenizeToHashMap(vResponse, "&", "=");
+//			System.out.println("hm: " + hm);
+			encResXML = hm.containsKey("enc_response") ? hm.get("enc_response").toString() : "";
+//			System.out.println("encResXML: "+encResXML);
+			String vStatus = hm.containsKey("status") ? hm.get("status").toString() : "";
+			String vError_code = hm.containsKey("enc_error_code") ? hm.get("enc_error_code").toString() : "";
+			if (vStatus.equals("1")) {// If Api call failed
+				log.info("enc_response : " + encResXML);
+				log.info("error_code : " + vError_code);
+//				return;
+			}
+			if (!encResXML.equals("")) {
+//				CcavenueUtils aesUtil = new CcavenueUtils("WORKING_KEY");
+				String decResponse = ccavenueUtis.decrypt(encResXML);
+				log.info("Dec Response : " + decResponse);
+//				return;
+			}
 		}
 
 		String queryUrl = "https://login.ccavenue.com/apis/servlet/DoWebTrans";
