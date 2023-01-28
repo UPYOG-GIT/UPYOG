@@ -53,11 +53,12 @@ const BpaApplicationDetail = () => {
 
   let businessService = [];
 
-  if(data && data?.applicationData?.businessService === "BPA_LOW")
-  {
-    businessService = ["BPA.NC_APP_FEE","BPA.NC_SAN_FEE"]
-  }
-  else if(data && data?.applicationData?.businessService === "BPA" && data?.applicationData?.riskType === "HIGH")
+  // if(data && data?.applicationData?.businessService === "BPA_LOW")
+  // {
+  //   businessService = ["BPA.NC_APP_FEE","BPA.NC_SAN_FEE"]
+  // }
+  // else
+   if((data && data?.applicationData?.businessService === "BPA" && data?.applicationData?.riskType === "HIGH" ) || (ata && data?.applicationData?.businessService === "BPA_LOW" && data?.applicationData?.riskType === "LOW"))
   {
     businessService = ["BPA.NC_APP_FEE","BPA.NC_SAN_FEE"];
   }
