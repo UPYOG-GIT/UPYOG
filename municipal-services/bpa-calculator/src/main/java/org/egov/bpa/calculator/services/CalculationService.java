@@ -136,25 +136,26 @@ public class CalculationService {
 			Object mdmsData) {
 		List<TaxHeadEstimate> estimates = new LinkedList<>();
 		EstimatesAndSlabs estimatesAndSlabs;
-//		if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.LOW_RISK_PERMIT_FEE_TYPE)) {
-//
-////			 stopping Application fee for lowrisk applicaiton according to BBI-391
+		if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.LOW_RISK_PERMIT_FEE_TYPE)) {
+
+//			 stopping Application fee for lowrisk applicaiton according to BBI-391
+			calulationCriteria.setFeeType(BPACalculatorConstants.MDMS_CALCULATIONTYPE_APL_FEETYPE);
 //			calulationCriteria.setFeeType(BPACalculatorConstants.MDMS_CALCULATIONTYPE_LOW_APL_FEETYPE);
+			estimatesAndSlabs = getBaseTax(calulationCriteria, requestInfo, mdmsData);
+
+			estimates.addAll(estimatesAndSlabs.getEstimates());
+
+//			calulationCriteria.setFeeType(BPACalculatorConstants.MDMS_CALCULATIONTYPE_LOW_SANC_FEETYPE);
 //			estimatesAndSlabs = getBaseTax(calulationCriteria, requestInfo, mdmsData);
 //
 //			estimates.addAll(estimatesAndSlabs.getEstimates());
-//
-////			calulationCriteria.setFeeType(BPACalculatorConstants.MDMS_CALCULATIONTYPE_LOW_SANC_FEETYPE);
-////			estimatesAndSlabs = getBaseTax(calulationCriteria, requestInfo, mdmsData);
-////
-////			estimates.addAll(estimatesAndSlabs.getEstimates());
-//
-//			calulationCriteria.setFeeType(BPACalculatorConstants.LOW_RISK_PERMIT_FEE_TYPE);
-//
-//		} else {
+
+			calulationCriteria.setFeeType(BPACalculatorConstants.LOW_RISK_PERMIT_FEE_TYPE);
+
+		} else {
 			estimatesAndSlabs = getBaseTax(calulationCriteria, requestInfo, mdmsData);
 			estimates.addAll(estimatesAndSlabs.getEstimates());
-//		}
+		}
 
 		estimatesAndSlabs.setEstimates(estimates);
 
