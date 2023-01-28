@@ -34,9 +34,9 @@ public class ServiceRequestRepository {
 	 */
 	public Object fetchResult(StringBuilder uri, Object request) {
 		Object response = null;
-		log.debug("URI: " + uri.toString());
+		log.info("URI: " + uri.toString());
 		try {
-			log.debug("Request: " + mapper.writeValueAsString(request));
+			log.info("Request: " + mapper.writeValueAsString(request));
 			response = restTemplate.postForObject(uri.toString(), request, Map.class);
 		} catch (HttpClientErrorException e) {
 			log.error("External Service threw an Exception: ", e);
@@ -57,7 +57,7 @@ public class ServiceRequestRepository {
 				.append(System.lineSeparator());
 		str.append("URI: ").append(uri.toString()).append(System.lineSeparator());
 		try {
-			log.debug(str.toString());
+			log.info(str.toString());
 			response = restTemplate.postForObject(uri.toString(), request, String.class);
 		} catch (HttpClientErrorException e) {
 			log.error("External Service threw an Exception: ", e);
