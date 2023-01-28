@@ -57,7 +57,7 @@ const BpaApplicationDetail = () => {
   {
     businessService = ["BPA.NC_APP_FEE","BPA.NC_SAN_FEE"]
   }
-  else if(data && data?.applicationData?.businessService === "BPA" && data?.applicationData?.riskType === "HIGH")
+  else if((data && data?.applicationData?.businessService === "BPA" && data?.applicationData?.riskType === "HIGH" ))
   {
     businessService = ["BPA.NC_APP_FEE","BPA.NC_SAN_FEE"];
   }
