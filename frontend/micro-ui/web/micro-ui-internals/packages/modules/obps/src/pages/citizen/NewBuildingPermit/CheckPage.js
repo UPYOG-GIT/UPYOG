@@ -16,10 +16,10 @@ import {
     let user = Digit.UserService.getUser();
     const tenantId = user?.info?.permanentCity || value?.tenantId ||Digit.ULBService.getCurrentTenantId() ;
     let BusinessService;
-    if(value.businessService === "BPA_LOW" || value.businessService === "BPA")
+    if(value.businessService === "BPA_LOW")
     BusinessService="BPA.NC_APP_FEE";
-    // else if(value.businessService === "BPA")
-    // BusinessService="BPA.NC_APP_FEE";
+    else if(value.businessService === "BPA")
+    BusinessService="BPA.NC_APP_FEE";
 
     const { data, address, owners, nocDocuments, documents, additionalDetails, subOccupancy,PrevStateDocuments,PrevStateNocDocuments,applicationNo } = value;
     const isEditApplication = window.location.href.includes("editApplication");
