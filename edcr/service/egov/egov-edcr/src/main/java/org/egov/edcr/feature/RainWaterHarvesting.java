@@ -63,7 +63,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RainWaterHarvesting extends FeatureProcess {
-    private static final String RULE_51 = "51";
+	private static final String RULE_51 = "51";
     /*
      * private static final String RULE_51_DESCRIPTION = "RainWater Storage Arrangement "; private static final String
      * RAINWATER_HARVESTING_TANK_CAPACITY = "Minimum capacity of Rain Water Harvesting Tank";
@@ -71,8 +71,9 @@ public class RainWaterHarvesting extends FeatureProcess {
     private static final String RULE_51_DESCRIPTION = "Rain Water Harvesting";
     // private static final String RAINWATER_HARVESTING_TANK_CAPACITY = "Minimum capacity of Rain Water Harvesting Tank";
     private static final BigDecimal HUNDRED = BigDecimal.valueOf(100);
+    private static final BigDecimal ONE_HUNDRED_FIFTY = BigDecimal.valueOf(150);
     private static final String RWH_DECLARATION_ERROR = DxfFileConstants.RWH_DECLARED
-            + " in PLAN_INFO layer must be declared as YES for plot area greater than 100 sqm.";
+            + " in PLAN_INFO layer must be declared as YES for plot area greater than 150 sqm.";
 
     @Override
     public Plan validate(Plan pl) {
@@ -100,7 +101,7 @@ public class RainWaterHarvesting extends FeatureProcess {
 
         if (mostRestrictiveFarHelper != null && mostRestrictiveFarHelper.getType() != null) {
             if (DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode()) &&
-                    plotArea.compareTo(HUNDRED) >= 0) {
+                    plotArea.compareTo(ONE_HUNDRED_FIFTY) >= 0) {
                 addOutput(pl, errors, subRule, subRuleDesc);
             } else if (DxfFileConstants.F.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode())) {
                 addOutput(pl, errors, subRule, subRuleDesc);
@@ -138,7 +139,7 @@ public class RainWaterHarvesting extends FeatureProcess {
             if (pl.getUtility().getRainWaterHarvest() != null && !pl.getUtility().getRainWaterHarvest().isEmpty()) {
                 setReportOutputDetails(pl, subRule, subRuleDesc, null,
                         "Defined in the plan",
-                        Result.Verify.getResultVal());
+                        Result.Verified.getResultVal());
             } else {
                 setReportOutputDetails(pl, subRule, subRuleDesc, null,
                         "Not Defined in the plan",
