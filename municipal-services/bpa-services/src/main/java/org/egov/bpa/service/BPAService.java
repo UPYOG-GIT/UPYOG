@@ -439,7 +439,8 @@ public class BPAService {
 		 */
 		// Generate the sanction Demand
 		if ((businessSrvc.equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE)
-				|| businessSrvc.equalsIgnoreCase(BPAConstants.BPA_BUSINESSSERVICE))
+				|| businessSrvc.equalsIgnoreCase(BPAConstants.BPA_BUSINESSSERVICE)
+				|| businessSrvc.equalsIgnoreCase(BPAConstants.BPA_LOW_BUSINESSSERVICE))
 				&& state.equalsIgnoreCase(BPAConstants.PENDING_APPROVAL_STATE)) {
 			calculationService.addCalculation(bpaRequest, BPAConstants.SANCTION_FEE_KEY);
 		}

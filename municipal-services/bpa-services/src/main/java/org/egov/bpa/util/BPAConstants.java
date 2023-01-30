@@ -381,5 +381,7 @@ public class BPAConstants {
 	public static final String CHANNEL = "Channel";
 
 	public static final String BPA_BUSINESSSERVICE = "BPA";
+	
+	public static final String BPA_LOW_BUSINESSSERVICE = "BPA_LOW";
 
 }
