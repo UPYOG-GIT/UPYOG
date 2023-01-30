@@ -127,7 +127,7 @@ public class CalculationService {
 		log.info("inside CalculationService.getTaxHeadEstimates()");
 		List<TaxHeadEstimate> estimates = new LinkedList<>();
 		EstimatesAndSlabs estimatesAndSlabs;
-		if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.LOW_RISK_PERMIT_FEE_TYPE)) {
+		if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_LOW_APL_FEETYPE)) {
 
 //			 stopping Application fee for lowrisk applicaiton according to BBI-391
 //			calulationCriteria.setFeeType(BPACalculatorConstants.MDMS_CALCULATIONTYPE_APL_FEETYPE);
