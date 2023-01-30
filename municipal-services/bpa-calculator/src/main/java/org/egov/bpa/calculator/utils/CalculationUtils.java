@@ -101,10 +101,12 @@ public class CalculationUtils {
 			}
 			break;
 		case BPACalculatorConstants.MDMS_CALCULATIONTYPE_LOW_APL_FEETYPE:
-			billingBusinessService = config.getLowRiskPermitFeeBusinessService();
+//			billingBusinessService = config.getLowRiskPermitFeeBusinessService();
+			billingBusinessService = config.getApplFeeBusinessService();
 			break;
 		case BPACalculatorConstants.MDMS_CALCULATIONTYPE_LOW_SANC_FEETYPE:
-			billingBusinessService = config.getLowRiskPermitFeeBusinessService();
+//			billingBusinessService = config.getLowRiskPermitFeeBusinessService();
+			billingBusinessService = config.getSanclFeeBusinessService();
 			break;
 		case BPACalculatorConstants.LOW_RISK_PERMIT_FEE_TYPE:
 			billingBusinessService = config.getLowRiskPermitFeeBusinessService();
