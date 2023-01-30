@@ -191,8 +191,8 @@ public class BPAService {
 		if (bpaRequest.getBPA().getRiskType().equals(BPAConstants.LOW_RISKTYPE)
 				&& !applicationType.equalsIgnoreCase(BPAConstants.BUILDING_PLAN_OC)) {
 //			calculationService.addCalculation(bpaRequest, BPAConstants.LOW_RISK_PERMIT_FEE_KEY);
-//			calculationService.addCalculation(bpaRequest, BPAConstants.LOW_APPLICATION_FEE_KEY);
-			calculationService.addCalculation(bpaRequest, BPAConstants.APPLICATION_FEE_KEY);
+			calculationService.addCalculation(bpaRequest, BPAConstants.LOW_APPLICATION_FEE_KEY);
+//			calculationService.addCalculation(bpaRequest, BPAConstants.APPLICATION_FEE_KEY);
 		} else {
 			calculationService.addCalculation(bpaRequest, BPAConstants.APPLICATION_FEE_KEY);
 		}
@@ -430,6 +430,8 @@ public class BPAService {
 				edcrResponse);
 		String state = workflowService.getCurrentState(bpa.getStatus(), businessService);
 		String businessSrvc = businessService.getBusinessService();
+
+		log.info("businessSrvc :" + businessSrvc);
 
 		/*
 		 * Before approving the application we need to check sanction fee is applicable
