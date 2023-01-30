@@ -57,7 +57,7 @@ public class BPACalculatorController {
 		log.info("calculationReq.getCalulationCriteria().get(0).getFeeType() : "
 				+ calculationReq.getCalulationCriteria().get(0).getFeeType());
 		List<Calculation> calculations = calculationService.calculate(calculationReq);
-		log.info("calculations : " + calculations);
+		log.info("Calculations Amount : " + calculations.get(0).getTaxHeadEstimates().get(0).getEstimateAmount());
 		CalculationRes calculationRes = CalculationRes.builder().calculations(calculations).build();
 		return new ResponseEntity<CalculationRes>(calculationRes, HttpStatus.OK);
 	}

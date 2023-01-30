@@ -39,8 +39,6 @@ import net.minidev.json.JSONArray;
 @Slf4j
 public class CalculationService {
 
-	
-
 	@Autowired
 	private MDMSService mdmsService;
 
@@ -49,7 +47,7 @@ public class CalculationService {
 
 	@Autowired
 	private EDCRService edcrService;
-	
+
 	@Autowired
 	private BPACalculatorConfig config;
 
@@ -59,24 +57,22 @@ public class CalculationService {
 	@Autowired
 	private BPACalculatorProducer producer;
 
-
 	@Autowired
 	private BPAService bpaService;
 
 	/**
 	 * Calculates tax estimates and creates demand
 	 * 
-	 * @param calculationReq
-	 *            The calculationCriteria request
-	 * @return List of calculations for all applicationNumbers or tradeLicenses
-	 *         in calculationReq
+	 * @param calculationReq The calculationCriteria request
+	 * @return List of calculations for all applicationNumbers or tradeLicenses in
+	 *         calculationReq
 	 */
 	public List<Calculation> calculate(CalculationReq calculationReq) {
-		String tenantId = calculationReq.getCalulationCriteria().get(0)
-				.getTenantId();
+		String tenantId = calculationReq.getCalulationCriteria().get(0).getTenantId();
 		Object mdmsData = mdmsService.mDMSCall(calculationReq, tenantId);
-		List<Calculation> calculations = getCalculation(calculationReq.getRequestInfo(),calculationReq.getCalulationCriteria(), mdmsData);
-		demandService.generateDemand(calculationReq.getRequestInfo(),calculations, mdmsData);
+		List<Calculation> calculations = getCalculation(calculationReq.getRequestInfo(),
+				calculationReq.getCalulationCriteria(), mdmsData);
+		demandService.generateDemand(calculationReq.getRequestInfo(), calculations, mdmsData);
 		CalculationRes calculationRes = CalculationRes.builder().calculations(calculations).build();
 		producer.push(config.getSaveTopic(), calculationRes);
 		return calculations;
@@ -85,36 +81,33 @@ public class CalculationService {
 	/***
 	 * Calculates tax estimates
 	 * 
-	 * @param requestInfo
-	 *            The requestInfo of the calculation request
-	 * @param criterias
-	 *            list of CalculationCriteria containing the tradeLicense or
-	 *            applicationNumber
-	 * @return List of calculations for all applicationNumbers or tradeLicenses
-	 *         in criterias
+	 * @param requestInfo The requestInfo of the calculation request
+	 * @param criterias   list of CalculationCriteria containing the tradeLicense or
+	 *                    applicationNumber
+	 * @return List of calculations for all applicationNumbers or tradeLicenses in
+	 *         criterias
 	 */
-	public List<Calculation> getCalculation(RequestInfo requestInfo,
-			List<CalulationCriteria> criterias, Object mdmsData) {
+	public List<Calculation> getCalculation(RequestInfo requestInfo, List<CalulationCriteria> criterias,
+			Object mdmsData) {
+		log.info("CalculationService.getCalculation()");
 		List<Calculation> calculations = new LinkedList<>();
 		for (CalulationCriteria criteria : criterias) {
 			BPA bpa;
-			if (criteria.getBpa() == null
-					&& criteria.getApplicationNo() != null) {
-				bpa = bpaService.getBuildingPlan(requestInfo, criteria.getTenantId(),
-						criteria.getApplicationNo(), null);
+			if (criteria.getBpa() == null && criteria.getApplicationNo() != null) {
+				bpa = bpaService.getBuildingPlan(requestInfo, criteria.getTenantId(), criteria.getApplicationNo(),
+						null);
 				criteria.setBpa(bpa);
 			}
 
-			EstimatesAndSlabs estimatesAndSlabs = getTaxHeadEstimates(criteria,
-					requestInfo, mdmsData);
-			List<TaxHeadEstimate> taxHeadEstimates = estimatesAndSlabs
-					.getEstimates();
+			EstimatesAndSlabs estimatesAndSlabs = getTaxHeadEstimates(criteria, requestInfo, mdmsData);
+			List<TaxHeadEstimate> taxHeadEstimates = estimatesAndSlabs.getEstimates();
 
+			log.info("taxHeadEstimates: " + taxHeadEstimates.get(0).getEstimateAmount().toString());
 			Calculation calculation = new Calculation();
 			calculation.setBpa(criteria.getBpa());
 			calculation.setTenantId(criteria.getTenantId());
 			calculation.setTaxHeadEstimates(taxHeadEstimates);
-			calculation.setFeeType( criteria.getFeeType());
+			calculation.setFeeType(criteria.getFeeType());
 			calculations.add(calculation);
 
 		}
@@ -124,40 +117,40 @@ public class CalculationService {
 	/**
 	 * Creates TacHeadEstimates
 	 * 
-	 * @param calulationCriteria
-	 *            CalculationCriteria containing the tradeLicense or
-	 *            applicationNumber
-	 * @param requestInfo
-	 *            The requestInfo of the calculation request
+	 * @param calulationCriteria CalculationCriteria containing the tradeLicense or
+	 *                           applicationNumber
+	 * @param requestInfo        The requestInfo of the calculation request
 	 * @return TaxHeadEstimates and the billingSlabs used to calculate it
 	 */
-	private EstimatesAndSlabs getTaxHeadEstimates(
-			CalulationCriteria calulationCriteria, RequestInfo requestInfo,
+	private EstimatesAndSlabs getTaxHeadEstimates(CalulationCriteria calulationCriteria, RequestInfo requestInfo,
 			Object mdmsData) {
+		log.info("inside CalculationService.getTaxHeadEstimates()");
 		List<TaxHeadEstimate> estimates = new LinkedList<>();
 		EstimatesAndSlabs estimatesAndSlabs;
-		if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.LOW_RISK_PERMIT_FEE_TYPE)) {
-
-//			 stopping Application fee for lowrisk applicaiton according to BBI-391
-			calulationCriteria.setFeeType(BPACalculatorConstants.MDMS_CALCULATIONTYPE_APL_FEETYPE);
-//			calulationCriteria.setFeeType(BPACalculatorConstants.MDMS_CALCULATIONTYPE_LOW_APL_FEETYPE);
-			estimatesAndSlabs = getBaseTax(calulationCriteria, requestInfo, mdmsData);
-
-			estimates.addAll(estimatesAndSlabs.getEstimates());
-
-//			calulationCriteria.setFeeType(BPACalculatorConstants.MDMS_CALCULATIONTYPE_LOW_SANC_FEETYPE);
+//		if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.LOW_RISK_PERMIT_FEE_TYPE)) {
+//
+////			 stopping Application fee for lowrisk applicaiton according to BBI-391
+//			calulationCriteria.setFeeType(BPACalculatorConstants.MDMS_CALCULATIONTYPE_APL_FEETYPE);
+////			calulationCriteria.setFeeType(BPACalculatorConstants.MDMS_CALCULATIONTYPE_LOW_APL_FEETYPE);
 //			estimatesAndSlabs = getBaseTax(calulationCriteria, requestInfo, mdmsData);
 //
 //			estimates.addAll(estimatesAndSlabs.getEstimates());
+//
+////			calulationCriteria.setFeeType(BPACalculatorConstants.MDMS_CALCULATIONTYPE_LOW_SANC_FEETYPE);
+////			estimatesAndSlabs = getBaseTax(calulationCriteria, requestInfo, mdmsData);
+////
+////			estimates.addAll(estimatesAndSlabs.getEstimates());
+//
+//			calulationCriteria.setFeeType(BPACalculatorConstants.LOW_RISK_PERMIT_FEE_TYPE);
+//
+//		} else {
+		estimatesAndSlabs = getBaseTax(calulationCriteria, requestInfo, mdmsData);
 
-			calulationCriteria.setFeeType(BPACalculatorConstants.LOW_RISK_PERMIT_FEE_TYPE);
-
-		} else {
-			estimatesAndSlabs = getBaseTax(calulationCriteria, requestInfo, mdmsData);
-			estimates.addAll(estimatesAndSlabs.getEstimates());
-		}
+		estimates.addAll(estimatesAndSlabs.getEstimates());
+//		}
 
 		estimatesAndSlabs.setEstimates(estimates);
+		log.info("getEstimateAmount(): " + estimatesAndSlabs.getEstimates().get(0).getEstimateAmount().toString());
 
 		return estimatesAndSlabs;
 	}
@@ -165,11 +158,9 @@ public class CalculationService {
 	/**
 	 * Calculates base tax and cretaes its taxHeadEstimate
 	 * 
-	 * @param calulationCriteria
-	 *            CalculationCriteria containing the tradeLicense or
-	 *            applicationNumber
-	 * @param requestInfo
-	 *            The requestInfo of the calculation request
+	 * @param calulationCriteria CalculationCriteria containing the tradeLicense or
+	 *                           applicationNumber
+	 * @param requestInfo        The requestInfo of the calculation request
 	 * @return BaseTax taxHeadEstimate and billingSlabs used to calculate it
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -195,7 +186,7 @@ public class CalculationService {
 			DocumentContext calcContext = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonData);
 			JSONArray parameterPaths = calcContext.read("calsiLogic.*.paramPath");
 			JSONArray tLimit = calcContext.read("calsiLogic.*.tolerancelimit");
-			System.out.println("tolerance limit in: " + tLimit.get(0));
+			log.info("tolerance limit in: " + tLimit.get(0));
 			DocumentContext edcrContext = null;
 			if (!CollectionUtils.isEmpty(permitNumber)) {
 				BPA permitBpa = bpaService.getBuildingPlan(requestInfo, bpa.getTenantId(), null,
@@ -206,16 +197,16 @@ public class CalculationService {
 					edcrContext = JsonPath.using(Configuration.defaultConfiguration()).parse(edcrData);
 				}
 			}
-			
+
 			for (int i = 0; i < parameterPaths.size(); i++) {
 				Double ocTotalBuitUpArea = context.read(parameterPaths.get(i).toString());
 				Double bpaTotalBuitUpArea = edcrContext.read(parameterPaths.get(i).toString());
 				Double diffInBuildArea = ocTotalBuitUpArea - bpaTotalBuitUpArea;
-				System.out.println("difference in area: " + diffInBuildArea);
+				log.info("difference in area: " + diffInBuildArea);
 				Double limit = Double.valueOf(tLimit.get(i).toString());
 				if (diffInBuildArea > limit) {
 					JSONArray data = calcContext.read("calsiLogic.*.deviation");
-					System.out.println(data.get(0));
+					log.info(data.get(0).toString());
 					JSONArray data1 = (JSONArray) data.get(0);
 					for (int j = 0; j < data1.size(); j++) {
 						LinkedHashMap diff = (LinkedHashMap) data1.get(j);
@@ -246,12 +237,12 @@ public class CalculationService {
 		} else {
 			log.info("inside else condition");
 			TaxHeadEstimate estimate = new TaxHeadEstimate();
-			
+
 //			calculatedAmout = Integer
 //					.parseInt(calculationTypeMap.get(BPACalculatorConstants.MDMS_CALCULATIONTYPE_AMOUNT).toString());
 			calculatedAmout = Double
 					.parseDouble(calculationTypeMap.get(BPACalculatorConstants.MDMS_CALCULATIONTYPE_AMOUNT).toString());
-			log.info("calculatedAmout: "+calculatedAmout);
+			log.info("calculatedAmout: " + calculatedAmout);
 			BigDecimal totalTax = BigDecimal.valueOf(calculatedAmout);
 			if (totalTax.compareTo(BigDecimal.ZERO) == -1)
 				throw new CustomException(BPACalculatorConstants.INVALID_AMOUNT, "Tax amount is negative");
