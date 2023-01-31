@@ -252,19 +252,20 @@ const BpaApplicationDetail = () => {
   }
 
 
-  if(data && data?.applicationData?.businessService === "BPA_LOW" && data?.collectionBillDetails?.length > 0) {
-    !(data?.applicationData?.status.includes("REVOCATION")) && dowloadOptions.push({
-      order: 3,
-      label: t("BPA_PERMIT_ORDER"),
-      onClick: () => getPermitOccupancyOrderSearch({tenantId: data?.applicationData?.tenantId},"buildingpermit-low"),
-    });
-    (data?.applicationData?.status.includes("REVOCATION")) && dowloadOptions.push({
-      order: 3,
-      label: t("BPA_REVOCATION_PDF_LABEL"),
-      onClick: () => getRevocationPDFSearch({tenantId: data?.applicationData?.tenantId}),
-    });
+  // if(data && data?.applicationData?.businessService === "BPA_LOW" && data?.collectionBillDetails?.length > 0) {
+  //   !(data?.applicationData?.status.includes("REVOCATION")) && dowloadOptions.push({
+  //     order: 3,
+  //     label: t("BPA_PERMIT_ORDER"),
+  //     onClick: () => getPermitOccupancyOrderSearch({tenantId: data?.applicationData?.tenantId},"buildingpermit-low"),
+  //   });
+  //   (data?.applicationData?.status.includes("REVOCATION")) && dowloadOptions.push({
+  //     order: 3,
+  //     label: t("BPA_REVOCATION_PDF_LABEL"),
+  //     onClick: () => getRevocationPDFSearch({tenantId: data?.applicationData?.tenantId}),
+  //   });
     
-  } else if(data && data?.applicationData?.businessService === "BPA" && data?.collectionBillDetails?.length > 0) {
+  // } else
+   if((data && data?.applicationData?.businessService === "BPA" && data?.collectionBillDetails?.length > 0) || ((data && data?.applicationData?.businessService === "BPA_LOW" && data?.collectionBillDetails?.length > 0))){
     if(data?.applicationData?.status==="APPROVED"){
     dowloadOptions.push({
       order: 3,
