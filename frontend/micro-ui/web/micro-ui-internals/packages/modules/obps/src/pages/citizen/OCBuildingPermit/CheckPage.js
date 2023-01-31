@@ -27,7 +27,7 @@ const CheckPage = ({ onSubmit, value }) => {
   let user = Digit.UserService.getUser();
   let BusinessService;
   if (value.businessService === "BPA_LOW")
-    BusinessService = "BPA.LOW_RISK_PERMIT_FEE";
+    BusinessService = "BPA.NC_APP_FEE";
   else if (value.businessService === "BPA")
     BusinessService = "BPA.NC_APP_FEE";
   else if (value.businessService === "BPA_OC")

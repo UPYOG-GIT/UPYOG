@@ -297,7 +297,7 @@ export const OBPSService = {
 
     let appBusinessService = [], collectionBillDetails = [], collectionBillArray = [], totalAmount = 0, collectionBillRes = [];
 
-    if (BPA?.businessService === "BPA_LOW") appBusinessService = ["BPA.LOW_RISK_PERMIT_FEE"]
+    if (BPA?.businessService === "BPA_LOW") appBusinessService = ["BPA.NC_APP_FEE", "BPA.NC_SAN_FEE"]
     else if (BPA?.businessService === "BPA") appBusinessService = ["BPA.NC_APP_FEE", "BPA.NC_SAN_FEE"];
     else if (BPA?.businessService === "BPA_OC") appBusinessService = ["BPA.NC_OC_APP_FEE", "BPA.NC_OC_SAN_FEE"];
 

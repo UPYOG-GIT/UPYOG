@@ -168,13 +168,13 @@ export const SuccessfulPayment = (props) => {
                 {t("BPA_OC_CERTIFICATE")}
               </div>
             ) : null}
-            {data?.[0]?.businessService === "BPA_LOW" ? (
+            {/* {data?.[0]?.businessService === "BPA_LOW" ? (
               <div className="primary-label-btn d-grid" style={{ marginLeft: "unset" }} onClick={r => getPermitOccupancyOrderSearch("buildingpermit-low")}>
                 <DownloadPrefixIcon />
                 {t("BPA_PERMIT_ORDER")}
               </div>
-            ) : null}
-            {data?.[0]?.businessService === "BPA" && (data?.[0]?.businessService !== "BPA_LOW") && (data?.[0]?.businessService !== "BPA_OC") && (data?.[0]?.status==="PENDING_SANC_FEE_PAYMENT" || data?.[0]?.status === "APPROVED") ? (
+            ) : null} */}
+            {((data?.[0]?.businessService === "BPA") || (data?.[0]?.businessService === "BPA_LOW")) && (data?.[0]?.businessService !== "BPA_OC") && (data?.[0]?.status==="PENDING_SANC_FEE_PAYMENT" || data?.[0]?.status === "APPROVED") ? (
               <div className="primary-label-btn d-grid" style={{ marginLeft: "unset" }} onClick={r => getPermitOccupancyOrderSearch("buildingpermit")}>
                 <DownloadPrefixIcon />
                 {t("BPA_PERMIT_ORDER")}
