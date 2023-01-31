@@ -62,8 +62,9 @@ public class ParkingExtract extends FeatureExtract {
 				List<String> covereredParkLayerNames = Util.getLayerNamesLike(pl.getDoc(), coveredParkLayer);
 				for (String s : covereredParkLayerNames)
 					Util.getPolyLinesByLayer(pl.getDoc(), s).forEach(coveredPark -> {
-						if (floor.getNumber() < 0)
-							floor.getParking().getBasementCars().add(new MeasurementDetail(coveredPark, true));
+						if (floor.getNumber() < 0) {
+//							floor.getParking().getBasementCars().add(new MeasurementDetail(coveredPark, true));
+						}
 						else
 							floor.getParking().getCoverCars().add(new MeasurementDetail(coveredPark, true));
 					});
@@ -124,6 +125,13 @@ public class ParkingExtract extends FeatureExtract {
 			for (String s : lowerGroungFloorParkLayerNames)
 				Util.getPolyLinesByLayer(pl.getDoc(), s).forEach(
 						lowerGroundFloorPark -> pl.getParkingDetails().getLowerGroundFloor().add(new MeasurementDetail(lowerGroundFloorPark, true)));
+		
+			String basementParkLayer = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + block.getNumber() + "_"
+					+ layerNames.getLayerName("LAYER_NAME_BSMNT_PARKING");
+			List<String> basementParkLayerNames = Util.getLayerNamesLike(pl.getDoc(), basementParkLayer);
+			for (String s : basementParkLayerNames)
+				Util.getPolyLinesByLayer(pl.getDoc(), s).forEach(
+						basementPark -> pl.getParkingDetails().getBasementCars().add(new MeasurementDetail(basementPark, true)));
 		
 		}
 
