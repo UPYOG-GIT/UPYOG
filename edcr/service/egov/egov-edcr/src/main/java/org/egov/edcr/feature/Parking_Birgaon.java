@@ -267,7 +267,7 @@ public class Parking_Birgaon extends FeatureProcess {
 		BigDecimal totalBuiltupArea = pl.getOccupancies().stream().map(Occupancy::getBuiltUpArea)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 		BigDecimal coverParkingArea = BigDecimal.ZERO;
-		BigDecimal basementParkingArea = BigDecimal.ZERO;
+//		BigDecimal basementParkingArea = BigDecimal.ZERO;
 		BigDecimal noOfBeds = BigDecimal.ZERO;
 		Integer noOfSeats = 0;
 		Double requiredCarParkArea = 0d;
@@ -280,6 +280,9 @@ public class Parking_Birgaon extends FeatureProcess {
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		BigDecimal lowerGroungFloorParkingArea = pl.getParkingDetails().getLowerGroundFloor().stream()
+				.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
+		
+		BigDecimal basementParkingArea = pl.getParkingDetails().getBasementCars().stream()
 				.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		noOfBeds = pl.getPlanInformation().getNoOfBeds();
@@ -296,8 +299,8 @@ public class Parking_Birgaon extends FeatureProcess {
 			for (Floor floor : block.getBuilding().getFloors()) {
 				coverParkingArea = coverParkingArea.add(floor.getParking().getCoverCars().stream()
 						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
-				basementParkingArea = basementParkingArea.add(floor.getParking().getBasementCars().stream()
-						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
+//				basementParkingArea = basementParkingArea.add(floor.getParking().getBasementCars().stream()
+//						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
 				
 				occupancyTypeHelper=floor.getOccupancies().get(0).getTypeHelper();
 				BigDecimal floorBuiltUpArea=floor.getOccupancies().get(0).getBuiltUpArea();
