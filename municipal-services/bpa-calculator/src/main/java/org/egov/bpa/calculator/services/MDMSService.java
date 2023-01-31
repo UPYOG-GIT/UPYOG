@@ -130,6 +130,10 @@ public class MDMSService {
 				log.info("filterExp--------" + filterExp);
 				List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
 				log.info("calTypes plotArea ----  " + calTypes);
+				if (calTypes.size() == 0) {
+					log.info("================should not enter==========");
+					return defaultMap(feeType);
+				}
 				Object obj = calTypes.get(0);
 				calculationType = (HashMap<String, Object>) obj;
 			} else {
