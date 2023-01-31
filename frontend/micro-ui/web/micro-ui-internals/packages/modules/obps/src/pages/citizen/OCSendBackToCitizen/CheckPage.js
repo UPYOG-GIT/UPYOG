@@ -40,7 +40,7 @@ const CheckPage = ({ onSubmit, value }) => {
     
   let routeLink = `/digit-ui/citizen/obps/sendbacktocitizen/${value.businessService=="BPA_OC" ? "ocbpa" : "bpa"}/${value?.tenantId}/${value?.applicationNo}`;
   if (value?.uiFlow?.flow === "OCBPA") routeLink = `/digit-ui/citizen/obps/sendbacktocitizen/ocbpa/${value?.tenantId}/${value?.applicationNo}`;
-  if (value.businessService === "BPA_LOW") BusinessService = "BPA.LOW_RISK_PERMIT_FEE";
+  if (value.businessService === "BPA_LOW") BusinessService = "BPA.NC_APP_FEE";
   else if (value.businessService === "BPA") BusinessService = "BPA.NC_APP_FEE";
   else BusinessService = "BPA.NC_OC_APP_FEE";
 

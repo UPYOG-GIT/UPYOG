@@ -25,9 +25,9 @@ const OBPSResponse = (props) => {
   useEffect(async () => {
     setIsLoader(true);
     const bpaResponse = await Digit.OBPSService.BPASearch(tenantId, { applicationNo: bpaData?.applicationNo });
-    // let businessService = "BPA.LOW_RISK_PERMIT_FEE";
-    // if (bpaResponse?.BPA?.[0]?.businessService === "BPA") businessService = "BPA.NC_SAN_FEE";
-    // else if (bpaResponse?.BPA?.[0]?.businessService === "BPA_OC") businessService = "BPA.NC_OC_SAN_FEE";
+    // let businessService = "BPA.NC_SAN_FEE";
+     if ((bpaResponse?.BPA?.[0]?.businessService === "BPA") || (bpaResponse?.BPA?.[0]?.businessService === "BPA_LOW")) businessService = "BPA.NC_SAN_FEE";
+    else if (bpaResponse?.BPA?.[0]?.businessService === "BPA_OC") businessService = "BPA.NC_OC_SAN_FEE";
     let businessService = await getBusinessServices(bpaResponse?.BPA?.[0]?.businessService, bpaResponse?.BPA?.[0]?.status);
 
     const fetchBill = await Digit.PaymentService.fetchBill(tenantId, { consumerCode: bpaResponse?.BPA?.[0]?.applicationNo, businessService: businessService });
