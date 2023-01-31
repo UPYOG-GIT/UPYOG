@@ -1,5 +1,5 @@
 import Urls from "../atoms/urls";
-import { Request } from "../atoms/Utils/Request";
+import { Request, ServiceRequest } from "../atoms/Utils/Request";
 
 export const PaymentService = {
   fetchBill: (tenantId, filters = {}) =>
@@ -100,6 +100,14 @@ export const PaymentService = {
       auth: true,
       userService: true,
       params: { tenantId, consumerCode, businessService },
+    }),
+
+  demandCreate: (Demands) =>
+    ServiceRequest({
+      serviceName: "billing-service",
+      url: Urls.payment.demandCreate,
+      data: Demands,
+      auth: false,
     }),
 
   recieptSearch: (tenantId, businessService, params) =>
