@@ -130,6 +130,7 @@ public class MDMSService {
 				log.info("filterExp--------" + filterExp);
 				List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
 				log.info("calTypes plotArea ----  " + calTypes);
+				log.info("calTypes.size(): " + calTypes.size());
 				if (calTypes.size() == 0) {
 					log.info("================should not enter==========");
 					return defaultMap(feeType);
