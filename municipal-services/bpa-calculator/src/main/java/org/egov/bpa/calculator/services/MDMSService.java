@@ -108,6 +108,7 @@ public class MDMSService {
 				Map sancFeeMap = new HashMap();
 				try {
 					String[] SancFee = bpaRepository.getSanctionFeeAmount(consumerCode);
+					log.info("SancFee from DB: " + SancFee.toString());
 					if (SancFee.length != 0) {
 						Double totalSancFeeAmount = Double.valueOf(SancFee[SancFee.length - 1]);
 						log.info("totalSancFeeAmount: " + totalSancFeeAmount);
