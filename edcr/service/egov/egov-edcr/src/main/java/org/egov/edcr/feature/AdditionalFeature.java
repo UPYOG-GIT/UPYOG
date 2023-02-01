@@ -282,9 +282,9 @@ public class AdditionalFeature extends FeatureProcess {
 			OccupancyTypeHelper occupancyTypeHelper = block.getBuilding().getMostRestrictiveFarHelper();
 
 			if (occupancyTypeHelper.getSubtype() != null && A_R.equals(occupancyTypeHelper.getSubtype().getCode())) {
+				requiredFloorCount = "<= 3";
 				if (floorAbvGround.compareTo(BigDecimal.valueOf(3)) <= 0) {
 					isAccepted = true;
-					requiredFloorCount = "<= 3";
 				}
 			}
 
@@ -376,6 +376,7 @@ public class AdditionalFeature extends FeatureProcess {
 		for (Block block : pl.getBlocks()) {
 
 			boolean isAccepted = false;
+			boolean isReport = false;
 			String ruleNo = RULE_38;
 			ScrutinyDetail scrutinyDetail = getNewScrutinyDetail(
 					"Block_" + block.getNumber() + "_" + "Height of Building");
@@ -386,9 +387,10 @@ public class AdditionalFeature extends FeatureProcess {
 			OccupancyTypeHelper occupancyTypeHelper = block.getBuilding().getMostRestrictiveFarHelper();
 
 			if (occupancyTypeHelper.getSubtype() != null && A_R.equals(occupancyTypeHelper.getSubtype().getCode())) {
+				isReport = true;
+				requiredBuildingHeight = "<= 9.5";
 				if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) <= 0) {
 					isAccepted = true;
-					requiredBuildingHeight = "<= 9.5";
 				}
 			}
 
