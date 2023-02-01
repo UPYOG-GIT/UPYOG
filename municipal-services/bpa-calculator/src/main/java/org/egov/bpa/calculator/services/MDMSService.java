@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.bpa.calculator.config.BPACalculatorConfig;
+import org.egov.bpa.calculator.repository.BPARepository;
 import org.egov.bpa.calculator.repository.ServiceRequestRepository;
 import org.egov.bpa.calculator.utils.BPACalculatorConstants;
 import org.egov.bpa.calculator.web.models.CalculationReq;
@@ -43,6 +44,9 @@ public class MDMSService {
 
 	@Autowired
 	private EDCRService edcrService;
+
+	@Autowired
+	private BPARepository bpaRepository;
 
 	public Object mDMSCall(CalculationReq calculationReq, String tenantId) {
 		MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(calculationReq, tenantId);
@@ -97,6 +101,21 @@ public class MDMSService {
 	public Map getCalculationType(RequestInfo requestInfo, BPA bpa, Object mdmsData, String feeType) {
 		HashMap<String, Object> calculationType = new HashMap<>();
 		try {
+
+			if (feeType.equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE)) {
+				String consumerCode = bpa.getApplicationNo();
+				Map sancFeeMap = new HashMap();
+//				Double totalSancFeeAmount = Double.valueOf(bpaRepository.getSanctionFeeAmount(consumerCode));
+				String[] SancFee = bpaRepository.getSanctionFeeAmount(consumerCode);
+				if (SancFee.length != 0) {
+					Double totalSancFeeAmount = Double.valueOf(SancFee[SancFee.length - 1]);
+					sancFeeMap.put(BPACalculatorConstants.MDMS_CALCULATIONTYPE_AMOUNT, totalSancFeeAmount);
+					return sancFeeMap;
+				}else {
+					throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "Sanction Fee not found");
+				}
+			}
+
 			List jsonOutput = JsonPath.read(mdmsData, BPACalculatorConstants.MDMS_CALCULATIONTYPE_PATH);
 			LinkedHashMap responseMap = edcrService.getEDCRDetails(requestInfo, bpa);
 
