@@ -48,6 +48,7 @@ const Urls = {
   payment: {
     fetch_bill: "/billing-service/bill/v2/_fetchbill",
     demandSearch: "/billing-service/demand/_search",
+    demandCreate: "/billing-service/demand/_create",
     create_reciept: "/collection-services/payments/_create",
     print_reciept: "/collection-services/payments",
     generate_pdf: "/pdf-service/v1/_create",
