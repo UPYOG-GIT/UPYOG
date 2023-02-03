@@ -196,7 +196,6 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(Balcony.class);
         features.add(pf);
 
-      //not required in cg ulb
 //        pf = new PlanFeature(PlantationGreenStrip.class);
 //        features.add(pf);
 
@@ -302,11 +301,9 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(AdditionalFeature.class);
         features.add(pf);
 
-      //not use in cg ulb
 //        pf = new PlanFeature(FireTenderMovement.class);
 //        features.add(pf);
 
-      //not use in cg ulb
         pf = new PlanFeature(SurrenderRoad.class);
         features.add(pf);
 
@@ -325,7 +322,6 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(HeadRoom.class);
         features.add(pf);
 
-      //not use in cg ulb
         pf = new PlanFeature(OverHangs.class);
         features.add(pf);
 
@@ -335,7 +331,6 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(DepthCuttingService.class);
         features.add(pf);
 
-      //not use in cg ulb
         pf = new PlanFeature(PetrolFillingStation.class);
         features.add(pf);
 
@@ -345,7 +340,6 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(Ventilation.class);
         features.add(pf);
         
-        //not required in cg ulb
         pf = new PlanFeature(VehicleRamp.class);
         features.add(pf);
         
