@@ -47,7 +47,7 @@ class TransactionQueryBuilder {
 		builder.append(" AND ");
 		builder.append(" pg.created_time <= ? ");
 		preparedStmtList.add(endTime);
-
+		log.info("builder.toString(): " + builder.toString());
 		return builder.toString();
 	}
 

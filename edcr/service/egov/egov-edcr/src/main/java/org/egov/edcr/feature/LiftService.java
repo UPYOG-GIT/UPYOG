@@ -101,6 +101,7 @@ public class LiftService extends FeatureProcess {
 	@Override
 	public Plan process(Plan plan) {
 		// validate(plan);
+		boolean isReport = false;
 		if (plan != null && !plan.getBlocks().isEmpty()) {
 			blk: for (Block block : plan.getBlocks()) {
 				scrutinyDetail = new ScrutinyDetail();
@@ -163,9 +164,11 @@ public class LiftService extends FeatureProcess {
 							valid = true;
 						}
 						if (valid) {
+							isReport = true;
 							setReportOutputDetails(plan, SUBRULE_48, SUBRULE_48_DESCRIPTION, noOfLiftsRqrd.toString(),
 									block.getNumberOfLifts(), Result.Accepted.getResultVal(), "", scrutinyDetail);
 						} else {
+							isReport = true;
 							setReportOutputDetails(plan, SUBRULE_48, SUBRULE_48_DESCRIPTION, noOfLiftsRqrd.toString(),
 									block.getNumberOfLifts(), Result.Not_Accepted.getResultVal(), "", scrutinyDetail);
 						}
@@ -205,7 +208,9 @@ public class LiftService extends FeatureProcess {
 
 			}
 		}
-
+//		if (!isReport) {
+//			plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//		}
 		return plan;
 	}
 
