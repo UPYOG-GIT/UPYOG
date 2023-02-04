@@ -190,8 +190,8 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(SpiralStair.class);
         features.add(pf);
 
-        pf = new PlanFeature(FireStair.class);
-        features.add(pf);
+//        pf = new PlanFeature(FireStair.class);
+//        features.add(pf);
 
         pf = new PlanFeature(Balcony.class);
         features.add(pf);
