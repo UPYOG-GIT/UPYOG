@@ -211,6 +211,10 @@ if(window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")){
   };
 
   return (
+     <div
+    className={"main center-container mb-25"}
+     style={{ paddingRight: '5000px'}}
+  >
     <Switch>
       <AppContainer>
         <BackButton />
@@ -241,6 +245,7 @@ if(window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")){
         {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
       </AppContainer>
     </Switch>
+    </div>
   );
 };
 
