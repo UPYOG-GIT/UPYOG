@@ -342,7 +342,7 @@ public class GeneralStair extends FeatureProcess {
     private BigDecimal getRequiredWidth(Block block, OccupancyTypeHelper mostRestrictiveOccupancyType) {
         if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
                 && DxfFileConstants.A_AF.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-            return BigDecimal.valueOf(1.9);
+            return BigDecimal.valueOf(0.75);
         } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
                 && DxfFileConstants.A_AF_GH.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
             return BigDecimal.valueOf(0.75);
@@ -350,18 +350,18 @@ public class GeneralStair extends FeatureProcess {
                 && DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
                 && block.getBuilding().getBuildingHeight().compareTo(BigDecimal.valueOf(10)) <= 0
                 && block.getBuilding().getFloorsAboveGround().compareTo(BigDecimal.valueOf(3)) <= 0) {
-            return BigDecimal.ONE;
+        	return BigDecimal.valueOf(0.75);
         } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
                 && DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-            return BigDecimal.valueOf(1.25);
+        	return BigDecimal.valueOf(0.75);
         } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
                 && DxfFileConstants.B.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-            return BigDecimal.valueOf(1.5);
+        	return BigDecimal.valueOf(0.75);
         } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
                 && DxfFileConstants.D.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-            return BigDecimal.valueOf(2);
+        	return BigDecimal.valueOf(0.75);
         } else {
-            return BigDecimal.valueOf(1.5);
+        	return BigDecimal.valueOf(0.75);
         }
     }
 

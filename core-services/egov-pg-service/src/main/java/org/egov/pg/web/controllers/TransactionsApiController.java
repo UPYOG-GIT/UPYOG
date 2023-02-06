@@ -94,6 +94,7 @@ public class TransactionsApiController {
 		String encResp = transactionService.getResponse(txnId);
 		log.info("encResp: " + encResp);
 		params.put("encResp", encResp);
+		params.put("FromUpdateAPI","true");
 		log.info("params.toString(): " + params.toString());
 		List<Transaction> transactions = transactionService.updateTransaction(requestInfoWrapper.getRequestInfo(),
 				params);

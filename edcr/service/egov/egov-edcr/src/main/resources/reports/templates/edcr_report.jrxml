@@ -387,7 +387,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getTypeOfArea()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getDevelopmentZone()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="28" y="330" width="114" height="21" uuid="10f0b035-0fa1-470b-9b21-2a84161cdc18"/>
@@ -402,7 +402,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["AREA TYPE"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["DEVELOPMENT ZONE"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="12" y="330" width="16" height="21" uuid="6aa97529-5f46-4fcf-bfd5-27cc1edbd803"/>
@@ -1582,10 +1582,10 @@
 				</textElement>
 				<textFieldExpression><![CDATA["Application No:"+$P{applicationNumber}+", Scrutiny Date:"+$P{reportGeneratedDate}]]></textFieldExpression>
 			</textField>
-			<image scaleImage="RetainShape" hAlign="Left" vAlign="Middle" isUsingCache="true" onErrorType="Blank">
-				<reportElement mode="Transparent" x="9" y="27" width="109" height="25" uuid="a44f1994-7654-4816-a0f5-0de0ffecc5ce"/>
-				<imageExpression><![CDATA[$P{egovLogo}]]></imageExpression>
-			</image>
+			<!--<image scaleImage="RetainShape" hAlign="Left" vAlign="Middle" isUsingCache="true" onErrorType="Blank">-->
+				<!--<reportElement mode="Transparent" x="9" y="27" width="109" height="25" uuid="a44f1994-7654-4816-a0f5-0de0ffecc5ce"/>-->
+				<!--<imageExpression><![CDATA[$P{egovLogo}]]></imageExpression>-->
+			<!--</image>-->
 		</band>
 	</pageFooter>
 	<summary>
