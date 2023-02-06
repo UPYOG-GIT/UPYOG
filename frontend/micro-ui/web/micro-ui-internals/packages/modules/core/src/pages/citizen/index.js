@@ -76,7 +76,14 @@ const Home = ({
         showSidebar={true}
       />
 
-      <div className={`main center-container mb-25`}>
+         <div
+            className={"main center-container mb-25"}
+            style={
+                location?.pathname === "/digit-ui/citizen/select-location" || location?.pathname === "/digit-ui/citizen/select-language" || location?.pathname === "/digit-ui/citizen/login/otp" || location?.pathname === "/digit-ui/citizen/login" 
+                ? { backgroundImage: `url("https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/background_pic1.png")`,width:'100%', backgroundRepeat: 'no-repeat', backgroundSize: '118%', paddingLeft: '400px', backgroundPositionY: '50px', paddingTop: '130px' }
+                : {}
+            }
+          >
         <Switch>
           <Route exact path={path}>
             <CitizenHome />
