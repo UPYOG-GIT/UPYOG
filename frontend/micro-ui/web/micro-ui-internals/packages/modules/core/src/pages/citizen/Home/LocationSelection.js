@@ -38,7 +38,7 @@ const LocationSelection = () => {
   function onSubmit() {
     if (selectedCity) {
       Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", selectedCity);
-      history.push("/digit-ui/citizen");
+      history.push("/digit-ui/citizen/obps-home");
     } else {
       setShowError(true);
     }

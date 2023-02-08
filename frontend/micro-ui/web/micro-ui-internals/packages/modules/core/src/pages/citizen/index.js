@@ -15,7 +15,10 @@ import UserProfile from "./Home/UserProfile";
 const getTenants = (codes, tenants) => {
   return tenants.filter((tenant) => codes.map((item) => item.code).includes(tenant.code));
 };
-
+// const isLogin = location?.pathname?.includes("citizen/login");/digit-ui/citizen/login
+// const isOtp= location?.pathname?.includes("citizen/login/otp");
+const isCitizen= location?.pathname === "/digit-ui/citizen/login" || location?.pathname === "/digit-ui/citizen/login/otp" || location?.pathname === "/digit-ui/citizen/select-location"
+// const isLocation= location?.pathname?.includes("citizen/select-location");
 const Home = ({
   stateInfo,
   userDetails,
@@ -62,6 +65,7 @@ const Home = ({
     );
   });
 
+
   return (
     <div className={classname}>
       <TopBarSideBar
@@ -75,8 +79,29 @@ const Home = ({
         logoUrl={logoUrl}
         showSidebar={true}
       />
+       <div
+            className={"main center-container mb-25"}
+            style={
+                location?.pathname === "/digit-ui/citizen/select-location" || location?.pathname === "/digit-ui/citizen/select-language" || location?.pathname === "/digit-ui/citizen/login/otp" || location?.pathname === "/digit-ui/citizen/login" 
+                ? { backgroundImage: `url("https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/background_pic1.png")`,width:'100%', backgroundRepeat: 'no-repeat', backgroundSize: '118%', paddingLeft: '400px', backgroundPositionY: '50px', paddingTop: '130px' }
+                : {}
+            }
+          >
 
-      <div className={`main center-container mb-25`}>
+            
+
+<<<<<<< HEAD
+     
+=======
+         <div
+            className={"main center-container mb-25"}
+            style={
+                location?.pathname === "/digit-ui/citizen/select-location" || location?.pathname === "/digit-ui/citizen/select-language" || location?.pathname === "/digit-ui/citizen/login/otp" || location?.pathname === "/digit-ui/citizen/login" 
+                ? { backgroundImage: `url("https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/background_pic1.png")`,width:'100%', backgroundRepeat: 'no-repeat', backgroundSize: '118%', paddingLeft: '400px', backgroundPositionY: '50px', paddingTop: '130px' }
+                : {}
+            }
+          >
+>>>>>>> 6c6ab1b14d0b0d07eae2bc2d8010734dbd6d0c65
         <Switch>
           <Route exact path={path}>
             <CitizenHome />
@@ -127,6 +152,7 @@ const Home = ({
         </div>
       </div>
     </div>
+    
   );
 };
 

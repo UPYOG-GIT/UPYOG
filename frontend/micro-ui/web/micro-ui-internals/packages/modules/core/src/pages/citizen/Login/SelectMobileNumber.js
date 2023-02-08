@@ -1,10 +1,11 @@
 import React from "react";
-import { CardText, FormStep } from "@egovernments/digit-ui-react-components";
+import { CardText, FormStep, Card } from "@egovernments/digit-ui-react-components";
 import { Link } from "react-router-dom";
 
 const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMobileChange, config }) => {
   return (
     <FormStep
+    
       isDisabled={mobileNumber.length !== 10}
       onSelect={onSelect}
       config={config}
@@ -13,6 +14,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
       onChange={onMobileChange}
       value={mobileNumber}
     ></FormStep>
+  
   );
 };
 
