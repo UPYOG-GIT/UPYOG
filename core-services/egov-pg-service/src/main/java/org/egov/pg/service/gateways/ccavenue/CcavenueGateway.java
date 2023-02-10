@@ -241,32 +241,32 @@ public class CcavenueGateway implements Gateway {
 				if (userDetail.length() == 0) {
 					userDetail.append(ADDITIONAL_FIELD_VALUE);
 				}
-				queryMap.put(ADDITIONAL_FIELD1_KEY, userDetail.toString());
-				queryMap.put(ADDITIONAL_FIELD2_KEY, ADDITIONAL_FIELD_VALUE); // Not in use
-				queryMap.put(ADDITIONAL_FIELD3_KEY, ADDITIONAL_FIELD_VALUE); // Not in use
-				queryMap.put(ADDITIONAL_FIELD4_KEY, transaction.getConsumerCode());
-				queryMap.put(ADDITIONAL_FIELD5_KEY, getModuleCode(transaction));
+//				queryMap.put(ADDITIONAL_FIELD1_KEY, userDetail.toString());
+//				queryMap.put(ADDITIONAL_FIELD2_KEY, ADDITIONAL_FIELD_VALUE); // Not in use
+//				queryMap.put(ADDITIONAL_FIELD3_KEY, ADDITIONAL_FIELD_VALUE); // Not in use
+//				queryMap.put(ADDITIONAL_FIELD4_KEY, transaction.getConsumerCode());
+//				queryMap.put(ADDITIONAL_FIELD5_KEY, getModuleCode(transaction));
 
 				// Generate Checksum for params
 				ArrayList<String> fields = new ArrayList<String>();
-				fields.add(queryMap.get(MESSAGE_TYPE_KEY));
-				fields.add(queryMap.get(MERCHANT_ID_KEY));
-				fields.add(queryMap.get(SERVICE_ID_KEY));
-				fields.add(queryMap.get(ORDER_ID_KEY));
-				fields.add(queryMap.get(CUSTOMER_ID_KEY));
-				fields.add(queryMap.get(TRANSACTION_AMOUNT_KEY));
-				fields.add(queryMap.get(CURRENCY_CODE_KEY));
-				fields.add(queryMap.get(REQUEST_DATE_TIME_KEY));
-				fields.add(queryMap.get(SUCCESS_URL_KEY));
-				fields.add(queryMap.get(FAIL_URL_KEY));
-				fields.add(queryMap.get(ADDITIONAL_FIELD1_KEY));
-				fields.add(queryMap.get(ADDITIONAL_FIELD2_KEY));
-				fields.add(queryMap.get(ADDITIONAL_FIELD3_KEY));
-				fields.add(queryMap.get(ADDITIONAL_FIELD4_KEY));
-				fields.add(queryMap.get(ADDITIONAL_FIELD5_KEY));
+//				fields.add(queryMap.get(MESSAGE_TYPE_KEY));
+//				fields.add(queryMap.get(MERCHANT_ID_KEY));
+//				fields.add(queryMap.get(SERVICE_ID_KEY));
+//				fields.add(queryMap.get(ORDER_ID_KEY));
+//				fields.add(queryMap.get(CUSTOMER_ID_KEY));
+//				fields.add(queryMap.get(TRANSACTION_AMOUNT_KEY));
+//				fields.add(queryMap.get(CURRENCY_CODE_KEY));
+//				fields.add(queryMap.get(REQUEST_DATE_TIME_KEY));
+//				fields.add(queryMap.get(SUCCESS_URL_KEY));
+//				fields.add(queryMap.get(FAIL_URL_KEY));
+//				fields.add(queryMap.get(ADDITIONAL_FIELD1_KEY));
+//				fields.add(queryMap.get(ADDITIONAL_FIELD2_KEY));
+//				fields.add(queryMap.get(ADDITIONAL_FIELD3_KEY));
+//				fields.add(queryMap.get(ADDITIONAL_FIELD4_KEY));
+//				fields.add(queryMap.get(ADDITIONAL_FIELD5_KEY));
 
 				String message = String.join("|", fields);
-				queryMap.put("checksum", CcavenueUtils.generateCRC32Checksum(message, WORKING_KEY));
+//				queryMap.put("checksum", CcavenueUtils.generateCRC32Checksum(message, WORKING_KEY));
 				queryMap.put("txURL", httpUrlConnection.getURL().toURI().toString());
 				SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyyHH:mm:SSS");
 				queryMap.put(REQUEST_DATE_TIME_KEY, format1.format(currentDate));
