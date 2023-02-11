@@ -813,4 +813,12 @@ public class BPAService {
 		}
 	}
 
+	public Map<String, Object> getPayTypeByTenantId(String tenantId) {
+
+		Map<String, Object> result = repository.getPayTypeByTenantId(tenantId);
+		log.info("getPayTypeByTenantId: " + result.toString());
+		return result;
+//		return null;
+	}
+
 }
