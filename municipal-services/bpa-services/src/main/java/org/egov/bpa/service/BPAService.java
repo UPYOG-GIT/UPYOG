@@ -813,11 +813,11 @@ public class BPAService {
 		}
 	}
 
-	public Map<String, Object> getPayTypeByTenantId(String tenantId) {
+	public List<Map<String,Object>> getPayTypeByTenantId(String tenantId) {
 
-		Map<String, Object> result = repository.getPayTypeByTenantId(tenantId);
-		log.info("getPayTypeByTenantId: " + result.toString());
-		return result;
+		List<Map<String,Object>> resultList = repository.getPayTypeByTenantId(tenantId);
+		log.info("getPayTypeByTenantId: " + resultList.toString());
+		return resultList;
 //		return null;
 	}
 

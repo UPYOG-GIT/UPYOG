@@ -106,10 +106,10 @@ public class BPARepository {
     	}
 
         
-        public Map<String,Object> getPayTypeByTenantId(String tenantId){
+        public List<Map<String,Object>> getPayTypeByTenantId(String tenantId){
         	
         	String query="select id,charges_type_name from paytype_master where ulb_tenantid=?";
-        	return jdbcTemplate.queryForMap(query, new Object[] { tenantId });
+        	return jdbcTemplate.queryForList(query, new Object[] { tenantId });
 //    		return jdbcTemplate.queryForObject(query, new Object[] { tenantId }, Map.class);
         	
 //        	return null;

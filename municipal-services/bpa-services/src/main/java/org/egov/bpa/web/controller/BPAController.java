@@ -113,11 +113,10 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_paytype")
-	public ResponseEntity<Map<String, Object>> getPayTypeByTenantId(@RequestBody RequestInfo requestInfo,
-			@RequestParam String tenantId) {
-
-		Map<String, Object> response = bpaService.getPayTypeByTenantId(tenantId);
-		return new ResponseEntity<>(response, HttpStatus.OK);
+	public ResponseEntity<List<Map<String,Object>>> getPayTypeByTenantId(@RequestParam String tenantId) {
+//		@RequestBody RequestInfo requestInfo,
+		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
+		return new ResponseEntity<>(responseList, HttpStatus.OK);
 	}
 
 }
