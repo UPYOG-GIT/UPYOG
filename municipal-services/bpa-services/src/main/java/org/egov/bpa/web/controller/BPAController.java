@@ -18,6 +18,7 @@ import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPAResponse;
 import org.egov.bpa.web.model.BPASearchCriteria;
 import org.egov.bpa.web.model.RequestInfoWrapper;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -75,9 +76,10 @@ public class BPAController {
 
 		List<BPA> bpas = bpaService.search(criteria, requestInfoWrapper.getRequestInfo());
 		int count = bpaService.getBPACount(criteria, requestInfoWrapper.getRequestInfo());
-		BPAResponse response = BPAResponse.builder().BPA(bpas).responseInfo(
-				responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true)).count(count)
-				.build();
+		BPAResponse response = BPAResponse
+				.builder().BPA(bpas).responseInfo(responseInfoFactory
+						.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
+				.count(count).build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
@@ -98,22 +100,24 @@ public class BPAController {
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + BPAConstants.EDCR_PDF + "\"")
 				.body(resource);
 	}
-	
+
 	@PostMapping(value = "/_plainsearch")
 	public ResponseEntity<BPAResponse> plainSearch(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
 			@Valid @ModelAttribute BPASearchCriteria criteria) {
 
 		List<BPA> bpas = bpaService.plainSearch(criteria, requestInfoWrapper.getRequestInfo());
 		BPAResponse response = BPAResponse.builder().BPA(bpas).responseInfo(
-				responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true)).build();
+				responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
+				.build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
-	
+
 	@PostMapping(value = "/_paytype")
-	public ResponseEntity<Map<String,Object>> getPayTypeByTenantId(@RequestParam String tenantId){
-		
-		Map<String,Object> response= bpaService.getPayTypeByTenantId(tenantId);
+	public ResponseEntity<Map<String, Object>> getPayTypeByTenantId(@RequestBody RequestInfo requestInfo,
+			@RequestParam String tenantId) {
+
+		Map<String, Object> response = bpaService.getPayTypeByTenantId(tenantId);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
-	
+
 }
