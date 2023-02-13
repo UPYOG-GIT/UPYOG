@@ -122,6 +122,8 @@ const Urls = {
     bpaRegUpdate: "/tl-services/v1/BPAREG/_update",
     receipt_download: "/egov-pdf/download/PAYMENT/consolidatedreceipt",
     edcrreportdownload: "/bpa-services/v1/bpa/_permitorderedcr",
+    // add a url for getting post fee rule type list
+    getPaytype:"/bpa-services/v1/bpa/_paytype",
   },
 
   edcr: {

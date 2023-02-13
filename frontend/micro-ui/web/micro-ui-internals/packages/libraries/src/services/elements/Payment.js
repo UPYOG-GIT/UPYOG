@@ -108,6 +108,12 @@ export const PaymentService = {
       url: Urls.payment.demandCreate,
       data: Demands,
       auth: false,
+    })
+    .then((d) => {
+      return d;
+    })
+    .catch((err) => {
+      return err;
     }),
 
   recieptSearch: (tenantId, businessService, params) =>
