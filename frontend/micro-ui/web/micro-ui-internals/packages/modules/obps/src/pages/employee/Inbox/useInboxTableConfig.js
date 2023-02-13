@@ -62,7 +62,7 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
             return (
                 <div>
                 <Link to={`${parentRoute}/addnew/paytype/${row.original["applicationId"]}`}>
-                    <button type="button" className="link">go</button>
+                    <button type="button" className="link">Add Charges</button>
                 </Link>
                 </div>
             );

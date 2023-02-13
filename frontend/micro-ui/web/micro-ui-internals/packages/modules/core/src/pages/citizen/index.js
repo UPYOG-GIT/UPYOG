@@ -77,6 +77,7 @@ const Home = ({
       />
 
       <div className={`main center-container mb-25`}>
+      {/* <div className={`main center-container mb-10`} style={{ backgroundImage: `url(${stateInfo?.bannerUrl})`, }}> */}
         <Switch>
           <Route exact path={path}>
             <CitizenHome />
