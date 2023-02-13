@@ -8,7 +8,6 @@ import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,6 +25,7 @@ import org.egov.bpa.validator.BPAValidator;
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPASearchCriteria;
+import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
 import org.egov.bpa.web.model.Workflow;
 import org.egov.bpa.web.model.landInfo.LandInfo;
 import org.egov.bpa.web.model.landInfo.LandSearchCriteria;
@@ -819,6 +819,10 @@ public class BPAService {
 		log.info("getPayTypeByTenantId: " + resultList.toString());
 		return resultList;
 //		return null;
+	}
+	
+	public void createFeeDetail(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
+		
 	}
 
 }

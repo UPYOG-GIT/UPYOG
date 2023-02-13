@@ -11,12 +11,16 @@ import org.egov.bpa.repository.rowmapper.BPARowMapper;
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPASearchCriteria;
+import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Repository
+@Slf4j
 public class BPARepository {
 
 	@Autowired
@@ -37,15 +41,16 @@ public class BPARepository {
 	/**
 	 * Pushes the request on save topic through kafka
 	 *
-	 * @param bpaRequest
-	 *            The bpa create request
+	 * @param bpaRequest The bpa create request
 	 */
 	public void save(BPARequest bpaRequest) {
 		producer.push(config.getSaveTopic(), bpaRequest);
 	}
 
 	/**
-	 * pushes the request on update or workflow update topic through kafaka based on th isStateUpdatable 
+	 * pushes the request on update or workflow update topic through kafaka based on
+	 * th isStateUpdatable
+	 * 
 	 * @param bpaRequest
 	 * @param isStateUpdatable
 	 */
@@ -73,8 +78,7 @@ public class BPARepository {
 	/**
 	 * BPA search in database
 	 *
-	 * @param criteria
-	 *            The BPA Search criteria
+	 * @param criteria The BPA Search criteria
 	 * @return List of BPA from search
 	 */
 	public List<BPA> getBPAData(BPASearchCriteria criteria, List<String> edcrNos) {
@@ -83,36 +87,68 @@ public class BPARepository {
 		List<BPA> BPAData = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
 		return BPAData;
 	}
-	
-	/**
-         * BPA search count in database
-         *
-         * @param criteria
-         *            The BPA Search criteria
-         * @return count of BPA from search
-         */
-        public int getBPACount(BPASearchCriteria criteria, List<String> edcrNos) {
-                List<Object> preparedStmtList = new ArrayList<>();
-                String query = queryBuilder.getBPASearchQuery(criteria, preparedStmtList, edcrNos, true);
-                int count = jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
-                return count;
-        }
-        
-        public List<BPA> getBPADataForPlainSearch(BPASearchCriteria criteria, List<String> edcrNos) {
-    		List<Object> preparedStmtList = new ArrayList<>();
-    		String query = queryBuilder.getBPASearchQueryForPlainSearch(criteria, preparedStmtList, edcrNos, false);
-    		List<BPA> BPAData = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
-    		return BPAData;
-    	}
 
-        
-        public List<Map<String,Object>> getPayTypeByTenantId(String tenantId){
-        	
-        	String query="select id,charges_type_name from paytype_master where ulb_tenantid=?";
+	/**
+	 * BPA search count in database
+	 *
+	 * @param criteria The BPA Search criteria
+	 * @return count of BPA from search
+	 */
+	public int getBPACount(BPASearchCriteria criteria, List<String> edcrNos) {
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = queryBuilder.getBPASearchQuery(criteria, preparedStmtList, edcrNos, true);
+		int count = jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
+		return count;
+	}
+
+	public List<BPA> getBPADataForPlainSearch(BPASearchCriteria criteria, List<String> edcrNos) {
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = queryBuilder.getBPASearchQueryForPlainSearch(criteria, preparedStmtList, edcrNos, false);
+		List<BPA> BPAData = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+		return BPAData;
+	}
+
+	public List<Map<String, Object>> getPayTypeByTenantId(String tenantId) {
+
+		String query = "select id,charges_type_name from paytype_master where ulb_tenantid=?";
 //        	String query="select charges_type_name from paytype_master where ulb_tenantid=?";
-        	return jdbcTemplate.queryForList(query, new Object[] { tenantId });
+		return jdbcTemplate.queryForList(query, new Object[] { tenantId });
 //    		return jdbcTemplate.queryForObject(query, new Object[] { tenantId }, Map.class);
-        	
+
 //        	return null;
-        }
+	}
+
+	public void createFeeDetail(List<PayTypeFeeDetailRequest> payTypeFeeDetailRequestList) {
+		
+		String insertQuery = "insert into pre_post_fee_details(paytype_id,ulb_tenantid,bill_id,application_no,"
+				+ "unit_id,pay_id,charges_type_name,amount,status_type,propvalue,value,status,createdby,payment_type)"
+				+ "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+		List<Object[]> parameters = new ArrayList<Object[]>();
+		for (PayTypeFeeDetailRequest payTypeFeeDetailRequest : payTypeFeeDetailRequestList) {
+			parameters.add(new Object[] { payTypeFeeDetailRequest.getPayTypeId(), payTypeFeeDetailRequest.getTenantId(),
+					payTypeFeeDetailRequest.getBillId(), payTypeFeeDetailRequest.getApplicationNo(),
+					payTypeFeeDetailRequest.getUnitId(), payTypeFeeDetailRequest.getPayId(),
+					payTypeFeeDetailRequest.getChargesTypeName(), payTypeFeeDetailRequest.getAmount(),
+					payTypeFeeDetailRequest.getStatusType(), payTypeFeeDetailRequest.getPropValue(),
+					payTypeFeeDetailRequest.getValue(), payTypeFeeDetailRequest.getStatus(),
+					payTypeFeeDetailRequest.getCreatedBy(), payTypeFeeDetailRequest.getPaymentType() });
+		}
+		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
+
+		log.info("BPARepository.createFeeDetail: " + insertResult + " data inserted into pre_post_fee_details table");
+		/*
+		 * for (PayTypeFeeDetailRequest payTypeFeeDetailRequest :
+		 * payTypeFeeDetailRequestList) { jdbcTemplate.update(insertQuery,
+		 * payTypeFeeDetailRequest.getPayTypeId(),
+		 * payTypeFeeDetailRequest.getTenantId(), payTypeFeeDetailRequest.getBillId(),
+		 * payTypeFeeDetailRequest.getApplicationNo(),
+		 * payTypeFeeDetailRequest.getUnitId(), payTypeFeeDetailRequest.getPayId(),
+		 * payTypeFeeDetailRequest.getChargesTypeName(),
+		 * payTypeFeeDetailRequest.getAmount(), payTypeFeeDetailRequest.getStatusType(),
+		 * payTypeFeeDetailRequest.getPropValue(), payTypeFeeDetailRequest.getValue(),
+		 * payTypeFeeDetailRequest.getStatus(), payTypeFeeDetailRequest.getCreatedBy(),
+		 * payTypeFeeDetailRequest.getPaymentType()); }
+		 */
+	}
 }
