@@ -261,11 +261,11 @@ public class Parking_Birgaon extends FeatureProcess {
 
 //		List<Occupancy> occ= pl.getOccupancies();
 
-		OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding() != null
-				? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
-				: null;
-		BigDecimal totalBuiltupArea = pl.getOccupancies().stream().map(Occupancy::getBuiltUpArea)
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
+//		OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding() != null
+//				? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
+//				: null;
+//		BigDecimal totalBuiltupArea = pl.getOccupancies().stream().map(Occupancy::getBuiltUpArea)
+//				.reduce(BigDecimal.ZERO, BigDecimal::add);
 		BigDecimal coverParkingArea = BigDecimal.ZERO;
 //		BigDecimal basementParkingArea = BigDecimal.ZERO;
 		BigDecimal noOfBeds = BigDecimal.ZERO;

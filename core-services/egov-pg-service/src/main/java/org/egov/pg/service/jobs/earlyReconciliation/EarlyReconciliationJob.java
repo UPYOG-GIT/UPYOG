@@ -27,52 +27,53 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class EarlyReconciliationJob implements Job {
 
-    private static RequestInfo requestInfo;
+	private static RequestInfo requestInfo;
 
-    @PostConstruct
-    public void init() {
-        User userInfo = User.builder()
-                .uuid(appProperties.getEgovPgReconciliationSystemUserUuid())
-                .type("SYSTEM")
-                .roles(Collections.emptyList()).id(0L).build();
+	@PostConstruct
+	public void init() {
+		User userInfo = User.builder().uuid(appProperties.getEgovPgReconciliationSystemUserUuid()).type("SYSTEM")
+				.roles(Collections.emptyList()).id(0L).build();
 
-        requestInfo = new RequestInfo("", "", 0L, "", "", "", "", "", "", userInfo);
-    }
+		requestInfo = new RequestInfo("", "", 0L, "", "", "", "", "", "", userInfo);
+	}
 
-    @Autowired
-    private AppProperties appProperties;
-    @Autowired
-    private TransactionService transactionService;
-    @Autowired
-    private TransactionRepository transactionRepository;
+	@Autowired
+	private AppProperties appProperties;
+	@Autowired
+	private TransactionService transactionService;
+	@Autowired
+	private TransactionRepository transactionRepository;
 
-    /**
-     * Fetch live status for pending transactions
-     * that were created for ex, between 15-30 minutes, configurable value
-     *
-     * @param jobExecutionContext execution context with optional job parameters
-     * @throws JobExecutionException
-     */
-    @Override
-    public void execute(JobExecutionContext jobExecutionContext) {
-        Integer startTime, endTime;
+	/**
+	 * Fetch live status for pending transactions that were created for ex, between
+	 * 15-30 minutes, configurable value
+	 *
+	 * @param jobExecutionContext execution context with optional job parameters
+	 * @throws JobExecutionException
+	 */
+	@Override
+	public void execute(JobExecutionContext jobExecutionContext) {
+		Integer startTime, endTime;
 
-        startTime = appProperties.getEarlyReconcileJobRunInterval() * 2;
-        endTime = startTime - appProperties.getEarlyReconcileJobRunInterval();
+		startTime = appProperties.getEarlyReconcileJobRunInterval() * 2;
+		endTime = startTime - appProperties.getEarlyReconcileJobRunInterval();
 
-        List<Transaction> pendingTxns = transactionRepository.fetchTransactionsByTimeRange(TransactionCriteria.builder()
-                        .txnStatus(Transaction.TxnStatusEnum.PENDING).build(),
-                System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(startTime),
-                System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(endTime));
+		
+		List<Transaction> pendingTxns = transactionRepository.fetchTransactionsByTimeRange(
+				TransactionCriteria.builder().txnStatus(Transaction.TxnStatusEnum.PENDING).build(),
+				System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(startTime),
+				System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(endTime));
+		
+		log.info("start time : " + (System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(startTime)));
+		log.info("end time : " + (System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(endTime)));
 
-        log.info("Attempting to reconcile {} pending transactions", pendingTxns.size());
+		log.info("Attempting to reconcile {} pending transactions", pendingTxns.size());
 
-        for (Transaction txn : pendingTxns) {
-            log.info(transactionService.updateTransaction(requestInfo, Collections.singletonMap(PgConstants.PG_TXN_IN_LABEL, txn
-                    .getTxnId
-                    ())).toString());
-        }
+		for (Transaction txn : pendingTxns) {
+			log.info(transactionService.updateTransaction(requestInfo,
+					Collections.singletonMap(PgConstants.PG_TXN_IN_LABEL, txn.getTxnId())).toString());
+		}
 
-    }
+	}
 
 }

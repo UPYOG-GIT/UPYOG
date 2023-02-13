@@ -154,8 +154,9 @@ public class CcavenueGateway implements Gateway {
 				+ "&language=EN&billing_name=&billing_address=&" + "billing_city=&billing_state=&billing_zip=&"
 				+ "billing_country=&billing_tel=&billing_email=&" + "delivery_name=&delivery_address=&delivery_city="
 				+ "&delivery_state=&delivery_zip=&delivery_country=" + "&delivery_tel=&merchant_param1=" + callBackUrl
-				+ "&merchant_param2=CCAVENUE" + "&merchant_param3=&merchant_param4=&merchant_param5=";
+				+ "&merchant_param2=CCAVENUE" + "&merchant_param3=&merchant_param4=&merchant_param5=&tid=";
 
+//		&tid=76070845
 		log.info("requestString : " + requestString);
 		String encryptedJsonData = "";
 		StringBuffer wsDataBuff = new StringBuffer();
@@ -327,43 +328,53 @@ public class CcavenueGateway implements Gateway {
 	public Transaction fetchStatus(Transaction currentStatus, Map<String, String> params) {
 		log.info("inside CcavenueGateway.fetchStatus().....");
 //		CcavenueResponse resp = objectMapper.convertValue(params, CcavenueResponse.class);
-		CcavenueResponse resp = new CcavenueResponse();
-		if (!isNull(resp.getEncResp()) && !isNull(resp.getOrderNo()))
-			;
-//			String checksum = resp.getHash();
+		if (params.containsKey("FromUpdateAPI")) {
+			log.info("Inside fetchStatus() if condition......");
+//			CcavenueResponse resp = new CcavenueResponse();
+//			if (!isNull(resp.getEncResp()) && !isNull(resp.getOrderNo()))
+//				;
+//				String checksum = resp.getHash();
 
-//		String encResp = resp.getEncResp();
-		String encResp = params.get("encResp");
-//		String orderNo = resp.getOrderNo();
-		log.info("encResp: " + encResp);
-		CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
-		String decryptedData = ccavenueUtis.decrypt(encResp);
-		log.info("decryptedData: " + decryptedData);
-		String encRespString[] = decryptedData.split("&");
-		Map<String, String> resMap = new HashMap<String, String>();
-		for (String s : encRespString) {
-			String s2[] = s.split("=");
-			if (!s2[0].equals("merchant_param1")) {
-				String key = s2[0];
-				String value = "";
-				if (s2.length > 1) {
-					value = s2[1];
+//			String encResp = resp.getEncResp();
+			String encResp = params.get("encResp");
+//			String orderNo = resp.getOrderNo();
+			log.info("encResp: " + encResp);
+			CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
+			String decryptedData = ccavenueUtis.decrypt(encResp);
+			log.info("decryptedData: " + decryptedData);
+			String encRespString[] = decryptedData.split("&");
+			Map<String, String> resMap = new HashMap<String, String>();
+			for (String s : encRespString) {
+				String s2[] = s.split("=");
+				if (!s2[0].equals("merchant_param1")) {
+					String key = s2[0];
+					String value = "";
+					if (s2.length > 1) {
+						value = s2[1];
+					}
+					resMap.put(key, value);
 				}
-				resMap.put(key, value);
+			}
+
+			log.info("resMap: " + resMap.toString());
+			Transaction txn = transformRawResponse(resMap, currentStatus);
+//			log.info("txn:" + txn.getTxnAmount());
+			log.info("txn.getTxnStatus():" + txn.getTxnStatus());
+			if (txn.getTxnStatus().equals(Transaction.TxnStatusEnum.SUCCESS)) {
+				return txn;
+			} else {
+				return fetchStatusFromGateway(currentStatus, resMap);
 			}
 		}
 
-		log.info("resMap: " + resMap.toString());
-		Transaction txn = transformRawResponse(resMap, currentStatus);
-//		log.info("txn:" + txn.getTxnAmount());
-		log.info("txn.getTxnStatus():" + txn.getTxnStatus());
-		if (txn.getTxnStatus().equals(Transaction.TxnStatusEnum.PENDING)
-				|| txn.getTxnStatus().equals(Transaction.TxnStatusEnum.FAILURE)) {
-			return txn;
-		}
+//		if (txn.getTxnStatus().equals(Transaction.TxnStatusEnum.PENDING)
+//				|| txn.getTxnStatus().equals(Transaction.TxnStatusEnum.FAILURE)) {
+//			return txn;
+//		}
 
-//		return fetchStatusFromGateway(currentStatus, resMap);
-		return txn;
+		Map<String, String> resMap = new HashMap<String, String>();
+		return fetchStatusFromGateway(currentStatus, resMap);
+//		return txn;
 	}
 
 	@Override
@@ -386,7 +397,7 @@ public class CcavenueGateway implements Gateway {
 		Transaction.TxnStatusEnum status;
 
 		String gatewayStatus = resp.get("order_status");
-		String trackerStatus=resp.get("status");
+//		String trackerStatus = resp.get("status");
 		log.info("gatewayStatus: " + gatewayStatus);
 
 		if (gatewayStatus.equalsIgnoreCase("success")) {
@@ -407,9 +418,12 @@ public class CcavenueGateway implements Gateway {
 	private Transaction fetchStatusFromGateway(Transaction currentStatus, Map<String, String> resMap) {
 		log.info("inside CcavenueGateway.fetchStatusFromGateway().....");
 
-		String refNo = resMap.get("tracking_id");
-		String orderNo = resMap.get("order_id");
-		String orderStatusQueryJson = "{ \"reference_no\":\"" + refNo + "\", \"order_no\":\"" + orderNo + "\" }";
+//		String refNo = resMap.get("tracking_id");
+//		String orderNo = resMap.get("order_id");
+		String orderNo = currentStatus.getTxnId();
+
+//		String orderStatusQueryJson = "{ \"reference_no\":\"" + refNo + "\", \"order_no\":\"" + orderNo + "\" }";
+		String orderStatusQueryJson = "{ \"order_no\":\"" + orderNo + "\" }";
 
 		String encryptedJsonData = "";
 		CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
@@ -418,16 +432,19 @@ public class CcavenueGateway implements Gateway {
 		URL url = null;
 		HttpURLConnection vHttpUrlConnection = null;
 		DataInputStream vInput = null;
-		String urlStr = "https://logintest.ccavenue.com/apis/servlet/DoWebTrans?enc_request=" + encryptedJsonData
+		String urlStr = "https://login.ccavenue.com/apis/servlet/DoWebTrans?enc_request=" + encryptedJsonData
 				+ "&access_code=" + ACCESS_CODE
 				+ "&request_type=JSON&response_type=JSON&command=orderStatusTracker&version=1.2";
+//		String urlStr = "https://logintest.ccavenue.com/apis/servlet/DoWebTrans?enc_request=" + encryptedJsonData
+//				+ "&access_code=" + ACCESS_CODE
+//				+ "&request_type=JSON&response_type=JSON&command=orderStatusTracker&version=1.2";
 		StringBuffer vStringBuffer = null;
 		try {
 			url = new URL(urlStr);
-			if (url.openConnection() instanceof HttpsURLConnection) {
-				vHttpUrlConnection = (HttpsURLConnection) url.openConnection();
-				vHttpUrlConnection.setRequestMethod("POST");
-			}
+//			if (url.openConnection() instanceof HttpsURLConnection) {
+			vHttpUrlConnection = (HttpsURLConnection) url.openConnection();
+			vHttpUrlConnection.setRequestMethod("POST");
+//			}
 			vHttpUrlConnection.setDoInput(true);
 			vHttpUrlConnection.setDoOutput(true);
 			vHttpUrlConnection.setUseCaches(false);
@@ -450,14 +467,13 @@ public class CcavenueGateway implements Gateway {
 
 			System.out.println("url: " + vHttpUrlConnection.getURL().toURI());
 			System.out.println("vStringBuffer: " + vStringBuffer);
-			if (isNull(vHttpUrlConnection.getURL().toURI()))
+			if (isNull(vHttpUrlConnection.getURL().toURI())) {
 				log.info("CCAVENUE_REDIRECT_URI_GEN_FAILED");
-			else {
-
+				return currentStatus;
 			}
 		} catch (Exception e) {
 			log.info("Unable to retrieve redirect URI from gateway: " + e);
-
+			return currentStatus;
 		}
 
 		String vResponse = vStringBuffer.toString();
@@ -471,8 +487,9 @@ public class CcavenueGateway implements Gateway {
 			if (vStatus.equals("1")) {// If Api call failed
 				log.info("enc_response : " + encResponse);
 				log.info("error_code : " + vError_code);
-				throw new CustomException("FAILED_TO_FETCH_STATUS_FROM_GATEWAY",
-						"Unable to fetch status from payment gateway for txnid: " + currentStatus.getTxnId());
+				return currentStatus;
+//				throw new CustomException("FAILED_TO_FETCH_STATUS_FROM_GATEWAY",
+//						"Unable to fetch status from payment gateway for txnid: " + currentStatus.getTxnId());
 			}
 			String decResponse = "";
 			if (!encResponse.equals("")) {
@@ -480,16 +497,41 @@ public class CcavenueGateway implements Gateway {
 				log.info("Dec Response : " + decResponse);
 			}
 
-			if (vStatus.equals("0") && decResponse != null) {// If Api call failed
+			if (vStatus.equals("0") && decResponse != null) {
 				String[] keyValuePairs = decResponse.split(",");
 				for (String pair : keyValuePairs) {
 					String[] entry = pair.split(":");
-					resp.put(entry[0].replace("\"", "").trim(), entry[1].replace("\"", "").trim());
+					resp.put(entry[0].replace("\"", "").replace("{", "").replace("}", "").trim(),
+							entry[1].replace("\"", "").replace("{", "").replace("}", "").trim());
 				}
+				Map<String, String> responseMap = new HashMap<String, String>();
+				if (resp.containsKey("order_status")) {
+					if (resp.get("order_status").equalsIgnoreCase("Unsuccessful")) {
+						responseMap.put("order_status", resp.get("Failure"));
+					}
+					if (resp.get("order_status").equalsIgnoreCase("Shipped")) {
+						responseMap.put("order_status", "Success");
+					}
+				}
+
+				if (resp.containsKey("order_amt")) {
+					responseMap.put("amount", resp.get("order_amt"));
+				}
+				if (resp.containsKey("reference_no")) {
+					responseMap.put("tracking_id", resp.get("reference_no"));
+				}
+				if (resp.containsKey("order_bank_response")) {
+					responseMap.put("status_message", resp.get("order_bank_response"));
+				}
+
+				responseMap.put("payment_mode", "");
+				responseMap.put("status_code", "");
+				responseMap.put("failure_message", "");
+				return transformRawResponse(responseMap, currentStatus);
 			}
 		}
 
-		return transformRawResponse(resp, currentStatus);
+		return currentStatus;
 
 	}
 

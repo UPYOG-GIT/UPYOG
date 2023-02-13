@@ -2,6 +2,7 @@ package org.egov.bpa.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.bpa.config.BPAConfiguration;
 import org.egov.bpa.producer.Producer;
@@ -104,4 +105,13 @@ public class BPARepository {
     		return BPAData;
     	}
 
+        
+        public List<Map<String,Object>> getPayTypeByTenantId(String tenantId){
+        	
+        	String query="select id,charges_type_name from paytype_master where ulb_tenantid=?";
+        	return jdbcTemplate.queryForList(query, new Object[] { tenantId });
+//    		return jdbcTemplate.queryForObject(query, new Object[] { tenantId }, Map.class);
+        	
+//        	return null;
+        }
 }
