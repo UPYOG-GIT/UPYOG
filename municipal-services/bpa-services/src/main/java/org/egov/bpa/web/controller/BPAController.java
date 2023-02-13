@@ -3,6 +3,7 @@ package org.egov.bpa.web.controller;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -113,10 +114,36 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_paytype")
-	public ResponseEntity<List<Map<String, Object>>> getPayTypeByTenantId(@Valid @RequestBody RequestInfo requestInfo,
-			@RequestParam String tenantId) {
+	public ResponseEntity<Map<String,Object>> getPayTypeByTenantId(@RequestParam String tenantId) {
 //		@RequestBody RequestInfo requestInfo,
-		List<Map<String, Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
+		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
+		Map<String,Object> responseMap=new HashMap<String,Object>();
+		for(Map<String,Object> response:responseList) {
+			responseMap.put("code", "charges_type_name");
+			responseMap.put("value", response.get("charges_type_name"));
+		}
+//		return new ResponseEntity<>(responseList, HttpStatus.OK);
+		return new ResponseEntity<>(responseMap, HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "/_createfeedetail")
+	public ResponseEntity<List<Map<String,Object>>> createFeeDetails(@RequestParam String tenantId) {
+//		@RequestBody RequestInfo requestInfo,
+		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
+		return new ResponseEntity<>(responseList, HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "/_updatefeedetail")
+	public ResponseEntity<List<Map<String,Object>>> updateFeeDetails(@RequestParam String tenantId) {
+//		@RequestBody RequestInfo requestInfo,
+		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
+		return new ResponseEntity<>(responseList, HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "/_deletefeedetail")
+	public ResponseEntity<List<Map<String,Object>>> deleteFeeDetails(@RequestParam String tenantId) {
+//		@RequestBody RequestInfo requestInfo,
+		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
 		return new ResponseEntity<>(responseList, HttpStatus.OK);
 	}
 
