@@ -118,8 +118,9 @@ public class BPAController {
 //		@RequestBody RequestInfo requestInfo,
 		List<Map<String,Object>> sqlResponseList = bpaService.getPayTypeByTenantId(tenantId);
 		List<Map<String,Object>> responseList=new ArrayList<>();
-		Map<String,Object> responseMap=new HashMap<String,Object>();
+		
 		for(Map<String,Object> response:sqlResponseList) {
+			Map<String,Object> responseMap=new HashMap<String,Object>();
 			responseMap.put("code", response.get("charges_type_name"));
 			responseMap.put("value", response.get("id"));
 			responseList.add(responseMap);
