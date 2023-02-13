@@ -114,16 +114,18 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_paytype")
-	public ResponseEntity<Map<String,Object>> getPayTypeByTenantId(@RequestParam String tenantId) {
+	public ResponseEntity<List<Map<String,Object>>> getPayTypeByTenantId(@RequestParam String tenantId) {
 //		@RequestBody RequestInfo requestInfo,
-		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
+		List<Map<String,Object>> sqlResponseList = bpaService.getPayTypeByTenantId(tenantId);
+		List<Map<String,Object>> responseList=new ArrayList<>();
 		Map<String,Object> responseMap=new HashMap<String,Object>();
-		for(Map<String,Object> response:responseList) {
-			responseMap.put("code", "charges_type_name");
-			responseMap.put("value", response.get("charges_type_name"));
+		for(Map<String,Object> response:sqlResponseList) {
+			responseMap.put("code", response.get("charges_type_name"));
+			responseMap.put("value", response.get("id"));
+			responseList.add(responseMap);
 		}
-//		return new ResponseEntity<>(responseList, HttpStatus.OK);
-		return new ResponseEntity<>(responseMap, HttpStatus.OK);
+		return new ResponseEntity<>(responseList, HttpStatus.OK);
+//		return new ResponseEntity<>(responseMap, HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "/_createfeedetail")
