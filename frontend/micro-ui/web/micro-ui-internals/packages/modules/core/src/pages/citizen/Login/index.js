@@ -211,13 +211,9 @@ if(window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")){
   };
 
   return (
-<<<<<<< HEAD
     <div
-=======
-     <div
->>>>>>> 6c6ab1b14d0b0d07eae2bc2d8010734dbd6d0c65
     className={"main center-container mb-25"}
-     style={{ paddingRight: '5000px'}}
+    //  style={{ paddingRight: '5000px'}}
   >
     <Switch>
       <AppContainer>
