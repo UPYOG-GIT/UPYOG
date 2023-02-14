@@ -134,22 +134,24 @@ public class BPAController {
 //		@RequestBody RequestInfo requestInfo,
 //		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
 //		return new ResponseEntity<>(responseList, HttpStatus.OK);
-		
+		bpaService.createFeeDetail(payTypeFeeDetailRequest);
 		return null;
 	}
 	
 	@PostMapping(value = "/_updatefeedetail")
 	public ResponseEntity<List<Map<String,Object>>> updateFeeDetails(@RequestParam String tenantId) {
 //		@RequestBody RequestInfo requestInfo,
-		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
-		return new ResponseEntity<>(responseList, HttpStatus.OK);
+//		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
+//		return new ResponseEntity<>(responseList, HttpStatus.OK);
+		return null;
 	}
 	
 	@PostMapping(value = "/_deletefeedetail")
 	public ResponseEntity<List<Map<String,Object>>> deleteFeeDetails(@RequestParam String tenantId) {
 //		@RequestBody RequestInfo requestInfo,
-		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
-		return new ResponseEntity<>(responseList, HttpStatus.OK);
+//		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
+//		return new ResponseEntity<>(responseList, HttpStatus.OK);
+		return null;
 	}
 
 }
