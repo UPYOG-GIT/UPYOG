@@ -18,8 +18,8 @@ import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPAResponse;
 import org.egov.bpa.web.model.BPASearchCriteria;
+import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
 import org.egov.bpa.web.model.RequestInfoWrapper;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,10 +134,12 @@ public class BPAController {
 	}
 	
 	@PostMapping(value = "/_createfeedetail")
-	public ResponseEntity<List<Map<String,Object>>> createFeeDetails(@RequestParam String tenantId) {
+	public ResponseEntity<List<Map<String,Object>>> createFeeDetails(@RequestBody List<PayTypeFeeDetailRequest> payTypeFeeDetailRequest) {
 //		@RequestBody RequestInfo requestInfo,
-		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
-		return new ResponseEntity<>(responseList, HttpStatus.OK);
+//		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
+//		return new ResponseEntity<>(responseList, HttpStatus.OK);
+		
+		return null;
 	}
 	
 	@PostMapping(value = "/_updatefeedetail")
