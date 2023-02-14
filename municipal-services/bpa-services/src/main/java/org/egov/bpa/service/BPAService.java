@@ -113,8 +113,10 @@ public class BPAService {
 	 */
 	public BPA create(BPARequest bpaRequest) {
 		RequestInfo requestInfo = bpaRequest.getRequestInfo();
+		log.info("service "+ requestInfo);
 		String tenantId = bpaRequest.getBPA().getTenantId().split("\\.")[0];
 		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
+		log.info("service mdmsdata " + mdmsData);
 		if (bpaRequest.getBPA().getTenantId().split("\\.").length == 1) {
 			throw new CustomException(BPAErrorConstants.INVALID_TENANT, " Application cannot be create at StateLevel");
 		}
@@ -125,6 +127,7 @@ public class BPAService {
 		}
 
 		Map<String, String> values = edcrService.validateEdcrPlan(bpaRequest, mdmsData);
+		log.info("validateEdcrPlan (bpaRequest, mdmsData)  "+ values);
 		String applicationType = values.get(BPAConstants.APPLICATIONTYPE);
 		this.validateCreateOC(applicationType, values, requestInfo, bpaRequest);
 		bpaValidator.validateCreate(bpaRequest, mdmsData, values);
