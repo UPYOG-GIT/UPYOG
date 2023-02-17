@@ -6,11 +6,10 @@ CREATE TABLE IF NOT EXISTS paytype_master
     payment_type character varying(10),
     defunt character varying(2),
     createdby character varying(128),
-	createddate timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+	createddate timestamp without time zone,
 	updatedby character varying(128),
-	updateddate timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-	optflag character varying(2),
-    hrnh character varying(2)
+	updateddate timestamp without time zone,
+	UNIQUE (ulb_tenantid, charges_type_name)
 );
 
 
@@ -30,10 +29,6 @@ CREATE TABLE IF NOT EXISTS pre_post_fee_details
 	value character varying(56),
 	status character varying(20),
 	createdby character varying(128),
-	createddate timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-	payment_type character varying(10),
-	CONSTRAINT fk_fee_detail_paytype_id FOREIGN KEY (paytype_id)
-        REFERENCES paytype_master(id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
+	createddate timestamp without time zone,
+	payment_type character varying(10)
 );

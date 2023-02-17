@@ -26,6 +26,7 @@ import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPASearchCriteria;
 import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
+import org.egov.bpa.web.model.PayTypeRequest;
 import org.egov.bpa.web.model.Workflow;
 import org.egov.bpa.web.model.landInfo.LandInfo;
 import org.egov.bpa.web.model.landInfo.LandSearchCriteria;
@@ -823,6 +824,10 @@ public class BPAService {
 	
 	public void createFeeDetail(List<PayTypeFeeDetailRequest> payTypeFeeDetailRequest) {
 		repository.createFeeDetail(payTypeFeeDetailRequest);
+	}
+	
+	public void createPayType(PayTypeRequest payTypeRequest) {
+		repository.createPayType(payTypeRequest);
 	}
 
 }

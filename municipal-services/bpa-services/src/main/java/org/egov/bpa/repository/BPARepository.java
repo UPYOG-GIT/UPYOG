@@ -1,6 +1,8 @@
 package org.egov.bpa.repository;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +14,7 @@ import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPASearchCriteria;
 import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
+import org.egov.bpa.web.model.PayTypeRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -119,7 +122,7 @@ public class BPARepository {
 	}
 
 	public void createFeeDetail(List<PayTypeFeeDetailRequest> payTypeFeeDetailRequestList) {
-		
+
 		String insertQuery = "insert into pre_post_fee_details(paytype_id,ulb_tenantid,bill_id,application_no,"
 				+ "unit_id,pay_id,charges_type_name,amount,status_type,propvalue,value,status,createdby,payment_type)"
 				+ "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -150,5 +153,21 @@ public class BPARepository {
 		 * payTypeFeeDetailRequest.getStatus(), payTypeFeeDetailRequest.getCreatedBy(),
 		 * payTypeFeeDetailRequest.getPaymentType()); }
 		 */
+	}
+
+	public void createPayType(PayTypeRequest payTypeRequest) {
+
+		String insertQuery = "insert into paytype_master(ulb_tenantid,charges_type_name,payment_type,"
+				+ "defunt,createdby,createddate) values (?,?,?,?,?,?)";
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		String date = simpleDateFormat.format(new Date());
+
+		List<Object[]> parameters = new ArrayList<Object[]>();
+		parameters.add(new Object[] { payTypeRequest.getTenantId(), payTypeRequest.getChargesTypeName(),
+				payTypeRequest.getPaymentType(), payTypeRequest.getDefunt(), payTypeRequest.getCreatedBy(), date });
+
+		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
+
+		log.info("BPARepository.createPayType: " + insertResult + " data inserted into paytype_master table");
 	}
 }

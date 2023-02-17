@@ -19,9 +19,9 @@ import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPAResponse;
 import org.egov.bpa.web.model.BPASearchCriteria;
 import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
+import org.egov.bpa.web.model.PayTypeRequest;
 import org.egov.bpa.web.model.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -132,13 +132,22 @@ public class BPAController {
 //		return new ResponseEntity<>(responseMap, HttpStatus.OK);
 	}
 	
+	@PostMapping(value = "/_createpaytype")
+	public void createPayType(@RequestBody PayTypeRequest payTypeRequest) {
+//		@RequestBody RequestInfo requestInfo,
+//		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
+//		return new ResponseEntity<>(responseList, HttpStatus.OK);
+		bpaService.createPayType(payTypeRequest);
+//		return null;
+	}
+	
 	@PostMapping(value = "/_createfeedetail")
-	public ResponseEntity<List<Map<String,Object>>> createFeeDetails(@RequestBody List<PayTypeFeeDetailRequest> payTypeFeeDetailRequest) {
+	public void createFeeDetails(@RequestBody List<PayTypeFeeDetailRequest> payTypeFeeDetailRequest) {
 //		@RequestBody RequestInfo requestInfo,
 //		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
 //		return new ResponseEntity<>(responseList, HttpStatus.OK);
 		bpaService.createFeeDetail(payTypeFeeDetailRequest);
-		return null;
+//		return null;
 	}
 	
 	@PostMapping(value = "/_updatefeedetail")
