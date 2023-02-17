@@ -154,12 +154,8 @@ public class BPAUtil {
 	 * @return
 	 */
 	public Object mDMSCall(RequestInfo requestInfo, String tenantId) {
-		log.info("makes mdms call with the given criteria and reutrn mdms data");
-		log.info("requestInfo  "+ requestInfo +   "  in mdms call tenantId "+ tenantId);
 		MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId);
-		log.info("mdmsCriteriaReq "+mdmsCriteriaReq);
 		Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
-		log.info("result "+ result);
 		return result;
 	}
 	
