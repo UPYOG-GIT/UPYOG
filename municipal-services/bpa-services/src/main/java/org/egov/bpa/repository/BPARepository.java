@@ -1,8 +1,8 @@
 package org.egov.bpa.repository;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -159,8 +159,11 @@ public class BPARepository {
 
 		String insertQuery = "insert into paytype_master(ulb_tenantid,charges_type_name,payment_type,"
 				+ "defunt,createdby,createddate) values (?,?,?,?,?,?)";
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-		String date = simpleDateFormat.format(new Date());
+//		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+//		String date = simpleDateFormat.format(new Date());
+
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
+		LocalDateTime date = LocalDateTime.now();
 
 		List<Object[]> parameters = new ArrayList<Object[]>();
 		parameters.add(new Object[] { payTypeRequest.getTenantId(), payTypeRequest.getChargesTypeName(),
