@@ -821,8 +821,8 @@ public class BPAService {
 //		return null;
 	}
 	
-	public void createFeeDetail(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
-		
+	public void createFeeDetail(List<PayTypeFeeDetailRequest> payTypeFeeDetailRequest) {
+		repository.createFeeDetail(payTypeFeeDetailRequest);
 	}
 
 }
