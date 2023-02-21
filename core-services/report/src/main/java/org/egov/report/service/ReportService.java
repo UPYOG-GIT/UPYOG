@@ -228,7 +228,12 @@ public class ReportService {
 		ReportDefinitions rds = ReportApp.getReportDefs();
 		ReportDefinition reportDefinition = rds.getReportDefinition(moduleName + " " + reportName);
 		List<Map<String, Object>> maps = reportRepository.getData(reportRequest, reportDefinition, authToken);
+		log.info("maps.get(0).toString() -------------" + maps.get(0).toString());
 		// Call decryption service if decryption is required for the report
+		log.info("++++++++++++++++++++++++++++++++++++++");
+		log.info("reportDefinition.getdecryptionPathId() : "+reportDefinition.getdecryptionPathId());
+		log.info("reportRequest.getRequestInfo() : "+ (reportRequest.getRequestInfo() != null));
+		log.info("reportRequest.getRequestInfo().getUserInfo() : "+(reportRequest.getRequestInfo().getUserInfo() != null));
 		if ((reportDefinition.getdecryptionPathId() != null) && (reportRequest.getRequestInfo() != null)
 				&& (reportRequest.getRequestInfo().getUserInfo() != null)) {
 			log.info("inside decryption condition......");
@@ -236,6 +241,7 @@ public class ReportService {
 				// handle if userInfo or requestInfo is null
 				User userInfo = getEncrichedandCopiedUserInfo(reportRequest.getRequestInfo().getUserInfo());
 				maps = encryptionService.decryptJson(maps, reportDefinition.getdecryptionPathId(), userInfo, Map.class);
+				log.info("================================================" + maps.get(0).toString());
 				auditDecryptRequest(maps, reportDefinition.getdecryptionPathId(),
 						reportRequest.getRequestInfo().getUserInfo());
 			} catch (IOException e) {
