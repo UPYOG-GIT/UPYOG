@@ -124,9 +124,10 @@ public class BPARepository {
 	public void createFeeDetail(List<PayTypeFeeDetailRequest> payTypeFeeDetailRequestList) {
 
 		String insertQuery = "insert into pre_post_fee_details(paytype_id,ulb_tenantid,bill_id,application_no,"
-				+ "unit_id,pay_id,charges_type_name,amount,status_type,propvalue,value,status,createdby,payment_type)"
-				+ "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-
+				+ "unit_id,pay_id,charges_type_name,amount,status_type,propvalue,value,status,createdby,payment_type,createddate)"
+				+ "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
+		LocalDateTime date = LocalDateTime.now();
 		List<Object[]> parameters = new ArrayList<Object[]>();
 		for (PayTypeFeeDetailRequest payTypeFeeDetailRequest : payTypeFeeDetailRequestList) {
 			parameters.add(new Object[] { payTypeFeeDetailRequest.getPayTypeId(), payTypeFeeDetailRequest.getTenantId(),
@@ -135,7 +136,7 @@ public class BPARepository {
 					payTypeFeeDetailRequest.getChargesTypeName(), payTypeFeeDetailRequest.getAmount(),
 					payTypeFeeDetailRequest.getStatusType(), payTypeFeeDetailRequest.getPropValue(),
 					payTypeFeeDetailRequest.getValue(), payTypeFeeDetailRequest.getStatus(),
-					payTypeFeeDetailRequest.getCreatedBy(), payTypeFeeDetailRequest.getPaymentType() });
+					payTypeFeeDetailRequest.getCreatedBy(), payTypeFeeDetailRequest.getPaymentType(), date });
 		}
 		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
 
@@ -157,17 +158,17 @@ public class BPARepository {
 
 	public void createPayType(PayTypeRequest payTypeRequest) {
 
-		String insertQuery = "insert into paytype_master(ulb_tenantid,charges_type_name,payment_type,"
-				+ "defunt,createdby,createddate) values (?,?,?,?,?,?)";
-//		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-//		String date = simpleDateFormat.format(new Date());
-
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
 		LocalDateTime date = LocalDateTime.now();
 
+		String insertQuery = "insert into paytype_master(ulb_tenantid,charges_type_name,payment_type,"
+				+ "defunt,createdby,createddate) values (?,?,?,?,?," + date + ")";
+//		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+//		String date = simpleDateFormat.format(new Date());
+
 		List<Object[]> parameters = new ArrayList<Object[]>();
 		parameters.add(new Object[] { payTypeRequest.getTenantId(), payTypeRequest.getChargesTypeName(),
-				payTypeRequest.getPaymentType(), payTypeRequest.getDefunt(), payTypeRequest.getCreatedBy(), date });
+				payTypeRequest.getPaymentType(), payTypeRequest.getDefunt(), payTypeRequest.getCreatedBy() });
 
 		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
 
