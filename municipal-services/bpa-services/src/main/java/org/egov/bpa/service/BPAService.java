@@ -27,6 +27,7 @@ import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPASearchCriteria;
 import org.egov.bpa.web.model.BSCategoryRequest;
+import org.egov.bpa.web.model.PayTpRateRequest;
 import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
 import org.egov.bpa.web.model.PayTypeRequest;
 import org.egov.bpa.web.model.ProposalTypeRequest;
@@ -864,4 +865,7 @@ public class BPAService {
 		return resultList;
 	}
 	
+	public int createPayTpRate(PayTpRateRequest payTpRateRequest) {
+		return repository.createPayTpRate(payTpRateRequest);
+	}
 }
