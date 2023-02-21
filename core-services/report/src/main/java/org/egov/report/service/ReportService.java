@@ -229,6 +229,10 @@ public class ReportService {
 		ReportDefinition reportDefinition = rds.getReportDefinition(moduleName + " " + reportName);
 		List<Map<String, Object>> maps = reportRepository.getData(reportRequest, reportDefinition, authToken);
 		// Call decryption service if decryption is required for the report
+		log.info("++++++++++++++++++++++++++++++++++++++");
+		log.info("reportDefinition.getdecryptionPathId() : "+reportDefinition.getdecryptionPathId());
+		log.info("reportRequest.getRequestInfo() : "+ (reportRequest.getRequestInfo() != null));
+		log.info("reportRequest.getRequestInfo().getUserInfo() : "+(reportRequest.getRequestInfo().getUserInfo() != null));
 		if ((reportDefinition.getdecryptionPathId() != null) && (reportRequest.getRequestInfo() != null)
 				&& (reportRequest.getRequestInfo().getUserInfo() != null)) {
 			log.info("inside decryption condition......");
