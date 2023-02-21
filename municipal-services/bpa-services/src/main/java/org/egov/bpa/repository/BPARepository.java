@@ -162,7 +162,7 @@ public class BPARepository {
 		LocalDateTime date = LocalDateTime.now();
 
 		String insertQuery = "insert into paytype_master(ulb_tenantid,charges_type_name,payment_type,"
-				+ "defunt,createdby,createddate) values (?,?,?,?,?," + date + ")";
+				+ "defunt,createdby,createddate) values (?,?,?,?,?,'" + date + "')";
 //		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 //		String date = simpleDateFormat.format(new Date());
 
