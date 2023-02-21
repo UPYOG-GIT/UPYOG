@@ -236,6 +236,7 @@ public class ReportService {
 				// handle if userInfo or requestInfo is null
 				User userInfo = getEncrichedandCopiedUserInfo(reportRequest.getRequestInfo().getUserInfo());
 				maps = encryptionService.decryptJson(maps, reportDefinition.getdecryptionPathId(), userInfo, Map.class);
+				log.info("================================================" + maps.get(0).toString());
 				auditDecryptRequest(maps, reportDefinition.getdecryptionPathId(),
 						reportRequest.getRequestInfo().getUserInfo());
 			} catch (IOException e) {
