@@ -614,14 +614,14 @@ class ShowField extends Component {
       for (let j = 0; j < reportResult.reportData[i].length; j++) {
         let val = intVal(reportResult.reportData[i][j]);
         if (i == 0) {
-          if (sumColumn[j + 1].total && typeof val === "number") {
+          if (sumColumn[j].total && typeof val === "number") {
             total.push(val);
           } else {
             total.push("");
           }
           continue;
         }
-        if (sumColumn[j + 1].total) {
+        if (sumColumn[j].total) {
           if (typeof val === "number") {
             if (typeof total[j] === "string") {
               total[j] = val;
