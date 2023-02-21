@@ -10,11 +10,14 @@ import org.egov.bpa.config.BPAConfiguration;
 import org.egov.bpa.producer.Producer;
 import org.egov.bpa.repository.querybuilder.BPAQueryBuilder;
 import org.egov.bpa.repository.rowmapper.BPARowMapper;
+import org.egov.bpa.web.model.BCategoryRequest;
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPASearchCriteria;
+import org.egov.bpa.web.model.BSCategoryRequest;
 import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
 import org.egov.bpa.web.model.PayTypeRequest;
+import org.egov.bpa.web.model.ProposalTypeRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -113,12 +116,11 @@ public class BPARepository {
 
 	public List<Map<String, Object>> getPayTypeByTenantId(String tenantId) {
 
-		String query = "select id,charges_type_name from paytype_master where ulb_tenantid=?";
+		String query = "select id,charges_type_name,defunt from paytype_master where ulb_tenantid=?";
 //        	String query="select charges_type_name from paytype_master where ulb_tenantid=?";
 		return jdbcTemplate.queryForList(query, new Object[] { tenantId });
 //    		return jdbcTemplate.queryForObject(query, new Object[] { tenantId }, Map.class);
 
-//        	return null;
 	}
 
 	public void createFeeDetail(List<PayTypeFeeDetailRequest> payTypeFeeDetailRequestList) {
@@ -173,5 +175,75 @@ public class BPARepository {
 		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
 
 		log.info("BPARepository.createPayType: " + insertResult + " data inserted into paytype_master table");
+	}
+
+	public int createProposalType(ProposalTypeRequest proposalTypeRequest) {
+
+		LocalDateTime date = LocalDateTime.now();
+
+		String insertQuery = "insert into proposal_type_master(ULB_TENANTID,DESC,DEFUNT,CREATEDBY,CREATEDDATE) "
+				+ "values (?,?,?,?,'" + date + "')";
+
+		Object parameters = new Object();
+		parameters = new Object[] { proposalTypeRequest.getTenantId(), proposalTypeRequest.getDesc(),
+				proposalTypeRequest.getDefunt(), proposalTypeRequest.getCreatedBy() };
+
+		int insertResult = jdbcTemplate.update(insertQuery, parameters);
+
+		log.info("BPARepository.createProposalType: " + insertResult + " data inserted into paytype_master table");
+		return insertResult;
+	}
+
+	// fetch data from proposal_type_master table
+	public List<Map<String, Object>> getProposalTypeByTenantId(String tenantId) {
+
+		String query = "select ID,DESC,DEFUNT from proposal_type_master where ULB_TENANTID=?";
+		return jdbcTemplate.queryForList(query, new Object[] { tenantId });
+	}
+
+	public int createBCategory(BCategoryRequest bCategoryRequest) {
+
+		LocalDateTime date = LocalDateTime.now();
+
+		String insertQuery = "insert into bcategory_master(ULB_TENANTID,DESC,DEFUNT,CREATEDBY,CREATEDDATE) "
+				+ "values (?,?,?,?,'" + date + "')";
+
+		Object parameters = new Object();
+		parameters = new Object[] { bCategoryRequest.getTenantId(), bCategoryRequest.getDesc(),
+				bCategoryRequest.getDefunt(), bCategoryRequest.getCreatedBy() };
+
+		int insertResult = jdbcTemplate.update(insertQuery, parameters);
+
+		log.info("BPARepository.createBCategory: " + insertResult + " data inserted into paytype_master table");
+		return insertResult;
+	}
+
+	// fetch data from bcategory_master table
+	public List<Map<String, Object>> getBCategoryByTenantId(String tenantId) {
+		String query = "select ID,DESC,DEFUNT from bcategory_master where ULB_TENANTID=?";
+		return jdbcTemplate.queryForList(query, new Object[] { tenantId });
+	}
+
+	public int createBSCategory(BSCategoryRequest bsCategoryRequest) {
+
+		LocalDateTime date = LocalDateTime.now();
+
+		String insertQuery = "insert into bcategory_master(ULB_TENANTID,DESC,DEFUNT,CATID,CREATEDBY,CREATEDDATE) "
+				+ "values (?,?,?,?,?,'" + date + "')";
+
+		Object parameters = new Object();
+		parameters = new Object[] { bsCategoryRequest.getTenantId(), bsCategoryRequest.getDesc(),
+				bsCategoryRequest.getDefunt(), bsCategoryRequest.getCatid(), bsCategoryRequest.getCreatedBy() };
+
+		int insertResult = jdbcTemplate.update(insertQuery, parameters);
+
+		log.info("BPARepository.createBSCategory: " + insertResult + " data inserted into paytype_master table");
+		return insertResult;
+	}
+
+	// fetch data from bscategory_master table
+	public List<Map<String, Object>> getBSCategoryByTenantId(String tenantId) {
+		String query = "select ID,DESC,DEFUNT from bscategory_master where ULB_TENANTID=?";
+		return jdbcTemplate.queryForList(query, new Object[] { tenantId });
 	}
 }

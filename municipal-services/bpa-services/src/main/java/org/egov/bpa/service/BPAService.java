@@ -22,11 +22,14 @@ import org.egov.bpa.util.BPAErrorConstants;
 import org.egov.bpa.util.BPAUtil;
 import org.egov.bpa.util.NotificationUtil;
 import org.egov.bpa.validator.BPAValidator;
+import org.egov.bpa.web.model.BCategoryRequest;
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPASearchCriteria;
+import org.egov.bpa.web.model.BSCategoryRequest;
 import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
 import org.egov.bpa.web.model.PayTypeRequest;
+import org.egov.bpa.web.model.ProposalTypeRequest;
 import org.egov.bpa.web.model.Workflow;
 import org.egov.bpa.web.model.landInfo.LandInfo;
 import org.egov.bpa.web.model.landInfo.LandSearchCriteria;
@@ -819,7 +822,6 @@ public class BPAService {
 		List<Map<String,Object>> resultList = repository.getPayTypeByTenantId(tenantId);
 		log.info("getPayTypeByTenantId: " + resultList.toString());
 		return resultList;
-//		return null;
 	}
 	
 	public void createFeeDetail(List<PayTypeFeeDetailRequest> payTypeFeeDetailRequest) {
@@ -829,5 +831,37 @@ public class BPAService {
 	public void createPayType(PayTypeRequest payTypeRequest) {
 		repository.createPayType(payTypeRequest);
 	}
+	
+	
+	public int createProposalType(ProposalTypeRequest proposalTypeRequest) {
+		return repository.createProposalType(proposalTypeRequest);
+	}
 
+	
+	public List<Map<String,Object>> getProposalTypeByTenantId(String tenantId) {
+		List<Map<String,Object>> resultList = repository.getProposalTypeByTenantId(tenantId);
+		log.info("getPayTypeByTenantId: " + resultList.toString());
+		return resultList;
+	}
+	
+	public int createBCategory(BCategoryRequest bCategoryRequest) {
+		return repository.createBCategory(bCategoryRequest);
+	}
+	
+	public List<Map<String,Object>> getBCategoryByTenantId(String tenantId) {
+		List<Map<String,Object>> resultList = repository.getBCategoryByTenantId(tenantId);
+		log.info("getPayTypeByTenantId: " + resultList.toString());
+		return resultList;
+	}
+	
+	public int createBSCategory(BSCategoryRequest bSCategoryRequest) {
+		return repository.createBSCategory(bSCategoryRequest);
+	}
+	
+	public List<Map<String,Object>> getBSCategoryByTenantId(String tenantId) {
+		List<Map<String,Object>> resultList = repository.getBSCategoryByTenantId(tenantId);
+		log.info("getPayTypeByTenantId: " + resultList.toString());
+		return resultList;
+	}
+	
 }
