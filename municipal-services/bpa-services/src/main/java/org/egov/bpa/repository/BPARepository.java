@@ -165,12 +165,12 @@ public class BPARepository {
 		String insertQuery = "insert into paytype_master(ulb_tenantid,charges_type_name,payment_type,"
 				+ "defunt,createdby,createddate) values (?,?,?,?,?,'" + date + "')";
 
-		Object parameters = new Object();
-		parameters=new Object[] { payTypeRequest.getTenantId(), payTypeRequest.getChargesTypeName(),
-				payTypeRequest.getPaymentType(), payTypeRequest.getDefunt(), payTypeRequest.getCreatedBy() };
-//		List<Object[]> parameters = new ArrayList<Object[]>();
-//		parameters.add(new Object[] { payTypeRequest.getTenantId(), payTypeRequest.getChargesTypeName(),
-//				payTypeRequest.getPaymentType(), payTypeRequest.getDefunt(), payTypeRequest.getCreatedBy() });
+//		Object parameters = new Object();
+//		parameters=new Object[] { payTypeRequest.getTenantId(), payTypeRequest.getChargesTypeName(),
+//				payTypeRequest.getPaymentType(), payTypeRequest.getDefunt(), payTypeRequest.getCreatedBy() };
+		List<Object[]> parameters = new ArrayList<Object[]>();
+		parameters.add(new Object[] { payTypeRequest.getTenantId(), payTypeRequest.getChargesTypeName(),
+				payTypeRequest.getPaymentType(), payTypeRequest.getDefunt(), payTypeRequest.getCreatedBy() });
 
 //		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
 		int insertResult = jdbcTemplate.update(insertQuery, parameters);
