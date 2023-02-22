@@ -1,5 +1,6 @@
 package org.egov.bpa.repository;
 
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -162,20 +163,27 @@ public class BPARepository {
 
 		LocalDateTime date = LocalDateTime.now();
 
+//		String insertQuery = "insert into paytype_master(ulb_tenantid,charges_type_name,payment_type,"
+//				+ "defunt,createdby,createddate) values (?,?,?,?,?,'" + date + "')";
 		String insertQuery = "insert into paytype_master(ulb_tenantid,charges_type_name,payment_type,"
-				+ "defunt,createdby,createddate) values (?,?,?,?,?,'" + date + "')";
+				+ "defunt,createdby,createddate) values ('" + payTypeRequest.getTenantId() + "','"
+				+ payTypeRequest.getChargesTypeName() + "','" + payTypeRequest.getPaymentType() + "','"
+				+ payTypeRequest.getDefunt() + "','" + payTypeRequest.getCreatedBy() + "','" + date + "')";
 
 //		Object parameters = new Object();
 //		parameters=new Object[] { payTypeRequest.getTenantId(), payTypeRequest.getChargesTypeName(),
 //				payTypeRequest.getPaymentType(), payTypeRequest.getDefunt(), payTypeRequest.getCreatedBy() };
-		List<Object[]> parameters = new ArrayList<Object[]>();
-		parameters.add(new Object[] { payTypeRequest.getTenantId(), payTypeRequest.getChargesTypeName(),
-				payTypeRequest.getPaymentType(), payTypeRequest.getDefunt(), payTypeRequest.getCreatedBy() });
+//		List<Object[]> parameters = new ArrayList<Object[]>();
+//		parameters.add(new Object[] { payTypeRequest.getTenantId(), payTypeRequest.getChargesTypeName(),
+//				payTypeRequest.getPaymentType(), payTypeRequest.getDefunt(), payTypeRequest.getCreatedBy() });
 
 //		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
-		int insertResult = jdbcTemplate.update(insertQuery, parameters);
-
+//		int insertResult = jdbcTemplate.update(insertQuery, parameters);
+//		int insertResult = jdbcTemplate.update(insertQuery, payTypeRequest.getTenantId(),payTypeRequest.getChargesTypeName(),
+//				payTypeRequest.getPaymentType(), payTypeRequest.getDefunt(), payTypeRequest.getCreatedBy());
+		int insertResult = jdbcTemplate.update(insertQuery);
 		log.info("BPARepository.createPayType: " + insertResult + " data inserted into paytype_master table");
+//		return Array.getInt(insertResult, 0);
 		return insertResult;
 	}
 
@@ -276,8 +284,7 @@ public class BPARepository {
 
 	public List<Map<String, Object>> getPayTpRateByTenantIdAndTypeId(String tenantId, int typeId) {
 		String query = "select ID,UNITID,SRNO,CALCON,CALCACT,P_CATEGORY,B_CATEGORY,S_CATEGORY,"
-				+ "RATE_RES,RATE_COMM,RATE_IND,PERVAL from pay_tp_rate_master "
-				+ "where ULB_TENANTID=? AND TYPEID=?";
+				+ "RATE_RES,RATE_COMM,RATE_IND,PERVAL from pay_tp_rate_master " + "where ULB_TENANTID=? AND TYPEID=?";
 		return jdbcTemplate.queryForList(query, new Object[] { tenantId, typeId });
 	}
 }
