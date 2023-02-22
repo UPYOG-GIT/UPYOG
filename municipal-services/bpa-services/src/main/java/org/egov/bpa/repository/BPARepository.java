@@ -246,7 +246,7 @@ public class BPARepository {
 
 		String insertQuery = "insert into bcategory_master(ULB_TENANTID,DESCRIPTION,DEFUNT,CATID,CREATEDBY,CREATEDDATE) "
 				+ "values ('" + bsCategoryRequest.getTenantId() + "','" + bsCategoryRequest.getDesc() + "','"
-				+ bsCategoryRequest.getDefunt() + "'," + bsCategoryRequest.getCatid() + ",'"
+				+ bsCategoryRequest.getDefunt() + "','" + bsCategoryRequest.getCatid() + "','"
 				+ bsCategoryRequest.getCreatedBy() + "','" + date + "')";
 //
 //		Object parameters = new Object();
@@ -273,19 +273,27 @@ public class BPARepository {
 				new Object[] { payTpRateRequest.getTenantId(), payTpRateRequest.getTypeId() }, Integer.class);
 		log.info("count : " + count);
 		LocalDateTime date = LocalDateTime.now();
+		count = count + 1;
 
 		String insertQuery = "insert into pay_tp_rate_master(ULB_TENANTID,UNITID,TYPEID,SRNO,CALCON,"
 				+ "CALCACT,P_CATEGORY,B_CATEGORY,S_CATEGORY,RATE_RES,RATE_COMM,RATE_IND,"
-				+ "PERVAL,CREATEDBY,CREATEDDATE) " + "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,'" + date + "')";
+				+ "PERVAL,CREATEDBY,CREATEDDATE) " + "values ('" + payTpRateRequest.getTenantId() + "','"
+				+ payTpRateRequest.getUnitId() + "','" + payTpRateRequest.getTypeId() + "','" + count + "','"
+				+ payTpRateRequest.getCalCon() + "','" + payTpRateRequest.getCalCact() + "','"
+				+ payTpRateRequest.getPCategory() + "','" + payTpRateRequest.getBCategory() + "','"
+				+ payTpRateRequest.getSCategory() + "','" + payTpRateRequest.getRateRes() + "','"
+				+ payTpRateRequest.getRateComm() + "','" + payTpRateRequest.getRateInd() + "','"
+				+ payTpRateRequest.getPerVal() + "','" + payTpRateRequest.getCreatedBy() + "','" + date + "')";
 
-		Object parameters = new Object();
-		parameters = new Object[] { payTpRateRequest.getTenantId(), payTpRateRequest.getUnitId(),
-				payTpRateRequest.getTypeId(), count + 1, payTpRateRequest.getCalCon(), payTpRateRequest.getCalCact(),
-				payTpRateRequest.getPCategory(), payTpRateRequest.getBCategory(), payTpRateRequest.getSCategory(),
-				payTpRateRequest.getRateRes(), payTpRateRequest.getRateComm(), payTpRateRequest.getRateInd(),
-				payTpRateRequest.getPerVal(), payTpRateRequest.getCreatedBy() };
-
-		int insertResult = jdbcTemplate.update(insertQuery, parameters);
+//		Object parameters = new Object();
+//		parameters = new Object[] { payTpRateRequest.getTenantId(), payTpRateRequest.getUnitId(),
+//				payTpRateRequest.getTypeId(), count + 1, payTpRateRequest.getCalCon(), payTpRateRequest.getCalCact(),
+//				payTpRateRequest.getPCategory(), payTpRateRequest.getBCategory(), payTpRateRequest.getSCategory(),
+//				payTpRateRequest.getRateRes(), payTpRateRequest.getRateComm(), payTpRateRequest.getRateInd(),
+//				payTpRateRequest.getPerVal(), payTpRateRequest.getCreatedBy() };
+//
+//		int insertResult = jdbcTemplate.update(insertQuery, parameters);
+		int insertResult = jdbcTemplate.update(insertQuery);
 
 		log.info("BPARepository.createPayTpRate: " + insertResult + " data inserted into paytype_master table");
 		return insertResult;

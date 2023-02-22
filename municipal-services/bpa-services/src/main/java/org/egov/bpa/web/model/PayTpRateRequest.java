@@ -16,7 +16,7 @@ import lombok.Setter;
 public class PayTpRateRequest {
 
 	@JsonProperty("typeId")
-	private int typeId = 0;
+	private String typeId = null;
 
 	@JsonProperty("tenantId")
 	private String tenantId = null;
