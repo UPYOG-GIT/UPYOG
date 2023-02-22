@@ -829,8 +829,8 @@ public class BPAService {
 		repository.createFeeDetail(payTypeFeeDetailRequest);
 	}
 	
-	public void createPayType(PayTypeRequest payTypeRequest) {
-		repository.createPayType(payTypeRequest);
+	public int createPayType(PayTypeRequest payTypeRequest) {
+		return repository.createPayType(payTypeRequest);
 	}
 	
 	
@@ -841,7 +841,7 @@ public class BPAService {
 	
 	public List<Map<String,Object>> getProposalTypeByTenantId(String tenantId) {
 		List<Map<String,Object>> resultList = repository.getProposalTypeByTenantId(tenantId);
-		log.info("getPayTypeByTenantId: " + resultList.toString());
+		log.info("getProposalTypeByTenantId: " + resultList.toString());
 		return resultList;
 	}
 	
@@ -851,7 +851,7 @@ public class BPAService {
 	
 	public List<Map<String,Object>> getBCategoryByTenantId(String tenantId) {
 		List<Map<String,Object>> resultList = repository.getBCategoryByTenantId(tenantId);
-		log.info("getPayTypeByTenantId: " + resultList.toString());
+		log.info("getBCategoryByTenantId: " + resultList.toString());
 		return resultList;
 	}
 	
@@ -861,11 +861,17 @@ public class BPAService {
 	
 	public List<Map<String,Object>> getBSCategoryByTenantId(String tenantId) {
 		List<Map<String,Object>> resultList = repository.getBSCategoryByTenantId(tenantId);
-		log.info("getPayTypeByTenantId: " + resultList.toString());
+		log.info("getBSCategoryByTenantId: " + resultList.toString());
 		return resultList;
 	}
 	
 	public int createPayTpRate(PayTpRateRequest payTpRateRequest) {
 		return repository.createPayTpRate(payTpRateRequest);
+	}
+	
+	public List<Map<String,Object>> getPayTpRateByTenantIdAndTypeId(String tenantId, int typeId) {
+		List<Map<String,Object>> resultList = repository.getPayTpRateByTenantIdAndTypeId(tenantId,typeId);
+		log.info("getPayTpRateByTenantIdAndTypeId: " + resultList.toString());
+		return resultList;
 	}
 }

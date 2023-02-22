@@ -158,22 +158,25 @@ public class BPARepository {
 		 */
 	}
 
-	public void createPayType(PayTypeRequest payTypeRequest) {
+	public int createPayType(PayTypeRequest payTypeRequest) {
 
 		LocalDateTime date = LocalDateTime.now();
 
 		String insertQuery = "insert into paytype_master(ulb_tenantid,charges_type_name,payment_type,"
 				+ "defunt,createdby,createddate) values (?,?,?,?,?,'" + date + "')";
-//		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-//		String date = simpleDateFormat.format(new Date());
 
-		List<Object[]> parameters = new ArrayList<Object[]>();
-		parameters.add(new Object[] { payTypeRequest.getTenantId(), payTypeRequest.getChargesTypeName(),
-				payTypeRequest.getPaymentType(), payTypeRequest.getDefunt(), payTypeRequest.getCreatedBy() });
+		Object parameters = new Object();
+		parameters=new Object[] { payTypeRequest.getTenantId(), payTypeRequest.getChargesTypeName(),
+				payTypeRequest.getPaymentType(), payTypeRequest.getDefunt(), payTypeRequest.getCreatedBy() };
+//		List<Object[]> parameters = new ArrayList<Object[]>();
+//		parameters.add(new Object[] { payTypeRequest.getTenantId(), payTypeRequest.getChargesTypeName(),
+//				payTypeRequest.getPaymentType(), payTypeRequest.getDefunt(), payTypeRequest.getCreatedBy() });
 
-		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
+//		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
+		int insertResult = jdbcTemplate.update(insertQuery, parameters);
 
 		log.info("BPARepository.createPayType: " + insertResult + " data inserted into paytype_master table");
+		return insertResult;
 	}
 
 	public int createProposalType(ProposalTypeRequest proposalTypeRequest) {
