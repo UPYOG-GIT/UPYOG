@@ -825,8 +825,8 @@ public class BPAService {
 		return resultList;
 	}
 	
-	public void createFeeDetail(List<PayTypeFeeDetailRequestWrapper> payTypeFeeDetailRequestWrapper) {
-		repository.createFeeDetail(payTypeFeeDetailRequestWrapper);
+	public int[] createFeeDetail(List<PayTypeFeeDetailRequestWrapper> payTypeFeeDetailRequestWrapper) {
+		return repository.createFeeDetail(payTypeFeeDetailRequestWrapper);
 	}
 	
 	public int createPayType(PayTypeRequest payTypeRequest) {
@@ -869,7 +869,7 @@ public class BPAService {
 		return repository.createPayTpRate(payTpRateRequest);
 	}
 	
-	public List<Map<String,Object>> getPayTpRateByTenantIdAndTypeId(String tenantId, int typeId) {
+	public List<Map<String,Object>> getPayTpRateByTenantIdAndTypeId(String tenantId, String typeId) {
 		List<Map<String,Object>> resultList = repository.getPayTpRateByTenantIdAndTypeId(tenantId,typeId);
 		log.info("getPayTpRateByTenantIdAndTypeId: " + resultList.toString());
 		return resultList;

@@ -124,7 +124,7 @@ public class BPARepository {
 
 	}
 
-	public void createFeeDetail(List<PayTypeFeeDetailRequestWrapper> payTypeFeeDetailRequestWrapperList) {
+	public int[] createFeeDetail(List<PayTypeFeeDetailRequestWrapper> payTypeFeeDetailRequestWrapperList) {
 
 		LocalDateTime date = LocalDateTime.now();
 		String insertQuery = "insert into pre_post_fee_details(paytype_id,ulb_tenantid,bill_id,application_no,"
@@ -146,6 +146,7 @@ public class BPARepository {
 		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
 
 		log.info("BPARepository.createFeeDetail: " + insertResult + " data inserted into pre_post_fee_details table");
+		return insertResult;
 		/*
 		 * for (PayTypeFeeDetailRequest payTypeFeeDetailRequest :
 		 * payTypeFeeDetailRequestList) { jdbcTemplate.update(insertQuery,
@@ -299,7 +300,7 @@ public class BPARepository {
 		return insertResult;
 	}
 
-	public List<Map<String, Object>> getPayTpRateByTenantIdAndTypeId(String tenantId, int typeId) {
+	public List<Map<String, Object>> getPayTpRateByTenantIdAndTypeId(String tenantId, String typeId) {
 		String query = "select ID,UNITID,SRNO,CALCON,CALCACT,P_CATEGORY,B_CATEGORY,S_CATEGORY,"
 				+ "RATE_RES,RATE_COMM,RATE_IND,PERVAL from pay_tp_rate_master " + "where ULB_TENANTID=? AND TYPEID=?";
 		return jdbcTemplate.queryForList(query, new Object[] { tenantId, typeId });

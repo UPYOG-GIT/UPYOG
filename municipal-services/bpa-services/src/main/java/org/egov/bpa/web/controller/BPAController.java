@@ -161,12 +161,23 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_createfeedetail")
-	public void createFeeDetails(@RequestBody List<PayTypeFeeDetailRequestWrapper> payTypeFeeDetailRequestWrapper) {
+	public ResponseEntity<Object> createFeeDetails(
+			@RequestBody List<PayTypeFeeDetailRequestWrapper> payTypeFeeDetailRequestWrapper) {
 //		@RequestBody RequestInfo requestInfo,
 //		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
 //		return new ResponseEntity<>(responseList, HttpStatus.OK);
 //		PayTypeFeeDetailRequest payTypeFeeDetailRequest = payTypeFeeDetailRequestWrapper.
-		bpaService.createFeeDetail(payTypeFeeDetailRequestWrapper);
+		try {
+			int[] insertResult = bpaService.createFeeDetail(payTypeFeeDetailRequestWrapper);
+			if (insertResult.length > 0) {
+				return new ResponseEntity<>(insertResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in createPayType: " + ex);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+		}
 //		return null;
 	}
 
@@ -187,12 +198,23 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_createproposaltype")
-	public void createProposalType(@RequestBody ProposalTypeRequestWrapper proposalTypeRequestWrapper) {
+	public ResponseEntity<Object> createProposalType(
+			@RequestBody ProposalTypeRequestWrapper proposalTypeRequestWrapper) {
 //		@RequestBody RequestInfo requestInfo,
 //		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
 //		return new ResponseEntity<>(responseList, HttpStatus.OK);
-		ProposalTypeRequest proposalTypeRequest= proposalTypeRequestWrapper.getProposalTypeRequest();
-		bpaService.createProposalType(proposalTypeRequest);
+		try {
+			ProposalTypeRequest proposalTypeRequest = proposalTypeRequestWrapper.getProposalTypeRequest();
+			int insertResult = bpaService.createProposalType(proposalTypeRequest);
+			if (insertResult > 0) {
+				return new ResponseEntity<>(insertResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in createPayType: " + ex);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+		}
 //		return null;
 	}
 
@@ -203,9 +225,19 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_createbcategory")
-	public void createBCategory(@RequestBody BCategoryRequestWrapper bCategoryRequestWrapper) {
-		BCategoryRequest bCategoryRequest= bCategoryRequestWrapper.getBCategoryRequest();
-		bpaService.createBCategory(bCategoryRequest);
+	public ResponseEntity<Object> createBCategory(@RequestBody BCategoryRequestWrapper bCategoryRequestWrapper) {
+		try {
+			BCategoryRequest bCategoryRequest = bCategoryRequestWrapper.getBCategoryRequest();
+			int insertResult = bpaService.createBCategory(bCategoryRequest);
+			if (insertResult > 0) {
+				return new ResponseEntity<>(insertResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in createPayType: " + ex);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+		}
 //		return null;
 	}
 
@@ -216,9 +248,19 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_createbscategory")
-	public void createBSCategory(@RequestBody BSCategoryRequestWrapper bSCategoryRequestWrapper) {
-		BSCategoryRequest bSCategoryRequest=bSCategoryRequestWrapper.getBSCategoryRequest();
-		bpaService.createBSCategory(bSCategoryRequest);
+	public ResponseEntity<Object> createBSCategory(@RequestBody BSCategoryRequestWrapper bSCategoryRequestWrapper) {
+		try {
+			BSCategoryRequest bSCategoryRequest = bSCategoryRequestWrapper.getBSCategoryRequest();
+			int insertResult = bpaService.createBSCategory(bSCategoryRequest);
+			if (insertResult > 0) {
+				return new ResponseEntity<>(insertResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in createPayType: " + ex);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+		}
 //		return null;
 	}
 
@@ -229,15 +271,25 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_createpaytprate")
-	public void createPayTpRate(@RequestBody PayTpRateRequestWrapper payTpRateRequestWrapper) {
-		PayTpRateRequest payTpRateRequest=payTpRateRequestWrapper.getPayTpRateRequest();
-		bpaService.createPayTpRate(payTpRateRequest);
+	public ResponseEntity<Object> createPayTpRate(@RequestBody PayTpRateRequestWrapper payTpRateRequestWrapper) {
+		try {
+			PayTpRateRequest payTpRateRequest = payTpRateRequestWrapper.getPayTpRateRequest();
+			int insertResult = bpaService.createPayTpRate(payTpRateRequest);
+			if (insertResult > 0) {
+				return new ResponseEntity<>(insertResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in createPayType: " + ex);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+		}
 //		return null;
 	}
 
 	@PostMapping(value = "/_searchpaytprate")
 	public ResponseEntity<List<Map<String, Object>>> getPayTpRateByTenantIdAndTypeId(@RequestParam String tenantId,
-			@RequestParam int typeId) {
+			@RequestParam String typeId) {
 		List<Map<String, Object>> sqlResponseList = bpaService.getPayTpRateByTenantIdAndTypeId(tenantId, typeId);
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 	}
