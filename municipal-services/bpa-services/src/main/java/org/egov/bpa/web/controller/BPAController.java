@@ -14,16 +14,20 @@ import org.egov.bpa.util.BPAErrorConstants;
 import org.egov.bpa.util.BPAUtil;
 import org.egov.bpa.util.ResponseInfoFactory;
 import org.egov.bpa.web.model.BCategoryRequest;
+import org.egov.bpa.web.model.BCategoryRequestWrapper;
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPAResponse;
 import org.egov.bpa.web.model.BPASearchCriteria;
 import org.egov.bpa.web.model.BSCategoryRequest;
+import org.egov.bpa.web.model.BSCategoryRequestWrapper;
 import org.egov.bpa.web.model.PayTpRateRequest;
-import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
+import org.egov.bpa.web.model.PayTpRateRequestWrapper;
+import org.egov.bpa.web.model.PayTypeFeeDetailRequestWrapper;
 import org.egov.bpa.web.model.PayTypeRequest;
 import org.egov.bpa.web.model.PayTypeRequestWrapper;
 import org.egov.bpa.web.model.ProposalTypeRequest;
+import org.egov.bpa.web.model.ProposalTypeRequestWrapper;
 import org.egov.bpa.web.model.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,11 +161,12 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_createfeedetail")
-	public void createFeeDetails(@RequestBody List<PayTypeFeeDetailRequest> payTypeFeeDetailRequest) {
+	public void createFeeDetails(@RequestBody List<PayTypeFeeDetailRequestWrapper> payTypeFeeDetailRequestWrapper) {
 //		@RequestBody RequestInfo requestInfo,
 //		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
 //		return new ResponseEntity<>(responseList, HttpStatus.OK);
-		bpaService.createFeeDetail(payTypeFeeDetailRequest);
+//		PayTypeFeeDetailRequest payTypeFeeDetailRequest = payTypeFeeDetailRequestWrapper.
+		bpaService.createFeeDetail(payTypeFeeDetailRequestWrapper);
 //		return null;
 	}
 
@@ -182,10 +187,11 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_createproposaltype")
-	public void createProposalType(@RequestBody ProposalTypeRequest proposalTypeRequest) {
+	public void createProposalType(@RequestBody ProposalTypeRequestWrapper proposalTypeRequestWrapper) {
 //		@RequestBody RequestInfo requestInfo,
 //		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
 //		return new ResponseEntity<>(responseList, HttpStatus.OK);
+		ProposalTypeRequest proposalTypeRequest= proposalTypeRequestWrapper.getProposalTypeRequest();
 		bpaService.createProposalType(proposalTypeRequest);
 //		return null;
 	}
@@ -197,7 +203,8 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_createbcategory")
-	public void createBCategory(@RequestBody BCategoryRequest bCategoryRequest) {
+	public void createBCategory(@RequestBody BCategoryRequestWrapper bCategoryRequestWrapper) {
+		BCategoryRequest bCategoryRequest= bCategoryRequestWrapper.getBCategoryRequest();
 		bpaService.createBCategory(bCategoryRequest);
 //		return null;
 	}
@@ -209,7 +216,8 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_createbscategory")
-	public void createBSCategory(@RequestBody BSCategoryRequest bSCategoryRequest) {
+	public void createBSCategory(@RequestBody BSCategoryRequestWrapper bSCategoryRequestWrapper) {
+		BSCategoryRequest bSCategoryRequest=bSCategoryRequestWrapper.getBSCategoryRequest();
 		bpaService.createBSCategory(bSCategoryRequest);
 //		return null;
 	}
@@ -221,7 +229,8 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_createpaytprate")
-	public void createPayTpRate(@RequestBody PayTpRateRequest payTpRateRequest) {
+	public void createPayTpRate(@RequestBody PayTpRateRequestWrapper payTpRateRequestWrapper) {
+		PayTpRateRequest payTpRateRequest=payTpRateRequestWrapper.getPayTpRateRequest();
 		bpaService.createPayTpRate(payTpRateRequest);
 //		return null;
 	}

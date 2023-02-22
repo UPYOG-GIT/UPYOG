@@ -15,13 +15,13 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-public class PayTypeRequestWrapper {
+public class ProposalTypeRequestWrapper {
 
 	@JsonProperty("RequestInfo")
 	private RequestInfo requestInfo;
 	
-	@JsonProperty("PayTypeRequest")
-	private PayTypeRequest payTypeRequest;
+	@JsonProperty("ProposalTypeRequest")
+	private ProposalTypeRequest proposalTypeRequest;
 	
 	
 }

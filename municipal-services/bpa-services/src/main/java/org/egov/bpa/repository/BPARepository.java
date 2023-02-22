@@ -1,6 +1,5 @@
 package org.egov.bpa.repository;
 
-import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +16,7 @@ import org.egov.bpa.web.model.BPASearchCriteria;
 import org.egov.bpa.web.model.BSCategoryRequest;
 import org.egov.bpa.web.model.PayTpRateRequest;
 import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
+import org.egov.bpa.web.model.PayTypeFeeDetailRequestWrapper;
 import org.egov.bpa.web.model.PayTypeRequest;
 import org.egov.bpa.web.model.ProposalTypeRequest;
 import org.egov.common.contract.request.RequestInfo;
@@ -124,7 +124,7 @@ public class BPARepository {
 
 	}
 
-	public void createFeeDetail(List<PayTypeFeeDetailRequest> payTypeFeeDetailRequestList) {
+	public void createFeeDetail(List<PayTypeFeeDetailRequestWrapper> payTypeFeeDetailRequestWrapperList) {
 
 		LocalDateTime date = LocalDateTime.now();
 		String insertQuery = "insert into pre_post_fee_details(paytype_id,ulb_tenantid,bill_id,application_no,"
@@ -132,7 +132,9 @@ public class BPARepository {
 				+ "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,'" + date + "')";
 
 		List<Object[]> parameters = new ArrayList<Object[]>();
-		for (PayTypeFeeDetailRequest payTypeFeeDetailRequest : payTypeFeeDetailRequestList) {
+		for (PayTypeFeeDetailRequestWrapper payTypeFeeDetailRequestWrapper : payTypeFeeDetailRequestWrapperList) {
+			PayTypeFeeDetailRequest payTypeFeeDetailRequest = payTypeFeeDetailRequestWrapper
+					.getPayTypeFeeDetailRequest();
 			parameters.add(new Object[] { payTypeFeeDetailRequest.getPayTypeId(), payTypeFeeDetailRequest.getTenantId(),
 					payTypeFeeDetailRequest.getBillId(), payTypeFeeDetailRequest.getApplicationNo(),
 					payTypeFeeDetailRequest.getUnitId(), payTypeFeeDetailRequest.getPayId(),
@@ -192,13 +194,15 @@ public class BPARepository {
 		LocalDateTime date = LocalDateTime.now();
 
 		String insertQuery = "insert into proposal_type_master(ULB_TENANTID,DESCRIPTION,DEFUNT,CREATEDBY,CREATEDDATE) "
-				+ "values (?,?,?,?,'" + date + "')";
+				+ "values ('" + proposalTypeRequest.getTenantId() + "','" + proposalTypeRequest.getDesc() + "','"
+				+ proposalTypeRequest.getDefunt() + "','" + proposalTypeRequest.getCreatedBy() + "','" + date + "')";
 
-		Object parameters = new Object();
-		parameters = new Object[] { proposalTypeRequest.getTenantId(), proposalTypeRequest.getDesc(),
-				proposalTypeRequest.getDefunt(), proposalTypeRequest.getCreatedBy() };
-
-		int insertResult = jdbcTemplate.update(insertQuery, parameters);
+//		Object parameters = new Object();
+//		parameters = new Object[] { proposalTypeRequest.getTenantId(), proposalTypeRequest.getDesc(),
+//				proposalTypeRequest.getDefunt(), proposalTypeRequest.getCreatedBy() };
+//
+//		int insertResult = jdbcTemplate.update(insertQuery, parameters);
+		int insertResult = jdbcTemplate.update(insertQuery);
 
 		log.info("BPARepository.createProposalType: " + insertResult + " data inserted into paytype_master table");
 		return insertResult;
@@ -216,13 +220,15 @@ public class BPARepository {
 		LocalDateTime date = LocalDateTime.now();
 
 		String insertQuery = "insert into bcategory_master(ULB_TENANTID,DESCRIPTION,DEFUNT,CREATEDBY,CREATEDDATE) "
-				+ "values (?,?,?,?,'" + date + "')";
+				+ "values ('" + bCategoryRequest.getTenantId() + "','" + bCategoryRequest.getDesc() + "','"
+				+ bCategoryRequest.getDefunt() + "','" + bCategoryRequest.getCreatedBy() + "','" + date + "')";
 
-		Object parameters = new Object();
-		parameters = new Object[] { bCategoryRequest.getTenantId(), bCategoryRequest.getDesc(),
-				bCategoryRequest.getDefunt(), bCategoryRequest.getCreatedBy() };
-
-		int insertResult = jdbcTemplate.update(insertQuery, parameters);
+//		Object parameters = new Object();
+//		parameters = new Object[] { bCategoryRequest.getTenantId(), bCategoryRequest.getDesc(),
+//				bCategoryRequest.getDefunt(), bCategoryRequest.getCreatedBy() };
+//
+//		int insertResult = jdbcTemplate.update(insertQuery, parameters);
+		int insertResult = jdbcTemplate.update(insertQuery);
 
 		log.info("BPARepository.createBCategory: " + insertResult + " data inserted into paytype_master table");
 		return insertResult;
@@ -239,13 +245,16 @@ public class BPARepository {
 		LocalDateTime date = LocalDateTime.now();
 
 		String insertQuery = "insert into bcategory_master(ULB_TENANTID,DESCRIPTION,DEFUNT,CATID,CREATEDBY,CREATEDDATE) "
-				+ "values (?,?,?,?,?,'" + date + "')";
-
-		Object parameters = new Object();
-		parameters = new Object[] { bsCategoryRequest.getTenantId(), bsCategoryRequest.getDesc(),
-				bsCategoryRequest.getDefunt(), bsCategoryRequest.getCatid(), bsCategoryRequest.getCreatedBy() };
-
-		int insertResult = jdbcTemplate.update(insertQuery, parameters);
+				+ "values ('" + bsCategoryRequest.getTenantId() + "','" + bsCategoryRequest.getDesc() + "','"
+				+ bsCategoryRequest.getDefunt() + "'," + bsCategoryRequest.getCatid() + ",'"
+				+ bsCategoryRequest.getCreatedBy() + "','" + date + "')";
+//
+//		Object parameters = new Object();
+//		parameters = new Object[] { bsCategoryRequest.getTenantId(), bsCategoryRequest.getDesc(),
+//				bsCategoryRequest.getDefunt(), bsCategoryRequest.getCatid(), bsCategoryRequest.getCreatedBy() };
+//
+//		int insertResult = jdbcTemplate.update(insertQuery, parameters);
+		int insertResult = jdbcTemplate.update(insertQuery);
 
 		log.info("BPARepository.createBSCategory: " + insertResult + " data inserted into paytype_master table");
 		return insertResult;

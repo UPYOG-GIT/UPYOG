@@ -28,7 +28,7 @@ import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPASearchCriteria;
 import org.egov.bpa.web.model.BSCategoryRequest;
 import org.egov.bpa.web.model.PayTpRateRequest;
-import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
+import org.egov.bpa.web.model.PayTypeFeeDetailRequestWrapper;
 import org.egov.bpa.web.model.PayTypeRequest;
 import org.egov.bpa.web.model.ProposalTypeRequest;
 import org.egov.bpa.web.model.Workflow;
@@ -825,8 +825,8 @@ public class BPAService {
 		return resultList;
 	}
 	
-	public void createFeeDetail(List<PayTypeFeeDetailRequest> payTypeFeeDetailRequest) {
-		repository.createFeeDetail(payTypeFeeDetailRequest);
+	public void createFeeDetail(List<PayTypeFeeDetailRequestWrapper> payTypeFeeDetailRequestWrapper) {
+		repository.createFeeDetail(payTypeFeeDetailRequestWrapper);
 	}
 	
 	public int createPayType(PayTypeRequest payTypeRequest) {

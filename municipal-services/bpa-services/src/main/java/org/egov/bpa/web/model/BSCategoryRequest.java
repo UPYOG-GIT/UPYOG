@@ -31,7 +31,7 @@ public class BSCategoryRequest {
 	private String defunt = null;
 	
 	@JsonProperty("catid")
-	private String catid = null;
+	private int catid;
 	
 	
 	
