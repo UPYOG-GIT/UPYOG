@@ -29,6 +29,8 @@ import org.egov.bpa.web.model.PayTypeRequestWrapper;
 import org.egov.bpa.web.model.ProposalTypeRequest;
 import org.egov.bpa.web.model.ProposalTypeRequestWrapper;
 import org.egov.bpa.web.model.RequestInfoWrapper;
+import org.egov.bpa.web.model.SlabMasterRequest;
+import org.egov.bpa.web.model.SlabMasterRequestWrapper;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -292,6 +294,30 @@ public class BPAController {
 	public ResponseEntity<List<Map<String, Object>>> getPayTpRateByTenantIdAndTypeId(@RequestParam String tenantId,
 			@RequestParam int typeId) {
 		List<Map<String, Object>> sqlResponseList = bpaService.getPayTpRateByTenantIdAndTypeId(tenantId, typeId);
+		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "/_createslab")
+	public ResponseEntity<Object> createSlabMaster(@RequestBody SlabMasterRequestWrapper slabMasterRequestWrapper) {
+		try {
+			SlabMasterRequest slabMasterRequest = slabMasterRequestWrapper.getSlabMasterRequest();
+			int insertResult = bpaService.createSlabMaster(slabMasterRequest);
+			if (insertResult > 0) {
+				return new ResponseEntity<>(insertResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in createPayType: " + ex);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+		}
+//		return null;
+	}
+
+	@PostMapping(value = "/_searchslab")
+	public ResponseEntity<List<Map<String, Object>>> getSlabMasterByTenantIdAndTypeId(@RequestParam String tenantId,
+			@RequestParam int typeId) {
+		List<Map<String, Object>> sqlResponseList = bpaService.getSlabMasterByTenantIdAndTypeId(tenantId, typeId);
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 	}
 }

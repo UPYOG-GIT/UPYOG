@@ -31,27 +31,27 @@ public class PayTpRateRequest {
 	private String calCact = null;
 
 	@JsonProperty("pCategory")
-	private int pCategory;
+	private String pCategory= null;
 
 	@JsonProperty("bCategory")
-	private int bCategory;
+	private String bCategory= null;
 
 	@JsonProperty("sCategory")
-	private int sCategory;
+	private String sCategory= null;
 
 	@JsonProperty("rateRes")
-	private double rateRes;
+	private String rateRes= null;
 
 	@JsonProperty("rateComm")
-	private double rateComm;
+	private String rateComm= null;
 
 	@JsonProperty("rateInd")
-	private double rateInd;
+	private String rateInd= null;
 
 	@JsonProperty("createdBy")
 	private String createdBy = null;
 
 	@JsonProperty("perVal")
-	private int perVal;
+	private String perVal= null;
 
 }

@@ -281,11 +281,11 @@ public class BPARepository {
 		String insertQuery = "insert into pay_tp_rate_master(ulb_tenantid,unitid,typeid,srno,calcon,"
 				+ "calcact,p_category,b_category,s_category,rate_res,rate_comm,rate_ind,"
 				+ "perval,createdby,createddate) " + "values ('" + payTpRateRequest.getTenantId() + "','"
-				+ payTpRateRequest.getUnitId() + "'," + payTpRateRequest.getTypeId() + "," + count + ",'"
-				+ payTpRateRequest.getCalCon() + "','" + payTpRateRequest.getCalCact() + "',"
-				+ payTpRateRequest.getPCategory() + "," + payTpRateRequest.getBCategory() + ","
-				+ payTpRateRequest.getSCategory() + "," + payTpRateRequest.getRateRes() + ","
-				+ payTpRateRequest.getRateComm() + "," + payTpRateRequest.getRateInd() + ",'"
+				+ payTpRateRequest.getUnitId() + "','" + payTpRateRequest.getTypeId() + "','" + count + "','"
+				+ payTpRateRequest.getCalCon() + "','" + payTpRateRequest.getCalCact() + "','"
+				+ payTpRateRequest.getPCategory() + "','" + payTpRateRequest.getBCategory() + "','"
+				+ payTpRateRequest.getSCategory() + "','" + payTpRateRequest.getRateRes() + "','"
+				+ payTpRateRequest.getRateComm() + "','" + payTpRateRequest.getRateInd() + "','"
 				+ payTpRateRequest.getPerVal() + "','" + payTpRateRequest.getCreatedBy() + "','" + date + "')";
 
 //		Object parameters = new Object();
@@ -318,7 +318,7 @@ public class BPARepository {
 		LocalDateTime date = LocalDateTime.now();
 		count = count + 1;
 
-		String insertQuery = "insert into pay_tp_rate_master(ulb_tenantid,paytype_id,srno,from_val,"
+		String insertQuery = "insert into slab_master(ulb_tenantid,paytype_id,srno,from_val,"
 				+ "to_val,p_category,b_category,s_category,rate_res,rate_comm,rate_ind,"
 				+ "operation,multp_val,max_limit,createdby,createddate) " + "values ('"
 				+ slabMasterRequest.getTenantId() + "','" + slabMasterRequest.getPayTypeId() + "','" + count + "','"
@@ -333,5 +333,12 @@ public class BPARepository {
 
 		log.info("BPARepository.createPayTpRate: " + insertResult + " data inserted into paytype_master table");
 		return insertResult;
+	}
+	
+	
+	public List<Map<String, Object>> getSlabMasterByTenantIdAndTypeId(String tenantId, int payTypeId) {
+		String query = "select id,unitid,srno,from_val,to_val,p_category,b_category,s_category,"
+				+ "rate_res,rate_comm,rate_ind,operation,multp_val,max_limit from slab_master " + "where ulb_tenantid=? AND paytype_id=?";
+		return jdbcTemplate.queryForList(query, new Object[] { tenantId, payTypeId });
 	}
 }

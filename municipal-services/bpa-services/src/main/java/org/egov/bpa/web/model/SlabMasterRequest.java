@@ -22,39 +22,39 @@ public class SlabMasterRequest {
 	private String payTypeId = null;
 
 	@JsonProperty("fromVal")
-	private double fromVal = 0d;
+	private String fromVal = null;
 	
 	@JsonProperty("toVal")
-	private double toVal = 0d;
+	private String toVal = null;
 	
 	@JsonProperty("rateRes")
-	private double rateRes = 0d;
+	private String rateRes = null;
 
 	@JsonProperty("rateComm")
-	private double rateComm = 0d;
+	private String rateComm = null;
 
 	@JsonProperty("rateInd")
-	private double rateInd = 0d;
+	private String rateInd = null;
 
 	@JsonProperty("operation")
 	private String operation = null;
 
 	@JsonProperty("pCategory")
-	private int pCategory = 0;
+	private String pCategory = null;
 
 	@JsonProperty("bCategory")
-	private int bCategory = 0;
+	private String bCategory = null;
 
 	@JsonProperty("sCategory")
-	private int sCategory = 0;
+	private String sCategory = null;
 
 	@JsonProperty("createdBy")
 	private String createdBy = null;
 
 	@JsonProperty("multpVal")
-	private double multpVal = 0d;
+	private String multpVal = null;
 	
 	@JsonProperty("maxLimit")
-	private double maxLimit = 0d;
+	private String maxLimit = null;
 
 }

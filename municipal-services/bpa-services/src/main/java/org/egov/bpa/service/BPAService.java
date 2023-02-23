@@ -31,6 +31,7 @@ import org.egov.bpa.web.model.PayTpRateRequest;
 import org.egov.bpa.web.model.PayTypeFeeDetailRequestWrapper;
 import org.egov.bpa.web.model.PayTypeRequest;
 import org.egov.bpa.web.model.ProposalTypeRequest;
+import org.egov.bpa.web.model.SlabMasterRequest;
 import org.egov.bpa.web.model.Workflow;
 import org.egov.bpa.web.model.landInfo.LandInfo;
 import org.egov.bpa.web.model.landInfo.LandSearchCriteria;
@@ -869,6 +870,16 @@ public class BPAService {
 
 	public List<Map<String, Object>> getPayTpRateByTenantIdAndTypeId(String tenantId, int typeId) {
 		List<Map<String, Object>> resultList = repository.getPayTpRateByTenantIdAndTypeId(tenantId, typeId);
+		log.info("getPayTpRateByTenantIdAndTypeId: " + resultList.toString());
+		return resultList;
+	}
+	
+	public int createSlabMaster(SlabMasterRequest slabMasterRequest) {
+		return repository.createSlabMaster(slabMasterRequest);
+	}
+
+	public List<Map<String, Object>> getSlabMasterByTenantIdAndTypeId(String tenantId, int typeId) {
+		List<Map<String, Object>> resultList = repository.getSlabMasterByTenantIdAndTypeId(tenantId, typeId);
 		log.info("getPayTpRateByTenantIdAndTypeId: " + resultList.toString());
 		return resultList;
 	}
