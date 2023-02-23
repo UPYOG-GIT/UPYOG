@@ -169,9 +169,10 @@ public class BPARepository {
 //		String insertQuery = "insert into paytype_master(ulb_tenantid,charges_type_name,payment_type,"
 //				+ "defunt,createdby,createddate) values (?,?,?,?,?,'" + date + "')";
 		String insertQuery = "insert into paytype_master(ulb_tenantid,charges_type_name,payment_type,"
-				+ "defunt,createdby,createddate) values ('" + payTypeRequest.getTenantId() + "','"
+				+ "defunt,optflag,hrnh,createdby,createddate) values ('" + payTypeRequest.getTenantId() + "','"
 				+ payTypeRequest.getChargesTypeName() + "','" + payTypeRequest.getPaymentType() + "','"
-				+ payTypeRequest.getDefunt() + "','" + payTypeRequest.getCreatedBy() + "','" + date + "')";
+				+ payTypeRequest.getDefunt() + "','" + payTypeRequest.getOptFlag() + "','" + payTypeRequest.getHrnh()
+				+ "','" + payTypeRequest.getCreatedBy() + "','" + date + "')";
 
 //		Object parameters = new Object();
 //		parameters=new Object[] { payTypeRequest.getTenantId(), payTypeRequest.getChargesTypeName(),
@@ -194,7 +195,7 @@ public class BPARepository {
 
 		LocalDateTime date = LocalDateTime.now();
 
-		String insertQuery = "insert into proposal_type_master(ULB_TENANTID,DESCRIPTION,DEFUNT,CREATEDBY,CREATEDDATE) "
+		String insertQuery = "insert into proposal_type_master(ulb_tenantid,description,defunt,createdby,createddate) "
 				+ "values ('" + proposalTypeRequest.getTenantId() + "','" + proposalTypeRequest.getDesc() + "','"
 				+ proposalTypeRequest.getDefunt() + "','" + proposalTypeRequest.getCreatedBy() + "','" + date + "')";
 
@@ -212,7 +213,7 @@ public class BPARepository {
 	// fetch data from proposal_type_master table
 	public List<Map<String, Object>> getProposalTypeByTenantId(String tenantId) {
 
-		String query = "select ID,DESCRIPTION,DEFUNT from proposal_type_master where ULB_TENANTID=?";
+		String query = "select id,description,defunt from proposal_type_master where ulb_tenantid=?";
 		return jdbcTemplate.queryForList(query, new Object[] { tenantId });
 	}
 
@@ -220,7 +221,7 @@ public class BPARepository {
 
 		LocalDateTime date = LocalDateTime.now();
 
-		String insertQuery = "insert into bcategory_master(ULB_TENANTID,DESCRIPTION,DEFUNT,CREATEDBY,CREATEDDATE) "
+		String insertQuery = "insert into bcategory_master(ulb_tenantid,description,defunt,createdby,createddate) "
 				+ "values ('" + bCategoryRequest.getTenantId() + "','" + bCategoryRequest.getDesc() + "','"
 				+ bCategoryRequest.getDefunt() + "','" + bCategoryRequest.getCreatedBy() + "','" + date + "')";
 
@@ -237,7 +238,7 @@ public class BPARepository {
 
 	// fetch data from bcategory_master table
 	public List<Map<String, Object>> getBCategoryByTenantId(String tenantId) {
-		String query = "select ID,DESCRIPTION,DEFUNT from bcategory_master where ULB_TENANTID=?";
+		String query = "select id,description,defunt from bcategory_master where ulb_tenantid=?";
 		return jdbcTemplate.queryForList(query, new Object[] { tenantId });
 	}
 
@@ -245,7 +246,7 @@ public class BPARepository {
 
 		LocalDateTime date = LocalDateTime.now();
 
-		String insertQuery = "insert into bcategory_master(ULB_TENANTID,DESCRIPTION,DEFUNT,CATID,CREATEDBY,CREATEDDATE) "
+		String insertQuery = "insert into bcategory_master(ulb_tenantid,description,defunt,catid,createdby,createddate) "
 				+ "values ('" + bsCategoryRequest.getTenantId() + "','" + bsCategoryRequest.getDesc() + "','"
 				+ bsCategoryRequest.getDefunt() + "','" + bsCategoryRequest.getCatid() + "','"
 				+ bsCategoryRequest.getCreatedBy() + "','" + date + "')";
@@ -263,22 +264,22 @@ public class BPARepository {
 
 	// fetch data from bscategory_master table
 	public List<Map<String, Object>> getBSCategoryByTenantId(String tenantId) {
-		String query = "select ID,DESCRIPTION,DEFUNT from bscategory_master where ULB_TENANTID=?";
+		String query = "select id,description,defunt from bscategory_master where ulb_tenantid=?";
 		return jdbcTemplate.queryForList(query, new Object[] { tenantId });
 	}
 
 	public int createPayTpRate(PayTpRateRequest payTpRateRequest) {
 
-		String query = "SELECT COUNT(*) FROM pay_tp_rate_master WHERE ULB_TENANTID=? AND TYPEID=?";
+		String query = "SELECT COUNT(*) FROM pay_tp_rate_master WHERE ulb_tenantid=? AND typeid=?";
 		int count = jdbcTemplate.queryForObject(query,
 				new Object[] { payTpRateRequest.getTenantId(), payTpRateRequest.getTypeId() }, Integer.class);
 		log.info("count : " + count);
 		LocalDateTime date = LocalDateTime.now();
 		count = count + 1;
 
-		String insertQuery = "insert into pay_tp_rate_master(ULB_TENANTID,UNITID,TYPEID,SRNO,CALCON,"
-				+ "CALCACT,P_CATEGORY,B_CATEGORY,S_CATEGORY,RATE_RES,RATE_COMM,RATE_IND,"
-				+ "PERVAL,CREATEDBY,CREATEDDATE) " + "values ('" + payTpRateRequest.getTenantId() + "','"
+		String insertQuery = "insert into pay_tp_rate_master(ulb_tenantid,unitid,typeid,srno,calcon,"
+				+ "calcact,p_category,b_category,s_category,rate_res,rate_comm,rate_ind,"
+				+ "perval,createdby,createddate) " + "values ('" + payTpRateRequest.getTenantId() + "','"
 				+ payTpRateRequest.getUnitId() + "','" + payTpRateRequest.getTypeId() + "','" + count + "','"
 				+ payTpRateRequest.getCalCon() + "','" + payTpRateRequest.getCalCact() + "','"
 				+ payTpRateRequest.getPCategory() + "','" + payTpRateRequest.getBCategory() + "','"
@@ -301,8 +302,8 @@ public class BPARepository {
 	}
 
 	public List<Map<String, Object>> getPayTpRateByTenantIdAndTypeId(String tenantId, String typeId) {
-		String query = "select ID,UNITID,SRNO,CALCON,CALCACT,P_CATEGORY,B_CATEGORY,S_CATEGORY,"
-				+ "RATE_RES,RATE_COMM,RATE_IND,PERVAL from pay_tp_rate_master " + "where ULB_TENANTID=? AND TYPEID=?";
+		String query = "select id,unitid,srno,calcon,calcact,p_category,b_category,s_category,"
+				+ "rate_res,rate_comm,rate_ind,perval from pay_tp_rate_master " + "where ulb_tenantid=? AND typeid=?";
 		return jdbcTemplate.queryForList(query, new Object[] { tenantId, typeId });
 	}
 }

@@ -33,6 +33,12 @@ public class PayTypeRequest {
 	@JsonProperty("defunt")
 	private String defunt = null;
 	
+	@JsonProperty("optflag")
+	private String optFlag = null;
+	
+	@JsonProperty("hrnh")
+	private String hrnh = null;
+	
 	
 	
 	
