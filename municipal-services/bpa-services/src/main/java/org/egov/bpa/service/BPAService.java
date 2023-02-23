@@ -818,59 +818,57 @@ public class BPAService {
 		}
 	}
 
-	public List<Map<String,Object>> getPayTypeByTenantId(String tenantId) {
+	public List<Map<String, Object>> getPayTypeByTenantId(String tenantId) {
 
-		List<Map<String,Object>> resultList = repository.getPayTypeByTenantId(tenantId);
+		List<Map<String, Object>> resultList = repository.getPayTypeByTenantId(tenantId);
 		log.info("getPayTypeByTenantId: " + resultList.toString());
 		return resultList;
 	}
-	
+
 	public int[] createFeeDetail(List<PayTypeFeeDetailRequestWrapper> payTypeFeeDetailRequestWrapper) {
 		return repository.createFeeDetail(payTypeFeeDetailRequestWrapper);
 	}
-	
+
 	public int createPayType(PayTypeRequest payTypeRequest) {
 		return repository.createPayType(payTypeRequest);
 	}
-	
-	
+
 	public int createProposalType(ProposalTypeRequest proposalTypeRequest) {
 		return repository.createProposalType(proposalTypeRequest);
 	}
 
-	
-	public List<Map<String,Object>> getProposalTypeByTenantId(String tenantId) {
-		List<Map<String,Object>> resultList = repository.getProposalTypeByTenantId(tenantId);
+	public List<Map<String, Object>> getProposalTypeByTenantId(String tenantId) {
+		List<Map<String, Object>> resultList = repository.getProposalTypeByTenantId(tenantId);
 		log.info("getProposalTypeByTenantId: " + resultList.toString());
 		return resultList;
 	}
-	
+
 	public int createBCategory(BCategoryRequest bCategoryRequest) {
 		return repository.createBCategory(bCategoryRequest);
 	}
-	
-	public List<Map<String,Object>> getBCategoryByTenantId(String tenantId) {
-		List<Map<String,Object>> resultList = repository.getBCategoryByTenantId(tenantId);
+
+	public List<Map<String, Object>> getBCategoryByTenantId(String tenantId) {
+		List<Map<String, Object>> resultList = repository.getBCategoryByTenantId(tenantId);
 		log.info("getBCategoryByTenantId: " + resultList.toString());
 		return resultList;
 	}
-	
+
 	public int createBSCategory(BSCategoryRequest bSCategoryRequest) {
 		return repository.createBSCategory(bSCategoryRequest);
 	}
-	
-	public List<Map<String,Object>> getBSCategoryByTenantId(String tenantId) {
-		List<Map<String,Object>> resultList = repository.getBSCategoryByTenantId(tenantId);
+
+	public List<Map<String, Object>> getBSCategoryByTenantId(String tenantId, String catId) {
+		List<Map<String, Object>> resultList = repository.getBSCategoryByTenantId(tenantId, catId);
 		log.info("getBSCategoryByTenantId: " + resultList.toString());
 		return resultList;
 	}
-	
+
 	public int createPayTpRate(PayTpRateRequest payTpRateRequest) {
 		return repository.createPayTpRate(payTpRateRequest);
 	}
-	
-	public List<Map<String,Object>> getPayTpRateByTenantIdAndTypeId(String tenantId, String typeId) {
-		List<Map<String,Object>> resultList = repository.getPayTpRateByTenantIdAndTypeId(tenantId,typeId);
+
+	public List<Map<String, Object>> getPayTpRateByTenantIdAndTypeId(String tenantId, int typeId) {
+		List<Map<String, Object>> resultList = repository.getPayTpRateByTenantIdAndTypeId(tenantId, typeId);
 		log.info("getPayTpRateByTenantIdAndTypeId: " + resultList.toString());
 		return resultList;
 	}

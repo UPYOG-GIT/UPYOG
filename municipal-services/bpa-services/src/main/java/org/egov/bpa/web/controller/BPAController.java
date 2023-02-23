@@ -265,8 +265,9 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_searchbscategory")
-	public ResponseEntity<List<Map<String, Object>>> getBSCategoryByTenantId(@RequestParam String tenantId) {
-		List<Map<String, Object>> sqlResponseList = bpaService.getBSCategoryByTenantId(tenantId);
+	public ResponseEntity<List<Map<String, Object>>> getBSCategoryByTenantId(@RequestParam String tenantId,
+			@RequestParam String catId) {
+		List<Map<String, Object>> sqlResponseList = bpaService.getBSCategoryByTenantId(tenantId, catId);
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 	}
 
@@ -289,7 +290,7 @@ public class BPAController {
 
 	@PostMapping(value = "/_searchpaytprate")
 	public ResponseEntity<List<Map<String, Object>>> getPayTpRateByTenantIdAndTypeId(@RequestParam String tenantId,
-			@RequestParam String typeId) {
+			@RequestParam int typeId) {
 		List<Map<String, Object>> sqlResponseList = bpaService.getPayTpRateByTenantIdAndTypeId(tenantId, typeId);
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 	}

@@ -13,16 +13,19 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-public class PayTpRateRequest {
-
-	@JsonProperty("typeId")
-	private int typeId = 0;
+public class SlabMasterRequest {
 
 	@JsonProperty("tenantId")
 	private String tenantId = null;
+	
+	@JsonProperty("payTypeId")
+	private String payTypeId = null;
 
-	@JsonProperty("unitId")
-	private String unitId = null;
+	@JsonProperty("fromVal")
+	private double fromVal = 0d;
+	
+	@JsonProperty("toVal")
+	private double toVal = 0d;
 
 	@JsonProperty("calCon")
 	private String calCon = null;
@@ -31,22 +34,22 @@ public class PayTpRateRequest {
 	private String calCact = null;
 
 	@JsonProperty("pCategory")
-	private int pCategory = 0;
+	private String pCategory = null;
 
 	@JsonProperty("bCategory")
-	private int bCategory = 0;
+	private String bCategory = null;
 
 	@JsonProperty("sCategory")
-	private int sCategory = 0;
+	private String sCategory = null;
 
 	@JsonProperty("rateRes")
-	private double rateRes = 0d;
+	private String rateRes = null;
 
 	@JsonProperty("rateComm")
-	private double rateComm = 0d;
+	private String rateComm = null;
 
 	@JsonProperty("rateInd")
-	private double rateInd = 0d;
+	private String rateInd = null;
 
 	@JsonProperty("createdBy")
 	private String createdBy = null;
@@ -54,4 +57,7 @@ public class PayTpRateRequest {
 	@JsonProperty("perVal")
 	private String perVal = null;
 
+	
+	
+	
 }
