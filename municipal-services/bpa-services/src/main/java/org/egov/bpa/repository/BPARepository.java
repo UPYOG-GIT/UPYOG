@@ -280,7 +280,7 @@ public class BPARepository {
 
 		String insertQuery = "insert into pay_tp_rate_master(ulb_tenantid,unitid,typeid,srno,calcon,"
 				+ "calcact,p_category,b_category,s_category,rate_res,rate_comm,rate_ind,"
-				+ "perval,createdby,createddate) " + "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ "perval,createdby,createddate) " + "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,'" + date + "')";
 //		String insertQuery = "insert into pay_tp_rate_master(ulb_tenantid,unitid,typeid,srno,calcon,"
 //				+ "calcact,p_category,b_category,s_category,rate_res,rate_comm,rate_ind,"
 //				+ "perval,createdby,createddate) " + "values ('" + payTpRateRequest.getTenantId() + "','"
@@ -302,7 +302,7 @@ public class BPARepository {
 				payTpRateRequest.getUnitId(), payTpRateRequest.getTypeId(), count, payTpRateRequest.getCalCon(),
 				payTpRateRequest.getCalCact(), payTpRateRequest.getPCategory(), payTpRateRequest.getBCategory(),
 				payTpRateRequest.getSCategory(), payTpRateRequest.getRateRes(), payTpRateRequest.getRateComm(),
-				payTpRateRequest.getRateInd(), payTpRateRequest.getPerVal(), payTpRateRequest.getCreatedBy(), date);
+				payTpRateRequest.getRateInd(), payTpRateRequest.getPerVal(), payTpRateRequest.getCreatedBy());
 //		int insertResult = jdbcTemplate.update(insertQuery);
 
 		log.info("BPARepository.createPayTpRate: " + insertResult + " data inserted into paytype_master table");
@@ -327,16 +327,25 @@ public class BPARepository {
 
 		String insertQuery = "insert into slab_master(ulb_tenantid,paytype_id,srno,from_val,"
 				+ "to_val,p_category,b_category,s_category,rate_res,rate_comm,rate_ind,"
-				+ "operation,multp_val,max_limit,createdby,createddate) " + "values ('"
-				+ slabMasterRequest.getTenantId() + "'," + slabMasterRequest.getPayTypeId() + "," + count + ",'"
-				+ slabMasterRequest.getFromVal() + "','" + slabMasterRequest.getToVal() + "','"
-				+ slabMasterRequest.getPCategory() + "','" + slabMasterRequest.getBCategory() + "','"
-				+ slabMasterRequest.getSCategory() + "','" + slabMasterRequest.getRateRes() + "','"
-				+ slabMasterRequest.getRateComm() + "','" + slabMasterRequest.getRateInd() + "','"
-				+ slabMasterRequest.getOperation() + "','" + slabMasterRequest.getMultpVal() + "','"
-				+ slabMasterRequest.getMaxLimit() + "','" + slabMasterRequest.getCreatedBy() + "','" + date + "')";
-
-		int insertResult = jdbcTemplate.update(insertQuery);
+				+ "operation,multp_val,max_limit,createdby,createddate) " 
+				+ "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'" + date + "')";
+//		String insertQuery = "insert into slab_master(ulb_tenantid,paytype_id,srno,from_val,"
+//				+ "to_val,p_category,b_category,s_category,rate_res,rate_comm,rate_ind,"
+//				+ "operation,multp_val,max_limit,createdby,createddate) " + "values ('"
+//				+ slabMasterRequest.getTenantId() + "'," + slabMasterRequest.getPayTypeId() + "," + count + ",'"
+//				+ slabMasterRequest.getFromVal() + "','" + slabMasterRequest.getToVal() + "','"
+//				+ slabMasterRequest.getPCategory() + "','" + slabMasterRequest.getBCategory() + "','"
+//				+ slabMasterRequest.getSCategory() + "','" + slabMasterRequest.getRateRes() + "','"
+//				+ slabMasterRequest.getRateComm() + "','" + slabMasterRequest.getRateInd() + "','"
+//				+ slabMasterRequest.getOperation() + "','" + slabMasterRequest.getMultpVal() + "','"
+//				+ slabMasterRequest.getMaxLimit() + "','" + slabMasterRequest.getCreatedBy() + "','" + date + "')";
+		int insertResult = jdbcTemplate.update(insertQuery, slabMasterRequest.getTenantId(),
+				slabMasterRequest.getPayTypeId(), count, slabMasterRequest.getFromVal(), slabMasterRequest.getToVal(),
+				slabMasterRequest.getPCategory(), slabMasterRequest.getBCategory(), slabMasterRequest.getSCategory(),
+				slabMasterRequest.getRateRes(), slabMasterRequest.getRateComm(), slabMasterRequest.getRateInd(),
+				slabMasterRequest.getOperation(), slabMasterRequest.getMultpVal(), slabMasterRequest.getMaxLimit(),
+				slabMasterRequest.getCreatedBy());
+//		int insertResult = jdbcTemplate.update(insertQuery);
 
 		log.info("BPARepository.createPayTpRate: " + insertResult + " data inserted into paytype_master table");
 		return insertResult;
