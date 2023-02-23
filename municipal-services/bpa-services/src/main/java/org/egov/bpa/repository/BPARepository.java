@@ -352,7 +352,7 @@ public class BPARepository {
 	}
 
 	public List<Map<String, Object>> getSlabMasterByTenantIdAndTypeId(String tenantId, int payTypeId) {
-		String query = "select id,unitid,srno,from_val,to_val,p_category,b_category,s_category,"
+		String query = "select id,srno,from_val,to_val,p_category,b_category,s_category,"
 				+ "rate_res,rate_comm,rate_ind,operation,multp_val,max_limit from slab_master "
 				+ "where ulb_tenantid=? AND paytype_id=?";
 		return jdbcTemplate.queryForList(query, new Object[] { tenantId, payTypeId });
