@@ -19,6 +19,7 @@ import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
 import org.egov.bpa.web.model.PayTypeFeeDetailRequestWrapper;
 import org.egov.bpa.web.model.PayTypeRequest;
 import org.egov.bpa.web.model.ProposalTypeRequest;
+import org.egov.bpa.web.model.SlabMasterRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -306,27 +307,27 @@ public class BPARepository {
 				+ "rate_res,rate_comm,rate_ind,perval from pay_tp_rate_master " + "where ulb_tenantid=? AND typeid=?";
 		return jdbcTemplate.queryForList(query, new Object[] { tenantId, typeId });
 	}
-	
-	
-	//insert data into slab_master table
-	public int createSlabMaster(PayTpRateRequest payTpRateRequest) {
 
-		String query = "SELECT COUNT(*) FROM pay_tp_rate_master WHERE ulb_tenantid=? AND typeid=?";
+	// insert data into slab_master table
+	public int createSlabMaster(SlabMasterRequest slabMasterRequest) {
+
+		String query = "SELECT COUNT(*) FROM slab_master WHERE ulb_tenantid=? AND paytype_id=?";
 		int count = jdbcTemplate.queryForObject(query,
-				new Object[] { payTpRateRequest.getTenantId(), payTpRateRequest.getTypeId() }, Integer.class);
+				new Object[] { slabMasterRequest.getTenantId(), slabMasterRequest.getPayTypeId() }, Integer.class);
 		log.info("count : " + count);
 		LocalDateTime date = LocalDateTime.now();
 		count = count + 1;
 
-		String insertQuery = "insert into pay_tp_rate_master(ulb_tenantid,unitid,typeid,srno,calcon,"
-				+ "calcact,p_category,b_category,s_category,rate_res,rate_comm,rate_ind,"
-				+ "perval,createdby,createddate) " + "values ('" + payTpRateRequest.getTenantId() + "','"
-				+ payTpRateRequest.getUnitId() + "','" + payTpRateRequest.getTypeId() + "','" + count + "','"
-				+ payTpRateRequest.getCalCon() + "','" + payTpRateRequest.getCalCact() + "','"
-				+ payTpRateRequest.getPCategory() + "','" + payTpRateRequest.getBCategory() + "','"
-				+ payTpRateRequest.getSCategory() + "','" + payTpRateRequest.getRateRes() + "','"
-				+ payTpRateRequest.getRateComm() + "','" + payTpRateRequest.getRateInd() + "','"
-				+ payTpRateRequest.getPerVal() + "','" + payTpRateRequest.getCreatedBy() + "','" + date + "')";
+		String insertQuery = "insert into pay_tp_rate_master(ulb_tenantid,paytype_id,srno,from_val,"
+				+ "to_val,p_category,b_category,s_category,rate_res,rate_comm,rate_ind,"
+				+ "operation,multp_val,max_limit,createdby,createddate) " + "values ('"
+				+ slabMasterRequest.getTenantId() + "','" + slabMasterRequest.getPayTypeId() + "','" + count + "','"
+				+ slabMasterRequest.getFromVal() + "','" + slabMasterRequest.getToVal() + "','"
+				+ slabMasterRequest.getPCategory() + "','" + slabMasterRequest.getBCategory() + "','"
+				+ slabMasterRequest.getSCategory() + "','" + slabMasterRequest.getRateRes() + "','"
+				+ slabMasterRequest.getRateComm() + "','" + slabMasterRequest.getRateInd() + "','"
+				+ slabMasterRequest.getOperation() + "','" + slabMasterRequest.getMultpVal() + "','"
+				+ slabMasterRequest.getMaxLimit() + "','" + slabMasterRequest.getCreatedBy() + "','" + date + "')";
 
 		int insertResult = jdbcTemplate.update(insertQuery);
 

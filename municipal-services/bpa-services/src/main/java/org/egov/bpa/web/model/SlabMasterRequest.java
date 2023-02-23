@@ -26,38 +26,35 @@ public class SlabMasterRequest {
 	
 	@JsonProperty("toVal")
 	private double toVal = 0d;
-
-	@JsonProperty("calCon")
-	private String calCon = null;
-
-	@JsonProperty("calCact")
-	private String calCact = null;
-
-	@JsonProperty("pCategory")
-	private String pCategory = null;
-
-	@JsonProperty("bCategory")
-	private String bCategory = null;
-
-	@JsonProperty("sCategory")
-	private String sCategory = null;
-
+	
 	@JsonProperty("rateRes")
-	private String rateRes = null;
+	private double rateRes = 0d;
 
 	@JsonProperty("rateComm")
-	private String rateComm = null;
+	private double rateComm = 0d;
 
 	@JsonProperty("rateInd")
-	private String rateInd = null;
+	private double rateInd = 0d;
+
+	@JsonProperty("operation")
+	private String operation = null;
+
+	@JsonProperty("pCategory")
+	private int pCategory = 0;
+
+	@JsonProperty("bCategory")
+	private int bCategory = 0;
+
+	@JsonProperty("sCategory")
+	private int sCategory = 0;
 
 	@JsonProperty("createdBy")
 	private String createdBy = null;
 
-	@JsonProperty("perVal")
-	private String perVal = null;
+	@JsonProperty("multpVal")
+	private double multpVal = 0d;
+	
+	@JsonProperty("maxLimit")
+	private double maxLimit = 0d;
 
-	
-	
-	
 }
