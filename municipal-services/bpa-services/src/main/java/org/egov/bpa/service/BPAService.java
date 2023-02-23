@@ -858,7 +858,7 @@ public class BPAService {
 		return repository.createBSCategory(bSCategoryRequest);
 	}
 
-	public List<Map<String, Object>> getBSCategoryByTenantId(String tenantId, String catId) {
+	public List<Map<String, Object>> getBSCategoryByTenantId(String tenantId, int catId) {
 		List<Map<String, Object>> resultList = repository.getBSCategoryByTenantId(tenantId, catId);
 		log.info("getBSCategoryByTenantId: " + resultList.toString());
 		return resultList;

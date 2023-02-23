@@ -268,7 +268,7 @@ public class BPAController {
 
 	@PostMapping(value = "/_searchbscategory")
 	public ResponseEntity<List<Map<String, Object>>> getBSCategoryByTenantId(@RequestParam String tenantId,
-			@RequestParam String catId) {
+			@RequestParam int catId) {
 		List<Map<String, Object>> sqlResponseList = bpaService.getBSCategoryByTenantId(tenantId, catId);
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 	}

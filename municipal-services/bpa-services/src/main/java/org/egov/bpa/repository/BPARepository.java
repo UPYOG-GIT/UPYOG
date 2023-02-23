@@ -264,7 +264,7 @@ public class BPARepository {
 	}
 
 	// fetch data from bscategory_master table
-	public List<Map<String, Object>> getBSCategoryByTenantId(String tenantId, String catId) {
+	public List<Map<String, Object>> getBSCategoryByTenantId(String tenantId, int catId) {
 		String query = "select id,description,defunt from bscategory_master where ulb_tenantid=? AND catid=?";
 		return jdbcTemplate.queryForList(query, new Object[] { tenantId, catId });
 	}
@@ -274,7 +274,7 @@ public class BPARepository {
 		String query = "SELECT COUNT(*) FROM pay_tp_rate_master WHERE ulb_tenantid=? AND typeid=?";
 		int count = jdbcTemplate.queryForObject(query,
 				new Object[] { payTpRateRequest.getTenantId(), payTpRateRequest.getTypeId() }, Integer.class);
-		log.info("count : " + count);
+		log.info("createPayTpRate count : " + count);
 		LocalDateTime date = LocalDateTime.now();
 		count = count + 1;
 
@@ -321,7 +321,7 @@ public class BPARepository {
 		String query = "SELECT COUNT(*) FROM slab_master WHERE ulb_tenantid=? AND paytype_id=?";
 		int count = jdbcTemplate.queryForObject(query,
 				new Object[] { slabMasterRequest.getTenantId(), slabMasterRequest.getPayTypeId() }, Integer.class);
-		log.info("count : " + count);
+		log.info("createSlabMaster count : " + count);
 		LocalDateTime date = LocalDateTime.now();
 		count = count + 1;
 
