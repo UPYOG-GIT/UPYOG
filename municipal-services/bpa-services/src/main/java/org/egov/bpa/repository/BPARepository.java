@@ -246,7 +246,7 @@ public class BPARepository {
 
 		LocalDateTime date = LocalDateTime.now();
 
-		String insertQuery = "insert into bcategory_master(ulb_tenantid,description,defunt,catid,createdby,createddate) "
+		String insertQuery = "insert into bscategory_master(ulb_tenantid,description,defunt,catid,createdby,createddate) "
 				+ "values ('" + bsCategoryRequest.getTenantId() + "','" + bsCategoryRequest.getDesc() + "','"
 				+ bsCategoryRequest.getDefunt() + "','" + bsCategoryRequest.getCatid() + "','"
 				+ bsCategoryRequest.getCreatedBy() + "','" + date + "')";
