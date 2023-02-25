@@ -310,8 +310,15 @@ public class BPARepository {
 	}
 
 	public List<Map<String, Object>> getPayTpRateByTenantIdAndTypeId(String tenantId, int typeId) {
-		String query = "select id,unitid,srno,calcon,calcact,p_category,b_category,s_category,"
-				+ "rate_res,rate_comm,rate_ind,perval from pay_tp_rate_master " + "where ulb_tenantid=? AND typeid=?";
+		String query = "select trm.id,trm.unitid,trm.srno,trm.calcon,trm.calcact,"
+				+ "ptm.description as p_category, bm.description as b_category, bsm.description as s_category, "
+				+ "trm.rate_res,trm.rate_comm,trm.rate_ind,trm.perval from pay_tp_rate_master trm "
+				+ "LEFT JOIN proposal_type_master as ptm on ptm.id = trm.p_category "
+				+ "LEFT JOIN bcategory_master as bm on bm.id = trm.b_category "
+				+ "LEFT JOIN bscategory_master as bsm on bsm.id = trm.s_category "
+				+ "where trm.ulb_tenantid=? AND trm.typeid=?";
+//		String query = "select id,unitid,srno,calcon,calcact,p_category,b_category,s_category,"
+//				+ "rate_res,rate_comm,rate_ind,perval from pay_tp_rate_master " + "where ulb_tenantid=? AND typeid=?";
 		return jdbcTemplate.queryForList(query, new Object[] { tenantId, typeId });
 	}
 
@@ -327,8 +334,8 @@ public class BPARepository {
 
 		String insertQuery = "insert into slab_master(ulb_tenantid,paytype_id,srno,from_val,"
 				+ "to_val,p_category,b_category,s_category,rate_res,rate_comm,rate_ind,"
-				+ "operation,multp_val,max_limit,createdby,createddate) " 
-				+ "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'" + date + "')";
+				+ "operation,multp_val,max_limit,createdby,createddate) " + "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'"
+				+ date + "')";
 //		String insertQuery = "insert into slab_master(ulb_tenantid,paytype_id,srno,from_val,"
 //				+ "to_val,p_category,b_category,s_category,rate_res,rate_comm,rate_ind,"
 //				+ "operation,multp_val,max_limit,createdby,createddate) " + "values ('"
@@ -352,9 +359,17 @@ public class BPARepository {
 	}
 
 	public List<Map<String, Object>> getSlabMasterByTenantIdAndTypeId(String tenantId, int payTypeId) {
-		String query = "select id,srno,from_val,to_val,p_category,b_category,s_category,"
-				+ "rate_res,rate_comm,rate_ind,operation,multp_val,max_limit from slab_master "
-				+ "where ulb_tenantid=? AND paytype_id=?";
+		String query = "select sm.id,sm.srno,sm.from_val,sm.to_val,ptm.description as p_category, "
+				+ "bm.description as b_category, bsm.description as s_category, sm.rate_res,"
+				+ "sm.rate_comm,sm.rate_ind,sm.operation,sm.multp_val,sm.max_limit "
+				+ "from slab_master sm "
+				+ "LEFT JOIN proposal_type_master as ptm on ptm.id = sm.p_category "
+				+ "LEFT JOIN bcategory_master as bm on bm.id = sm.b_category "
+				+ "LEFT JOIN bscategory_master as bsm on bsm.id = sm.s_category "
+				+ "Where sm.ulb_tenantid=? AND sm.paytype_id=?";
+//		String query = "select id,srno,from_val,to_val,p_category,b_category,s_category,"
+//				+ "rate_res,rate_comm,rate_ind,operation,multp_val,max_limit from slab_master "
+//				+ "where ulb_tenantid=? AND paytype_id=?";
 		return jdbcTemplate.queryForList(query, new Object[] { tenantId, payTypeId });
 	}
 }
