@@ -21,6 +21,12 @@ import EditEmployee from "./pages/EditEmployee/index";
 import Details from "./pages/EmployeeDetails";
 import Inbox from "./pages/Inbox";
 import Response from "./pages/Response";
+import PayTypeRate from "./pages/PayTypeRateEntry";
+import SlabEntry from "./pages/SlabEntry";
+import ProptymasterEntry from "./pages/Proposaltymaster";
+import CateEntry from "./pages/CategoryEntry";
+import SubCateEntry from "./pages/SubCategoryEntry";
+import PayTpEntry from "./pages/PayTpEntry";
 
 export const HRMSModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = "HR";
@@ -54,6 +60,12 @@ const componentsToRegister = {
   SelectEmployeeGender,
   SelectDateofBirthEmployment,
   HRMSModule,
+  PayTypeRate, 
+  SlabEntry,
+  ProptymasterEntry,
+  CateEntry,
+  SubCateEntry,
+  PayTpEntry,
   HRMSResponse: Response,
   HREditEmpolyee: EditEmployee,
   HRCreateEmployee: CreateEmployee,

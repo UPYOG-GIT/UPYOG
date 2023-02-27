@@ -49,7 +49,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
         CarpetArea: ob.occupancies?.[0]?.CarpetArea || 0,
         key: t(`BPA_FLOOR_NAME_${ob.number}`),
       });
-    });
+    }); 
     return floors;
   }
 

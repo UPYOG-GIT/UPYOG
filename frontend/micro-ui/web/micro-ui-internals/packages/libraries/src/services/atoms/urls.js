@@ -124,6 +124,17 @@ const Urls = {
     edcrreportdownload: "/bpa-services/v1/bpa/_permitorderedcr",
     // add a url for getting post fee rule type list
     getPaytype:"/bpa-services/v1/bpa/_paytype",
+    createPaytype:"/bpa-services/v1/bpa/_createpaytype",
+    getProptype:"/bpa-services/v1/bpa/_searchproposaltype",
+    createProptype:"/bpa-services/v1/bpa/_createproposaltype",
+    getBcategory:"/bpa-services/v1/bpa/_searchbcategory",
+    createBcate:"/bpa-services/v1/bpa/_createbcategory",
+    getBScategory:"/bpa-services/v1/bpa/_searchbscategory",
+    createBScate:"/bpa-services/v1/bpa/_createbscategory",
+    getpaytprate:"/bpa-services/v1/bpa/_searchpaytprate",
+    createpayrate:"/bpa-services/v1/bpa/_createpaytprate",
+    getslab:"/bpa-services/v1/bpa/_searchslab",
+    createSlab:"/bpa-services/v1/bpa/_createslab",
   },
 
   edcr: {

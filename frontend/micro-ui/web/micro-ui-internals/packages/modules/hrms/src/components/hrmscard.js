@@ -34,11 +34,35 @@ const HRMSCard = () => {
             {
                 label: t("HR_COMMON_CREATE_EMPLOYEE_HEADER"),
                 link: `/digit-ui/employee/hrms/create`
-            }           
+            },
+            {
+                label: t("Pay Type Entry"),
+                link: `/digit-ui/employee/hrms/paytyEntry`
+            },   
+            {
+                label: t("Pay Type Rate Entry"),
+                link: `/digit-ui/employee/hrms/rateEntry`
+            },
+            {
+                label: t("Slab Entry"),
+                link: `/digit-ui/employee/hrms/slabEntry`
+            },  
+            {
+                label: t("Proposal Type Master"),
+                link: `/digit-ui/employee/hrms/proptymaster`
+            },  
+            {
+                label: t("Category Entry"),
+                link: `/digit-ui/employee/hrms/cateEntry`
+            },
+            {
+                label: t("Sub Category Entry"),
+                link: `/digit-ui/employee/hrms/subcateEntry`
+            },       
         ]
     }
 
-    return <EmployeeModuleCard {...propsForModuleCard} />
+    return <EmployeeModuleCard {...propsForModuleCard} />;
 };
 
 export default HRMSCard;

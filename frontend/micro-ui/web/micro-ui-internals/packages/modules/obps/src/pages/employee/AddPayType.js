@@ -29,6 +29,7 @@ const AddPayType = () => {
   const [modalUnit,setModalUnit] = useState("per Sq. Meter");
   const [modalRate,setModalRate] = useState(0);
   const [modalValue,setModalValue] = useState(0);
+  const [dropDownData,setDropDownData] = useState([]);
   const { id } = useParams();
   const [modalList,setModalList] = useState(getDatafromLS(id));
  
@@ -39,7 +40,7 @@ const AddPayType = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
-  const dropDownData = [{code:"c",value:"c"},{code:"a",value:"a"},{code:"b",value:"b"}];
+  const dropDownData1 = [{code:"c",value:"c"},{code:"a",value:"a"},{code:"b",value:"b"}];
 
  
 
@@ -78,12 +79,13 @@ const AddPayType = () => {
         amount +=item.modalValue));
   }
 
-  const paytypeRule =[];
+
   const { data = {}, isLoading } = Digit.Hooks.obps.useBPADetailsPage(tenantId, { applicationNo: id });
   useEffect( async ()=>{
-    paytypeRule = await Digit.OBPSService.getPaytype(tenantId);
-    
-  })
+    let paytypeRule = await Digit.OBPSService.getPaytype(tenantId);
+    setDropDownData(dropDownData);
+    console.log("drop--gh--"+JSON.stringify(paytypeRule)); 
+  },[])
   // 
 
 
@@ -94,7 +96,7 @@ const AddPayType = () => {
   if (isLoading) {
     return <Loader />;
   }
-console.log("paytypeRule-----"+paytypeRule);
+
   const plotarea = data?.edcrDetails?.planDetail?.planInformation?.plotArea;
   const totalBuitUpArea = data?.edcrDetails?.planDetail?.virtualBuilding?.totalBuitUpArea;
 
@@ -162,10 +164,6 @@ console.log("paytypeRule-----"+paytypeRule);
 
   
 
-
-
-
- 
 
   return (
 
