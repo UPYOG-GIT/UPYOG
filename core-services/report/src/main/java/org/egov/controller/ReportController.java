@@ -125,6 +125,8 @@ public class ReportController {
     @ResponseBody
     public ResponseEntity<?> getReportDatav1(@PathVariable("moduleName") String moduleName, @RequestBody @Valid final ReportRequest reportRequest,
                                              final BindingResult errors) {
+        log.info(reportRequest.getSearchParams().toString());
+
         try {
             List<ReportResponse> reportResponse = reportService.getAllReportData(reportRequest, moduleName, reportRequest.getRequestInfo().getAuthToken());
             return reportService.getReportDataSuccessResponse(reportResponse, reportRequest.getRequestInfo(), reportRequest.getTenantId());

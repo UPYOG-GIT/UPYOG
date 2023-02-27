@@ -8,7 +8,6 @@ import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,9 +22,16 @@ import org.egov.bpa.util.BPAErrorConstants;
 import org.egov.bpa.util.BPAUtil;
 import org.egov.bpa.util.NotificationUtil;
 import org.egov.bpa.validator.BPAValidator;
+import org.egov.bpa.web.model.BCategoryRequest;
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPASearchCriteria;
+import org.egov.bpa.web.model.BSCategoryRequest;
+import org.egov.bpa.web.model.PayTpRateRequest;
+import org.egov.bpa.web.model.PayTypeFeeDetailRequestWrapper;
+import org.egov.bpa.web.model.PayTypeRequest;
+import org.egov.bpa.web.model.ProposalTypeRequest;
+import org.egov.bpa.web.model.SlabMasterRequest;
 import org.egov.bpa.web.model.Workflow;
 import org.egov.bpa.web.model.landInfo.LandInfo;
 import org.egov.bpa.web.model.landInfo.LandSearchCriteria;
@@ -813,12 +819,68 @@ public class BPAService {
 		}
 	}
 
-	public List<Map<String,Object>> getPayTypeByTenantId(String tenantId) {
+	public List<Map<String, Object>> getPayTypeByTenantId(String tenantId) {
 
-		List<Map<String,Object>> resultList = repository.getPayTypeByTenantId(tenantId);
+		List<Map<String, Object>> resultList = repository.getPayTypeByTenantId(tenantId);
 		log.info("getPayTypeByTenantId: " + resultList.toString());
 		return resultList;
-//		return null;
 	}
 
+	public int[] createFeeDetail(List<PayTypeFeeDetailRequestWrapper> payTypeFeeDetailRequestWrapper) {
+		return repository.createFeeDetail(payTypeFeeDetailRequestWrapper);
+	}
+
+	public int createPayType(PayTypeRequest payTypeRequest) {
+		return repository.createPayType(payTypeRequest);
+	}
+
+	public int createProposalType(ProposalTypeRequest proposalTypeRequest) {
+		return repository.createProposalType(proposalTypeRequest);
+	}
+
+	public List<Map<String, Object>> getProposalTypeByTenantId(String tenantId) {
+		List<Map<String, Object>> resultList = repository.getProposalTypeByTenantId(tenantId);
+		log.info("getProposalTypeByTenantId: " + resultList.toString());
+		return resultList;
+	}
+
+	public int createBCategory(BCategoryRequest bCategoryRequest) {
+		return repository.createBCategory(bCategoryRequest);
+	}
+
+	public List<Map<String, Object>> getBCategoryByTenantId(String tenantId) {
+		List<Map<String, Object>> resultList = repository.getBCategoryByTenantId(tenantId);
+		log.info("getBCategoryByTenantId: " + resultList.toString());
+		return resultList;
+	}
+
+	public int createBSCategory(BSCategoryRequest bSCategoryRequest) {
+		return repository.createBSCategory(bSCategoryRequest);
+	}
+
+	public List<Map<String, Object>> getBSCategoryByTenantId(String tenantId, int catId) {
+		List<Map<String, Object>> resultList = repository.getBSCategoryByTenantId(tenantId, catId);
+		log.info("getBSCategoryByTenantId: " + resultList.toString());
+		return resultList;
+	}
+
+	public int createPayTpRate(PayTpRateRequest payTpRateRequest) {
+		return repository.createPayTpRate(payTpRateRequest);
+	}
+
+	public List<Map<String, Object>> getPayTpRateByTenantIdAndTypeId(String tenantId, int typeId) {
+		List<Map<String, Object>> resultList = repository.getPayTpRateByTenantIdAndTypeId(tenantId, typeId);
+		log.info("getPayTpRateByTenantIdAndTypeId: " + resultList.toString());
+		return resultList;
+	}
+	
+	public int createSlabMaster(SlabMasterRequest slabMasterRequest) {
+		return repository.createSlabMaster(slabMasterRequest);
+	}
+
+	public List<Map<String, Object>> getSlabMasterByTenantIdAndTypeId(String tenantId, int typeId) {
+		List<Map<String, Object>> resultList = repository.getSlabMasterByTenantIdAndTypeId(tenantId, typeId);
+		log.info("getPayTpRateByTenantIdAndTypeId: " + resultList.toString());
+		return resultList;
+	}
 }
