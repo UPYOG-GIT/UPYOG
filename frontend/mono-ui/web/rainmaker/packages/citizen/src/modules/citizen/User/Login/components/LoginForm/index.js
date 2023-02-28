@@ -18,7 +18,7 @@ const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp }
      {!enableWhatsApp&&
     <Card
       className={enableWhatsApp?"login-cardwidth user-screens-card":"login-cardwidthmob col-sm-offset-4 col-sm-4 user-screens-card"}
-      textChildren={
+      textChildren={  
         <div>
           <div className="rainmaker-displayInline" style={{ justifyContent: "center"  ,alignItems:"center",marginBottom: "24px"}}>
             <div style={{ }}>
@@ -227,4 +227,4 @@ const LoginForm = ({ handleFieldChange, form, logoUrl,qrCodeURL,enableWhatsApp }
   );
 };
 
-export default LoginForm;
+export default LoginForm; 

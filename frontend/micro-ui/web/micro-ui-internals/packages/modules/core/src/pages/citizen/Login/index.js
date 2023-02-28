@@ -1,11 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AppContainer, BackButton, Toast } from "@egovernments/digit-ui-react-components";
+import { AppContainer, PageBasedInput, BackButton, Card, Toast, LabelPageBasedInput, CardHeader, SearchOnRadioButtons, CardLabelError } from "@egovernments/digit-ui-react-components";
 import { Route, Switch, useHistory, useRouteMatch, useLocation } from "react-router-dom";
 import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
 import SelectOtp from "./SelectOtp";
 import SelectName from "./SelectName";
+import Typography from "@material-ui/core/Typography";
+import { TextField, Button, InputLabel, MenuItem, Box } from "@material-ui/core";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
+
 
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
@@ -13,22 +18,26 @@ const DEFAULT_USER = "digit-user";
 const DEFAULT_REDIRECT_URL = "/digit-ui/citizen";
 
 /* set citizen details to enable backward compatiable */
-const setCitizenDetail=(userObject,token,tenantId)=>{
-  let locale=JSON.parse(sessionStorage.getItem("Digit.initData"))?.value?.selectedLanguage;
-  localStorage.setItem("Citizen.tenant-id",tenantId);
-  localStorage.setItem("tenant-id",tenantId);
-  localStorage.setItem("citizen.userRequestObject",JSON.stringify(userObject));
-  localStorage.setItem("locale",locale);
-  localStorage.setItem("Citizen.locale",locale);
-  localStorage.setItem("token",token);
-  localStorage.setItem("Citizen.token",token);
-  localStorage.setItem("user-info",JSON.stringify(userObject));
-  localStorage.setItem("Citizen.user-info",JSON.stringify(userObject));  
+const setCitizenDetail = (userObject, token, tenantId) => {
+  let locale = JSON.parse(sessionStorage.getItem("Digit.initData"))?.value?.selectedLanguage;
+  localStorage.setItem("Citizen.tenant-id", tenantId);
+  localStorage.setItem("tenant-id", tenantId);
+  localStorage.setItem("citizen.userRequestObject", JSON.stringify(userObject));
+  localStorage.setItem("locale", locale);
+  localStorage.setItem("Citizen.locale", locale);
+  localStorage.setItem("token", token);
+  localStorage.setItem("Citizen.token", token);
+  localStorage.setItem("user-info", JSON.stringify(userObject));
+  localStorage.setItem("Citizen.user-info", JSON.stringify(userObject));
 }
 
 const getFromLocation = (state, searchParams) => {
+  // console.log("state" + state)
   return state?.from || searchParams?.from || DEFAULT_REDIRECT_URL;
+
 };
+
+
 
 const Login = ({ stateCode, isUserRegistered = true }) => {
   const { t } = useTranslation();
@@ -39,9 +48,26 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   const [error, setError] = useState(null);
   const [isOtpValid, setIsOtpValid] = useState(true);
   const [tokens, setTokens] = useState(null);
-  const [params, setParmas] = useState(isUserRegistered?{}:location?.state?.data);
+  const [params, setParmas] = useState(isUserRegistered ? {} : location?.state?.data);
   const [errorTO, setErrorTO] = useState(null);
+
   const searchParams = Digit.Hooks.useQueryParams();
+console.log("params------------"+JSON.stringify(params));
+  const [isSignup, setSignup] = useState(false);
+  //console.log(isSignup)
+  const [mobileNumber, setMobileNumber] = useState();
+  const [otp, setOtp] = useState();
+  const [name, setName] = useState();
+  const { data: cities, isLoading } = Digit.Hooks.useTenants();
+
+  const [selectedCity, setSelectedCity] = useState(() => ({ code: Digit.ULBService.getCitizenCurrentTenant(true) }));
+  const [showError, setShowError] = useState(false);
+
+  const { pathname } = useLocation();
+
+  // console.log("local--"+JSON.stringify(location));
+  // console.log("params"+JSON.stringify(Digit.ULBService.getCitizenCurrentTenant(true)));
+  // console.log("selectedCity"+JSON.stringify(selectedCity));
 
   useEffect(() => {
     let errorTimeout;
@@ -66,7 +92,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     }
     Digit.SessionStorage.set("citizen.userRequestObject", user);
     Digit.UserService.setUser(user);
-    setCitizenDetail(user?.info,user?.access_token,stateCode)
+    setCitizenDetail(user?.info, user?.access_token, stateCode)
     const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
     history.replace(redirectPath);
   }, [user]);
@@ -87,35 +113,52 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   const getUserType = () => Digit.UserService.getType();
 
   const handleOtpChange = (otp) => {
-    setParmas({ ...params, otp });
+    setOtp(otp.target.value);
   };
 
-  const handleMobileChange = (event) => {
-    const { value } = event.target;
-    setParmas({ ...params, mobileNumber: value });
+  const handleMobileChange = (e) => {
+    // const { value } = event.target;
+    setMobileNumber(e.target.value);
   };
 
-  const selectMobileNumber = async (mobileNumber) => {
-    setParmas({ ...params, ...mobileNumber });
+  const handleNameChange = (e) => {
+    // const { value } = event.target;
+    setName(e.target.value);
+  };
+
+  const selectMobileNumber = async () => {
+    // setParmas({ ...params, mobileNumber });
     const data = {
-      ...mobileNumber,
+      mobileNumber,
+
       tenantId: stateCode,
       userType: getUserType(),
     };
+
+   
+    Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", selectedCity);
+    // console.log("ioioioio" + JSON.stringify(data));
+
     if (isUserRegistered) {
+
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
+      //   console.log("err" + err);
       if (!err) {
+        //  console.log("hiiiiii");
         history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams), role: location.state?.role });
         return;
       } else {
+        // console.log("kkkkkkkkkkkkkkkkk");
         if (!(location.state && location.state.role === 'FSM_DSO')) {
-          history.push(`/digit-ui/citizen/register/name`, { from: getFromLocation(location.state, searchParams), data:data });
+          history.push(`/digit-ui/citizen/register/name`, { from: getFromLocation(location.state, searchParams), data: data });
         }
       }
       if (location.state?.role) {
         setError(location.state?.role === "FSM_DSO" ? t("ES_ERROR_DSO_LOGIN") : "User not registered.");
       }
+
     } else {
+      //   console.log("Type Register");
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
       if (!err) {
         history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
@@ -124,48 +167,90 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     }
   };
 
-  const selectName = async (name) => {
+  const seletName = async () => {
+    console.log("hiii")
+    
     const data = {
       ...params,
+        name,
       tenantId: stateCode,
       userType: getUserType(),
-      ...name
+      //...name
+    
     };
-    setParmas({ ...params, ...name });
+    console.log("data"+ JSON.stringify(data))
+    setParmas({ ...params, name });
     const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
-    if(res){
+    console.log("params" + JSON.stringify(params))
+    if (res) {
       history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
     }
-    
+
+  };
+  
+  const selectName = async () => {
+    console.log("hiii")
+    let par = location?.state?.data;
+    setParmas({ ...par, name });
+    const data = {
+     ...par,
+      tenantId: stateCode,
+      userType: getUserType(),
+      name
+    };
+    console.log("data1"+ JSON.stringify(  ))
+    console.log("data"+ JSON.stringify(location?.state?.data))
+    //setParmas({ ...par, name });
+    console.log("params" + JSON.stringify(params))
+    const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
+    if (res) {
+      history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
+    }
+
   };
 
+
+  //   console.log("location" + JSON.stringify(location.state))
+
   const selectOtp = async () => {
+
     try {
       setIsOtpValid(true);
-      const { mobileNumber, otp, name } = params;
+      // console.log("setOtp")
+      //const { mobileNumber, otp, name } = params;
+      // console.log("params" + JSON.stringify(params))
+
       if (isUserRegistered) {
+        // console.log("registered ")
         const requestData = {
           username: mobileNumber,
           password: otp,
           tenantId: stateCode,
           userType: getUserType(),
         };
+        //  console.log("inside request" + JSON.stringify(requestData))
+        // console.log("location" + location.state?.role)
 
         const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
 
         if (location.state?.role) {
+
           const roleInfo = info.roles.find((userRole) => userRole.code === location.state.role);
+
+          //console.log("role------ mskla" + roleInfo)
           if (!roleInfo || !roleInfo.code) {
+            //  console.log("role------ error")
             setError(t("ES_ERROR_USER_NOT_PERMITTED"));
             setTimeout(() => history.replace(DEFAULT_REDIRECT_URL), 5000);
             return;
           }
         }
-if(window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")){
-  info.tenantId= Digit.ULBService.getStateId();
-}
+        if (window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")) {
+          info.tenantId = Digit.ULBService.getStateId();
+        }
 
         setUser({ info, ...tokens });
+        // console.log("setUser" + setUser)
       } else if (!isUserRegistered) {
         const requestData = {
           name,
@@ -175,9 +260,9 @@ if(window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")){
         };
 
         const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.UserService.registerUser(requestData, stateCode);
-      
-        if(window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")){
-        info.tenantId= Digit.ULBService.getStateId();
+
+        if (window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")) {
+          info.tenantId = Digit.ULBService.getStateId();
         }
 
         setUser({ info, ...tokens });
@@ -209,27 +294,247 @@ if(window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")){
       return [null, err];
     }
   };
+  const handleLogin = (e) => {
+    e.preventDefault();
+    // handle login logic here
+  };
 
+  const handleRegister = (e) => {
+    e.preventDefault();
+    // handle register logic here
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // handle register logic here
+  };
+  const handleButtonClick = () => {
+    const path = isSignup ? '/login' : '/register';
+    history.push("/digit-ui/citizen/register/name");
+  };
+
+
+  const texts = useMemo(
+    () => ({
+      header: t("CS_COMMON_CHOOSE_LOCATION"),
+      submitBarLabel: t("CORE_COMMON_CONTINUE"),
+    }),
+    [t]
+  );
+
+  function selectCity(city) {
+    setSelectedCity(city);
+    setShowError(false);
+  }
+
+  const RadioButtonProps = useMemo(() => {
+    return {
+      options: cities,
+      optionsKey: "i18nKey",
+      additionalWrapperClass: "reverse-radio-selection-wrapper",
+      onSelect: selectCity,
+      selectedOption: selectedCity,
+    };
+  }, [cities, t, selectedCity]);
+  // console.log(cities);
+
+  function onSubmit() {
+    e.preventDefault();
+    //console.log("selectedCity-----"+selectedCity);
+    if (selectedCity) {
+      Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", selectedCity);
+      history.push("/digit-ui/citizen/obps-home");
+    } else {
+      setShowError(true);
+    }
+  }
+
+
+  // console.log(selectedCity);
   return (
     <div
-    className={"main center-container mb-25"}
+
     //  style={{ paddingRight: '5000px'}}
-  >
-    <Switch>
-      <AppContainer>
-        <BackButton />
+    > 
+    <BackButton 
+            style={{fontWeight: 'bold', fontSize: '1.5em', display: 'flex', justifyContent: 'center', alignItems: 'center'}} />
+      <Switch>
+        {/* <AppContainer> */}
+        
+        <div>
+        
+          <form >
+
+          
+            <Box
+              display="flex"
+              flexDirection={"column"}
+              maxWidth={550}
+              maxHeight={450}
+              // height={350}
+              alignItems="center"
+              justifyContent={"center"}
+              margin="auto"
+              marginTop={20}
+              padding={5}
+
+              borderRadius={1}
+              boxShadow={"5px 5px 10px #ccc"}
+              sx={{
+                ":hover": {
+                  boxShadow: '10px 10px 20px #ccc'
+                }, backgroundColor: "white"
+              }}
+
+            >
+
+              <Typography variant="h6">UPYOG | CG</Typography>
+              <Typography variant="h6" padding={4} style={{ marginTop: 5, padding: 4 }}>{isSignup ? "Register" : "Login"}</Typography>
+
+              {location.pathname === "/digit-ui/citizen/register/name" && <TextField fullWidth
+                label="Name"
+                variant="standard"
+                padding={5}
+                margin="normal"
+                value={name}
+                onChange={handleNameChange}
+              ></TextField>
+              }
+              <Route path={`${path}`} exact></Route>
+
+              <TextField fullWidth
+                required
+                style={{ padding: 5 }}
+                type={"number"}
+                label="Mobile Number"
+                variant="standard"
+                padding={5}
+                margin="normal"
+                value={mobileNumber}
+                onChange={handleMobileChange}
+
+              ></TextField>
+
+
+
+              {location.pathname === "/digit-ui/citizen/login/otp" || location.pathname === "/digit-ui/citizen/register/otp" ? (
+                <TextField
+                  fullWidth
+                  required
+                  label="Enter OTP"
+                  style={{ padding: 5 }}
+                  type={"number"}
+                  variant="standard"
+                  margin="normal"
+                  padding={5}
+                  value={otp}
+                  onChange={handleOtpChange}
+                />
+              ) : (
+                <FormControl variant="standard" fullWidth required>
+                  <InputLabel id="cities-label">Select City</InputLabel>
+                  <Select
+                    labelId="cities-label"
+                    id="cities"
+                    value={selectedCity.code}
+                    onChange={(e) => setSelectedCity({ code: e.target.value })}
+                    label="Select City"
+                    error={showError}
+                  >
+                    {cities &&
+                      cities.map((city) => (
+
+                        <MenuItem key={city.code} value={city.code}>
+                          {city.name}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                  {showError && <CardLabelError>{t("CS_CITIZEN_DETAILS_ERROR_MSG1")}</CardLabelError>}
+                </FormControl>
+
+              )}
+
+              {location.pathname === "/digit-ui/citizen/login" ? (
+                <Button
+                  fullWidth
+                  variant="contained"
+                  onClick={selectMobileNumber}
+                  style={{
+                    backgroundColor: '#FE7A51',
+                    color: 'white',
+                    padding: '10px 20px',
+                    border: 'none',
+                    borderRadius: '5px',
+                    margin: '25px',
+                  }}
+                >
+                  Next
+                </Button>
+              ) : location.pathname === "/digit-ui/citizen/register/name" ? (
+                <Button
+                  fullWidth
+                  variant="contained"
+                
+                  onClick={selectName}
+                  style={{
+                    backgroundColor: '#FE7A51',
+                    color: 'white',
+                    padding: '10px 20px',
+                    border: 'none',
+                    borderRadius: '5px',
+                    margin: '25px',
+                  }}
+                >
+                  Register
+                </Button>
+              ) : (
+                <Button
+                  fullWidth
+                  variant="contained"
+                  onClick={selectOtp}
+                  style={{
+                    backgroundColor: '#FE7A51',
+                    color: 'white',
+                    padding: '10px 20px',
+                    border: 'none',
+                    borderRadius: '5px',
+                    margin: '25px',
+                  }}
+                >
+                  Continue
+                </Button>
+              )}
+
+
+
+              {/* <Button
+                onClick={handleButtonClick}
+                style={{
+                  padding: '10px 20px',
+                  marginTop: '8px',
+                  marginBottom: '10px'
+                }}
+              >
+                {isSignup ? 'Login' : 'Register'}
+              </Button> */}
+
+            </Box>
+          </form>
+        </div>
+
         <Route path={`${path}`} exact>
-          <SelectMobileNumber
+          {/* <SelectMobileNumber
             onSelect={selectMobileNumber}
             config={stepItems[0]}
             mobileNumber={params.mobileNumber || ""}
             onMobileChange={handleMobileChange}
             showRegisterLink={isUserRegistered && !location.state?.role}
             t={t}
-          />
+          /> */}
+
         </Route>
         <Route path={`${path}/otp`}>
-          <SelectOtp
+          {/* <SelectOtp
             config={{ ...stepItems[1], texts: { ...stepItems[1].texts, cardText: `${stepItems[1].texts.cardText} ${params.mobileNumber || ""}` } }}
             onOtpChange={handleOtpChange}
             onResend={resendOtp}
@@ -237,15 +542,16 @@ if(window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")){
             otp={params.otp}
             error={isOtpValid}
             t={t}
-          />
+          /> */}
         </Route>
         <Route path={`${path}/name`}>
           <SelectName config={stepItems[2]} onSelect={selectName} t={t} />
         </Route>
         {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
-      </AppContainer>
-    </Switch>
-    </div>
+        {/* </AppContainer> */}
+      </Switch>
+    </div >
+
   );
 };
 
