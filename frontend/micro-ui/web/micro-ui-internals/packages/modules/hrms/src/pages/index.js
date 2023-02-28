@@ -19,6 +19,13 @@ const EmployeeApp = ({ path, url, userType }) => {
   const Inbox = Digit?.ComponentRegistryService?.getComponent("HRInbox");
   const CreateEmployee = Digit?.ComponentRegistryService?.getComponent("HRCreateEmployee");
   const EditEmpolyee = Digit?.ComponentRegistryService?.getComponent("HREditEmpolyee");
+  const PayTypeRate = Digit?.ComponentRegistryService?.getComponent("PayTypeRate");
+  const SlabEntry = Digit?.ComponentRegistryService?.getComponent("SlabEntry");
+  const ProptymasterEntry = Digit?.ComponentRegistryService?.getComponent("ProptymasterEntry");
+  const CateEntry = Digit?.ComponentRegistryService?.getComponent("CateEntry");
+  const SubCateEntry = Digit?.ComponentRegistryService?.getComponent("SubCateEntry");
+  const PayTpEntry = Digit?.ComponentRegistryService?.getComponent("PayTpEntry");
+  
   return (
     <Switch>
       <React.Fragment>
@@ -37,8 +44,15 @@ const EmployeeApp = ({ path, url, userType }) => {
           />
           <PrivateRoute path={`${path}/create`} component={() => <CreateEmployee />} />
           <PrivateRoute path={`${path}/response`} component={(props) => <HRMSResponse {...props} parentRoute={path} />} />
+          {/* add by manisha yadu for pattyperate entry */}
+          <PrivateRoute path={`${path}/rateEntry`} component={()=><PayTypeRate/>} />
+          <PrivateRoute path={`${path}/slabEntry`} component={()=><SlabEntry/>} />
           <PrivateRoute path={`${path}/details/:tenantId/:id`} component={() => <HRMSDetails />} />
           <PrivateRoute path={`${path}/edit/:tenantId/:id`} component={() => <EditEmpolyee />} />
+          <PrivateRoute path={`${path}/proptymaster`} component={()=><ProptymasterEntry/>} />
+          <PrivateRoute path={`${path}/cateEntry`} component={()=><CateEntry/>}/>
+          <PrivateRoute path={`${path}/subcateEntry`} component={()=><SubCateEntry/>}/>
+          <PrivateRoute path={`${path}/paytyEntry`} component={()=><PayTpEntry/>}/>
         </div>
       </React.Fragment>
     </Switch>

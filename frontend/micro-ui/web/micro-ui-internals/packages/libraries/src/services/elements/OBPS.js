@@ -5,6 +5,7 @@ import { MdmsService } from "./MDMS";
 import React from "react";
 import { UploadServices } from "../atoms/UploadServices";
 
+
 export const OBPSService = {
   scrutinyDetails: (tenantId, params) =>
     Request({
@@ -130,6 +131,7 @@ export const OBPSService = {
       userService: true,
       userDownload: true,
     }),
+
   edcr_report_download: (details, tenantId) =>
     Request({
       url: Urls.obps.edcrreportdownload,

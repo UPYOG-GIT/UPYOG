@@ -90,7 +90,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
         },
       },
     ];
-  }, []);
+  }, []); 
 
   let result;
   if (props.isLoading) {
@@ -131,7 +131,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
         pageSizeLimit={props.pageSizeLimit}
         onSort={props.onSort}
         disableSort={props.disableSort}
-        onPageSizeChange={props.onPageSizeChange}
+        // onPageSizeChange={props.onPageSizeChange}
         sortParams={props.sortParams}
         totalRecords={props.totalRecords}
       />
@@ -146,7 +146,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
             parentRoute={props.parentRoute}
             allLinks={[
               {
-                text: "HR_COMMON_CREATE_EMPLOYEE_HEADER",
+                text: "HR_COMMON_CREATE_EMPLOYEE_HEAD",
                 link: "/digit-ui/employee/hrms/create",
                 businessService: "hrms",
                 roles: ["HRMS_ADMIN"],
