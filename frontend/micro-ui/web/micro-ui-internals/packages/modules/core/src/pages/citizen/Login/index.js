@@ -7,7 +7,7 @@ import SelectMobileNumber from "./SelectMobileNumber";
 import SelectOtp from "./SelectOtp";
 import SelectName from "./SelectName";
 import Typography from "@material-ui/core/Typography";
-import { TextField, Button, InputLabel, MenuItem, Box } from "@material-ui/core";
+import { TextField, Button, InputLabel, MenuItem, Box, rgbToHex } from "@material-ui/core";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 
@@ -32,7 +32,7 @@ const setCitizenDetail = (userObject, token, tenantId) => {
 }
 
 const getFromLocation = (state, searchParams) => {
- 
+
   return state?.from || searchParams?.from || DEFAULT_REDIRECT_URL;
 
 };
@@ -132,19 +132,19 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       userType: getUserType(),
     };
 
-   
+
     Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", selectedCity);
-   
+
     if (isUserRegistered) {
 
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
-  
+
       if (!err) {
-       
+
         history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams), role: location.state?.role });
         return;
       } else {
-       
+
         if (!(location.state && location.state.role === 'FSM_DSO')) {
           history.push(`/digit-ui/citizen/register/name`, { from: getFromLocation(location.state, searchParams), data: data });
         }
@@ -164,20 +164,20 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   };
 
 
-  
+
   const selectName = async () => {
-   
+
     let par = location?.state?.data;
     setParmas({ ...par, name });
     const data = {
-     ...par,
+      ...par,
       tenantId: stateCode,
       userType: getUserType(),
       name
     };
- 
+
     //setParmas({ ...par, name });
-  
+
     const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
     if (res) {
       history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
@@ -186,24 +186,24 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   };
 
 
- 
+
 
   const selectOtp = async () => {
 
     try {
       setIsOtpValid(true);
-     
+
       //const { mobileNumber, otp, name } = params;
-      
+
       if (isUserRegistered) {
-       
+
         const requestData = {
           username: mobileNumber,
           password: otp,
           tenantId: stateCode,
           userType: getUserType(),
         };
-        
+
 
         const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
 
@@ -211,9 +211,9 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
           const roleInfo = info.roles.find((userRole) => userRole.code === location.state.role);
 
-         
+
           if (!roleInfo || !roleInfo.code) {
-           
+
             setError(t("ES_ERROR_USER_NOT_PERMITTED"));
             setTimeout(() => history.replace(DEFAULT_REDIRECT_URL), 5000);
             return;
@@ -224,7 +224,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         }
 
         setUser({ info, ...tokens });
-       
+
       } else if (!isUserRegistered) {
         const requestData = {
           name,
@@ -270,17 +270,17 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   };
   const handleLogin = (e) => {
     e.preventDefault();
-    
+
   };
 
   const handleRegister = (e) => {
     e.preventDefault();
-   
+
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-   
+
   };
 
 
@@ -305,17 +305,17 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     <div
 
     //  style={{ paddingRight: '5000px'}}
-    > 
-    <BackButton 
-            style={{fontWeight: 'bold', fontSize: '1.5em', display: 'flex', justifyContent: 'center', alignItems: 'center'}} />
+    >
+      <BackButton
+        style={{ fontWeight: 'bold', fontSize: '1.5em', display: 'flex', justifyContent: 'center', alignItems: 'center' }} />
       <Switch>
         {/* <AppContainer> */}
-        
+
         <div>
-        
+
           <form >
 
-          
+
             <Box
               display="flex"
               flexDirection={"column"}
@@ -338,8 +338,11 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
             >
 
-              <Typography variant="h6">UPYOG | CG</Typography>
-              <Typography variant="h6" padding={4} style={{ marginTop: 5, padding: 4 }}>{isSignup ? "Register" : "Login"}</Typography>
+              <Box display="flex" alignItems="center">
+                <img src="https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/logo.png" alt="Logo" />
+                <Typography variant="h6">| Chhattisgarh</Typography>
+              </Box>
+              <Typography variant="h6" padding={4} style={{ marginTop: 5, padding: 4, color: '#484848', fontWeight: 500, fontSize: 16 }}>{location.pathname === '/digit-ui/citizen/register/name' || location.pathname === '/digit-ui/citizen/register/otp' ? "Register" : "Login"}</Typography>
 
               {location.pathname === "/digit-ui/citizen/register/name" && <TextField fullWidth
                 label="Name"
@@ -362,7 +365,10 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                 margin="normal"
                 value={mobileNumber}
                 onChange={handleMobileChange}
-
+                onInput={(e) => {
+                  e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 10)
+                }}
+               
               ></TextField>
 
 
@@ -415,7 +421,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                     padding: '10px 20px',
                     border: 'none',
                     borderRadius: '5px',
-                    margin: '25px',
+                    marginTop: '45px',
+                    //marginBottom: '0px'
                   }}
                 >
                   Next
@@ -424,7 +431,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                 <Button
                   fullWidth
                   variant="contained"
-                
+
                   onClick={selectName}
                   style={{
                     backgroundColor: '#FE7A51',
