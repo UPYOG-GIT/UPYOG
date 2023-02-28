@@ -32,7 +32,7 @@ const setCitizenDetail = (userObject, token, tenantId) => {
 }
 
 const getFromLocation = (state, searchParams) => {
-  // console.log("state" + state)
+ 
   return state?.from || searchParams?.from || DEFAULT_REDIRECT_URL;
 
 };
@@ -52,9 +52,9 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   const [errorTO, setErrorTO] = useState(null);
 
   const searchParams = Digit.Hooks.useQueryParams();
-console.log("params------------"+JSON.stringify(params));
+
   const [isSignup, setSignup] = useState(false);
-  //console.log(isSignup)
+
   const [mobileNumber, setMobileNumber] = useState();
   const [otp, setOtp] = useState();
   const [name, setName] = useState();
@@ -65,9 +65,6 @@ console.log("params------------"+JSON.stringify(params));
 
   const { pathname } = useLocation();
 
-  // console.log("local--"+JSON.stringify(location));
-  // console.log("params"+JSON.stringify(Digit.ULBService.getCitizenCurrentTenant(true)));
-  // console.log("selectedCity"+JSON.stringify(selectedCity));
 
   useEffect(() => {
     let errorTimeout;
@@ -137,18 +134,17 @@ console.log("params------------"+JSON.stringify(params));
 
    
     Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", selectedCity);
-    // console.log("ioioioio" + JSON.stringify(data));
-
+   
     if (isUserRegistered) {
 
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
-      //   console.log("err" + err);
+  
       if (!err) {
-        //  console.log("hiiiiii");
+       
         history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams), role: location.state?.role });
         return;
       } else {
-        // console.log("kkkkkkkkkkkkkkkkk");
+       
         if (!(location.state && location.state.role === 'FSM_DSO')) {
           history.push(`/digit-ui/citizen/register/name`, { from: getFromLocation(location.state, searchParams), data: data });
         }
@@ -158,7 +154,7 @@ console.log("params------------"+JSON.stringify(params));
       }
 
     } else {
-      //   console.log("Type Register");
+
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
       if (!err) {
         history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
@@ -167,29 +163,10 @@ console.log("params------------"+JSON.stringify(params));
     }
   };
 
-  const seletName = async () => {
-    console.log("hiii")
-    
-    const data = {
-      ...params,
-        name,
-      tenantId: stateCode,
-      userType: getUserType(),
-      //...name
-    
-    };
-    console.log("data"+ JSON.stringify(data))
-    setParmas({ ...params, name });
-    const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
-    console.log("params" + JSON.stringify(params))
-    if (res) {
-      history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
-    }
 
-  };
   
   const selectName = async () => {
-    console.log("hiii")
+   
     let par = location?.state?.data;
     setParmas({ ...par, name });
     const data = {
@@ -198,10 +175,9 @@ console.log("params------------"+JSON.stringify(params));
       userType: getUserType(),
       name
     };
-    console.log("data1"+ JSON.stringify(  ))
-    console.log("data"+ JSON.stringify(location?.state?.data))
+ 
     //setParmas({ ...par, name });
-    console.log("params" + JSON.stringify(params))
+  
     const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
     if (res) {
       history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
@@ -210,26 +186,24 @@ console.log("params------------"+JSON.stringify(params));
   };
 
 
-  //   console.log("location" + JSON.stringify(location.state))
+ 
 
   const selectOtp = async () => {
 
     try {
       setIsOtpValid(true);
-      // console.log("setOtp")
+     
       //const { mobileNumber, otp, name } = params;
-      // console.log("params" + JSON.stringify(params))
-
+      
       if (isUserRegistered) {
-        // console.log("registered ")
+       
         const requestData = {
           username: mobileNumber,
           password: otp,
           tenantId: stateCode,
           userType: getUserType(),
         };
-        //  console.log("inside request" + JSON.stringify(requestData))
-        // console.log("location" + location.state?.role)
+        
 
         const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
 
@@ -237,9 +211,9 @@ console.log("params------------"+JSON.stringify(params));
 
           const roleInfo = info.roles.find((userRole) => userRole.code === location.state.role);
 
-          //console.log("role------ mskla" + roleInfo)
+         
           if (!roleInfo || !roleInfo.code) {
-            //  console.log("role------ error")
+           
             setError(t("ES_ERROR_USER_NOT_PERMITTED"));
             setTimeout(() => history.replace(DEFAULT_REDIRECT_URL), 5000);
             return;
@@ -250,7 +224,7 @@ console.log("params------------"+JSON.stringify(params));
         }
 
         setUser({ info, ...tokens });
-        // console.log("setUser" + setUser)
+       
       } else if (!isUserRegistered) {
         const requestData = {
           name,
@@ -296,22 +270,19 @@ console.log("params------------"+JSON.stringify(params));
   };
   const handleLogin = (e) => {
     e.preventDefault();
-    // handle login logic here
+    
   };
 
   const handleRegister = (e) => {
     e.preventDefault();
-    // handle register logic here
+   
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // handle register logic here
+   
   };
-  const handleButtonClick = () => {
-    const path = isSignup ? '/login' : '/register';
-    history.push("/digit-ui/citizen/register/name");
-  };
+
 
 
   const texts = useMemo(
@@ -327,30 +298,9 @@ console.log("params------------"+JSON.stringify(params));
     setShowError(false);
   }
 
-  const RadioButtonProps = useMemo(() => {
-    return {
-      options: cities,
-      optionsKey: "i18nKey",
-      additionalWrapperClass: "reverse-radio-selection-wrapper",
-      onSelect: selectCity,
-      selectedOption: selectedCity,
-    };
-  }, [cities, t, selectedCity]);
-  // console.log(cities);
-
-  function onSubmit() {
-    e.preventDefault();
-    //console.log("selectedCity-----"+selectedCity);
-    if (selectedCity) {
-      Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", selectedCity);
-      history.push("/digit-ui/citizen/obps-home");
-    } else {
-      setShowError(true);
-    }
-  }
 
 
-  // console.log(selectedCity);
+
   return (
     <div
 
