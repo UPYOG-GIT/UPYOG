@@ -131,15 +131,6 @@ export const OBPSService = {
       userService: true,
       userDownload: true,
     }),
-// add by manisha yadu for getting paytype rule list 
-    getPaytype: (tenantId) =>
-    Request({
-      url: Urls.obps.getPaytype,
-      params: {tenantId},
-      auth: false,
-      userService: false,
-      method: "POST"
-    }),
 
   edcr_report_download: (details, tenantId) =>
     Request({

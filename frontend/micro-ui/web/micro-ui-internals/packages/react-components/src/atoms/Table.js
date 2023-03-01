@@ -76,6 +76,8 @@ const Table = ({
     useRowSelect
   );
 
+  // console.log("getTableBodyProps=="+JSON.stringify(page));
+
   useEffect(() => {
     onSort(sortBy);
   }, [onSort, sortBy]);
@@ -110,6 +112,7 @@ const Table = ({
               {i+1}
               </td>}
                 {row.cells.map((cell) => {
+                  // console.log("cell===="+JSON.stringify(cell));
                   return (
                     <td
                       // style={{ padding: "20px 18px", fontSize: "16px", borderTop: "1px solid grey", textAlign: "left", verticalAlign: "middle" }}

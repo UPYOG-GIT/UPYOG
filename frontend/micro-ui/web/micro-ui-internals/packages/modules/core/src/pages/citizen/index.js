@@ -17,7 +17,7 @@ const getTenants = (codes, tenants) => {
 };
 // const isLogin = location?.pathname?.includes("citizen/login");/digit-ui/citizen/login
 // const isOtp= location?.pathname?.includes("citizen/login/otp");
-const isCitizen= location?.pathname === "/digit-ui/citizen/login" || location?.pathname === "/digit-ui/citizen/login/otp" || location?.pathname === "/digit-ui/citizen/select-location"
+//const isCitizen= location?.pathname === "/digit-ui/citizen/login" || location?.pathname === "/digit-ui/citizen/login/otp" || location?.pathname === "/digit-ui/citizen/select-location"
 // const isLocation= location?.pathname?.includes("citizen/select-location");
 const Home = ({
   stateInfo,
@@ -82,8 +82,8 @@ const Home = ({
        <div
             className={"main center-container mb-25"}
             style={
-                location?.pathname === "/digit-ui/citizen/select-location" || location?.pathname === "/digit-ui/citizen/select-language" || location?.pathname === "/digit-ui/citizen/login/otp" || location?.pathname === "/digit-ui/citizen/login" 
-                ? { backgroundImage: `url("https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/background_pic1.png")`,width:'100%', backgroundRepeat: 'no-repeat', backgroundSize: '118%', paddingLeft: '400px', backgroundPositionY: '50px', paddingTop: '130px' }
+                location?.pathname === "/digit-ui/citizen/select-location" || location?.pathname === "/digit-ui/citizen/register/name" || location?.pathname === "/digit-ui/citizen/register/otp" || location?.pathname === "/digit-ui/citizen/select-language" || location?.pathname === "/digit-ui/citizen/login/otp" || location?.pathname === "/digit-ui/citizen/login" 
+                ? { backgroundImage: `url("https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/background_pic1.png")`,width:'100%', backgroundRepeat: 'no-repeat', backgroundSize: '118%', backgroundPositionY: '50px'}
                 : {}
             }
           >

@@ -49,7 +49,7 @@ export const Request = async ({
   multipartFormData = false,
   multipartData = {}
 }) => {
-  console.log("url--"+url+"--params--"+JSON.stringify(params));
+  
   if (method.toUpperCase() === "POST") {
     const ts = new Date().getTime()
     data.RequestInfo = {
