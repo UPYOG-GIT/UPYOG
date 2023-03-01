@@ -342,9 +342,10 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                   xs: '100%', // 0px
                   sm: '60%', // 600px
                   md: '40.33%', // 900px
-                  lg: '35%', // 1200px
+                  lg: '28%', // 1200px
                   xl: '20%', // 1536px
                 }
+                
               }}
 
             >
