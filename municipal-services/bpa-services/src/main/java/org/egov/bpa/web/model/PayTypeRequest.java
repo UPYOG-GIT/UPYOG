@@ -39,6 +39,15 @@ public class PayTypeRequest {
 	@JsonProperty("hrnh")
 	private String hrnh = null;
 	
+	@JsonProperty("depflag")
+	private String depFlag = null;
+	
+	@JsonProperty("fdrflg")
+	private String fdrFlg = null;
+	
+	@JsonProperty("zdaflg")
+	private String zdaFlg = null;
+	
 	
 	
 	

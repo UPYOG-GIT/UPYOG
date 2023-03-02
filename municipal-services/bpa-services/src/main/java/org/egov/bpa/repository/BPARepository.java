@@ -170,10 +170,12 @@ public class BPARepository {
 //		String insertQuery = "insert into paytype_master(ulb_tenantid,charges_type_name,payment_type,"
 //				+ "defunt,createdby,createddate) values (?,?,?,?,?,'" + date + "')";
 		String insertQuery = "insert into paytype_master(ulb_tenantid,charges_type_name,payment_type,"
-				+ "defunt,optflag,hrnh,createdby,createddate) values ('" + payTypeRequest.getTenantId() + "','"
-				+ payTypeRequest.getChargesTypeName() + "','" + payTypeRequest.getPaymentType() + "','"
-				+ payTypeRequest.getDefunt() + "','" + payTypeRequest.getOptFlag() + "','" + payTypeRequest.getHrnh()
-				+ "','" + payTypeRequest.getCreatedBy() + "','" + date + "')";
+				+ "defunt,optflag,hrnh,depflag,fdrflg,zdaflg,createdby,createddate) values ('"
+				+ payTypeRequest.getTenantId() + "','" + payTypeRequest.getChargesTypeName() + "','"
+				+ payTypeRequest.getPaymentType() + "','" + payTypeRequest.getDefunt() + "','"
+				+ payTypeRequest.getOptFlag() + "','" + payTypeRequest.getHrnh() + "','" + payTypeRequest.getDepFlag()
+				+ "','" + payTypeRequest.getFdrFlg() + "','" + payTypeRequest.getZdaFlg() + "','"
+				+ payTypeRequest.getCreatedBy() + "','" + date + "')";
 
 //		Object parameters = new Object();
 //		parameters=new Object[] { payTypeRequest.getTenantId(), payTypeRequest.getChargesTypeName(),
@@ -361,8 +363,7 @@ public class BPARepository {
 	public List<Map<String, Object>> getSlabMasterByTenantIdAndTypeId(String tenantId, int payTypeId) {
 		String query = "select sm.id,sm.srno,sm.from_val,sm.to_val,ptm.description as p_category, "
 				+ "bm.description as b_category, bsm.description as s_category, sm.rate_res,"
-				+ "sm.rate_comm,sm.rate_ind,sm.operation,sm.multp_val,sm.max_limit "
-				+ "from slab_master sm "
+				+ "sm.rate_comm,sm.rate_ind,sm.operation,sm.multp_val,sm.max_limit " + "from slab_master sm "
 				+ "LEFT JOIN proposal_type_master as ptm on ptm.id = sm.p_category "
 				+ "LEFT JOIN bcategory_master as bm on bm.id = sm.b_category "
 				+ "LEFT JOIN bscategory_master as bsm on bsm.id = sm.s_category "

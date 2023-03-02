@@ -5,6 +5,10 @@ import useInterval from "../../../hooks/useInterval";
 const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, userType="citizen" }) => {
   const [timeLeft, setTimeLeft] = useState(30);
 
+  console.log(onSelect);
+  console.log(otp);
+  console.log(onResend);
+
   useInterval(
     () => {
       setTimeLeft(timeLeft - 1);
