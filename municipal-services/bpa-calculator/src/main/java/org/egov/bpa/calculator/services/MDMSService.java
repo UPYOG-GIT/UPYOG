@@ -154,13 +154,17 @@ public class MDMSService {
 			
 			
 //			added ----- auto calculation----------------------------------------------
-			String appDate = context.read("edcrDetail[0].applicationDate");
+			Long appDate = bpa.getApplicationDate();
 			log.info("appDate:-----" + appDate);
-			String appName = context.read("edcrDetail[0].applicationNumber");
-			log.info("appName:----- " +appName);
+			String appNum = bpa.getApplicationNo();
+			log.info("appNum:----- " +appNum);
+			String tenantid = bpa.getTenantId();
+			
 			additionalDetails.put("appDate", appDate.toString());
-			additionalDetails.put("appName", appName.toString());
+			additionalDetails.put("appNum", appNum.toString());
 			additionalDetails.put("plotares", plotArea.toString());
+			additionalDetails.put("feeType", feeType.toString());
+			additionalDetails.put("tenantid", tenantid.toString());
 			Map responseMap1 = feeCalculation(additionalDetails);
 			
 			log.info("responseMap1----------"+responseMap1);
@@ -287,9 +291,35 @@ public class MDMSService {
 
 	private Map feeCalculation(Map data) {	
 		log.info("Data  "+data);
-		Map ed = new HashMap(); 
-				ed=data;
-		return ed;
+		String feetype = data.get("feeType").toString();
+		log.info("feetype----"+feetype);
+		String tenantid = data.get("tenantid")+"";
+		log.info("tenantid----"+tenantid);
+		
+		
+//		Object feetype = data.get("feeType");
+		String feety ="";
+		
+		if(feetype =="ApplicationFee" ) {
+			feety = "Pre";
+		}
+		else if(feetype =="SanctionFee") {
+			feety = "Post";
+		}
+		
+		
+		if (feety=="Pre")	
+		{
+			//for hight rise----------
+			log.info("-------------inside hight rise-----------");
+		}
+		
+		List<Map<String,Object>> result  = bpaRepository.getPaytyDate(tenantid,feety);
+		
+		log.info("result--0-----"+result.toString());
+//		Map ed = new HashMap(); 
+//				ed=result;
+		return null;
 	}
 
 }
