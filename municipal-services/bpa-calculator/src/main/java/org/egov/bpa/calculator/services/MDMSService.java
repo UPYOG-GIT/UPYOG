@@ -126,7 +126,7 @@ public class MDMSService {
 
 			List jsonOutput = JsonPath.read(mdmsData, BPACalculatorConstants.MDMS_CALCULATIONTYPE_PATH);
 			LinkedHashMap responseMap = edcrService.getEDCRDetails(requestInfo, bpa);
-
+//			Map responseMap1 = feeCalculation(responseMap);
 			log.info("jsonOutput logg :======= " + jsonOutput);
 
 			log.info("feeType: " + feeType);
@@ -151,6 +151,24 @@ public class MDMSService {
 			log.info("plotArea Condition: " + (plotArea <= 500.00));
 			log.info("occupancy Condition:(equals) " + additionalDetails.get("occupancyType").equals("Residential"));
 
+			
+			
+//			added ----- auto calculation----------------------------------------------
+			String appDate = context.read("edcrDetail[0].applicationDate");
+			log.info("appDate:-----" + appDate);
+			String appName = context.read("edcrDetail[0].applicationNumber");
+			log.info("appName:----- " +appName);
+			additionalDetails.put("appDate", appDate.toString());
+			additionalDetails.put("appName", appName.toString());
+			additionalDetails.put("plotares", plotArea.toString());
+			Map responseMap1 = feeCalculation(additionalDetails);
+			
+			log.info("responseMap1----------"+responseMap1);
+//			added end----- auto calculation--------------------------------------------			
+			
+			
+			
+			
 			if (((plotArea <= 500.00) && (additionalDetails.get("occupancyType").equals("Residential")))) {
 //	     		   String filterExp = "$.[?(@.amount==1)]";
 				String filterExp = "$.[?(@.feeType=='" + feeType + "')]";
@@ -264,6 +282,14 @@ public class MDMSService {
 				: config.getSancFeeDefaultAmount();
 		defaultMap.put(BPACalculatorConstants.MDMS_CALCULATIONTYPE_AMOUNT, feeAmount);
 		return defaultMap;
+	}
+	
+
+	private Map feeCalculation(Map data) {	
+		log.info("Data  "+data);
+		Map ed = new HashMap(); 
+				ed=data;
+		return ed;
 	}
 
 }
