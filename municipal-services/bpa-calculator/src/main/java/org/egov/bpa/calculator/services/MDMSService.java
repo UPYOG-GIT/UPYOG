@@ -154,17 +154,21 @@ public class MDMSService {
 			
 			
 //			added ----- auto calculation----------------------------------------------
-			Long appDate = bpa.getApplicationDate();
+			String appDate = context.read("edcrDetail[0].applicationDate");
 			log.info("appDate:-----" + appDate);
 			String appNum = bpa.getApplicationNo();
 			log.info("appNum:----- " +appNum);
 			String tenantid = bpa.getTenantId();
+			log.info("tenantid:----- " +tenantid);
+		
 			
 			additionalDetails.put("appDate", appDate.toString());
 			additionalDetails.put("appNum", appNum.toString());
 			additionalDetails.put("plotares", plotArea.toString());
 			additionalDetails.put("feeType", feeType.toString());
 			additionalDetails.put("tenantid", tenantid.toString());
+			
+			log.info("additionalDetails---------"+additionalDetails);
 			Map responseMap1 = feeCalculation(additionalDetails);
 			
 			log.info("responseMap1----------"+responseMap1);
