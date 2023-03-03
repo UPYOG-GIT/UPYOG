@@ -317,7 +317,7 @@ public class MDMSService {
 			//for hight rise----------
 			log.info("-------------inside hight rise-----------");
 		}
-		
+		log.info("tenantid--"+tenantid+"---feety---"+feety);
 		List<Map<String,Object>> result  = bpaRepository.getPaytyDate(tenantid,feety);
 		
 		log.info("result--0-----"+result.toString());

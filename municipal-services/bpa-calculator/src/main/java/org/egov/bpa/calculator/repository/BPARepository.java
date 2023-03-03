@@ -22,7 +22,9 @@ public class BPARepository {
 //		return null;
 	}
 
-	public List<Map<String, Object>> getPaytyDate(String feetype, String tenantid) {
+	public List<Map<String, Object>> getPaytyDate(String tenantid, String feetype ) {
+		
+		log.info("tenantid--"+tenantid+"---feetype---"+feetype);
 //		String sql = "select id, charges_type_name,zdaflg from paytype_master where ulb_tenantid=? and payment_type=? and defunt='N' and optflag='N'"; 
 		String sql = "select id, charges_type_name,zdaflg from paytype_master where ulb_tenantid='" + tenantid
 				+ "' and payment_type='" + feetype + "' and defunt='N' and optflag='N'";
