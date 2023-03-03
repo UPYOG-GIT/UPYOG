@@ -304,15 +304,15 @@ public class MDMSService {
 //		Object feetype = data.get("feeType");
 		String feety ="";
 		
-		if(feetype =="ApplicationFee" ) {
+		if(feetype.equals("ApplicationFee")) {
 			feety = "Pre";
 		}
-		else if(feetype =="SanctionFee") {
+		else if(feetype.equals("SanctionFee")) {
 			feety = "Post";
 		}
 		
 		
-		if (feety=="Pre")	
+		if (feety.equals("Pre"))	
 		{
 			//for hight rise----------
 			log.info("-------------inside hight rise-----------");
