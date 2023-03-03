@@ -10,6 +10,7 @@ import LanguageSelection from "./Home/LanguageSelection";
 import LocationSelection from "./Home/LocationSelection";
 import Login from "./Login";
 import UserProfile from "./Home/UserProfile";
+import { style } from "@material-ui/system";
 // import PDF from "../../assets/";
 
 const getTenants = (codes, tenants) => {
@@ -83,7 +84,8 @@ const Home = ({
             className={"main center-container mb-25"}
             style={
                 location?.pathname === "/digit-ui/citizen/select-location" || location?.pathname === "/digit-ui/citizen/register/name" || location?.pathname === "/digit-ui/citizen/register/otp" || location?.pathname === "/digit-ui/citizen/select-language" || location?.pathname === "/digit-ui/citizen/login/otp" || location?.pathname === "/digit-ui/citizen/login" 
-                ? { backgroundImage: `url("https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/background_pic1.png")`,width:'100%', backgroundRepeat: 'no-repeat', backgroundSize: '118%', backgroundPositionY: '50px'}
+                ? { backgroundImage: `url("https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/background_pic1.png")`,width:'100%', backgroundRepeat: 'no-repeat', backgroundSize: '118%', backgroundPositionY: '50px',
+                 }
                 : {}
             }
           >

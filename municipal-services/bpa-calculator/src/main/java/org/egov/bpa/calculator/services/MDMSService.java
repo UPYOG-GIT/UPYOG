@@ -126,7 +126,7 @@ public class MDMSService {
 
 			List jsonOutput = JsonPath.read(mdmsData, BPACalculatorConstants.MDMS_CALCULATIONTYPE_PATH);
 			LinkedHashMap responseMap = edcrService.getEDCRDetails(requestInfo, bpa);
-
+//			Map responseMap1 = feeCalculation(responseMap);
 			log.info("jsonOutput logg :======= " + jsonOutput);
 
 			log.info("feeType: " + feeType);
@@ -151,6 +151,32 @@ public class MDMSService {
 			log.info("plotArea Condition: " + (plotArea <= 500.00));
 			log.info("occupancy Condition:(equals) " + additionalDetails.get("occupancyType").equals("Residential"));
 
+			
+			
+//			added ----- auto calculation----------------------------------------------
+			String appDate = context.read("edcrDetail[0].applicationDate");
+			log.info("appDate:-----" + appDate);
+			String appNum = bpa.getApplicationNo();
+			log.info("appNum:----- " +appNum);
+			String tenantid = bpa.getTenantId();
+			log.info("tenantid:----- " +tenantid);
+		
+			
+			additionalDetails.put("appDate", appDate.toString());
+			additionalDetails.put("appNum", appNum.toString());
+			additionalDetails.put("plotares", plotArea.toString());
+			additionalDetails.put("feeType", feeType.toString());
+			additionalDetails.put("tenantid", tenantid.toString());
+			
+			log.info("additionalDetails---------"+additionalDetails);
+			Map responseMap1 = feeCalculation(additionalDetails);
+			
+			log.info("responseMap1----------"+responseMap1);
+//			added end----- auto calculation--------------------------------------------			
+			
+			
+			
+			
 			if (((plotArea <= 500.00) && (additionalDetails.get("occupancyType").equals("Residential")))) {
 //	     		   String filterExp = "$.[?(@.amount==1)]";
 				String filterExp = "$.[?(@.feeType=='" + feeType + "')]";
@@ -264,6 +290,40 @@ public class MDMSService {
 				: config.getSancFeeDefaultAmount();
 		defaultMap.put(BPACalculatorConstants.MDMS_CALCULATIONTYPE_AMOUNT, feeAmount);
 		return defaultMap;
+	}
+	
+
+	private Map feeCalculation(Map data) {	
+		log.info("Data  "+data);
+		String feetype = data.get("feeType").toString();
+		log.info("feetype----"+feetype);
+		String tenantid = data.get("tenantid")+"";
+		log.info("tenantid----"+tenantid);
+		
+		
+//		Object feetype = data.get("feeType");
+		String feety ="";
+		
+		if(feetype.equals("ApplicationFee")) {
+			feety = "Pre";
+		}
+		else if(feetype.equals("SanctionFee")) {
+			feety = "Post";
+		}
+		
+		
+		if (feety.equals("Pre"))	
+		{
+			//for hight rise----------
+			log.info("-------------inside hight rise-----------");
+		}
+		log.info("tenantid--"+tenantid+"---feety---"+feety);
+		List<Map<String,Object>> result  = bpaRepository.getPaytyDate(tenantid,feety);
+		
+		log.info("result--0-----"+result.toString());
+//		Map ed = new HashMap(); 
+//				ed=result;
+		return null;
 	}
 
 }

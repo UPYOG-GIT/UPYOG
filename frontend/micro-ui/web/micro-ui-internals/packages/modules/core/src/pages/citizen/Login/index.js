@@ -7,7 +7,7 @@ import SelectMobileNumber from "./SelectMobileNumber";
 import SelectOtp from "./SelectOtp";
 import SelectName from "./SelectName";
 import Typography from "@material-ui/core/Typography";
-import { TextField, Button, InputLabel, MenuItem, Box, rgbToHex } from "@material-ui/core";
+import { TextField, Button, InputLabel, MenuItem, Box } from "@material-ui/core";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 
@@ -282,6 +282,16 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     e.preventDefault();
 
   };
+  function onSubmit() {
+    e.preventDefault();
+    //console.log("selectedCity-----"+selectedCity);
+    if (selectedCity) {
+      Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", selectedCity);
+      history.push("/digit-ui/citizen/obps-home");
+    } else {
+      setShowError(true);
+    }
+  }
 
 
 
@@ -298,9 +308,6 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     setShowError(false);
   }
 
-
-
-
   return (
     <div
 
@@ -312,20 +319,18 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         {/* <AppContainer> */}
 
         <div>
-
           <form >
-
-
             <Box
               display="flex"
               flexDirection={"column"}
-              maxWidth={550}
-              maxHeight={450}
-              // height={350}
+
+              // width={400}
+              // maxHeight='none'
+            //  height='auto'
               alignItems="center"
               justifyContent={"center"}
               margin="auto"
-              marginTop={20}
+              marginTop={5}
               padding={5}
 
               borderRadius={1}
@@ -333,7 +338,14 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
               sx={{
                 ":hover": {
                   boxShadow: '10px 10px 20px #ccc'
-                }, backgroundColor: "white"
+                }, backgroundColor: "white", width: {
+                  xs: '100%', // 0px
+                  sm: '60%', // 600px
+                  md: '40.33%', // 900px
+                  lg: '28%', // 1200px
+                  xl: '20%', // 1536px
+                }
+                
               }}
 
             >
@@ -368,10 +380,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                 onInput={(e) => {
                   e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 10)
                 }}
-               
+
               ></TextField>
-
-
 
               {location.pathname === "/digit-ui/citizen/login/otp" || location.pathname === "/digit-ui/citizen/register/otp" ? (
                 <TextField
@@ -414,6 +424,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                 <Button
                   fullWidth
                   variant="contained"
+
                   onClick={selectMobileNumber}
                   style={{
                     backgroundColor: '#FE7A51',
