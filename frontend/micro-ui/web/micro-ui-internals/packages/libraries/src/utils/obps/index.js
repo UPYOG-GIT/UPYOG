@@ -8,7 +8,7 @@ export const calculateRiskType = (riskTypes, plotArea, blocks) => {
       return true;
     }
 
-    if (riskType.riskType === "MEDIUM" && ((plotArea >= riskType?.fromPlotArea && plotArea <= riskType?.toPlotArea) || 
+    if (riskType.riskType === "MEDIUM" && ((plotArea >= riskType?.fromPlotArea && plotArea <= riskType?.toPlotArea) && 
     (buildingHeight >= riskType?.fromBuildingHeight && buildingHeight <= riskType?.toBuildingHeight))) {
       return true;
     }
@@ -16,6 +16,10 @@ export const calculateRiskType = (riskTypes, plotArea, blocks) => {
     if (riskType?.riskType === "LOW" && plotArea < riskType.toPlotArea && buildingHeight < riskType.toBuildingHeight) {
       return true;
     }
+     if (riskType?.riskType === "VLOW" && plotArea < riskType.toPlotArea && buildingHeight < riskType.toBuildingHeight) {
+      return true;
+    }
+
 
     return false;
   })
