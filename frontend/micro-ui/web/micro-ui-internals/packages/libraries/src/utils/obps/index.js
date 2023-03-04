@@ -4,22 +4,19 @@ export const calculateRiskType = (riskTypes, plotArea, blocks) => {
   }, Number.NEGATIVE_INFINITY);
 
   const risk = riskTypes?.find(riskType => {
-    if (riskType.riskType === "HIGH" && (plotArea > riskType?.fromPlotArea || buildingHeight >= riskType?.fromBuildingHeight)) {
-      return true;
+   if(buildingHeight >= riskType?.fromBuildingHeight){
+        if (riskType.riskType === "HIGH" && plotArea > riskType?.fromPlotArea) {
+            return true;
+        }
+    }else{
+        if (riskType.riskType === "MEDIUM" && (plotArea >= riskType?.fromPlotArea && plotArea <= riskType?.toPlotArea)) {
+            return true;
+        } else if (riskType?.riskType === "LOW" && (plotArea >= riskType?.fromPlotArea && plotArea <= riskType?.toPlotArea)) {
+            return true;
+        } else if (riskType?.riskType === "VLOW" && plotArea < riskType.toPlotArea) {
+            return true;
+        }
     }
-
-    if (riskType.riskType === "MEDIUM" && ((plotArea >= riskType?.fromPlotArea && plotArea <= riskType?.toPlotArea) && 
-    (buildingHeight >= riskType?.fromBuildingHeight && buildingHeight <= riskType?.toBuildingHeight))) {
-      return true;
-    }
-
-    if (riskType?.riskType === "LOW" && plotArea < riskType.toPlotArea && buildingHeight < riskType.toBuildingHeight) {
-      return true;
-    }
-     if (riskType?.riskType === "VLOW" && plotArea < riskType.toPlotArea && buildingHeight < riskType.toBuildingHeight) {
-      return true;
-    }
-
 
     return false;
   })
