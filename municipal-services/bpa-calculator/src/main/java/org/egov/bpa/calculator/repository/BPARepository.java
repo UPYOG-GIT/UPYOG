@@ -22,12 +22,40 @@ public class BPARepository {
 //		return null;
 	}
 
-	public List<Map<String, Object>> getPaytyDate(String tenantid, String feetype ) {
+	public List<Map<String, Object>> getPaytyDate(String tenantid, String feetype, String occupancyType, Double plotares, String heightcat, String newrevise ) {
 		
 		log.info("tenantid--"+tenantid+"---feetype---"+feetype);
 //		String sql = "select id, charges_type_name,zdaflg from paytype_master where ulb_tenantid=? and payment_type=? and defunt='N' and optflag='N'"; 
 		String sql = "select id, charges_type_name,zdaflg from paytype_master where ulb_tenantid='" + tenantid
 				+ "' and payment_type='" + feetype + "' and defunt='N' and optflag='N'";
+		
+		if (feetype.equals("Pre"))	
+		{
+			String hrnhveri ="";
+			
+			if(heightcat.equals("NH") && newrevise.equals("NEW"))hrnhveri="NN";
+			if(heightcat.equals("NH") && newrevise.equals("REVISED"))hrnhveri="NR";
+			if(heightcat.equals("HR") && newrevise.equals("NEW"))hrnhveri="HN";
+			
+			if((!heightcat.equals("")) && (!newrevise.equals(""))) {
+				sql += "and hrnh ='"+hrnhveri+"'";
+			}
+			
+			if((occupancyType.equals("Residential") && plotares<= 500)) {
+				sql += "and id <> 1";
+			}
+						
+		}
+//		else if(feetype.equals("Post")) {
+//			if((occupancyType.equals("Residential") && plotares > 500)) {
+//				
+//			}
+//			else if((occupancyType.equals("Residential") && plotares<= 500)) {
+//				
+//			}
+//			
+//		}
+	
 		log.info("BPARepository.getPaytyDate Query : " + sql);
 //		return jdbcTemplate.queryForList(sql, new Object[] { tenantid, feetype });
 		return jdbcTemplate.queryForList(sql);

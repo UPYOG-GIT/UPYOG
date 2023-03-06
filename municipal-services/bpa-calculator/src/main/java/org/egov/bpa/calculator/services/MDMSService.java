@@ -160,16 +160,25 @@ public class MDMSService {
 			log.info("appNum:----- " +appNum);
 			String tenantid = bpa.getTenantId();
 			log.info("tenantid:----- " +tenantid);
-		
+			String bCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].type.name");
+			log.info("bcate:----- " +bCate);
+			String subCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype.name");
+			log.info("subcate:----- " +subCate);
+			String parkDetails = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[6]");
+			log.info("totalparkarea:----- " +parkDetails);
 			
 			additionalDetails.put("appDate", appDate.toString());
 			additionalDetails.put("appNum", appNum.toString());
 			additionalDetails.put("plotares", plotArea.toString());
 			additionalDetails.put("feeType", feeType.toString());
 			additionalDetails.put("tenantid", tenantid.toString());
+			additionalDetails.put("bcate", bCate.toString());
+			additionalDetails.put("subcate", subCate.toString());
+			additionalDetails.put("totalparkarea", parkDetails.toString());
+			
 			
 			log.info("additionalDetails---------"+additionalDetails);
-			Map responseMap1 = feeCalculation(additionalDetails);
+			List<Map<String, Object>> responseMap1 = feeCalculation(additionalDetails);
 			
 			log.info("responseMap1----------"+responseMap1);
 //			added end----- auto calculation--------------------------------------------			
@@ -293,37 +302,61 @@ public class MDMSService {
 	}
 	
 
-	private Map feeCalculation(Map data) {	
+	private List<Map<String, Object>> feeCalculation(Map data) {	
 		log.info("Data  "+data);
 		String feetype = data.get("feeType").toString();
 		log.info("feetype----"+feetype);
 		String tenantid = data.get("tenantid")+"";
 		log.info("tenantid----"+tenantid);
-		
-		
+		String occupancyType = data.get("occupancyType")+"";
+		Double plotares =  (double) data.get("plotares");
+
 //		Object feetype = data.get("feeType");
 		String feety ="";
+		String brkflg="";
+		String heightcat = "NH";
+		String newrevise = "NEW";
 		
 		if(feetype.equals("ApplicationFee")) {
 			feety = "Pre";
 		}
 		else if(feetype.equals("SanctionFee")) {
 			feety = "Post";
-		}
+		} 
 		
 		
 		if (feety.equals("Pre"))	
 		{
 			//for hight rise----------
 			log.info("-------------inside hight rise-----------");
-		}
+		}	
+		
+		
+		
 		log.info("tenantid--"+tenantid+"---feety---"+feety);
-		List<Map<String,Object>> result  = bpaRepository.getPaytyDate(tenantid,feety);
+		
+		List<Map<String,Object>> result  = bpaRepository.getPaytyDate(tenantid,feety,occupancyType,plotares,heightcat,newrevise);
 		
 		log.info("result--0-----"+result.toString());
-//		Map ed = new HashMap(); 
-//				ed=result;
-		return null;
+		
+		for(Map<String,Object> item : result) {
+			if (feety.equals("Pre"))	
+			{
+				if(heightcat.equals("NH") && newrevise.equals("REVISED")) {
+					log.info("------------REVISED----------");
+				}
+			}
+			if(brkflg.equals("")) {
+				if(item.get("zdaflg").equals("N")) {
+					log.info("End-------End---------End---------End-------End");
+				}
+				
+			}
+		}
+		
+		
+
+		return result;
 	}
 
 }
