@@ -127,21 +127,7 @@ public class BPAController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@PostMapping(value = "/_paytype")
-	public ResponseEntity<List<Map<String, Object>>> getPayTypeByTenantId(@RequestParam String tenantId) {
-//		@RequestBody RequestInfo requestInfo,
-		List<Map<String, Object>> sqlResponseList = bpaService.getPayTypeByTenantId(tenantId);
-//		List<Map<String,Object>> responseList=new ArrayList<>();
-//		
-//		for(Map<String,Object> response:sqlResponseList) {
-//			Map<String,Object> responseMap=new HashMap<String,Object>();
-//			responseMap.put("code", response.get("charges_type_name"));
-//			responseMap.put("value", response.get("id"));
-//			responseList.add(responseMap);
-//		}
-		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
-//		return new ResponseEntity<>(responseMap, HttpStatus.OK);
-	}
+	
 
 	@PostMapping(value = "/_createpaytype")
 	public ResponseEntity<Object> createPayType(@RequestBody PayTypeRequestWrapper payTypeRequestWrapper) {
@@ -160,6 +146,29 @@ public class BPAController {
 			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 //		return null;
+	}
+	
+	@PostMapping(value = "/_paytype")
+	public ResponseEntity<List<Map<String, Object>>> getPayTypeByTenantId(@RequestParam String tenantId) {
+//		@RequestBody RequestInfo requestInfo,
+		List<Map<String, Object>> sqlResponseList = bpaService.getPayTypeByTenantId(tenantId);
+//		List<Map<String,Object>> responseList=new ArrayList<>();
+//		
+//		for(Map<String,Object> response:sqlResponseList) {
+//			Map<String,Object> responseMap=new HashMap<String,Object>();
+//			responseMap.put("code", response.get("charges_type_name"));
+//			responseMap.put("value", response.get("id"));
+//			responseList.add(responseMap);
+//		}
+		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
+//		return new ResponseEntity<>(responseMap, HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "/_updatepaytype")
+	public ResponseEntity<Object> updatePayType(@RequestBody PayTypeRequestWrapper payTypeRequestWrapper) {
+		PayTypeRequest payTypeRequest = payTypeRequestWrapper.getPayTypeRequest();
+		int updateResult = bpaService.updatePayType(payTypeRequest);
+		return new ResponseEntity<>(updateResult, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/_createfeedetail")
@@ -226,6 +235,13 @@ public class BPAController {
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 	}
 
+	@PostMapping(value = "/_updateproposaltype")
+	public ResponseEntity<Object> updateProposalType(@RequestBody ProposalTypeRequestWrapper proposalTypeRequestWrapper) {
+		ProposalTypeRequest proposalTypeRequest = proposalTypeRequestWrapper.getProposalTypeRequest();
+		int updateResult = bpaService.updateProposalType(proposalTypeRequest);
+		return new ResponseEntity<>(updateResult, HttpStatus.OK);
+	}
+	
 	@PostMapping(value = "/_createbcategory")
 	public ResponseEntity<Object> createBCategory(@RequestBody BCategoryRequestWrapper bCategoryRequestWrapper) {
 		try {
@@ -247,6 +263,13 @@ public class BPAController {
 	public ResponseEntity<List<Map<String, Object>>> getBCategoryByTenantId(@RequestParam String tenantId) {
 		List<Map<String, Object>> sqlResponseList = bpaService.getBCategoryByTenantId(tenantId);
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "/_updatebcategory")
+	public ResponseEntity<Object> updateBCategory(@RequestBody BCategoryRequestWrapper bCategoryRequestWrapper) {
+		BCategoryRequest bCategoryRequest = bCategoryRequestWrapper.getBCategoryRequest();
+		int updateResult = bpaService.updateBCategory(bCategoryRequest);
+		return new ResponseEntity<>(updateResult, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/_createbscategory")
@@ -272,6 +295,13 @@ public class BPAController {
 		List<Map<String, Object>> sqlResponseList = bpaService.getBSCategoryByTenantId(tenantId, catId);
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 	}
+	
+	@PostMapping(value = "/_updatebscategory")
+	public ResponseEntity<Object> updateBSCategory(@RequestBody BSCategoryRequestWrapper bSCategoryRequestWrapper) {
+		BSCategoryRequest bSCategoryRequest = bSCategoryRequestWrapper.getBSCategoryRequest();
+		int updateResult = bpaService.updateBSCategory(bSCategoryRequest);
+		return new ResponseEntity<>(updateResult, HttpStatus.OK);
+	}
 
 	@PostMapping(value = "/_createpaytprate")
 	public ResponseEntity<Object> createPayTpRate(@RequestBody PayTpRateRequestWrapper payTpRateRequestWrapper) {
@@ -296,7 +326,13 @@ public class BPAController {
 		List<Map<String, Object>> sqlResponseList = bpaService.getPayTpRateByTenantIdAndTypeId(tenantId, typeId);
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 	}
-	
+
+	@PostMapping(value = "/_deletepaytprate")
+	public ResponseEntity<Object> deletePayTpRateById(@RequestParam int id) {
+		int deleteResult = bpaService.deletePayTpRateById(id);
+		return new ResponseEntity<>(deleteResult, HttpStatus.OK);
+	}
+
 	@PostMapping(value = "/_createslab")
 	public ResponseEntity<Object> createSlabMaster(@RequestBody SlabMasterRequestWrapper slabMasterRequestWrapper) {
 		try {
@@ -319,5 +355,11 @@ public class BPAController {
 			@RequestParam int typeId) {
 		List<Map<String, Object>> sqlResponseList = bpaService.getSlabMasterByTenantIdAndTypeId(tenantId, typeId);
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "/_deleteslab")
+	public ResponseEntity<Object> deleteSlabMasterById(@RequestParam int id) {
+		int deleteResult = bpaService.deleteSlabMasterById(id);
+		return new ResponseEntity<>(deleteResult, HttpStatus.OK);
 	}
 }

@@ -819,19 +819,23 @@ public class BPAService {
 		}
 	}
 
-	public List<Map<String, Object>> getPayTypeByTenantId(String tenantId) {
-
-		List<Map<String, Object>> resultList = repository.getPayTypeByTenantId(tenantId);
-		log.info("getPayTypeByTenantId: " + resultList.toString());
-		return resultList;
-	}
-
 	public int[] createFeeDetail(List<PayTypeFeeDetailRequestWrapper> payTypeFeeDetailRequestWrapper) {
 		return repository.createFeeDetail(payTypeFeeDetailRequestWrapper);
 	}
 
 	public int createPayType(PayTypeRequest payTypeRequest) {
 		return repository.createPayType(payTypeRequest);
+	}
+	
+	public List<Map<String, Object>> getPayTypeByTenantId(String tenantId) {
+
+		List<Map<String, Object>> resultList = repository.getPayTypeByTenantId(tenantId);
+		log.info("getPayTypeByTenantId: " + resultList.toString());
+		return resultList;
+	}
+	
+	public int updatePayType(PayTypeRequest payTypeRequest) {
+		return repository.updatePayType(payTypeRequest);
 	}
 
 	public int createProposalType(ProposalTypeRequest proposalTypeRequest) {
@@ -843,6 +847,10 @@ public class BPAService {
 		log.info("getProposalTypeByTenantId: " + resultList.toString());
 		return resultList;
 	}
+	
+	public int updateProposalType(ProposalTypeRequest proposalTypeRequest) {
+		return repository.updateProposalType(proposalTypeRequest);
+	}
 
 	public int createBCategory(BCategoryRequest bCategoryRequest) {
 		return repository.createBCategory(bCategoryRequest);
@@ -852,6 +860,10 @@ public class BPAService {
 		List<Map<String, Object>> resultList = repository.getBCategoryByTenantId(tenantId);
 		log.info("getBCategoryByTenantId: " + resultList.toString());
 		return resultList;
+	}
+	
+	public int updateBCategory(BCategoryRequest bCategoryRequest) {
+		return repository.updateBCategory(bCategoryRequest);
 	}
 
 	public int createBSCategory(BSCategoryRequest bSCategoryRequest) {
@@ -863,6 +875,10 @@ public class BPAService {
 		log.info("getBSCategoryByTenantId: " + resultList.toString());
 		return resultList;
 	}
+	
+	public int updateBSCategory(BSCategoryRequest bSCategoryRequest) {
+		return repository.updateBSCategory(bSCategoryRequest);
+	}
 
 	public int createPayTpRate(PayTpRateRequest payTpRateRequest) {
 		return repository.createPayTpRate(payTpRateRequest);
@@ -873,7 +889,12 @@ public class BPAService {
 		log.info("getPayTpRateByTenantIdAndTypeId: " + resultList.toString());
 		return resultList;
 	}
-	
+
+	// delete from pay_tp_rate_master table
+	public int deletePayTpRateById(int id) {
+		return repository.deletePayTpRateById(id);
+	}
+
 	public int createSlabMaster(SlabMasterRequest slabMasterRequest) {
 		return repository.createSlabMaster(slabMasterRequest);
 	}
@@ -882,5 +903,9 @@ public class BPAService {
 		List<Map<String, Object>> resultList = repository.getSlabMasterByTenantIdAndTypeId(tenantId, typeId);
 		log.info("getPayTpRateByTenantIdAndTypeId: " + resultList.toString());
 		return resultList;
+	}
+	
+	public int deleteSlabMasterById(int id) {
+		return repository.deleteSlabMasterById(id);
 	}
 }

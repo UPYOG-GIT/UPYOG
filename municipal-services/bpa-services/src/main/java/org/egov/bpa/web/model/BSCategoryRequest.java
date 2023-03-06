@@ -15,6 +15,9 @@ import lombok.Setter;
 @Setter
 public class BSCategoryRequest {
 
+	@JsonProperty("id")
+	private int id;
+	
 	@JsonProperty("tenantId")
 	private String tenantId = null;
 
