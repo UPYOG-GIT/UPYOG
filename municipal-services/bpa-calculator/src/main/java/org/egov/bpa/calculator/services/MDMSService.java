@@ -164,10 +164,11 @@ public class MDMSService {
 			log.info("bcate:----- " +bCate);
 			String subCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype.name");
 			log.info("subcate:----- " +subCate);
-			Map parkDetails = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[6]");
-			log.info("totalparkarea:----- " +parkDetails.toString());
+//			Map parkDetails = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[6]");
+//			log.info("totalparkarea:----- " +parkDetails.toString());
 			JSONArray parkDetails11 = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking\")].detail[0].Provided");
 			log.info("parkDetails11====:----- " +parkDetails11.toString());
+			String totalParkArea = parkDetails11.get(0).toString();
 			
 			additionalDetails.put("appDate", appDate.toString());
 			additionalDetails.put("appNum", appNum.toString());
@@ -176,7 +177,7 @@ public class MDMSService {
 			additionalDetails.put("tenantid", tenantid.toString());
 			additionalDetails.put("bcate", bCate.toString());
 			additionalDetails.put("subcate", subCate.toString());
-			additionalDetails.put("totalparkarea", parkDetails.toString());
+			additionalDetails.put("totalParkArea", totalParkArea);
 			
 			
 			log.info("additionalDetails---------"+additionalDetails);
@@ -311,7 +312,7 @@ public class MDMSService {
 		String tenantid = data.get("tenantid")+"";
 		log.info("tenantid----"+tenantid);
 		String occupancyType = data.get("occupancyType")+"";
-		Double plotares =  (double) data.get("plotares");
+		Double plotares = Double.valueOf(data.get("plotares").toString());
 
 //		Object feetype = data.get("feeType");
 		String feety ="";
