@@ -164,8 +164,10 @@ public class MDMSService {
 			log.info("bcate:----- " +bCate);
 			String subCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype.name");
 			log.info("subcate:----- " +subCate);
-			String parkDetails = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[6]");
-			log.info("totalparkarea:----- " +parkDetails);
+			Map parkDetails = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[6]");
+			log.info("totalparkarea:----- " +parkDetails.toString());
+			JSONArray parkDetails11 = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking\")].detail[0].Provided");
+			log.info("parkDetails11====:----- " +parkDetails11.toString());
 			
 			additionalDetails.put("appDate", appDate.toString());
 			additionalDetails.put("appNum", appNum.toString());
