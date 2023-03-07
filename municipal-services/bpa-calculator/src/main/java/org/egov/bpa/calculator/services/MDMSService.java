@@ -312,8 +312,22 @@ public class MDMSService {
 		String tenantid = data.get("tenantid")+"";
 		log.info("tenantid----"+tenantid);
 		String occupancyType = data.get("occupancyType")+"";
+		log.info("occupancyType----"+occupancyType);
 		Double plotares = Double.valueOf(data.get("plotares").toString());
-
+		log.info("plotares----"+plotares);
+		String applicationNo = data.get("appNum").toString();
+		log.info("applicationNo----"+applicationNo);
+		String bcategory = data.get("bcate").toString();
+		log.info("bcategory----"+bcategory);
+		Double totalParkArea = Double.valueOf(data.get("totalParkArea").toString());
+		log.info("totalParkArea----"+totalParkArea);
+		String subcate = data.get("subcate").toString();
+		log.info("subcate----"+subcate);
+		String appDate = data.get("appDate").toString();
+		log.info("appDate----"+appDate);
+		 
+		
+		
 //		Object feetype = data.get("feeType");
 		String feety ="";
 		String brkflg="";
@@ -365,15 +379,16 @@ public class MDMSService {
 			}
 			if(brkflg.equals("")) {
 				if(item.get("zdaflg").equals("N")) {
-					Integer countPayTyrate = bpaRepository.getCountOfPaytyrate(tenantid,item.get("id").toString(),pCategory);
+					int id = Integer.parseInt(item.get("id").toString());
+					Integer countPayTyrate = bpaRepository.getCountOfPaytyrate(tenantid,id,pCategory);
 					log.info("countPayTyrate: "+countPayTyrate);
 					
 					if(countPayTyrate.equals(0)) {
 						throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "No pay type rate entry found for  this id");
 					}
 					
-					String[] detailPayTyrate = bpaRepository.getDetailOfPaytyrate(tenantid,item.get("id").toString(),pCategory);
-					log.info("detailPayTyrate : "+detailPayTyrate);
+					String[] detailPayTyrate = bpaRepository.getDetailOfPaytyrate(tenantid,id,pCategory);
+					log.info("detailPayTyrate : "+detailPayTyrate.toString());
 					
 					
 					log.info("End-------End---------End---------End-------End");
