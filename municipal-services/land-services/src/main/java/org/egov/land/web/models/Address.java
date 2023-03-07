@@ -98,7 +98,7 @@ public class Address {
 
 	@SafeHtml
 	@JsonProperty("plotArea")
-	private Double plotArea = 0d;
+	private String plotArea;
 
 	@JsonProperty("locality")
 	private Boundary locality = null;
@@ -544,11 +544,11 @@ public class Address {
 		this.occupancy = occupancy;
 	}
 
-	public Double getPlotArea() {
+	public String getPlotArea() {
 		return plotArea;
 	}
 
-	public void setPlotArea(Double plotArea) {
+	public void setPlotArea(String plotArea) {
 		this.plotArea = plotArea;
 	}
 }
