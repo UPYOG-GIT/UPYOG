@@ -319,7 +319,11 @@ public class MDMSService {
 		log.info("applicationNo----"+applicationNo);
 		String bcategory = data.get("bcate").toString();
 		log.info("bcategory----"+bcategory);
-		Double totalParkArea = Double.valueOf(data.get("totalParkArea").toString());
+		String tolpark =(data.get("totalParkArea").toString()).replace("m2","");
+		log.info("tolpark----"+tolpark);
+//		().replace('m2','');
+		Double totalParkArea = Double.valueOf(tolpark);
+		
 		log.info("totalParkArea----"+totalParkArea);
 		String subcate = data.get("subcate").toString();
 		log.info("subcate----"+subcate);
