@@ -319,6 +319,7 @@ public class MDMSService {
 		String brkflg="";
 		String heightcat = "NH";
 		String newrevise = "NEW";
+		int pCategory = 0;
 		
 		if(feetype.equals("ApplicationFee")) {
 			feety = "Pre";
@@ -326,6 +327,19 @@ public class MDMSService {
 		else if(feetype.equals("SanctionFee")) {
 			feety = "Post";
 		} 
+		
+		if(occupancyType.equals("Residential")) {
+			pCategory =1;
+		}
+		else if(occupancyType.equals("Commercial")) {
+			pCategory =2;
+		}
+		else if(occupancyType.equals("INDUSTRIAL")) {
+			pCategory =3;
+		}
+		else if(occupancyType.equals("MIX")) {
+			pCategory =4;
+		}
 		
 		
 		if (feety.equals("Pre"))	
@@ -351,6 +365,17 @@ public class MDMSService {
 			}
 			if(brkflg.equals("")) {
 				if(item.get("zdaflg").equals("N")) {
+					Integer countPayTyrate = bpaRepository.getCountOfPaytyrate(tenantid,item.get("id").toString(),pCategory);
+					log.info("countPayTyrate: "+countPayTyrate);
+					
+					if(countPayTyrate.equals(0)) {
+						throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "No pay type rate entry found for  this id");
+					}
+					
+					String[] detailPayTyrate = bpaRepository.getDetailOfPaytyrate(tenantid,item.get("id").toString(),pCategory);
+					log.info("detailPayTyrate : "+detailPayTyrate);
+					
+					
 					log.info("End-------End---------End---------End-------End");
 				}
 				
