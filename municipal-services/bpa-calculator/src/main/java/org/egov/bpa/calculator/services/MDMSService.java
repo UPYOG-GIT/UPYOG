@@ -397,7 +397,7 @@ public class MDMSService {
 						throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "No pay type rate entry found for  this id");
 					}
 					
-					String[] detailPayTyrate = bpaRepository.getDetailOfPaytyrate(tenantid,id,pCategory,countPayTyrate,bcategory,subcate);
+					Map<String,Object> detailPayTyrate = bpaRepository.getDetailOfPaytyrate(tenantid,id,pCategory,countPayTyrate,bcategory,subcate);
 					log.info("detailPayTyrate : "+detailPayTyrate.toString());
 					
 					
