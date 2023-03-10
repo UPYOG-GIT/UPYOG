@@ -21,6 +21,16 @@ public class BPARepository {
 		return jdbcTemplate.queryForObject(sql, new Object[] { consumerCode }, String[].class);
 //		return null;
 	}
+	
+	public Integer getBcategoryId(String bcat) {
+		String sql = "select id from bcategory_master where description ~*? ";
+		return jdbcTemplate.queryForObject(sql, new Object[] {bcat}, Integer.class);
+	}
+	
+	public Integer getScategoryId(String scat,Integer bcat) {
+		String sql = "select id from bscategory_master where description ~*? and catid =? ";
+		return jdbcTemplate.queryForObject(sql,new Object[] {scat,bcat},Integer.class);
+	}
 
 	public List<Map<String, Object>> getPaytyDate(String tenantid, String feetype, String occupancyType, Double plotares, String heightcat, String newrevise ) {
 		
@@ -72,11 +82,20 @@ public class BPARepository {
 		return jdbcTemplate.queryForObject(sql, new Object[] { tenantid,id,pCategory }, Integer.class);
 	}
 	
-	public String[] getDetailOfPaytyrate(String tenantid,int id,int pCategory) {
+	public String[] getDetailOfPaytyrate(String tenantid,int id,int pCategory,int countPayTyrate, Integer bcategory,Integer subcate) {
 		String sql = "select * from pay_tp_rate_master "
 				+ "where  ulb_tenantid=? "
 				+ "and typeId=? "
-				+ "and p_category=?";
+				+ "and p_category=? ";
+		
+		if(countPayTyrate>1) {
+			if(!bcategory.equals(null) && !bcategory.equals(0)) {
+				sql +=" and b_category="+bcategory;
+			}
+			if(!subcate.equals(null) && !subcate.equals(0)) {
+				sql +=" and s_category="+subcate;
+			}
+		}
 		
 		log.info("BPARepository.getDetailOfPaytyrate: "+sql);
 		return jdbcTemplate.queryForObject(sql, new Object[] { tenantid,id,pCategory }, String[].class);
