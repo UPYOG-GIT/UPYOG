@@ -1,1 +1,0 @@
-update egbpa_sub_occupancy set name='RESIDENTIAL SINGLE UNIT' where code='A-R';
