@@ -508,6 +508,10 @@ public class Address {
 		sb.append("    locality: ").append(toIndentedString(locality)).append("\n");
 		sb.append("    geoLocation: ").append(toIndentedString(geoLocation)).append("\n");
 		sb.append("    auditDetails: ").append(toIndentedString(auditDetails)).append("\n");
+		sb.append("    khataNo: ").append(toIndentedString(khataNo)).append("\n");
+		sb.append("    mauza: ").append(toIndentedString(mauza)).append("\n");
+		sb.append("    occupancy: ").append(toIndentedString(occupancy)).append("\n");
+		sb.append("    plotArea: ").append(toIndentedString(plotArea)).append("\n");
 		sb.append("}");
 		return sb.toString();
 	}

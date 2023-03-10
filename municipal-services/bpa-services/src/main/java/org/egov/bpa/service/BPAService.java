@@ -124,7 +124,8 @@ public class BPAService {
 		if (bpaRequest.getBPA().getTenantId().split("\\.").length == 1) {
 			throw new CustomException(BPAErrorConstants.INVALID_TENANT, " Application cannot be create at StateLevel");
 		}
-
+		
+		log.info("bpaRequest.getBPA().getLandInfo().getAddress(): " + bpaRequest.getBPA().getLandInfo().getAddress().toString());
 		// Since approval number should be generated at approve stage
 		if (!StringUtils.isEmpty(bpaRequest.getBPA().getApprovalNo())) {
 			bpaRequest.getBPA().setApprovalNo(null);
