@@ -85,10 +85,7 @@ const OBPSLinks = ({ matchPath, userType }) => {
       link: `${matchPath}/my-applications`,
       i18nKey: t("BPA_CITIZEN_HOME_VIEW_APP_BY_CITIZEN_LABEL"),
     },
-    {
-      link: `${matchPath}/stakeholder/apply/stakeholder-docs-required`,
-      i18nKey: t("BPA_CITIZEN_HOME_STAKEHOLDER_LOGIN_LABEL"),
-    },
+ 
     {
       link: `${matchPath}/home`,
       i18nKey: t("BPA_CITIZEN_HOME_ARCHITECT_LOGIN_LABEL"),
@@ -97,12 +94,20 @@ const OBPSLinks = ({ matchPath, userType }) => {
       link: `/digit-ui/employee/user/login`,
       i18nKey: t("Employee Login"),
     },
+
+    // {
+    //   link: `${matchPath}/stakeholder/apply/stakeholder-docs-required`,
+    //   i18nKey: t("BPA_CITIZEN_HOME_STAKEHOLDER_LOGIN_LABEL"),
+      
+    // },
   ];
 
   return (
+
     <CitizenHomeCard header={t("ACTION_TEST_BUILDING_PLAN_APPROVAL")} links={links} Icon={() => <OBPSIcon />}
       Info={() => <CitizenInfoLabel style={{margin: "0px", padding: "10px"}} info={t("CS_FILE_APPLICATION_INFO_LABEL")} text={t(`BPA_CITIZEN_HOME_STAKEHOLDER_INCLUDES_INFO_LABEL`)} />} isInfo={true}
     />
+
   );
 } 
 

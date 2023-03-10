@@ -29,6 +29,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     const [fields, setFeilds] = useState(
         (formData?.owners && formData?.owners?.owners) || [{ name: "", gender: "", mobileNumber: null, isPrimaryOwner: true }]
     );
+    // console.log("formData1111" + JSON.stringify(formData));
 
     useEffect(() => {
         var flag=0;
@@ -292,15 +293,24 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 if (formData?.address?.landmark) payload.landInfo.address.landmark = formData?.address?.landmark;
                 if (formData?.address?.street) payload.landInfo.address.street = formData?.address?.street;
                 if (formData?.address?.geoLocation) payload.landInfo.address.geoLocation = formData?.address?.geoLocation;
+                payload.landInfo.address.plotNo = formData?.data?.edcrDetails?.planDetail?.planInfoProperties?.PLOT_NO;
+                payload.landInfo.address.khataNo = formData?.data?.edcrDetails?.planDetail?.planInfoProperties?.KHATA_NO;
+                payload.landInfo.address.mauza = formData?.data?.edcrDetails?.planDetail?.planInfoProperties?.MAUZA;
+                payload.landInfo.address.plotArea = formData?.data?.edcrDetails?.planDetail?.planInfoProperties?.PLOT_AREA_M2;
+                
 
                 payload.landInfo.owners = conversionOwners;
                 payload.landInfo.ownershipCategory = ownershipCategory.code;
                 payload.landInfo.tenantId = formData?.address?.city?.code;
+                // console.log("formData" + formData?.data?.edcrDetails?.planDetail?.planInfoProperties?.PLOT_NO);
+                // console.log("formData" + formData?.data?.edcrDetails?.planDetail?.planInfoProperties?.KHATA_NO);
+                // console.log("formData" + formData?.data?.edcrDetails?.planDetail?.planInfoProperties?.MAUZA);
+                // console.log("formData" + formData?.data?.edcrDetails?.planDetail?.planInfoProperties?.PLOT_AREA_M2);
 
                 //for units
                 const blockOccupancyDetails = formData;
                 payload.landInfo.unit = getUnitsForAPI(blockOccupancyDetails);
-
+                                                
                 let nameOfAchitect = sessionStorage.getItem("BPA_ARCHITECT_NAME");
                 let parsedArchitectName = nameOfAchitect ? JSON.parse(nameOfAchitect) : "ARCHITECT";
                 payload.additionalDetails.typeOfArchitect = parsedArchitectName;

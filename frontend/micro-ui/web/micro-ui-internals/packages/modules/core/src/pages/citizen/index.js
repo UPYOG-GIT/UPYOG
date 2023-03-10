@@ -63,14 +63,13 @@ const Home = ({
         </div>
         <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} >
           <Box flex="3" className="leftColumn">
-            <Chip label="Welcome to Building Permission Management System!" style={{ width: '100%', maxWidth: 500, color: 'white', backgroundColor: '#f47738', marginTop: 20, fontSize: 17 }} />
-
-            <Typography variant="body1" style={{ fontFamily: 'Sans-serif', color: '#444444', padding: 10, marginTop: 10, marginRight: 40, fontSize: 22, textAlign: 'justify' }}>
+            <Chip label="Welcome to Online Building Permission System!" style={{ width: '100%', maxWidth: 500, color: 'white', backgroundColor: '#f47738', marginTop: 20, fontSize: 19 }} />
+            <Typography variant="body1" style={{ fontFamily: 'Sans-serif', color: '#444444', padding: 10, marginTop: 10, marginRight: 40, fontSize: 20, textAlign: 'justify' }}>
               NiwasPass System Enables citizens of Urban areas of Chhattisgarh to upload their requisite documents as per the set procedure and generate the building permission after various checks of the system. In this system, a Unique Chhattisgarh model based initiative has been introduced where Citizens having plot size upto 500 Sq. Mtr can get Direct Building Permission by paying a 1/- application fees.
             </Typography>
 
             {/* if not responsive remove marginnRight of above*/}
-            <Typography variant="body1" style={{ fontFamily: 'Sans-serif', color: '#2e2e2e', marginBottom: '1rem', marginLeft: 10, fontSize: 20 }}>
+            <Typography variant="body1" style={{ fontFamily: 'Sans-serif', color: '#2e2e2e', marginBottom: '1rem', marginLeft: 10, fontSize: 18 }}>
               Currently the following ULB's are in this system :
             </Typography>
 
@@ -110,7 +109,7 @@ const Home = ({
             <CardContent>
               <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
                 gutterBottom>
-                76298
+                05
               </Typography>
               <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
                 Uploaded Proposals
@@ -126,7 +125,7 @@ const Home = ({
             <CardContent>
               <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
                 gutterBottom>
-                66673
+                03
               </Typography>
               <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
                 Approved Proposals
@@ -142,7 +141,7 @@ const Home = ({
             <CardContent>
               <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
                 gutterBottom>
-                812
+                02
               </Typography>
               <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
                 Rejected Proposals

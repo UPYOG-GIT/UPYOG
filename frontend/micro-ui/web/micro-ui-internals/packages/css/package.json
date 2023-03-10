@@ -1,5 +1,5 @@
 {
-  "name": "@egovernments/digit-ui-css",
+  "name": "@entit/digit-ui-css",
   "version": "1.5.6",
   "license": "MIT",
   "main": "dist/index.css",
@@ -13,7 +13,8 @@
     "start": "gulp build",
     "build:prod": "NODE_ENV=production gulp build",
     "prepublish": "yarn build:prod",
-    "deploy": "gulp && cp -R svg example && cp -R img example && gh-pages -d example"
+    "deploy": "gulp && cp -R svg example && cp -R img example && gh-pages -d example",
+    "publish:css": "cd packages/css && yarn publish --access public"
   },
   "browserslist": [
     "> 3%",
@@ -21,6 +22,7 @@
   ],
   "style": "./dist/index.css",
   "dependencies": {
+    "@entit/digit-ui-css": "^1.5.6",
     "node-sass": "4.14.1",
     "normalize.css": "8.0.1",
     "postcss-scss": "3.0.5",
@@ -53,5 +55,10 @@
     "img/**/*.png",
     "src/**/*.scss",
     "src/**/*.css"
-  ]
+  ],
+  "directories": {
+    "example": "example"
+  },
+  "author": "",
+  "description": ""
 }
