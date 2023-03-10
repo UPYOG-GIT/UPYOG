@@ -61,4 +61,24 @@ public class BPARepository {
 		return jdbcTemplate.queryForList(sql);
 
 	}
+	
+	public Integer getCountOfPaytyrate(String tenantid,int id,int pCategory) {
+		String sql = "select count(*)from pay_tp_rate_master "
+				+ "where  ulb_tenantid=? "
+				+ "and typeId=? "
+				+ "and p_category=?";
+		
+		log.info("BPARepository.getCountOfPaytyrate: "+sql);
+		return jdbcTemplate.queryForObject(sql, new Object[] { tenantid,id,pCategory }, Integer.class);
+	}
+	
+	public String[] getDetailOfPaytyrate(String tenantid,int id,int pCategory) {
+		String sql = "select * from pay_tp_rate_master "
+				+ "where  ulb_tenantid=? "
+				+ "and typeId=? "
+				+ "and p_category=?";
+		
+		log.info("BPARepository.getDetailOfPaytyrate: "+sql);
+		return jdbcTemplate.queryForObject(sql, new Object[] { tenantid,id,pCategory }, String[].class);
+	}
 }

@@ -312,13 +312,32 @@ public class MDMSService {
 		String tenantid = data.get("tenantid")+"";
 		log.info("tenantid----"+tenantid);
 		String occupancyType = data.get("occupancyType")+"";
+		log.info("occupancyType----"+occupancyType);
 		Double plotares = Double.valueOf(data.get("plotares").toString());
-
+		log.info("plotares----"+plotares);
+		String applicationNo = data.get("appNum").toString();
+		log.info("applicationNo----"+applicationNo);
+		String bcategory = data.get("bcate").toString();
+		log.info("bcategory----"+bcategory);
+		String tolpark =(data.get("totalParkArea").toString()).replace("m2","");
+		log.info("tolpark----"+tolpark);
+//		().replace('m2','');
+		Double totalParkArea = Double.valueOf(tolpark);
+		
+		log.info("totalParkArea----"+totalParkArea);
+		String subcate = data.get("subcate").toString();
+		log.info("subcate----"+subcate);
+		String appDate = data.get("appDate").toString();
+		log.info("appDate----"+appDate);
+		 
+		
+		
 //		Object feetype = data.get("feeType");
 		String feety ="";
 		String brkflg="";
 		String heightcat = "NH";
 		String newrevise = "NEW";
+		int pCategory = 0;
 		
 		if(feetype.equals("ApplicationFee")) {
 			feety = "Pre";
@@ -326,6 +345,19 @@ public class MDMSService {
 		else if(feetype.equals("SanctionFee")) {
 			feety = "Post";
 		} 
+		
+		if(occupancyType.equals("Residential")) {
+			pCategory =1;
+		}
+		else if(occupancyType.equals("Commercial")) {
+			pCategory =2;
+		}
+		else if(occupancyType.equals("INDUSTRIAL")) {
+			pCategory =3;
+		}
+		else if(occupancyType.equals("MIX")) {
+			pCategory =4;
+		}
 		
 		
 		if (feety.equals("Pre"))	
@@ -351,6 +383,18 @@ public class MDMSService {
 			}
 			if(brkflg.equals("")) {
 				if(item.get("zdaflg").equals("N")) {
+					int id = Integer.parseInt(item.get("id").toString());
+					Integer countPayTyrate = bpaRepository.getCountOfPaytyrate(tenantid,id,pCategory);
+					log.info("countPayTyrate: "+countPayTyrate);
+					
+					if(countPayTyrate.equals(0)) {
+						throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "No pay type rate entry found for  this id");
+					}
+					
+					String[] detailPayTyrate = bpaRepository.getDetailOfPaytyrate(tenantid,id,pCategory);
+					log.info("detailPayTyrate : "+detailPayTyrate.toString());
+					
+					
 					log.info("End-------End---------End---------End-------End");
 				}
 				
