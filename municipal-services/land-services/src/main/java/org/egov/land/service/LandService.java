@@ -49,17 +49,18 @@ public class LandService {
 		if (landRequest.getLandInfo().getTenantId().split("\\.").length == 1) {
 			throw new CustomException(LandConstants.INVALID_TENANT, " Application cannot be create at StateLevel");
 		}
-		
-		landValidator.validateLandInfo(landRequest,mdmsData);
+
+		log.info("LandService.create()............");
+		log.info("landRequest.getLandInfo().getAddress(): " + landRequest.getLandInfo().getAddress().toString());
+		landValidator.validateLandInfo(landRequest, mdmsData);
 		userService.manageUser(landRequest);
-		
+
 		enrichmentService.enrichLandInfoRequest(landRequest, false);
 
 		landRequest.getLandInfo().getOwners().forEach(owner -> {
 			if (owner.getActive()) {
 				owner.setStatus(true);
-			}else
-			{
+			} else {
 				owner.setStatus(false);
 			}
 		});
@@ -83,29 +84,28 @@ public class LandService {
 		landValidator.validateLandInfo(landRequest, mdmsData);
 		userService.manageUser(landRequest);
 		enrichmentService.enrichLandInfoRequest(landRequest, true);
-		
-			landRequest.getLandInfo().getOwners().forEach(owner -> {
+
+		landRequest.getLandInfo().getOwners().forEach(owner -> {
 			if (owner.getActive()) {
 				owner.setStatus(true);
-			}else
-			{
+			} else {
 				owner.setStatus(false);
 			}
 		});
 
 		repository.update(landRequest);
 		List<OwnerInfo> activeOwnerList = new ArrayList<OwnerInfo>();
-		if(landRequest.getLandInfo().getOwners().size()>1) {
+		if (landRequest.getLandInfo().getOwners().size() > 1) {
 			landRequest.getLandInfo().getOwners().forEach(owner -> {
-			if (owner.getStatus()) {
-				activeOwnerList.add(owner);
-			}
-		});
-		landRequest.getLandInfo().setOwners(activeOwnerList);
+				if (owner.getStatus()) {
+					activeOwnerList.add(owner);
+				}
+			});
+			landRequest.getLandInfo().setOwners(activeOwnerList);
 		}
 		return landRequest.getLandInfo();
 	}
-	
+
 	public List<LandInfo> search(LandSearchCriteria criteria, RequestInfo requestInfo) {
 		List<LandInfo> landInfos;
 		landValidator.validateSearch(requestInfo, criteria);
@@ -113,7 +113,7 @@ public class LandService {
 			landInfos = getLandFromMobileNumber(criteria, requestInfo);
 			// With given mobile number if no record exists then return empty response
 			if (landInfos.isEmpty())
-	                    return Collections.emptyList();
+				return Collections.emptyList();
 			List<String> landIds = new ArrayList<String>();
 			for (LandInfo li : landInfos) {
 				landIds.add(li.getId());
@@ -129,7 +129,7 @@ public class LandService {
 		}
 		return landInfos;
 	}
-	
+
 	private List<LandInfo> getLandFromMobileNumber(LandSearchCriteria criteria, RequestInfo requestInfo) {
 
 		List<LandInfo> landInfo = new LinkedList<>();
@@ -137,9 +137,9 @@ public class LandService {
 		// If user not found with given user fields return empty list
 		if (userDetailResponse.getUser().size() == 0) {
 			return Collections.emptyList();
-		}else{
+		} else {
 			List<String> ids = new ArrayList<String>();
-			for(int i=0; i<userDetailResponse.getUser().size();i++){
+			for (int i = 0; i < userDetailResponse.getUser().size(); i++) {
 				ids.add(userDetailResponse.getUser().get(i).getUuid());
 			}
 			System.out.println(ids);
@@ -154,28 +154,25 @@ public class LandService {
 		enrichmentService.enrichLandInfoSearch(landInfo, criteria, requestInfo);
 		return landInfo;
 	}
-	
 
 	/**
 	 * Returns the landInfo with enriched owners from user service
 	 * 
-	 * @param criteria
-	 *            The object containing the parameters on which to search
-	 * @param requestInfo
-	 *            The search request's requestInfo
+	 * @param criteria    The object containing the parameters on which to search
+	 * @param requestInfo The search request's requestInfo
 	 * @return List of landInfo for the given criteria
 	 */
 	public List<LandInfo> fetchLandInfoData(LandSearchCriteria criteria, RequestInfo requestInfo) {
 		List<LandInfo> landInfos = repository.getLandInfoData(criteria);
 		if (landInfos.isEmpty())
 			return Collections.emptyList();
-		
-		if(!CollectionUtils.isEmpty(landInfos)){
+
+		if (!CollectionUtils.isEmpty(landInfos)) {
 			log.debug("Received final landInfo response..");
 		}
-		
+
 		landInfos = enrichmentService.enrichLandInfoSearch(landInfos, criteria, requestInfo);
-		if(!CollectionUtils.isEmpty(landInfos)){
+		if (!CollectionUtils.isEmpty(landInfos)) {
 			log.debug("Received final landInfo response after enrichment..");
 		}
 		return landInfos;
