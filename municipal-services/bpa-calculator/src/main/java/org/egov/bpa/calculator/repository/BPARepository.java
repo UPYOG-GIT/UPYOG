@@ -82,7 +82,7 @@ public class BPARepository {
 		return jdbcTemplate.queryForObject(sql, new Object[] { tenantid,id,pCategory }, Integer.class);
 	}
 	
-	public String[] getDetailOfPaytyrate(String tenantid,int id,int pCategory,int countPayTyrate, Integer bcategory,Integer subcate) {
+	public Map<String,Object> getDetailOfPaytyrate(String tenantid,int id,int pCategory,int countPayTyrate, Integer bcategory,Integer subcate) {
 		String sql = "select * from pay_tp_rate_master "
 				+ "where  ulb_tenantid=? "
 				+ "and typeId=? "
@@ -98,6 +98,6 @@ public class BPARepository {
 		}
 		
 		log.info("BPARepository.getDetailOfPaytyrate: "+sql);
-		return jdbcTemplate.queryForObject(sql, new Object[] { tenantid,id,pCategory }, String[].class);
+		return jdbcTemplate.queryForMap(sql, new Object[] { tenantid,id,pCategory });
 	}
 }
