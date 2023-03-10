@@ -126,7 +126,7 @@ public class MDMSService {
 
 			List jsonOutput = JsonPath.read(mdmsData, BPACalculatorConstants.MDMS_CALCULATIONTYPE_PATH);
 			LinkedHashMap responseMap = edcrService.getEDCRDetails(requestInfo, bpa);
-
+//			Map responseMap1 = feeCalculation(responseMap);
 			log.info("jsonOutput logg :======= " + jsonOutput);
 
 			log.info("feeType: " + feeType);
@@ -151,6 +151,44 @@ public class MDMSService {
 			log.info("plotArea Condition: " + (plotArea <= 500.00));
 			log.info("occupancy Condition:(equals) " + additionalDetails.get("occupancyType").equals("Residential"));
 
+			
+			
+//			added ----- auto calculation----------------------------------------------
+			String appDate = context.read("edcrDetail[0].applicationDate");
+			log.info("appDate:-----" + appDate);
+			String appNum = bpa.getApplicationNo();
+			log.info("appNum:----- " +appNum);
+			String tenantid = bpa.getTenantId();
+			log.info("tenantid:----- " +tenantid);
+			String bCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].type.name");
+			log.info("bcate:----- " +bCate);
+			String subCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype.name");
+			log.info("subcate:----- " +subCate);
+//			Map parkDetails = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[6]");
+//			log.info("totalparkarea:----- " +parkDetails.toString());
+			JSONArray parkDetails11 = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking\")].detail[0].Provided");
+			log.info("parkDetails11====:----- " +parkDetails11.toString());
+			String totalParkArea = parkDetails11.get(0).toString();
+			
+			additionalDetails.put("appDate", appDate.toString());
+			additionalDetails.put("appNum", appNum.toString());
+			additionalDetails.put("plotares", plotArea.toString());
+			additionalDetails.put("feeType", feeType.toString());
+			additionalDetails.put("tenantid", tenantid.toString());
+			additionalDetails.put("bcate", bCate.toString());
+			additionalDetails.put("subcate", subCate.toString());
+			additionalDetails.put("totalParkArea", totalParkArea);
+			
+			
+			log.info("additionalDetails---------"+additionalDetails);
+			List<Map<String, Object>> responseMap1 = feeCalculation(additionalDetails);
+			
+			log.info("responseMap1----------"+responseMap1);
+//			added end----- auto calculation--------------------------------------------			
+			
+			
+			
+			
 			if (((plotArea <= 500.00) && (additionalDetails.get("occupancyType").equals("Residential")))) {
 //	     		   String filterExp = "$.[?(@.amount==1)]";
 				String filterExp = "$.[?(@.feeType=='" + feeType + "')]";
@@ -264,6 +302,108 @@ public class MDMSService {
 				: config.getSancFeeDefaultAmount();
 		defaultMap.put(BPACalculatorConstants.MDMS_CALCULATIONTYPE_AMOUNT, feeAmount);
 		return defaultMap;
+	}
+	
+
+	private List<Map<String, Object>> feeCalculation(Map data) {	
+		log.info("Data  "+data);
+		String feetype = data.get("feeType").toString();
+		log.info("feetype----"+feetype);
+		String tenantid = data.get("tenantid")+"";
+		log.info("tenantid----"+tenantid);
+		String occupancyType = data.get("occupancyType")+"";
+		log.info("occupancyType----"+occupancyType);
+		Double plotares = Double.valueOf(data.get("plotares").toString());
+		log.info("plotares----"+plotares);
+		String applicationNo = data.get("appNum").toString();
+		log.info("applicationNo----"+applicationNo);
+		String bcategory = data.get("bcate").toString();
+		log.info("bcategory----"+bcategory);
+		String tolpark =(data.get("totalParkArea").toString()).replace("m2","");
+		log.info("tolpark----"+tolpark);
+//		().replace('m2','');
+		Double totalParkArea = Double.valueOf(tolpark);
+		
+		log.info("totalParkArea----"+totalParkArea);
+		String subcate = data.get("subcate").toString();
+		log.info("subcate----"+subcate);
+		String appDate = data.get("appDate").toString();
+		log.info("appDate----"+appDate);
+		 
+		
+		
+//		Object feetype = data.get("feeType");
+		String feety ="";
+		String brkflg="";
+		String heightcat = "NH";
+		String newrevise = "NEW";
+		int pCategory = 0;
+		
+		if(feetype.equals("ApplicationFee")) {
+			feety = "Pre";
+		}
+		else if(feetype.equals("SanctionFee")) {
+			feety = "Post";
+		} 
+		
+		if(occupancyType.equals("Residential")) {
+			pCategory =1;
+		}
+		else if(occupancyType.equals("Commercial")) {
+			pCategory =2;
+		}
+		else if(occupancyType.equals("INDUSTRIAL")) {
+			pCategory =3;
+		}
+		else if(occupancyType.equals("MIX")) {
+			pCategory =4;
+		}
+		
+		
+		if (feety.equals("Pre"))	
+		{
+			//for hight rise----------
+			log.info("-------------inside hight rise-----------");
+		}	
+		
+		
+		
+		log.info("tenantid--"+tenantid+"---feety---"+feety);
+		
+		List<Map<String,Object>> result  = bpaRepository.getPaytyDate(tenantid,feety,occupancyType,plotares,heightcat,newrevise);
+		
+		log.info("result--0-----"+result.toString());
+		
+		for(Map<String,Object> item : result) {
+			if (feety.equals("Pre"))	
+			{
+				if(heightcat.equals("NH") && newrevise.equals("REVISED")) {
+					log.info("------------REVISED----------");
+				}
+			}
+			if(brkflg.equals("")) {
+				if(item.get("zdaflg").equals("N")) {
+					int id = Integer.parseInt(item.get("id").toString());
+					Integer countPayTyrate = bpaRepository.getCountOfPaytyrate(tenantid,id,pCategory);
+					log.info("countPayTyrate: "+countPayTyrate);
+					
+					if(countPayTyrate.equals(0)) {
+						throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "No pay type rate entry found for  this id");
+					}
+					
+					String[] detailPayTyrate = bpaRepository.getDetailOfPaytyrate(tenantid,id,pCategory);
+					log.info("detailPayTyrate : "+detailPayTyrate.toString());
+					
+					
+					log.info("End-------End---------End---------End-------End");
+				}
+				
+			}
+		}
+		
+		
+
+		return result;
 	}
 
 }

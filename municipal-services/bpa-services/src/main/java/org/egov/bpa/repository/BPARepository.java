@@ -1,7 +1,6 @@
 package org.egov.bpa.repository;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -10,15 +9,22 @@ import org.egov.bpa.config.BPAConfiguration;
 import org.egov.bpa.producer.Producer;
 import org.egov.bpa.repository.querybuilder.BPAQueryBuilder;
 import org.egov.bpa.repository.rowmapper.BPARowMapper;
+import org.egov.bpa.web.model.BCategoryRequest;
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPASearchCriteria;
+import org.egov.bpa.web.model.BSCategoryRequest;
+import org.egov.bpa.web.model.PayTpRateRequest;
 import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
+import org.egov.bpa.web.model.PayTypeFeeDetailRequestWrapper;
 import org.egov.bpa.web.model.PayTypeRequest;
+import org.egov.bpa.web.model.ProposalTypeRequest;
+import org.egov.bpa.web.model.SlabMasterRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -111,36 +117,29 @@ public class BPARepository {
 		return BPAData;
 	}
 
-	public List<Map<String, Object>> getPayTypeByTenantId(String tenantId) {
+	public int[] createFeeDetail(List<PayTypeFeeDetailRequestWrapper> payTypeFeeDetailRequestWrapperList) {
 
-		String query = "select id,charges_type_name from paytype_master where ulb_tenantid=?";
-//        	String query="select charges_type_name from paytype_master where ulb_tenantid=?";
-		return jdbcTemplate.queryForList(query, new Object[] { tenantId });
-//    		return jdbcTemplate.queryForObject(query, new Object[] { tenantId }, Map.class);
-
-//        	return null;
-	}
-
-	public void createFeeDetail(List<PayTypeFeeDetailRequest> payTypeFeeDetailRequestList) {
-
+		LocalDateTime date = LocalDateTime.now();
 		String insertQuery = "insert into pre_post_fee_details(paytype_id,ulb_tenantid,bill_id,application_no,"
 				+ "unit_id,pay_id,charges_type_name,amount,status_type,propvalue,value,status,createdby,payment_type,createddate)"
-				+ "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
-		LocalDateTime date = LocalDateTime.now();
+				+ "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,'" + date + "')";
+
 		List<Object[]> parameters = new ArrayList<Object[]>();
-		for (PayTypeFeeDetailRequest payTypeFeeDetailRequest : payTypeFeeDetailRequestList) {
+		for (PayTypeFeeDetailRequestWrapper payTypeFeeDetailRequestWrapper : payTypeFeeDetailRequestWrapperList) {
+			PayTypeFeeDetailRequest payTypeFeeDetailRequest = payTypeFeeDetailRequestWrapper
+					.getPayTypeFeeDetailRequest();
 			parameters.add(new Object[] { payTypeFeeDetailRequest.getPayTypeId(), payTypeFeeDetailRequest.getTenantId(),
 					payTypeFeeDetailRequest.getBillId(), payTypeFeeDetailRequest.getApplicationNo(),
 					payTypeFeeDetailRequest.getUnitId(), payTypeFeeDetailRequest.getPayId(),
 					payTypeFeeDetailRequest.getChargesTypeName(), payTypeFeeDetailRequest.getAmount(),
 					payTypeFeeDetailRequest.getStatusType(), payTypeFeeDetailRequest.getPropValue(),
 					payTypeFeeDetailRequest.getValue(), payTypeFeeDetailRequest.getStatus(),
-					payTypeFeeDetailRequest.getCreatedBy(), payTypeFeeDetailRequest.getPaymentType(), date });
+					payTypeFeeDetailRequest.getCreatedBy(), payTypeFeeDetailRequest.getPaymentType() });
 		}
 		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
 
 		log.info("BPARepository.createFeeDetail: " + insertResult + " data inserted into pre_post_fee_details table");
+		return insertResult;
 		/*
 		 * for (PayTypeFeeDetailRequest payTypeFeeDetailRequest :
 		 * payTypeFeeDetailRequestList) { jdbcTemplate.update(insertQuery,
@@ -156,22 +155,289 @@ public class BPARepository {
 		 */
 	}
 
-	public void createPayType(PayTypeRequest payTypeRequest) {
+	public int createPayType(PayTypeRequest payTypeRequest) {
 
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
 		LocalDateTime date = LocalDateTime.now();
 
+//		String insertQuery = "insert into paytype_master(ulb_tenantid,charges_type_name,payment_type,"
+//				+ "defunt,createdby,createddate) values (?,?,?,?,?,'" + date + "')";
 		String insertQuery = "insert into paytype_master(ulb_tenantid,charges_type_name,payment_type,"
-				+ "defunt,createdby,createddate) values (?,?,?,?,?,'" + date + "')";
-//		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-//		String date = simpleDateFormat.format(new Date());
+				+ "defunt,optflag,hrnh,depflag,fdrflg,zdaflg,createdby,createddate) values ('"
+				+ payTypeRequest.getTenantId() + "','" + payTypeRequest.getChargesTypeName() + "','"
+				+ payTypeRequest.getPaymentType() + "','" + payTypeRequest.getDefunt() + "','"
+				+ payTypeRequest.getOptFlag() + "','" + payTypeRequest.getHrnh() + "','" + payTypeRequest.getDepFlag()
+				+ "','" + payTypeRequest.getFdrFlg() + "','" + payTypeRequest.getZdaFlg() + "','"
+				+ payTypeRequest.getCreatedBy() + "','" + date + "')";
 
-		List<Object[]> parameters = new ArrayList<Object[]>();
-		parameters.add(new Object[] { payTypeRequest.getTenantId(), payTypeRequest.getChargesTypeName(),
-				payTypeRequest.getPaymentType(), payTypeRequest.getDefunt(), payTypeRequest.getCreatedBy() });
+//		Object parameters = new Object();
+//		parameters=new Object[] { payTypeRequest.getTenantId(), payTypeRequest.getChargesTypeName(),
+//				payTypeRequest.getPaymentType(), payTypeRequest.getDefunt(), payTypeRequest.getCreatedBy() };
+//		List<Object[]> parameters = new ArrayList<Object[]>();
+//		parameters.add(new Object[] { payTypeRequest.getTenantId(), payTypeRequest.getChargesTypeName(),
+//				payTypeRequest.getPaymentType(), payTypeRequest.getDefunt(), payTypeRequest.getCreatedBy() });
 
-		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
-
+//		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
+//		int insertResult = jdbcTemplate.update(insertQuery, parameters);
+//		int insertResult = jdbcTemplate.update(insertQuery, payTypeRequest.getTenantId(),payTypeRequest.getChargesTypeName(),
+//				payTypeRequest.getPaymentType(), payTypeRequest.getDefunt(), payTypeRequest.getCreatedBy());
+		int insertResult = jdbcTemplate.update(insertQuery);
 		log.info("BPARepository.createPayType: " + insertResult + " data inserted into paytype_master table");
+//		return Array.getInt(insertResult, 0);
+		return insertResult;
+	}
+
+	public List<Map<String, Object>> getPayTypeByTenantId(String tenantId) {
+
+		String query = "select id,charges_type_name,payment_type,defunt,optflag,hrnh,depflag,fdrflg,zdaflg from paytype_master where ulb_tenantid=? order by id";
+//        	String query="select charges_type_name from paytype_master where ulb_tenantid=?";
+		return jdbcTemplate.queryForList(query, new Object[] { tenantId });
+//    		return jdbcTemplate.queryForObject(query, new Object[] { tenantId }, Map.class);
+
+	}
+
+	public int updatePayType(PayTypeRequest payTypeRequest) {
+		LocalDateTime date = LocalDateTime.now();
+
+		String updateQuery = "update paytype_master set charges_type_name='" + payTypeRequest.getChargesTypeName()
+				+ "',payment_type='" + payTypeRequest.getPaymentType() + "',defunt='" + payTypeRequest.getDefunt()
+				+ "',optflag='" + payTypeRequest.getOptFlag() + "',hrnh='" + payTypeRequest.getHrnh() + "',depflag='"
+				+ payTypeRequest.getDepFlag() + "',fdrflg='" + payTypeRequest.getFdrFlg() + "',zdaflg='"
+				+ payTypeRequest.getZdaFlg() + "',updatedby='" + payTypeRequest.getUpdatedBy() + "',updateddate='"
+				+ date + "' where id=" + payTypeRequest.getId();
+		int updateResult = jdbcTemplate.update(updateQuery);
+		log.info("BPARepository.updatePayType: " + updateResult + " data updated into paytype_master table");
+		return updateResult;
+	}
+
+	public int createProposalType(ProposalTypeRequest proposalTypeRequest) {
+
+		LocalDateTime date = LocalDateTime.now();
+
+		String insertQuery = "insert into proposal_type_master(ulb_tenantid,description,defunt,createdby,createddate) "
+				+ "values ('" + proposalTypeRequest.getTenantId() + "','" + proposalTypeRequest.getDesc() + "','"
+				+ proposalTypeRequest.getDefunt() + "','" + proposalTypeRequest.getCreatedBy() + "','" + date + "')";
+
+//		Object parameters = new Object();
+//		parameters = new Object[] { proposalTypeRequest.getTenantId(), proposalTypeRequest.getDesc(),
+//				proposalTypeRequest.getDefunt(), proposalTypeRequest.getCreatedBy() };
+//
+//		int insertResult = jdbcTemplate.update(insertQuery, parameters);
+		int insertResult = jdbcTemplate.update(insertQuery);
+
+		log.info(
+				"BPARepository.createProposalType: " + insertResult + " data inserted into proposal_type_master table");
+		return insertResult;
+	}
+
+	// fetch data from proposal_type_master table
+	public List<Map<String, Object>> getProposalTypeByTenantId(String tenantId) {
+
+		String query = "select id,description,defunt from proposal_type_master where ulb_tenantid=?";
+		return jdbcTemplate.queryForList(query, new Object[] { tenantId });
+	}
+
+	public int updateProposalType(ProposalTypeRequest proposalTypeRequest) {
+		LocalDateTime date = LocalDateTime.now();
+
+		String updateQuery = "update proposal_type_master set description='" + proposalTypeRequest.getDesc()
+				+ "',defunt='" + proposalTypeRequest.getDefunt() + "',updatedby='" + proposalTypeRequest.getUpdatedBy()
+				+ "',updateddate='" + date + "' where id=" + proposalTypeRequest.getId();
+		int updateResult = jdbcTemplate.update(updateQuery);
+		log.info("BPARepository.updateBSCategory: " + updateResult + " data updated into paytype_master table");
+		return updateResult;
+	}
+
+	public int createBCategory(BCategoryRequest bCategoryRequest) {
+
+		LocalDateTime date = LocalDateTime.now();
+
+		String insertQuery = "insert into bcategory_master(ulb_tenantid,description,defunt,createdby,createddate) "
+				+ "values ('" + bCategoryRequest.getTenantId() + "','" + bCategoryRequest.getDesc() + "','"
+				+ bCategoryRequest.getDefunt() + "','" + bCategoryRequest.getCreatedBy() + "','" + date + "')";
+
+//		Object parameters = new Object();
+//		parameters = new Object[] { bCategoryRequest.getTenantId(), bCategoryRequest.getDesc(),
+//				bCategoryRequest.getDefunt(), bCategoryRequest.getCreatedBy() };
+//
+//		int insertResult = jdbcTemplate.update(insertQuery, parameters);
+		int insertResult = jdbcTemplate.update(insertQuery);
+
+		log.info("BPARepository.createBCategory: " + insertResult + " data inserted into bcategory_master table");
+		return insertResult;
+	}
+
+	// fetch data from bcategory_master table
+	public List<Map<String, Object>> getBCategoryByTenantId(String tenantId) {
+		String query = "select id,description,defunt from bcategory_master where ulb_tenantid=?";
+		return jdbcTemplate.queryForList(query, new Object[] { tenantId });
+	}
+
+	public int updateBCategory(BCategoryRequest bCategoryRequest) {
+		LocalDateTime date = LocalDateTime.now();
+
+		String updateQuery = "update bcategory_master set description='" + bCategoryRequest.getDesc() + "',defunt='"
+				+ bCategoryRequest.getDefunt() + "',updatedby='" + bCategoryRequest.getUpdatedBy() + "',updateddate='"
+				+ date + "' where id=" + bCategoryRequest.getId();
+		int updateResult = jdbcTemplate.update(updateQuery);
+		log.info("BPARepository.updateBCategory: " + updateResult + " data updated into paytype_master table");
+		return updateResult;
+	}
+
+	public int createBSCategory(BSCategoryRequest bsCategoryRequest) {
+
+		LocalDateTime date = LocalDateTime.now();
+
+		String insertQuery = "insert into bscategory_master(ulb_tenantid,description,defunt,catid,createdby,createddate) "
+				+ "values ('" + bsCategoryRequest.getTenantId() + "','" + bsCategoryRequest.getDesc() + "','"
+				+ bsCategoryRequest.getDefunt() + "','" + bsCategoryRequest.getCatid() + "','"
+				+ bsCategoryRequest.getCreatedBy() + "','" + date + "')";
+//
+//		Object parameters = new Object();
+//		parameters = new Object[] { bsCategoryRequest.getTenantId(), bsCategoryRequest.getDesc(),
+//				bsCategoryRequest.getDefunt(), bsCategoryRequest.getCatid(), bsCategoryRequest.getCreatedBy() };
+//
+//		int insertResult = jdbcTemplate.update(insertQuery, parameters);
+		int insertResult = jdbcTemplate.update(insertQuery);
+
+		log.info("BPARepository.createBSCategory: " + insertResult + " data inserted into bscategory_master table");
+		return insertResult;
+	}
+
+	// fetch data from bscategory_master table
+	public List<Map<String, Object>> getBSCategoryByTenantId(String tenantId, int catId) {
+		String query = "select id,description,defunt,catid from bscategory_master where ulb_tenantid=? AND catid=?";
+		return jdbcTemplate.queryForList(query, new Object[] { tenantId, catId });
+	}
+
+	public int updateBSCategory(BSCategoryRequest bsCategoryRequest) {
+		LocalDateTime date = LocalDateTime.now();
+
+		String updateQuery = "update bscategory_master set description='" + bsCategoryRequest.getDesc() + "',defunt='"
+				+ bsCategoryRequest.getDefunt() + "',,catid='" + bsCategoryRequest.getCatid() + "',updatedby='"
+				+ bsCategoryRequest.getUpdatedBy() + "',updateddate='" + date + "' where id="
+				+ bsCategoryRequest.getId();
+		int updateResult = jdbcTemplate.update(updateQuery);
+		log.info("BPARepository.updateBSCategory: " + updateResult + " data updated into paytype_master table");
+		return updateResult;
+	}
+
+	public int createPayTpRate(PayTpRateRequest payTpRateRequest) {
+
+		String query = "SELECT COUNT(*) FROM pay_tp_rate_master WHERE ulb_tenantid=? AND typeid=?";
+		int count = jdbcTemplate.queryForObject(query,
+				new Object[] { payTpRateRequest.getTenantId(), payTpRateRequest.getTypeId() }, Integer.class);
+		log.info("createPayTpRate count : " + count);
+		LocalDateTime date = LocalDateTime.now();
+		count = count + 1;
+
+		String insertQuery = "insert into pay_tp_rate_master(ulb_tenantid,unitid,typeid,srno,calcon,"
+				+ "calcact,p_category,b_category,s_category,rate_res,rate_comm,rate_ind,"
+				+ "perval,createdby,createddate) " + "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,'" + date + "')";
+//		String insertQuery = "insert into pay_tp_rate_master(ulb_tenantid,unitid,typeid,srno,calcon,"
+//				+ "calcact,p_category,b_category,s_category,rate_res,rate_comm,rate_ind,"
+//				+ "perval,createdby,createddate) " + "values ('" + payTpRateRequest.getTenantId() + "','"
+//				+ payTpRateRequest.getUnitId() + "'," + payTpRateRequest.getTypeId() + "," + count + ",'"
+//				+ payTpRateRequest.getCalCon() + "','" + payTpRateRequest.getCalCact() + "','"
+//				+ payTpRateRequest.getPCategory() + "','" + payTpRateRequest.getBCategory() + "','"
+//				+ payTpRateRequest.getSCategory() + "','" + payTpRateRequest.getRateRes() + "','"
+//				+ payTpRateRequest.getRateComm() + "','" + payTpRateRequest.getRateInd() + "','"
+//				+ payTpRateRequest.getPerVal() + "','" + payTpRateRequest.getCreatedBy() + "','" + date + "')";
+
+//		Object parameters = new Object();
+//		parameters = new Object[] { payTpRateRequest.getTenantId(), payTpRateRequest.getUnitId(),
+//				payTpRateRequest.getTypeId(), count + 1, payTpRateRequest.getCalCon(), payTpRateRequest.getCalCact(),
+//				payTpRateRequest.getPCategory(), payTpRateRequest.getBCategory(), payTpRateRequest.getSCategory(),
+//				payTpRateRequest.getRateRes(), payTpRateRequest.getRateComm(), payTpRateRequest.getRateInd(),
+//				payTpRateRequest.getPerVal(), payTpRateRequest.getCreatedBy() };
+//
+		int insertResult = jdbcTemplate.update(insertQuery, payTpRateRequest.getTenantId(),
+				payTpRateRequest.getUnitId(), payTpRateRequest.getTypeId(), count, payTpRateRequest.getCalCon(),
+				payTpRateRequest.getCalCact(), payTpRateRequest.getPCategory(), payTpRateRequest.getBCategory(),
+				payTpRateRequest.getSCategory(), payTpRateRequest.getRateRes(), payTpRateRequest.getRateComm(),
+				payTpRateRequest.getRateInd(), payTpRateRequest.getPerVal(), payTpRateRequest.getCreatedBy());
+//		int insertResult = jdbcTemplate.update(insertQuery);
+
+		log.info("BPARepository.createPayTpRate: " + insertResult + " data inserted into pay_tp_rate_master table");
+		return insertResult;
+	}
+
+	public List<Map<String, Object>> getPayTpRateByTenantIdAndTypeId(String tenantId, int typeId) {
+		String query = "select trm.id,trm.unitid,trm.srno,trm.calcon,trm.calcact,"
+				+ "ptm.description as p_category, bm.description as b_category, bsm.description as s_category, "
+				+ "trm.rate_res,trm.rate_comm,trm.rate_ind,trm.perval from pay_tp_rate_master trm "
+				+ "LEFT JOIN proposal_type_master as ptm on ptm.id = trm.p_category "
+				+ "LEFT JOIN bcategory_master as bm on bm.id = trm.b_category "
+				+ "LEFT JOIN bscategory_master as bsm on bsm.id = trm.s_category "
+				+ "where trm.ulb_tenantid=? AND trm.typeid=?";
+//		String query = "select id,unitid,srno,calcon,calcact,p_category,b_category,s_category,"
+//				+ "rate_res,rate_comm,rate_ind,perval from pay_tp_rate_master " + "where ulb_tenantid=? AND typeid=?";
+		return jdbcTemplate.queryForList(query, new Object[] { tenantId, typeId });
+	}
+
+	// delete from pay_tp_rate_master table
+	public int deletePayTpRateById(int id) {
+		String deleteQuery = "delete from pay_tp_rate_master where id=" + id;
+		int deleteResult = jdbcTemplate.update(deleteQuery);
+		log.info("BPARepository.deletePayTpRateById: " + deleteResult
+				+ " data deleted from pay_tp_rate_master table of id : " + id);
+		return deleteResult;
+	}
+
+	// insert data into slab_master table
+	public int createSlabMaster(SlabMasterRequest slabMasterRequest) {
+
+		String query = "SELECT COUNT(*) FROM slab_master WHERE ulb_tenantid=? AND paytype_id=?";
+		int count = jdbcTemplate.queryForObject(query,
+				new Object[] { slabMasterRequest.getTenantId(), slabMasterRequest.getPayTypeId() }, Integer.class);
+		log.info("createSlabMaster count : " + count);
+		LocalDateTime date = LocalDateTime.now();
+		count = count + 1;
+
+		String insertQuery = "insert into slab_master(ulb_tenantid,paytype_id,srno,from_val,"
+				+ "to_val,p_category,b_category,s_category,rate_res,rate_comm,rate_ind,"
+				+ "operation,multp_val,max_limit,createdby,createddate) " + "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'"
+				+ date + "')";
+//		String insertQuery = "insert into slab_master(ulb_tenantid,paytype_id,srno,from_val,"
+//				+ "to_val,p_category,b_category,s_category,rate_res,rate_comm,rate_ind,"
+//				+ "operation,multp_val,max_limit,createdby,createddate) " + "values ('"
+//				+ slabMasterRequest.getTenantId() + "'," + slabMasterRequest.getPayTypeId() + "," + count + ",'"
+//				+ slabMasterRequest.getFromVal() + "','" + slabMasterRequest.getToVal() + "','"
+//				+ slabMasterRequest.getPCategory() + "','" + slabMasterRequest.getBCategory() + "','"
+//				+ slabMasterRequest.getSCategory() + "','" + slabMasterRequest.getRateRes() + "','"
+//				+ slabMasterRequest.getRateComm() + "','" + slabMasterRequest.getRateInd() + "','"
+//				+ slabMasterRequest.getOperation() + "','" + slabMasterRequest.getMultpVal() + "','"
+//				+ slabMasterRequest.getMaxLimit() + "','" + slabMasterRequest.getCreatedBy() + "','" + date + "')";
+		int insertResult = jdbcTemplate.update(insertQuery, slabMasterRequest.getTenantId(),
+				slabMasterRequest.getPayTypeId(), count, slabMasterRequest.getFromVal(), slabMasterRequest.getToVal(),
+				slabMasterRequest.getPCategory(), slabMasterRequest.getBCategory(), slabMasterRequest.getSCategory(),
+				slabMasterRequest.getRateRes(), slabMasterRequest.getRateComm(), slabMasterRequest.getRateInd(),
+				slabMasterRequest.getOperation(), slabMasterRequest.getMultpVal(), slabMasterRequest.getMaxLimit(),
+				slabMasterRequest.getCreatedBy());
+//		int insertResult = jdbcTemplate.update(insertQuery);
+
+		log.info("BPARepository.createPayTpRate: " + insertResult + " data inserted into slab_master table");
+		return insertResult;
+	}
+
+	public List<Map<String, Object>> getSlabMasterByTenantIdAndTypeId(String tenantId, int payTypeId) {
+		String query = "select sm.id,sm.srno,sm.from_val,sm.to_val,ptm.description as p_category, "
+				+ "bm.description as b_category, bsm.description as s_category, sm.rate_res,"
+				+ "sm.rate_comm,sm.rate_ind,sm.operation,sm.multp_val,sm.max_limit " + "from slab_master sm "
+				+ "LEFT JOIN proposal_type_master as ptm on ptm.id = sm.p_category "
+				+ "LEFT JOIN bcategory_master as bm on bm.id = sm.b_category "
+				+ "LEFT JOIN bscategory_master as bsm on bsm.id = sm.s_category "
+				+ "Where sm.ulb_tenantid=? AND sm.paytype_id=?";
+//		String query = "select id,srno,from_val,to_val,p_category,b_category,s_category,"
+//				+ "rate_res,rate_comm,rate_ind,operation,multp_val,max_limit from slab_master "
+//				+ "where ulb_tenantid=? AND paytype_id=?";
+		return jdbcTemplate.queryForList(query, new Object[] { tenantId, payTypeId });
+	}
+
+	public int deleteSlabMasterById(int id) {
+		String deleteQuery = "delete from slab_master where id=" + id;
+		int deleteResult = jdbcTemplate.update(deleteQuery);
+		log.info("BPARepository.deleteSlabMasterById: " + deleteResult + " data deleted from slab_master table of id : "
+				+ id);
+		return deleteResult;
 	}
 }

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./scripts/run.sh commonPt obps
+./scripts/run.sh commonPt hrms

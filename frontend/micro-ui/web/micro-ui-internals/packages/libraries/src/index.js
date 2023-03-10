@@ -43,6 +43,7 @@ import { subFormRegistry } from "./subFormRegistry";
 import ReceiptsService from "./services/elements/Receipts";
 import { EDCRService } from "./services/elements/EDCR";
 import { OBPSService } from "./services/elements/OBPS";
+import { OBPSAdminService } from "./services/elements/OBPSAdmin";
 import { NOCService } from "./services/elements/NOC";
 
 const setupLibraries = (Library, props) => {
@@ -74,6 +75,7 @@ const initLibraries = () => {
   setupLibraries("PaymentService", PaymentService);
   setupLibraries("EDCRService", EDCRService);
   setupLibraries("OBPSService", OBPSService);
+  setupLibraries("OBPSAdminService", OBPSAdminService);
   setupLibraries("DateUtils", dateUtils);
   setupLibraries("WorkflowService", WorkflowService);
   setupLibraries("MDMSService", MdmsService);

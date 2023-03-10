@@ -13,7 +13,7 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-public class PayTypeRequest {
+public class ProposalTypeRequest {
 
 	@JsonProperty("id")
 	private int id;
@@ -21,12 +21,9 @@ public class PayTypeRequest {
 	@JsonProperty("tenantId")
 	private String tenantId=null;
 
-	@JsonProperty("chargesTypeName")
-	private String chargesTypeName = null;
+	@JsonProperty("desc")
+	private String desc = null;
 	
-	@JsonProperty("paymentType")
-	private String paymentType = null;
-
 	@JsonProperty("createdBy")
 	private String createdBy = null;
 	
@@ -35,21 +32,6 @@ public class PayTypeRequest {
 	
 	@JsonProperty("defunt")
 	private String defunt = null;
-	
-	@JsonProperty("optflag")
-	private String optFlag = null;
-	
-	@JsonProperty("hrnh")
-	private String hrnh = null;
-	
-	@JsonProperty("depflag")
-	private String depFlag = null;
-	
-	@JsonProperty("fdrflg")
-	private String fdrFlg = null;
-	
-	@JsonProperty("zdaflg")
-	private String zdaFlg = null;
 	
 	
 	

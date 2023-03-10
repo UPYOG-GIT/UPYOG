@@ -13,45 +13,27 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-public class PayTypeRequest {
+public class BSCategoryRequest {
 
 	@JsonProperty("id")
 	private int id;
 	
 	@JsonProperty("tenantId")
-	private String tenantId=null;
+	private String tenantId = null;
 
-	@JsonProperty("chargesTypeName")
-	private String chargesTypeName = null;
-	
-	@JsonProperty("paymentType")
-	private String paymentType = null;
+	@JsonProperty("desc")
+	private String desc = null;
 
 	@JsonProperty("createdBy")
 	private String createdBy = null;
-	
+
 	@JsonProperty("updatedBy")
 	private String updatedBy = null;
-	
+
 	@JsonProperty("defunt")
 	private String defunt = null;
-	
-	@JsonProperty("optflag")
-	private String optFlag = null;
-	
-	@JsonProperty("hrnh")
-	private String hrnh = null;
-	
-	@JsonProperty("depflag")
-	private String depFlag = null;
-	
-	@JsonProperty("fdrflg")
-	private String fdrFlg = null;
-	
-	@JsonProperty("zdaflg")
-	private String zdaFlg = null;
-	
-	
-	
-	
+
+	@JsonProperty("catid")
+	private String catid = null;
+
 }
