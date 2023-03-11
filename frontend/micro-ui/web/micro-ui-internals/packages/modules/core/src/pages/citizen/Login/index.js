@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import { AppContainer, PageBasedInput, BackButton, Card, Toast, LabelPageBasedInput, CardHeader, SearchOnRadioButtons, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { AppContainer, PageBasedInput, BackButton, Card, Toast, LabelPageBasedInput, CardHeader, CardText, SearchOnRadioButtons, CardLabelError } from "@egovernments/digit-ui-react-components";
 import { Route, Switch, useHistory, useRouteMatch, useLocation } from "react-router-dom";
 import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
@@ -10,6 +10,7 @@ import Typography from "@material-ui/core/Typography";
 import { TextField, Button, InputLabel, MenuItem, Box } from "@material-ui/core";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+import useInterval from "../../../hooks/useInterval";
 
 
 const TYPE_REGISTER = { type: "register" };
@@ -62,6 +63,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
   const [selectedCity, setSelectedCity] = useState(() => ({ code: Digit.ULBService.getCitizenCurrentTenant(true) }));
   const [showError, setShowError] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(40);
 
   const { pathname } = useLocation();
 
@@ -107,6 +109,18 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     )
   );
 
+  const handleResendOtp = () => {
+    onResend();
+    setTimeLeft(2);
+  };
+
+  useInterval(
+    () => {
+      setTimeLeft(timeLeft - 1);
+    },
+    timeLeft > 0 ? 1000 : null
+  );
+
   const getUserType = () => Digit.UserService.getType();
 
   const handleOtpChange = (otp) => {
@@ -115,7 +129,16 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
   const handleMobileChange = (e) => {
     // const { value } = event.target;
-    setMobileNumber(e.target.value);
+    // setMobileNumber(e.target.value);
+
+    const newValue = e.target.value;
+    setMobileNumber(newValue);
+   if (newValue.length < 10 || newValue < 10) {
+      setError(true);
+    } else {
+      setError(false);
+    }
+
   };
 
   const handleNameChange = (e) => {
@@ -242,17 +265,19 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         setUser({ info, ...tokens });
       }
     } catch (err) {
-      setIsOtpValid(false);
+      setIsOtpValid(false) ;
     }
   };
 
   const resendOtp = async () => {
-    const { mobileNumber } = params;
+    // const { mobileNumber } = params;
     const data = {
       mobileNumber,
       tenantId: stateCode,
       userType: getUserType(),
+
     };
+    // console.log("data------" + JSON.stringify(data));
     if (!isUserRegistered) {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
     } else if (isUserRegistered) {
@@ -326,7 +351,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
               // width={400}
               // maxHeight='none'
-            //  height='auto'
+              //  height='auto'
               alignItems="center"
               justifyContent={"center"}
               margin="auto"
@@ -345,7 +370,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                   lg: '28%', // 1200px
                   xl: '20%', // 1536px
                 }
-                
+
               }}
 
             >
@@ -367,7 +392,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
               }
               <Route path={`${path}`} exact></Route>
 
-              <TextField fullWidth
+              <TextField
+                fullWidth
                 required
                 style={{ padding: 5 }}
                 type={"number"}
@@ -377,14 +403,18 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                 margin="normal"
                 value={mobileNumber}
                 onChange={handleMobileChange}
-                onInput={(e) => {
-                  e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 10)
+                error={error}
+                helperText={error ? "Invalid Mobile Number" : ""}
+                inputProps={{ 
+                  onInput: (e) => {
+                    e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 10)
+                  }
                 }}
-
-              ></TextField>
+              />
 
               {location.pathname === "/digit-ui/citizen/login/otp" || location.pathname === "/digit-ui/citizen/register/otp" ? (
-                <TextField
+
+                <><TextField
                   fullWidth
                   required
                   label="Enter OTP"
@@ -393,10 +423,27 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                   variant="standard"
                   margin="normal"
                   padding={5}
+                  inputProps={{ 
+                    onInput: (e) => {
+                      e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 6)
+                    }
+                  }}
+                
                   value={otp}
-                  onChange={handleOtpChange}
-                />
+                  onChange={handleOtpChange} /> {timeLeft > 0 ? (
+                    <CardText  style={{color: "red"}}>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
+                  ) : (
+                    <p className="card-text-button" onClick={resendOtp} style={{color: "red"}}>
+                      {t("CS_RESEND_OTP")}
+                    </p>
+                  )}
+                  {!isOtpValid && <CardLabelError>{t("CS_INVALID_OTP")}</CardLabelError>}
+                   
+                 
+                </>
+
               ) : (
+
                 <FormControl variant="standard" fullWidth required>
                   <InputLabel id="cities-label">Select City</InputLabel>
                   <Select

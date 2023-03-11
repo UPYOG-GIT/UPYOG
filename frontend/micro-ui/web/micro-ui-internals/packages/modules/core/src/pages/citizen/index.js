@@ -65,7 +65,7 @@ const Home = ({
           <Box flex="3" className="leftColumn">
             <Chip label="Welcome to Online Building Permission System!" style={{ width: '100%', maxWidth: 500, color: 'white', backgroundColor: '#f47738', marginTop: 20, fontSize: 19 }} />
             <Typography variant="body1" style={{ fontFamily: 'Sans-serif', color: '#444444', padding: 10, marginTop: 10, marginRight: 40, fontSize: 20, textAlign: 'justify' }}>
-              NiwasPass System Enables citizens of Urban areas of Chhattisgarh to upload their requisite documents as per the set procedure and generate the building permission after various checks of the system. In this system, a Unique Chhattisgarh model based initiative has been introduced where Citizens having plot size upto 500 Sq. Mtr can get Direct Building Permission by paying a 1/- application fees.
+              Niwaspass system enables citizens of urban areas of Chhattisgarh to upload their requisite documents as per the set procedure and generate the building permission after various checks of the system. In this system, an unique Chhattisgarh model based initiative has been introduced where citizens having plot size upto 500 Sq. Mtr can get Direct Building Permission by paying a 1/- application fees.
             </Typography>
 
             {/* if not responsive remove marginnRight of above*/}
