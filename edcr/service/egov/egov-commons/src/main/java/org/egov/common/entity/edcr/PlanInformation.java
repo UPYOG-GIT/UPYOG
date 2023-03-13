@@ -156,6 +156,8 @@ public class PlanInformation implements Serializable {
     private transient String provisionsForGreenBuildingsAndSustainability = NA;
     //YES/NO/NA.Extracted from Plan info. Fire Protection And Fire Safety Requirements declared in the plan.
     private transient String fireProtectionAndFireSafetyRequirements = NA;
+    //YES/NO/NA.Extracted from Plan info. Multilevel Parking declared in the plan.
+    private transient String multilevelParking = NA;
     //Extracted from Plan info.Plot number.
     private String plotNo;
     //Extracted from Plan info.Khata number.
@@ -168,6 +170,8 @@ public class PlanInformation implements Serializable {
     private transient String rwhDeclared = NA;
     //Extracted from Plan info. Development Zone for Coverage feature. 
   	private transient String developmentZone;
+  	//Extracted from Plan info. Center for Dhamtari ULB. 
+  	private transient boolean isCenterArea;
   	//no. of tenement in residential occupancy
   	private transient int tenementResidential;
   	//no. of tenement in commercial occupancy
@@ -662,6 +666,22 @@ public class PlanInformation implements Serializable {
 
 	public void setRequiredWaterTankCapacity(BigDecimal requiredWaterTankCapacity) {
 		this.requiredWaterTankCapacity = requiredWaterTankCapacity;
+	}
+
+	public boolean isCenterArea() {
+		return isCenterArea;
+	}
+
+	public void setCenterArea(boolean isCenterArea) {
+		this.isCenterArea = isCenterArea;
+	}
+
+	public String getMultilevelParking() {
+		return multilevelParking;
+	}
+
+	public void setMultilevelParking(String multilevelParking) {
+		this.multilevelParking = multilevelParking;
 	}
 
 	

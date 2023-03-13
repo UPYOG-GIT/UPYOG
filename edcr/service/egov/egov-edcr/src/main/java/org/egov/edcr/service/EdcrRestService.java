@@ -168,6 +168,9 @@ public class EdcrRestService {
 
 	@Autowired
 	private RestTemplate restTemplate;
+	
+//	@Autowired
+//	private PlanInformation planInformation;
 
 	@Value("${egov.services.egov-indexer.url}")
 	private String egovIndexerUrl;
@@ -216,6 +219,8 @@ public class EdcrRestService {
 
 		// add for areaCategory
 //		edcrApplication.setAreaCategory(edcrRequest.getAreaCategory());
+//		edcrApplication.setKhataNo();
+//		String kh=planInformation.getKhataNo();
 		edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
 		edcrApplication.setDxfFile(file);
 

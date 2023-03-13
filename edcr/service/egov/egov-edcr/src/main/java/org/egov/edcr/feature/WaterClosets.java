@@ -69,7 +69,8 @@ public class WaterClosets extends FeatureProcess {
 
 	private static final Logger LOG = LogManager.getLogger(WaterClosets.class);
 	private static final String RULE_41_IV = "41-iv";
-	public static final String WATERCLOSETS_DESCRIPTION = "Water Closets";
+//	public static final String WATERCLOSETS_DESCRIPTION = "Water Closets";
+	public static final String WATERCLOSETS_DESCRIPTION = "Toilet";
 
 	@Override
 	public Plan validate(Plan pl) {
@@ -80,68 +81,83 @@ public class WaterClosets extends FeatureProcess {
 	@Override
 	public Plan process(Plan pl) {
 
-		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Water Closets");
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, REQUIRED);
-		scrutinyDetail.addColumnHeading(4, PROVIDED);
-		scrutinyDetail.addColumnHeading(5, STATUS);
+		
 
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_41_IV);
-		details.put(DESCRIPTION, WATERCLOSETS_DESCRIPTION);
-
-		BigDecimal minHeight = BigDecimal.ZERO, totalArea = BigDecimal.ZERO, minWidth = BigDecimal.ZERO;
+		
 
 		for (Block b : pl.getBlocks()) {
+			ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+			scrutinyDetail.setKey("Block_" + b.getNumber() + "_" + "Toilet");
+			scrutinyDetail.addColumnHeading(1, RULE_NO);
+			scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+			scrutinyDetail.addColumnHeading(3, FLOOR_NO);
+			scrutinyDetail.addColumnHeading(4, REQUIRED);
+			scrutinyDetail.addColumnHeading(5, PROVIDED);
+			scrutinyDetail.addColumnHeading(6, STATUS);
+
+			
+			
 			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
 					&& !b.getBuilding().getFloors().isEmpty()) {
 
 				for (Floor f : b.getBuilding().getFloors()) {
-
-					if (f.getWaterClosets() != null && f.getWaterClosets().getHeights() != null
-							&& !f.getWaterClosets().getHeights().isEmpty() && f.getWaterClosets().getRooms() != null
+					Map<String, String> details = new HashMap<>();
+					details.put(RULE_NO, RULE_41_IV);
+					details.put(DESCRIPTION, WATERCLOSETS_DESCRIPTION);
+					BigDecimal minHeight = BigDecimal.ZERO, totalArea = BigDecimal.ZERO, minWidth = BigDecimal.ZERO;
+					if (f.getWaterClosets() != null && f.getWaterClosets().getRooms() != null
 							&& !f.getWaterClosets().getRooms().isEmpty()) {
+//						if (f.getWaterClosets() != null && f.getWaterClosets().getHeights() != null
+//								&& !f.getWaterClosets().getHeights().isEmpty() && f.getWaterClosets().getRooms() != null
+//								&& !f.getWaterClosets().getRooms().isEmpty()) {
 
-						if (f.getWaterClosets().getHeights() != null && !f.getWaterClosets().getHeights().isEmpty()) {
-							minHeight = f.getWaterClosets().getHeights().get(0).getHeight();
-							for (RoomHeight rh : f.getWaterClosets().getHeights()) {
-								if (rh.getHeight().compareTo(minHeight) < 0) {
-									minHeight = rh.getHeight();
-								}
-							}
-						}
+//						if (f.getWaterClosets().getHeights() != null && !f.getWaterClosets().getHeights().isEmpty()) {
+//							minHeight = f.getWaterClosets().getHeights().get(0).getHeight();
+//							for (RoomHeight rh : f.getWaterClosets().getHeights()) {
+//								if (rh.getHeight().compareTo(minHeight) < 0) {
+//									minHeight = rh.getHeight();
+//								}
+//							}
+//						}
 
 						if (f.getWaterClosets().getRooms() != null && !f.getWaterClosets().getRooms().isEmpty()) {
-							minWidth = f.getWaterClosets().getRooms().get(0).getWidth();
+							minWidth = f.getWaterClosets().getRooms().get(0).getWidth().setScale(2, BigDecimal.ROUND_HALF_UP);
 							for (Measurement m : f.getWaterClosets().getRooms()) {
-								totalArea = totalArea.add(m.getArea());
-								if (m.getWidth().compareTo(minWidth) < 0) {
-									minWidth = m.getWidth();
+//								totalArea = totalArea.add(m.getArea()).setScale(2, BigDecimal.ROUND_HALF_UP);
+								totalArea = m.getArea().setScale(2, BigDecimal.ROUND_HALF_UP);
+//								if (m.getWidth().compareTo(minWidth) < 0) {
+//									minWidth = m.getWidth().setScale(2, BigDecimal.ROUND_HALF_UP);
+//								}
+								if (
+//										minHeight.compareTo(new BigDecimal(2.4)) >= 0 && 
+								totalArea.compareTo(new BigDecimal(2.4)) >= 0 && minWidth.compareTo(new BigDecimal(1.2)) >= 0) {
+
+//									details.put(REQUIRED, "Height >= 2.4, Total Area >= 1.2, Width >= 1");
+									details.put(FLOOR_NO, f.getNumber().toString());
+									details.put(REQUIRED, "Total Area >= 2.4, Width >= 1.2");
+									details.put(PROVIDED, "Total Area = " + totalArea + ", Width = " + minWidth);
+//									details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
+//											+ ", Width >= " + minWidth);
+									details.put(STATUS, Result.Accepted.getResultVal());
+									scrutinyDetail.getDetail().add(details);
+									pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+
+								} else {
+									details.put(FLOOR_NO, f.getNumber().toString());
+//									details.put(REQUIRED, "Height >= 2.4, Total Area >= 1.2, Width >= 1");
+									details.put(REQUIRED, "Total Area >= 2.4, Width >= 1.2");
+									details.put(PROVIDED, "Total Area = " + totalArea
+											+ ", Width = " + minWidth);
+//									details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
+//											+ ", Width >= " + minWidth);
+									details.put(STATUS, Result.Not_Accepted.getResultVal());
+									scrutinyDetail.getDetail().add(details);
+									pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 								}
 							}
 						}
 
-						if (minHeight.compareTo(new BigDecimal(2.4)) >= 0
-								&& totalArea.compareTo(new BigDecimal(1.2)) >= 0
-								&& minWidth.compareTo(new BigDecimal(1)) >= 0) {
-
-							details.put(REQUIRED, "Height >= 2.4, Total Area >= 1.2, Width >= 1");
-							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
-									+ ", Width >= " + minWidth);
-							details.put(STATUS, Result.Accepted.getResultVal());
-							scrutinyDetail.getDetail().add(details);
-							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-
-						} else {
-							details.put(REQUIRED, "Height >= 2.4, Total Area >= 1.2, Width >= 1");
-							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
-									+ ", Width >= " + minWidth);
-							details.put(STATUS, Result.Not_Accepted.getResultVal());
-							scrutinyDetail.getDetail().add(details);
-							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-						}
+						
 
 					}
 

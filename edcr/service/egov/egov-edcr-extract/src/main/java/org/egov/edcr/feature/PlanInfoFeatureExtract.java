@@ -5,6 +5,7 @@ import static org.egov.edcr.constants.DxfFileConstants.OPENING_ABOVE_2_1_ON_SIDE
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,8 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 	private LayerNames layerNames;
 	@Autowired
 	private Util util;
+	
+//	private BigDecimal roadArea=BigDecimal.ZERO;
 
 	@Override
 	public PlanDetail extract(PlanDetail pl) {
@@ -47,6 +50,8 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		VirtualBuilding virtualBuilding = new VirtualBuilding();
 
 		pl.setVirtualBuilding(virtualBuilding);
+
+//		extractRoadArea(pl);
 
 		extractPlotDetails(pl);
 
@@ -67,13 +72,32 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 
 	}
 
+	private void extractRoadArea(PlanDetail pl) {
+		List<DXFLWPolyline> roadAreaLayerNames = Util.getPolyLinesByLayer(pl.getDoc(),
+				layerNames.getLayerName("LAYER_NAME_ROAD_AREA"));
+		BigDecimal roadArea=BigDecimal.ZERO;
+		for(DXFLWPolyline roadAreaLayerPolyLine : roadAreaLayerNames) {
+//			if (roadAreaLayer.) {
+//				DXFLWPolyline frontRoadAreaPolyLine = roadAreaLayer.get(0);
+				((PlotDetail) pl.getPlot()).setRoadAreaPolyLine(roadAreaLayerPolyLine);
+//				pl.getPlot().addRoadArea(Util.getPolyLineArea(frontRoadAreaPolyLine));
+				roadArea=roadArea.add(Util.getPolyLineArea(roadAreaLayerPolyLine));
+//			}
+		}
+		
+		pl.setRoadArea(roadArea.setScale(2, RoundingMode.HALF_UP));
+	}
+
 	private void extractPlotDetails(PlanDetail pl) {
+		
 		List<DXFLWPolyline> plotBoundaries = Util.getPolyLinesByLayer(pl.getDoc(),
 				layerNames.getLayerName("LAYER_NAME_PLOT_BOUNDARY"));
 		if (!plotBoundaries.isEmpty()) {
 			DXFLWPolyline plotBndryPolyLine = plotBoundaries.get(0);
 			((PlotDetail) pl.getPlot()).setPolyLine(plotBndryPolyLine);
 			pl.getPlot().setPlotBndryArea(Util.getPolyLineArea(plotBndryPolyLine));
+//			pl.getPlot().setNetPlotArea(pl.getPlot().getPlotBndryArea().subtract(pl.getPlot().getRoadArea()));
+//			pl.getPlot().setNetPlotArea(pl.getPlot().getPlotBndryArea().subtract(pl.getRoadArea()));
 		} else
 			pl.addError(layerNames.getLayerName("LAYER_NAME_PLOT_BOUNDARY"),
 					getLocaleMessage(OBJECTNOTDEFINED, layerNames.getLayerName("LAYER_NAME_PLOT_BOUNDARY")));
@@ -487,6 +511,18 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 			pl.addError(DxfFileConstants.DEVELOPMENT_ZONE,
 					getLocaleMessage(OBJECTNOTDEFINED, DxfFileConstants.DEVELOPMENT_ZONE + " of PLAN_INFO layer"));
 
+		// fetch Center Area from Plan Info Layer for Dhamtari ULB
+		String isCenterArea = planInfoProperties.get(DxfFileConstants.CENTER_AREA);
+		if (StringUtils.isNotBlank(isCenterArea)) {
+			if (isCenterArea.equalsIgnoreCase(DcrConstants.YES)) {
+				pi.setCenterArea(true);
+			} else if (isCenterArea.equalsIgnoreCase(DcrConstants.NO)) {
+				pi.setCenterArea(false);
+			} else
+				pl.addError(DxfFileConstants.CENTER_AREA,
+						DxfFileConstants.CENTER_AREA + " cannot be accepted , should be either YES/NO.");
+		}
+
 		String plotDepth = planInfoProperties.get(DxfFileConstants.AVG_PLOT_DEPTH);
 		if (StringUtils.isNotBlank(plotDepth)) {
 			plotDepth = plotDepth.replaceAll(digitsRegex, "");
@@ -526,6 +562,18 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 				pi.setNocCollectorGvtLand(DcrConstants.NA);
 		} else
 			pi.setNocCollectorGvtLand(DcrConstants.NA);
+		
+		
+		String multilevelParking = planInfoProperties.get(DxfFileConstants.MULTILEVEL_PARKING);
+		if (StringUtils.isNotBlank(multilevelParking)) {
+			if (multilevelParking.equalsIgnoreCase(DcrConstants.YES))
+				pi.setMultilevelParking(DcrConstants.YES);
+			else if (multilevelParking.equalsIgnoreCase(DcrConstants.NO))
+				pi.setMultilevelParking(DcrConstants.NO);
+			else
+				pi.setMultilevelParking(DcrConstants.NA);
+		} else
+			pi.setMultilevelParking(DcrConstants.NA);
 
 		String nocNearDefenceAerodomes = planInfoProperties
 				.get(DxfFileConstants.NOC_FOR_CONSTRUCTION_NEAR_DEFENCE_AERODOMES);

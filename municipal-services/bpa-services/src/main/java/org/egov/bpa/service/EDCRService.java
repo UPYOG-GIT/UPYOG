@@ -87,12 +87,12 @@ public class EDCRService {
 		BeanUtils.copyProperties(request.getRequestInfo(), edcrRequestInfo);
 		Map<String, List<String>> masterData = mdmsValidator.getAttributeValues(mdmsData);
 
-		log.info("masterData: " + masterData);
+//		log.info("masterData: " + masterData);
 		LinkedHashMap responseMap = null;
 		try {
 			responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri,
 					new RequestInfoWrapper(edcrRequestInfo));
-			log.info("responseMap: " + responseMap);
+//			log.info("responseMap: " + responseMap);
 		} catch (ServiceCallException se) {
 			throw new CustomException(BPAErrorConstants.EDCR_ERROR, " EDCR Number is Invalid");
 		}
@@ -191,7 +191,7 @@ public class EDCRService {
 															// would be same in
 															// the list
 			Double plotArea = plotAreas.get(0);
-			log.info("masterData: " + masterData);
+//			log.info("masterData: " + masterData);
 			List jsonOutput = JsonPath.read(masterData, BPAConstants.RISKTYPE_COMPUTATION);
 			log.info("jsonOutput: " + jsonOutput);
 			String filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea

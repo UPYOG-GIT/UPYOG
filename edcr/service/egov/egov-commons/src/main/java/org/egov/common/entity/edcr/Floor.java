@@ -69,6 +69,7 @@ public class Floor extends Measurement {
     // this is for differently able people
     private List<Measurement> specialWaterClosets = new ArrayList<>();
     private List<Measurement> coverageDeduct = new ArrayList<>();
+    private List<Measurement> waterCloset = new ArrayList<>();
     private String name;
     private Integer number;
     private List<BigDecimal> exitWidthDoor = new ArrayList<>();
@@ -103,6 +104,8 @@ public class Floor extends Measurement {
     private List<GlassFacadeOpening> glassFacadeOpenings = new ArrayList<>();
     // Doors for version 1.1.1
     private List<Door> doors = new ArrayList<>();
+    
+    private List<Window> windows = new ArrayList<>();
 
     // From 2.0.0 version
     private List<BigDecimal> heightFromFloorToBottomOfBeam;
@@ -611,13 +614,38 @@ public class Floor extends Measurement {
     public void setDoors(List<Door> doors) {
         this.doors = doors;
     }
+    
+    public void addDoor(Door door) {
+        this.doors.add(door);
+    }
 
-    public List<BigDecimal> getHeightFromFloorToBottomOfBeam() {
+    public List<Window> getWindows() {
+		return windows;
+	}
+
+	public void setWindows(List<Window> windows) {
+		this.windows = windows;
+	}
+	
+	public void addWindow(Window window) {
+        this.windows.add(window);
+    }
+
+	public List<BigDecimal> getHeightFromFloorToBottomOfBeam() {
         return heightFromFloorToBottomOfBeam;
     }
 
     public void setHeightFromFloorToBottomOfBeam(List<BigDecimal> heightFromFloorToBottomOfBeam) {
         this.heightFromFloorToBottomOfBeam = heightFromFloorToBottomOfBeam;
     }
+
+	public List<Measurement> getWaterCloset() {
+		return waterCloset;
+	}
+
+	public void setWaterCloset(List<Measurement> waterCloset) {
+		this.waterCloset = waterCloset;
+	}
+
 
 }

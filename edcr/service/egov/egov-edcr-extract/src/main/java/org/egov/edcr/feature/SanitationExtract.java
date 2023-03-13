@@ -78,6 +78,20 @@ public class SanitationExtract extends FeatureExtract {
                         f.getSpecialWaterClosets().add(m);
                     }
             }
+        
+        //Water Closet Floor Wise
+        for (Block block : pl.getBlocks())
+        	for (Floor f : block.getBuilding().getFloors()) {
+        		String layerName1 = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + block.getNumber() + "_"
+        				+ layerNames.getLayerName("LAYER_NAME_FLOOR_NAME_PREFIX") + f.getNumber() + "_"
+        				+ layerNames.getLayerName("LAYER_NAME_WATER_CLOSET");
+        		List<DXFLWPolyline> polyLinesByLayer = Util.getPolyLinesByLayer(pl.getDoc(), layerName1);
+        		if (!polyLinesByLayer.isEmpty())
+        			for (DXFLWPolyline pline : polyLinesByLayer) {
+        				Measurement m = new MeasurementDetail(pline, true);
+        				f.getWaterCloset().add(m);
+        			}
+        	}
 
         // Wash Basins for this will be added floor wise
 

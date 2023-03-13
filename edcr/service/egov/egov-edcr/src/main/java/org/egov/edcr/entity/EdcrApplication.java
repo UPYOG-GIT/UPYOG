@@ -97,7 +97,15 @@ public class EdcrApplication extends AbstractAuditable {
     private String architectInformation;
 
     private String projectType;
-
+    
+//    private String khataNo;
+//    
+//    private String mauza;
+//    
+//    private String plotNo;
+//    
+//    private String plotArea;
+    
     private transient String permitDateTemp;
 
     private transient Map<String, List<Object>> mdmsMasterData;
@@ -309,6 +317,39 @@ public class EdcrApplication extends AbstractAuditable {
         this.deviationStatus = deviationStatus;
     }
 
+//	public String getKhataNo() {
+//		return khataNo;
+//	}
+//
+//	public void setKhataNo(String khataNo) {
+//		this.khataNo = khataNo;
+//	}
+//
+//	public String getMauza() {
+//		return mauza;
+//	}
+//
+//	public void setMauza(String mauza) {
+//		this.mauza = mauza;
+//	}
+//
+//	public String getPlotNo() {
+//		return plotNo;
+//	}
+//
+//	public void setPlotNo(String plotNo) {
+//		this.plotNo = plotNo;
+//	}
+//
+//	public String getPlotArea() {
+//		return plotArea;
+//	}
+//
+//	public void setPlotArea(String plotArea) {
+//		this.plotArea = plotArea;
+//	}
+
+    
 //	public String getAreaCategory() {
 //		return areaCategory;
 //	}

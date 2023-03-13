@@ -256,6 +256,13 @@ public class Parking_Birgaon extends FeatureProcess {
 
 	public void processParking(Plan pl) {
 		LOGGER.info("inside processParking()");
+		
+		ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
+		scrutinyDetail1.setKey("Common_Podium Parking");
+		scrutinyDetail1.addColumnHeading(1, DESCRIPTION);
+		scrutinyDetail1.addColumnHeading(2, PROVIDED);
+		scrutinyDetail1.addColumnHeading(3, STATUS);
+		
 		ParkingHelper helper = new ParkingHelper();
 		// checkDimensionForCarParking(pl, helper);
 
@@ -285,12 +292,15 @@ public class Parking_Birgaon extends FeatureProcess {
 		BigDecimal basementParkingArea = pl.getParkingDetails().getBasementCars().stream()
 				.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
 
+		BigDecimal podiumParkingArea = pl.getParkingDetails().getPodium().stream()
+				.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
+
 		noOfBeds = pl.getPlanInformation().getNoOfBeds();
 		noOfSeats = pl.getPlanInformation().getNoOfSeats();
 		
 		OccupancyTypeHelper occupancyTypeHelper=null;
 		for (Block block : pl.getBlocks()) {
-			
+			String blockNumber=block.getNumber();
 //			for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
 //				occupancyTypeHelper=occupancy.getTypeHelper();
 //				break;
@@ -311,7 +321,22 @@ public class Parking_Birgaon extends FeatureProcess {
 			}
 		}
 		
-		
+		if(podiumParkingArea.compareTo(BigDecimal.ZERO)==0) {
+			Map<String, String> details = new HashMap<>();
+			details.put(DESCRIPTION, "Podium Parking");
+			details.put(PROVIDED, "Podium Parking not Provided");
+			details.put(STATUS, "");
+			scrutinyDetail1.getDetail().add(details);
+			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
+			
+		}else {
+			Map<String, String> details = new HashMap<>();
+			details.put(DESCRIPTION, "Podium Parking");
+			details.put(PROVIDED, podiumParkingArea.toString());
+			details.put(STATUS, "");
+			scrutinyDetail1.getDetail().add(details);
+			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
+		}
 
 		BigDecimal totalProvidedCarParkArea = openParkingArea.add(coverParkingArea).add(basementParkingArea)
 				.add(stiltParkingArea).add(lowerGroungFloorParkingArea);
@@ -338,10 +363,11 @@ public class Parking_Birgaon extends FeatureProcess {
 
 		// checkDimensionForTwoWheelerParking(pl, helper);
 		// checkAreaForLoadUnloadSpaces(pl);
+		boolean isSingleFamilyRes=false;
 		if (occupancyTypeHelper.getSubtype() != null && A_R.equals(occupancyTypeHelper.getSubtype().getCode())) {
-			totalProvidedCarParkArea = BigDecimal.valueOf(-1);
+			isSingleFamilyRes=true;
 		}
-		if (totalProvidedCarParkArea.doubleValue() == 0
+		if (totalProvidedCarParkArea.doubleValue() == 0 && !isSingleFamilyRes
 //				&& 
 //				(mostRestrictiveOccupancy != null && 
 //				!A_R.equals(mostRestrictiveOccupancy.getSubtype().getCode())
@@ -362,6 +388,7 @@ public class Parking_Birgaon extends FeatureProcess {
 			setReportOutputDetails(pl, RULE_81, RULE_81_DESCRIPTION, requiredVisitorParkingArea + SQMTRS,
 					providedVisitorParkingArea + SQMTRS, Result.Accepted.getResultVal());
 		}
+		
 
 		LOGGER.info("******************Require no of Car Parking***************" + helper.totalRequiredCarParking);
 	}
@@ -448,7 +475,6 @@ public class Parking_Birgaon extends FeatureProcess {
 
 	private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
 			String status) {
-		LOGGER.info("inside setReportOutputDetails()");
 		Map<String, String> details = new HashMap<>();
 		details.put(RULE_NO, ruleNo);
 		details.put(DESCRIPTION, ruleDesc);
@@ -457,6 +483,24 @@ public class Parking_Birgaon extends FeatureProcess {
 		details.put(STATUS, status);
 		scrutinyDetail.getDetail().add(details);
 		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+	}
+	
+	private void setReportOutputDetailsParking(Plan pl, String ruleNo, String ruleDesc, String actual,
+			String status) {
+		ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
+		scrutinyDetail1.setKey("Common_Podium Parking");
+		scrutinyDetail1.addColumnHeading(1, RULE_NO);
+		scrutinyDetail1.addColumnHeading(2, DESCRIPTION);
+		scrutinyDetail1.addColumnHeading(4, PROVIDED);
+		scrutinyDetail1.addColumnHeading(5, STATUS);
+		
+		Map<String, String> details = new HashMap<>();
+		details.put(RULE_NO, ruleNo);
+		details.put(DESCRIPTION, ruleDesc);
+		details.put(PROVIDED, actual);
+		details.put(STATUS, status);
+		scrutinyDetail1.getDetail().add(details);
+		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
 	}
 
 	private void validateSpecialParking(Plan pl, ParkingHelper helper, BigDecimal totalBuiltupArea) {

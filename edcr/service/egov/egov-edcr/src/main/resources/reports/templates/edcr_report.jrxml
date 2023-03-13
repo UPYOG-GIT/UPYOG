@@ -1364,6 +1364,53 @@
 				</textElement>
 				<textFieldExpression><![CDATA["10"]]></textFieldExpression>
 			</textField>
+			
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="28" y="660" width="343" height="25" uuid="571e3ece-34d8-4577-a1a1-ab0f6a4bc5f7"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="10"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Multilevel Parking Present ?"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="371" y="660" width="177" height="25" uuid="51126563-9b73-4332-8577-f8a87965f306"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{planInformation}.getMultilevelParking()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="12" y="660" width="16" height="25" uuid="417e51bc-efb5-41da-90e3-177492acbf7a"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="10"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA["11"]]></textFieldExpression>
+			</textField>
+			
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="304" y="144" width="114" height="21" uuid="9970f7fd-bfb1-42a3-88d4-6eaf28aad7ea"/>
 				<box>

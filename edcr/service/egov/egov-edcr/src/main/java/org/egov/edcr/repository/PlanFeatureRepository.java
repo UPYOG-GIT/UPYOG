@@ -208,8 +208,8 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(Chimney.class);
         features.add(pf);
 
-//        pf = new PlanFeature(HeightOfRoom.class);
-//        features.add(pf);
+        pf = new PlanFeature(HeightOfRoom.class);
+        features.add(pf);
 
         pf = new PlanFeature(Kitchen.class);
         features.add(pf);
@@ -232,8 +232,8 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(GeneralStair.class);
         features.add(pf);
 
-//        pf = new PlanFeature(RampService.class);
-//        features.add(pf);
+        pf = new PlanFeature(RampService.class);
+        features.add(pf);
 
         pf = new PlanFeature(CommonFeature.class);
         features.add(pf);
@@ -256,8 +256,8 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(SegregatedToilet.class);
         features.add(pf);
 
-//        pf = new PlanFeature(Sanitation.class);
-//        features.add(pf);
+        pf = new PlanFeature(Sanitation.class);
+        features.add(pf);
 
         pf = new PlanFeature(MeanOfAccess.class);
         features.add(pf);
@@ -337,8 +337,8 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(OpenStairService.class);
         features.add(pf);
 
-        pf = new PlanFeature(Ventilation.class);
-        features.add(pf);
+//        pf = new PlanFeature(Ventilation.class);
+//        features.add(pf);
         
         pf = new PlanFeature(VehicleRamp.class);
         features.add(pf);

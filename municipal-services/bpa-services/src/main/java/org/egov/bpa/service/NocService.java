@@ -50,14 +50,14 @@ public class NocService {
 	public void createNocRequest(BPARequest bpaRequest, Object mdmsData) {
 		BPA bpa = bpaRequest.getBPA();
 		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
-		log.debug("applicationType in NOC is " + edcrResponse.get(BPAConstants.APPLICATIONTYPE));
-		log.debug("serviceType in NOC is " + edcrResponse.get(BPAConstants.SERVICETYPE));
+		log.info("applicationType in NOC is " + edcrResponse.get(BPAConstants.APPLICATIONTYPE));
+		log.info("serviceType in NOC is " + edcrResponse.get(BPAConstants.SERVICETYPE));
 		
 		String riskType = "ALL";
 		if (StringUtils.isEmpty(bpa.getRiskType()) || bpa.getRiskType().equalsIgnoreCase("LOW")) {
 			riskType = bpa.getRiskType();
 		}
-		log.debug("Fetching NocTypeMapping record of riskType : " + riskType);
+		log.info("Fetching NocTypeMapping record of riskType : " + riskType);
 
 		String nocPath = BPAConstants.NOCTYPE_REQUIRED_MAP
 				.replace("{1}", edcrResponse.get(BPAConstants.APPLICATIONTYPE))
@@ -78,7 +78,7 @@ public class NocService {
 				createNoc(nocRequest);
 			}
 		} else {
-			log.debug("NOC Mapping is not found!!");
+			log.info("NOC Mapping is not found!!");
 		}
 
 	}

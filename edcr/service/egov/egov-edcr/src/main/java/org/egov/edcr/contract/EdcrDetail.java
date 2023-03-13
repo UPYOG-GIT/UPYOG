@@ -55,40 +55,48 @@ import org.egov.common.entity.edcr.Plan;
 
 public class EdcrDetail {
 
-    private String dxfFile;
+	private String dxfFile;
 
-    private String updatedDxfFile;
+	private String updatedDxfFile;
 
-    private String planReport;
+	private String planReport;
 
-    private String transactionNumber;
+	private String transactionNumber;
 
-    private Date applicationDate;
+	private Date applicationDate;
 
-    private String applicationNumber;
+	private String applicationNumber;
 
-    private String status;
+	private String status;
 
-    private String edcrNumber;
+	private String edcrNumber;
 
-    private String tenantId;
+	private String tenantId;
 
-    private String errors;
+	private String errors;
 
-    private List<String> planPdfs;
+	private List<String> planPdfs;
 
-    private Plan planDetail;
+	private Plan planDetail;
 
-    private String permitNumber;
+	private String permitNumber;
 
-    private Date permitDate;
+	private Date permitDate;
 
-    private String appliactionType;
+	private String appliactionType;
 
-    private String applicationSubType;
+	private String applicationSubType;
 
-    private String comparisonEdcrNumber;
-    
+	private String comparisonEdcrNumber;
+
+	private String khataNo;
+
+	private String mauza;
+
+	private String plotNo;
+
+	private String plotArea;
+
 //    private String areaCategory;  //add for areaCategory used in Coverage feature
 //
 //    public String getAreaCategory() {
@@ -100,148 +108,183 @@ public class EdcrDetail {
 //	}
 
 	public String getPlanReport() {
-        return planReport;
-    }
+		return planReport;
+	}
 
-    public void setPlanReport(String planReport) {
-        this.planReport = planReport;
-    }
+	public void setPlanReport(String planReport) {
+		this.planReport = planReport;
+	}
 
-    public String getStatus() {
-        return status;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-    public Plan getPlanDetail() {
-        return planDetail;
-    }
+	public Plan getPlanDetail() {
+		return planDetail;
+	}
 
-    public void setPlanDetail(Plan planDetail) {
-        this.planDetail = planDetail;
-    }
+	public void setPlanDetail(Plan planDetail) {
+		this.planDetail = planDetail;
+	}
 
-    public List<String> getPlanPdfs() {
-        return planPdfs;
-    }
+	public List<String> getPlanPdfs() {
+		return planPdfs;
+	}
 
-    public void setPlanPdfs(List<String> planPdfs) {
-        this.planPdfs = planPdfs;
-    }
+	public void setPlanPdfs(List<String> planPdfs) {
+		this.planPdfs = planPdfs;
+	}
 
-    public String getEdcrNumber() {
-        return edcrNumber;
-    }
+	public String getEdcrNumber() {
+		return edcrNumber;
+	}
 
-    public void setEdcrNumber(String edcrNumber) {
-        this.edcrNumber = edcrNumber;
-    }
+	public void setEdcrNumber(String edcrNumber) {
+		this.edcrNumber = edcrNumber;
+	}
 
-    public String getTransactionNumber() {
-        return transactionNumber;
-    }
+	public String getTransactionNumber() {
+		return transactionNumber;
+	}
 
-    public void setTransactionNumber(String transactionNumber) {
-        this.transactionNumber = transactionNumber;
-    }
+	public void setTransactionNumber(String transactionNumber) {
+		this.transactionNumber = transactionNumber;
+	}
 
-    public void setApplicationDate(Date applicationDate) {
-        this.applicationDate = applicationDate;
-    }
+	public void setApplicationDate(Date applicationDate) {
+		this.applicationDate = applicationDate;
+	}
 
-    public Date getApplicationDate() {
-        return applicationDate;
-    }
+	public Date getApplicationDate() {
+		return applicationDate;
+	}
 
-    public void setApplicationNumber(String applicationNumber) {
-        this.applicationNumber = applicationNumber;
-    }
+	public void setApplicationNumber(String applicationNumber) {
+		this.applicationNumber = applicationNumber;
+	}
 
-    public String getApplicationNumber() {
-        return applicationNumber;
-    }
+	public String getApplicationNumber() {
+		return applicationNumber;
+	}
 
-    public String getTenantId() {
-        return tenantId;
-    }
+	public String getTenantId() {
+		return tenantId;
+	}
 
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
+	public void setTenantId(String tenantId) {
+		this.tenantId = tenantId;
+	}
 
-    public String getDxfFile() {
-        return dxfFile;
-    }
+	public String getDxfFile() {
+		return dxfFile;
+	}
 
-    public void setDxfFile(String dxfFile) {
-        this.dxfFile = dxfFile;
-    }
+	public void setDxfFile(String dxfFile) {
+		this.dxfFile = dxfFile;
+	}
 
-    public String getUpdatedDxfFile() {
-        return updatedDxfFile;
-    }
+	public String getUpdatedDxfFile() {
+		return updatedDxfFile;
+	}
 
-    public void setUpdatedDxfFile(String updatedDxfFile) {
-        this.updatedDxfFile = updatedDxfFile;
-    }
+	public void setUpdatedDxfFile(String updatedDxfFile) {
+		this.updatedDxfFile = updatedDxfFile;
+	}
 
-    public String getErrors() {
-        return errors;
-    }
+	public String getErrors() {
+		return errors;
+	}
 
-    public void setErrors(String errors) {
-        this.errors = errors;
-    }
+	public void setErrors(String errors) {
+		this.errors = errors;
+	}
 
-    public String getPermitNumber() {
-        return permitNumber;
-    }
+	public String getPermitNumber() {
+		return permitNumber;
+	}
 
-    public void setPermitNumber(String permitNumber) {
-        this.permitNumber = permitNumber;
-    }
+	public void setPermitNumber(String permitNumber) {
+		this.permitNumber = permitNumber;
+	}
 
-    public Date getPermitDate() {
-        return permitDate;
-    }
+	public Date getPermitDate() {
+		return permitDate;
+	}
 
-    public void setPermitDate(Date permitDate) {
-        this.permitDate = permitDate;
-    }
+	public void setPermitDate(Date permitDate) {
+		this.permitDate = permitDate;
+	}
 
-    public String getAppliactionType() {
-        return appliactionType;
-    }
+	public String getAppliactionType() {
+		return appliactionType;
+	}
 
-    public void setAppliactionType(String appliactionType) {
-        this.appliactionType = appliactionType;
-    }
+	public void setAppliactionType(String appliactionType) {
+		this.appliactionType = appliactionType;
+	}
 
-    public String getApplicationSubType() {
-        return applicationSubType;
-    }
+	public String getApplicationSubType() {
+		return applicationSubType;
+	}
 
-    public void setApplicationSubType(String applicationSubType) {
-        this.applicationSubType = applicationSubType;
-    }
+	public void setApplicationSubType(String applicationSubType) {
+		this.applicationSubType = applicationSubType;
+	}
 
-    public String getComparisonEdcrNumber() {
-        return comparisonEdcrNumber;
-    }
+	public String getComparisonEdcrNumber() {
+		return comparisonEdcrNumber;
+	}
 
-    public void setComparisonEdcrNumber(String comparisonEdcrNumber) {
-        this.comparisonEdcrNumber = comparisonEdcrNumber;
-    }
+	public void setComparisonEdcrNumber(String comparisonEdcrNumber) {
+		this.comparisonEdcrNumber = comparisonEdcrNumber;
+	}
 
-    @Override
-    public String toString() {
-        return "EdcrDetail [transactionNumber=" + transactionNumber + ", applicationDate=" + applicationDate
-                + ", applicationNumber=" + applicationNumber + ", status=" + status + ", edcrNumber=" + edcrNumber + ", tenantId="
-                + tenantId + ", errors=" + errors + ", planPdfs=" + planPdfs + ", planDetail=" + planDetail + ", permitNumber="
-                + permitNumber + ", permitDate=" + permitDate + ", appliactionType=" + appliactionType + ", applicationSubType="
-                + applicationSubType + ", comparisonEdcrNumber=" + comparisonEdcrNumber + "]";
-    }
+	
+	
+	public String getKhataNo() {
+		return khataNo;
+	}
+
+	public void setKhataNo(String khataNo) {
+		this.khataNo = khataNo;
+	}
+
+	public String getMauza() {
+		return mauza;
+	}
+
+	public void setMauza(String mauza) {
+		this.mauza = mauza;
+	}
+
+	public String getPlotNo() {
+		return plotNo;
+	}
+
+	public void setPlotNo(String plotNo) {
+		this.plotNo = plotNo;
+	}
+
+	public String getPlotArea() {
+		return plotArea;
+	}
+
+	public void setPlotArea(String plotArea) {
+		this.plotArea = plotArea;
+	}
+
+	@Override
+	public String toString() {
+		return "EdcrDetail [transactionNumber=" + transactionNumber + ", applicationDate=" + applicationDate
+				+ ", applicationNumber=" + applicationNumber + ", status=" + status + ", edcrNumber=" + edcrNumber
+				+ ", tenantId=" + tenantId + ", errors=" + errors + ", planPdfs=" + planPdfs + ", planDetail="
+				+ planDetail + ", permitNumber=" + permitNumber + ", permitDate=" + permitDate + ", appliactionType="
+				+ appliactionType + ", applicationSubType=" + applicationSubType + ", comparisonEdcrNumber="
+				+ comparisonEdcrNumber + "]";
+	}
 
 }
