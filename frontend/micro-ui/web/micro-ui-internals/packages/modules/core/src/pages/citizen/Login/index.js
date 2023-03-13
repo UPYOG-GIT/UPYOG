@@ -445,7 +445,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
               ) : (
 
                 <FormControl variant="standard" fullWidth required>
-                  <InputLabel id="cities-label">Select City</InputLabel>
+                  <InputLabel id="cities-label">Select Municipal Corporation</InputLabel>
                   <Select
                     labelId="cities-label"
                     id="cities"

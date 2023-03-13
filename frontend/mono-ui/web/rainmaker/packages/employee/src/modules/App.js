@@ -85,7 +85,7 @@ class App extends Component {
       loginScreens = true;
     }    
     let sourceUrl = `${window.location.origin}/employee`;
-    sourceUrl="https://s3.ap-south-1.amazonaws.com/egov-qa-assets";  // changes for the image configured in s3 bucket
+    sourceUrl="https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com";  // changes for the image configured in s3 bucket
 
     let dashboardScreen = false;
     if (window.location.pathname.includes('integration/dss')) {
@@ -111,7 +111,7 @@ class App extends Component {
         <CommonShareContainer componentId="rainmaker-common-share" />
 
         {!loginScreens && !dashboardScreen && isFixedFooter&& <div className={"jk-footer"} style={{ width: '100%', position: 'fixed', bottom: 0, color:"#22394d" }} >
-            <img style={{ display: "inline-flex", height: '1.4em' }} className={"jk-footer-image-cursor"} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
+            <img style={{ display: "inline-flex", height: '1.4em' }} className={"jk-footer-image-cursor"} alt={"Powered by UPYOG"} src={`${sourceUrl}/digit-footer+copy.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
               window.open('https://www.digit.org/', '_blank').focus();
             }}></img>
             <span style={{ margin: "0 10px" }}>|</span>
@@ -122,7 +122,7 @@ class App extends Component {
 
         {!loginScreens && !dashboardScreen && !isFixedFooter&&<div style={{ width: '100%', display: 'flex', flexFlow: 'column', position:"fixed", bottom: "0" }}>
           <div style={{ display: 'flex', justifyContent: 'center', color:"#22394d" }}>
-            <img style={{ display: "inline-flex", height: '1.4em' }} className={"jk-footer-image-cursor"} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
+            <img style={{ display: "inline-flex", height: '1.4em' }} className={"jk-footer-image-cursor"} alt={"Powered by UPYOG"} src={`${sourceUrl}/digit-footer+copy.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
               window.open('https://www.digit.org/', '_blank').focus();
             }}></img>
             <span style={{ margin: "0 10px" }}>|</span>
@@ -134,7 +134,7 @@ class App extends Component {
         
         {loginScreens && <div style={{ width: '100%', position: 'fixed', bottom: 0 }} >
           <div style={{ display: 'flex', justifyContent: 'center', color:"white" }}>
-            <img style={{ display: "inline-flex", height: '1.4em' }} className={"jk-footer-image-cursor"} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer-bw.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
+            <img style={{ display: "inline-flex", height: '1.4em' }} className={"jk-footer-image-cursor"} alt={"Powered by UPYOG"} src={`${sourceUrl}/digit-footer+copy.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
               window.open('https://www.digit.org/', '_blank').focus();
             }}></img>
             <span style={{ margin: "0 10px" }}>|</span>
