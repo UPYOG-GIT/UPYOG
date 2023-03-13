@@ -48,6 +48,7 @@
 package org.egov.common.entity.edcr;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 /*
@@ -75,6 +76,10 @@ public class Plot extends Measurement {
     private Boolean smallPlot = false;
 
     private BigDecimal plotBndryArea;
+
+    private BigDecimal roadArea;
+    
+    private BigDecimal netPlotArea;
 
     public SetBack getLevelZeroSetBack() {
         SetBack setBack = null;
@@ -181,4 +186,25 @@ public class Plot extends Measurement {
     public void setPlotBndryArea(BigDecimal plotBndryArea) {
         this.plotBndryArea = plotBndryArea;
     }
+
+	public BigDecimal getRoadArea() {
+		return roadArea;
+	}
+
+	public void setRoadArea(BigDecimal roadArea) {
+		this.roadArea = roadArea;
+	}
+	
+	public void addRoadArea(BigDecimal roadArea) {
+		this.roadArea=this.roadArea.add(roadArea);
+	}
+
+	public BigDecimal getNetPlotArea() {
+		return netPlotArea;
+	}
+
+	public void setNetPlotArea(BigDecimal netPlotArea) {
+		this.netPlotArea = netPlotArea;
+	}
+    
 }

@@ -44,7 +44,7 @@ public class DxfFileConstants {
     public static final String D_A = "D-A"; // Religious
     public static final String D_AW = "D-AW";// Assembly Worship
     public static final String D_BT = "D-BT";// Bus Terminal
-    public static final String D_MHCT = "D-MHCT";//Meeting Hall/Cinema Theater   //add for birgaon requirement
+    public static final String D_MHCT = "D-MHCT";//Meeting Hall/Cinema Theater   //add for CG requirement
     
    
 

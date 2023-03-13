@@ -69,5 +69,6 @@ public class SanityHelper implements Serializable {
     public String ruleDescription;
     public Double failedAreaSpecialWc = 0d;
     public Double failedDimensionSpecialWc = 0d;
+    public int requiredWC = 0;
 
 }

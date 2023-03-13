@@ -75,7 +75,7 @@ public class SepticTank_Birgaon extends SepticTank {
 //	public static final BigDecimal MIN_DIS_BUILDING = BigDecimal.valueOf(6);
 
 //	added by manisha yadu-------------------------------------
-	public static final String MIN_CAPACITY_SEPTIC_TANK = "Minimum capacity of septic tank";
+	public static final String MIN_CAPACITY_SEPTIC_TANK = "Minimum Capacity of Septic Tank";
 	public static final BigDecimal ONE_POINT_FIVE = BigDecimal.valueOf(1.5);
 //	added by manisha yadu--end-----------------------------------
 
@@ -88,7 +88,7 @@ public class SepticTank_Birgaon extends SepticTank {
 	public Plan process(Plan pl) {
 
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Septic Tank ");
+		scrutinyDetail.setKey("Common_Septic Tank Capacity");
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
 		scrutinyDetail.addColumnHeading(3, REQUIRED);

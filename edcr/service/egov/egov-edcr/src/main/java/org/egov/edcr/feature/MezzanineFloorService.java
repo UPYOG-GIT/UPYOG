@@ -57,6 +57,7 @@ public class MezzanineFloorService extends FeatureProcess {
                 scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Mezzanine Floor");
                 if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
                     BigDecimal totalBuiltupArea = BigDecimal.ZERO;
+                    boolean isReport=false;
                     for (Floor floor : block.getBuilding().getFloors()) {
                         BigDecimal builtupArea = BigDecimal.ZERO;
                         for (Occupancy occ : floor.getOccupancies()) {
@@ -66,6 +67,7 @@ public class MezzanineFloorService extends FeatureProcess {
                         totalBuiltupArea = totalBuiltupArea.add(builtupArea);
                         for (Occupancy mezzanineFloor : floor.getOccupancies()) {
                             if (mezzanineFloor.getIsMezzanine() && floor.getNumber() != 0) {
+                            	isReport=true;
                                 if (mezzanineFloor.getBuiltUpArea() != null && mezzanineFloor.getBuiltUpArea().doubleValue() > 0
                                         && mezzanineFloor.getTypeHelper() == null) {
                                     pl.addError(OBJECTNOTDEFINED_DESC,
@@ -131,6 +133,19 @@ public class MezzanineFloorService extends FeatureProcess {
                                 }
                             }
                         }
+                    }
+                    if(!isReport) {
+                    	ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
+        				scrutinyDetail1.addColumnHeading(1, DESCRIPTION);
+        				scrutinyDetail1.addColumnHeading(2, PROVIDED);
+        				scrutinyDetail1.addColumnHeading(3, STATUS);
+        				scrutinyDetail1.setKey("Block_" + block.getNumber() + "_" + "Mezzanine Floor");
+        				Map<String, String> details = new HashMap<>();
+        				details.put(DESCRIPTION, "Mezzanine Floor");
+        				details.put(PROVIDED, "Mezzanine Floor Not Provided");
+        				details.put(STATUS, "");
+        				scrutinyDetail1.getDetail().add(details);
+        				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
                     }
                 }
             }

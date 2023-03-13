@@ -142,6 +142,7 @@ public class DxfFileConstants {
     public static final String ROAD_LENGTH = "ROAD_LENGTH";
     public static final String AREA_TYPE = "AREA_TYPE";
     public static final String DEVELOPMENT_ZONE = "DEVELOPMENT_ZONE";
+    public static final String CENTER_AREA = "CENTER_AREA";
     public static final String AVG_PLOT_DEPTH = "AVG_PLOT_DEPTH";
     public static final String AVG_PLOT_WIDTH = "AVG_PLOT_WIDTH";
     public static final String LAND_USE_ZONE = "LAND_USE_ZONE";
@@ -158,6 +159,7 @@ public class DxfFileConstants {
     public static final String NOC_STATE_ENV_IMPACT = "NOC_STATE_ENV_IMPACT";
     public static final String NOC_RAILWAY = "NOC_RAILWAY";
     public static final String NOC_COLLECTOR_GVT_LAND = "NOC_COLLECTOR_GVT_LAND";
+    public static final String MULTILEVEL_PARKING = "MULTILEVEL_PARKING";
     public static final String NOC_IRRIGATION_DEPT = "NOC_IRRIGATION_DEPT";
     public static final String NOC_FIRE_DEPT = "NOC_FIRE_DEPT";
     public static final String PLOT_NO = "PLOT_NO";

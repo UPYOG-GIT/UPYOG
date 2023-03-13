@@ -59,6 +59,8 @@ public class Room {
     private Boolean closed = false;
 
     private List<Measurement> rooms = new ArrayList<>();
+    
+    private List<Measurement> ventilation = new ArrayList<>();
 
     private MeasurementWithHeight lightAndVentilation = new MeasurementWithHeight();
 
@@ -130,4 +132,13 @@ public class Room {
         this.mezzanineAreas = mezzanineAreas;
     }
 
+	public List<Measurement> getVentilation() {
+		return ventilation;
+	}
+
+	public void setVentilation(List<Measurement> ventilation) {
+		this.ventilation = ventilation;
+	}
+
+    
 }

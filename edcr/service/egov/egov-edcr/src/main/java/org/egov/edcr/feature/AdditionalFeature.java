@@ -128,7 +128,8 @@ public class AdditionalFeature extends FeatureProcess {
 	public static final String NO_OF_FLOORS = "Maximum number of floors allowed";
 	public static final String HEIGHT_OF_FLOORS = "Maximum height of floor allowed";
 	public static final String HEIGHT_BUILDING = "Maximum height of building allowed";
-	public static final String MIN_PLINTH_HEIGHT = " >= 0.45";
+	public static final String MIN_PLINTH_HEIGHT = "0.45";
+	public static final String MAX_PLINTH_HEIGHT = "1.20";
 	public static final String MIN_PLINTH_HEIGHT_DESC = "Minimum plinth height";
 	public static final String MAX_BSMNT_CELLAR = "Number of basement/cellar allowed";
 	public static final String MIN_INT_COURT_YARD = "0.15";
@@ -185,7 +186,7 @@ public class AdditionalFeature extends FeatureProcess {
 			validateHeightOfFloors(pl, errors);
 		}
 //
-//        validatePlinthHeight(pl, errors);
+		validatePlinthHeight(pl, errors);
 //        // validateIntCourtYard(pl, errors);
 //        validateBarrierFreeAccess(pl, errors);
 //        validateBasement(pl, errors);
@@ -289,6 +290,9 @@ public class AdditionalFeature extends FeatureProcess {
 				if (floorAbvGround.compareTo(BigDecimal.valueOf(3)) <= 0) {
 					isAccepted = true;
 				}
+			} else {
+				requiredFloorCount = "-";
+				isAccepted = true;
 			}
 
 			for (Floor floor : block.getBuilding().getFloors()) {
@@ -398,6 +402,9 @@ public class AdditionalFeature extends FeatureProcess {
 				if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) <= 0) {
 					isAccepted = true;
 				}
+			} else {
+				requiredBuildingHeight = "-";
+				isAccepted = true;
 			}
 
 			/*
@@ -478,8 +485,8 @@ public class AdditionalFeature extends FeatureProcess {
 				details.put(DESCRIPTION, HEIGHT_BUILDING);
 //				details.put(DxfFileConstants.AREA_TYPE, typeOfArea);
 //				details.put(DxfFileConstants.ROAD_WIDTH, roadWidth.toString());
-				details.put(PERMISSIBLE, requiredBuildingHeight);
-				details.put(PROVIDED, String.valueOf(buildingHeight));
+				details.put(PERMISSIBLE, requiredBuildingHeight + DcrConstants.IN_METER);
+				details.put(PROVIDED, String.valueOf(buildingHeight) + DcrConstants.IN_METER);
 				details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 				scrutinyDetail.getDetail().add(details);
 				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
@@ -491,10 +498,10 @@ public class AdditionalFeature extends FeatureProcess {
 		for (Block block : pl.getBlocks()) {
 //			boolean isAccepted = false;
 			ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-			scrutinyDetail.addColumnHeading(1, FLOOR_NO);
-			scrutinyDetail.addColumnHeading(2, RULE_NO);
-			scrutinyDetail.addColumnHeading(3, DESCRIPTION);
-			scrutinyDetail.addColumnHeading(4, PERMISSIBLE);
+			scrutinyDetail.addColumnHeading(1, RULE_NO);
+			scrutinyDetail.addColumnHeading(2, FLOOR_NO);
+			scrutinyDetail.addColumnHeading(3, MIN_REQUIRED);
+			scrutinyDetail.addColumnHeading(4, MAX_PERMISSIBLE);
 			scrutinyDetail.addColumnHeading(5, PROVIDED);
 			scrutinyDetail.addColumnHeading(6, STATUS);
 			scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Height of Floor");
@@ -503,16 +510,20 @@ public class AdditionalFeature extends FeatureProcess {
 				BigDecimal floorHeight = BigDecimal.ZERO;
 				floorHeight = floor.getFloorHeights().get(0);
 				int floorNumber = floor.getNumber();
-				String requiredFloorHeight = "<= 3.0";
-				if (floorHeight.compareTo(BigDecimal.valueOf(3.0)) <= 0) {
+//				String requiredFloorHeight = "<= 3.0";
+//				floor.getOccupancies().get(0).getTypeHelper().getSubtype().getName();
+				String minRequiredFloorHeight = "2.75";
+				String maxPermissibleFloorHeight = "4.40";
+				if (floorHeight.compareTo(BigDecimal.valueOf(2.75)) >= 0
+						&& floorHeight.compareTo(BigDecimal.valueOf(4.40)) <= 0) {
 //					addFloorHeightDetails(scrutinyDetail, String.valueOf(floorNumber), RULE_38, HEIGHT_OF_FLOORS,
 //							requiredFloorHeight, String.valueOf(floorHeight), Result.Accepted.getResultVal());
 					Map<String, String> details = new HashMap<>();
 					details.put(FLOOR_NO, String.valueOf(floorNumber));
 					details.put(RULE_NO, RULE_38);
-					details.put(DESCRIPTION, HEIGHT_OF_FLOORS);
-					details.put(PERMISSIBLE, requiredFloorHeight);
-					details.put(PROVIDED, floorHeight.toString());
+					details.put(MIN_REQUIRED, minRequiredFloorHeight + DcrConstants.IN_METER);
+					details.put(MAX_PERMISSIBLE, maxPermissibleFloorHeight + DcrConstants.IN_METER);
+					details.put(PROVIDED, floorHeight.toString() + DcrConstants.IN_METER);
 					details.put(STATUS, Result.Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
@@ -520,9 +531,9 @@ public class AdditionalFeature extends FeatureProcess {
 					Map<String, String> details = new HashMap<>();
 					details.put(FLOOR_NO, String.valueOf(floorNumber));
 					details.put(RULE_NO, RULE_38);
-					details.put(DESCRIPTION, HEIGHT_OF_FLOORS);
-					details.put(REQUIRED, requiredFloorHeight);
-					details.put(PROVIDED, floorHeight.toString());
+					details.put(MIN_REQUIRED, minRequiredFloorHeight + DcrConstants.IN_METER);
+					details.put(MAX_PERMISSIBLE, maxPermissibleFloorHeight + DcrConstants.IN_METER);
+					details.put(PROVIDED, floorHeight.toString() + DcrConstants.IN_METER);
 					details.put(STATUS, Result.Not_Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
@@ -551,12 +562,19 @@ public class AdditionalFeature extends FeatureProcess {
 			boolean isAccepted = false;
 			BigDecimal minPlinthHeight = BigDecimal.ZERO;
 			String blkNo = block.getNumber();
-			ScrutinyDetail scrutinyDetail = getNewScrutinyDetail("Block_" + blkNo + "_" + "Plinth");
+			ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+			scrutinyDetail.addColumnHeading(1, RULE_NO);
+			scrutinyDetail.addColumnHeading(2, MIN_REQUIRED);
+			scrutinyDetail.addColumnHeading(3, MAX_PERMISSIBLE);
+			scrutinyDetail.addColumnHeading(4, PROVIDED);
+			scrutinyDetail.addColumnHeading(5, STATUS);
+			scrutinyDetail.setKey("Block_" + blkNo + "_" + "Plinth Height");
 			List<BigDecimal> plinthHeights = block.getPlinthHeight();
 
 			if (!plinthHeights.isEmpty()) {
 				minPlinthHeight = plinthHeights.stream().reduce(BigDecimal::min).get();
-				if (minPlinthHeight.compareTo(BigDecimal.valueOf(0.45)) >= 0) {
+				if (minPlinthHeight.compareTo(BigDecimal.valueOf(0.45)) >= 0
+						&& minPlinthHeight.compareTo(BigDecimal.valueOf(1.20)) <= 0) {
 					isAccepted = true;
 				}
 			} else {
@@ -568,8 +586,8 @@ public class AdditionalFeature extends FeatureProcess {
 			if (errors.isEmpty()) {
 				Map<String, String> details = new HashMap<>();
 				details.put(RULE_NO, RULE_41_I_A);
-				details.put(DESCRIPTION, MIN_PLINTH_HEIGHT_DESC);
-				details.put(PERMISSIBLE, MIN_PLINTH_HEIGHT);
+				details.put(MIN_REQUIRED, MIN_PLINTH_HEIGHT);
+				details.put(MAX_PERMISSIBLE, MAX_PLINTH_HEIGHT);
 				details.put(PROVIDED, String.valueOf(minPlinthHeight));
 				details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 				scrutinyDetail.getDetail().add(details);

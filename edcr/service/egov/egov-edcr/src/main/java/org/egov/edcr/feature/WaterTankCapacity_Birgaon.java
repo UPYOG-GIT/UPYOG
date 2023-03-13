@@ -67,8 +67,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class WaterTankCapacity_Birgaon extends WaterTankCapacity {
     private static final String RULE_59_10_vii = "59-10-vii";
-    private static final String RULE_59_10_vii_DESCRIPTION = "Water tank capacity";
-    private static final String WATER_TANK_CAPACITY = "Minimum capacity of Water tank";
+    private static final String RULE_59_10_vii_DESCRIPTION = "Water Tank Capacity";
+    private static final String WATER_TANK_CAPACITY = "Minimum Capacity of Water Tank";
     private static final BigDecimal TWELVE_POINTFIVE = BigDecimal.valueOf(12.5);
 //    private static final BigDecimal ONEHUNDRED_THIRTYFIVE = BigDecimal.valueOf(135);
     private static final BigDecimal FORTYFIVE = BigDecimal.valueOf(45);
@@ -89,7 +89,7 @@ public class WaterTankCapacity_Birgaon extends WaterTankCapacity {
         scrutinyDetail.addColumnHeading(3, REQUIRED);
         scrutinyDetail.addColumnHeading(4, PROVIDED);
         scrutinyDetail.addColumnHeading(5, STATUS);
-        scrutinyDetail.setKey("Common_Water tank capacity");
+        scrutinyDetail.setKey("Common_Water Tank Capacity");
         String subRule = RULE_59_10_vii;
         String subRuleDesc = RULE_59_10_vii_DESCRIPTION;
         BigDecimal expectedWaterTankCapacityR = BigDecimal.ZERO;

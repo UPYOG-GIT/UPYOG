@@ -162,6 +162,11 @@ public class Plan implements Serializable {
     // For proposed road widening, surrendered road area.This area will be used to calculate FAR,setback and permissible buildup
     // area.
     private transient BigDecimal totalSurrenderRoadArea = BigDecimal.ZERO;
+    
+    private transient BigDecimal roadArea = BigDecimal.ZERO;
+    
+    private transient BigDecimal netPlotArea = BigDecimal.ZERO;
+    
     // Distance of plot with external entities like rive, lake, monuments, government building etc are grouped.
     private DistanceToExternalEntity distanceToExternalEntity = new DistanceToExternalEntity();
     // Plot all sides compound wall and their railing heights
@@ -658,4 +663,21 @@ public class Plan implements Serializable {
         this.icts = icts;
     }
 
+	public BigDecimal getRoadArea() {
+		return roadArea;
+	}
+
+	public void setRoadArea(BigDecimal roadArea) {
+		this.roadArea = roadArea;
+	}
+
+	public BigDecimal getNetPlotArea() {
+		return netPlotArea;
+	}
+
+	public void setNetPlotArea(BigDecimal netPlotArea) {
+		this.netPlotArea = netPlotArea;
+	}
+
+    
 }

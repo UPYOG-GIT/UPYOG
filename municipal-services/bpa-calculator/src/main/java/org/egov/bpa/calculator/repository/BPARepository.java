@@ -23,16 +23,16 @@ public class BPARepository {
 	}
 	
 	public Integer getBcategoryId(String bcat) {
-		String sql = "select id from bcategory_master where description ~*? ";
-		return jdbcTemplate.queryForObject(sql, new Object[] {bcat}, Integer.class);
+		String sql = "select id from bcategory_master where lower(description) =? ";
+		return jdbcTemplate.queryForObject(sql, new Object[] {bcat.toLowerCase()}, Integer.class);
 	}
 	
 	public Integer getScategoryId(String scat,Integer bcat) {
-		String sql = "select id from bscategory_master where description ~*? and catid =? ";
-		return jdbcTemplate.queryForObject(sql,new Object[] {scat,bcat},Integer.class);
+		String sql = "select id from bscategory_master where lower(description) =? and catid =? ";
+		return jdbcTemplate.queryForObject(sql,new Object[] {scat.toLowerCase(),bcat},Integer.class);
 	}
 
-	public List<Map<String, Object>> getPaytyDate(String tenantid, String feetype, String occupancyType, Double plotares, String heightcat, String newrevise ) {
+	public List<Map<String, Object>> getPaytyData(String tenantid, String feetype, String occupancyType, Double plotares, String heightcat, String newrevise ) {
 		
 		log.info("tenantid--"+tenantid+"---feetype---"+feetype);
 //		String sql = "select id, charges_type_name,zdaflg from paytype_master where ulb_tenantid=? and payment_type=? and defunt='N' and optflag='N'"; 
@@ -72,7 +72,7 @@ public class BPARepository {
 
 	}
 	
-	public Integer getCountOfPaytyrate(String tenantid,int id,int pCategory) {
+	public Integer getCountOfPaytyrate(String tenantid,int id,Integer pCategory) {
 		String sql = "select count(*)from pay_tp_rate_master "
 				+ "where  ulb_tenantid=? "
 				+ "and typeId=? "
@@ -82,7 +82,7 @@ public class BPARepository {
 		return jdbcTemplate.queryForObject(sql, new Object[] { tenantid,id,pCategory }, Integer.class);
 	}
 	
-	public Map<String,Object> getDetailOfPaytyrate(String tenantid,int id,int pCategory,int countPayTyrate, Integer bcategory,Integer subcate) {
+	public Map<String,Object> getDetailOfPaytyrate(String tenantid,int id,Integer pCategory,int countPayTyrate, Integer bcategory,Integer subcate) {
 		String sql = "select * from pay_tp_rate_master "
 				+ "where  ulb_tenantid=? "
 				+ "and typeId=? "
@@ -100,4 +100,22 @@ public class BPARepository {
 		log.info("BPARepository.getDetailOfPaytyrate: "+sql);
 		return jdbcTemplate.queryForMap(sql, new Object[] { tenantid,id,pCategory });
 	}
+	
+	public List<Map<String, Object>> getDetailOfSlabMaster(Integer bcatefromrate, Integer subcatefromrate,String tenantid,int id, Integer pCategory,Double area ){
+		String sql ="select * from slab_master where ulb_tenantid=? "
+				+ "and paytype_id=? and p_category=? "
+				+ "and from_val <= ? ";
+		if(!bcatefromrate.equals(null) && !bcatefromrate.equals(0)) {
+			 sql +=" and  b_category ="+bcatefromrate;
+		}
+		if(!subcatefromrate.equals(null) && !subcatefromrate.equals(0)) {
+			 sql +=" and  s_category ="+subcatefromrate;
+		}
+			sql+= " order by from_val";
+			
+			log.info("BPARepository.getDetailOfSlabMaster: "+sql);
+			return jdbcTemplate.queryForList(sql, new Object[] { tenantid,id,pCategory,area});	
+	}
+	
+	
 }

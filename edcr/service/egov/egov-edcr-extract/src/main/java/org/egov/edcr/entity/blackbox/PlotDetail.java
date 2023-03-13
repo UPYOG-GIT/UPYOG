@@ -15,6 +15,7 @@ public class PlotDetail extends Plot {
     private static final long serialVersionUID = 71L;
     @JsonIgnore
     protected transient DXFLWPolyline polyLine;
+    protected transient DXFLWPolyline roadAreaPolyLine;
 
     public DXFLWPolyline getPolyLine() {
         return polyLine;
@@ -23,5 +24,13 @@ public class PlotDetail extends Plot {
     public void setPolyLine(DXFLWPolyline polyLine) {
         this.polyLine = polyLine;
     }
+
+	public DXFLWPolyline getRoadAreaPolyLine() {
+		return roadAreaPolyLine;
+	}
+
+	public void setRoadAreaPolyLine(DXFLWPolyline roadAreaPolyLine) {
+		this.roadAreaPolyLine = roadAreaPolyLine;
+	}
 
 }
