@@ -18,8 +18,11 @@ const CitizenHomeCard = ({ header, links, state, Icon, Info, isInfo = false, sty
           </Link>
         ))}
       </div>
-      <div className="links" style={{fontSize: 14}}>
-        <a href="/digit-ui/citizen/obps/stakeholder/apply/stakeholder-docs-required">Stakeholder Registration</a>
+      <div className="links">
+        <a href="/digit-ui/employee">Employee Login</a>
+      </div>
+      <div className="links" style={{fontSize: 12, textAlign: "right", color: "#1d70b8"}} >
+        <a href="/digit-ui/citizen/obps/stakeholder/apply/stakeholder-docs-required">Architect Signup</a>
       </div>
       <div>
         {isInfo ? <Info /> : null} 
