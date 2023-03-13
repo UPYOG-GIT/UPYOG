@@ -39,6 +39,7 @@
  */
 package org.egov.edcr.entity;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,164 +68,199 @@ import org.hibernate.validator.constraints.Length;
 @SequenceGenerator(name = EdcrApplicationDetail.SEQ_EDCR_APPLICATION_DETAIL, sequenceName = EdcrApplicationDetail.SEQ_EDCR_APPLICATION_DETAIL, allocationSize = 1)
 public class EdcrApplicationDetail extends AbstractAuditable {
 
-    public static final String SEQ_EDCR_APPLICATION_DETAIL = "SEQ_EDCR_APPLICATION_DETAIL";
-    private static final long serialVersionUID = 62L;
+	public static final String SEQ_EDCR_APPLICATION_DETAIL = "SEQ_EDCR_APPLICATION_DETAIL";
+	private static final long serialVersionUID = 62L;
 
-    @Id
-    @GeneratedValue(generator = SEQ_EDCR_APPLICATION_DETAIL, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_EDCR_APPLICATION_DETAIL, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "dxffileid")
-    private FileStoreMapper dxfFileId;
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "dxffileid")
+	private FileStoreMapper dxfFileId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "reportoutputid")
-    private FileStoreMapper reportOutputId;
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "reportoutputid")
+	private FileStoreMapper reportOutputId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "application")
-    private EdcrApplication application;
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "application")
+	private EdcrApplication application;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "planDetailFileStore")
-    private FileStoreMapper planDetailFileStore;
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "planDetailFileStore")
+	private FileStoreMapper planDetailFileStore;
 
-    @Length(min = 1, max = 128)
-    private String dcrNumber;
+	@Length(min = 1, max = 128)
+	private String dcrNumber;
 
-    private String status;
+	private String status;
 
-    @Transient
-    private Plan plan;
+	@Transient
+	private Plan plan;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "scrutinizedDxfFileId")
-    private FileStoreMapper scrutinizedDxfFileId;
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "scrutinizedDxfFileId")
+	private FileStoreMapper scrutinizedDxfFileId;
 
-    @OneToMany(mappedBy = "edcrApplicationDetail", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @OrderBy("id DESC ")
-    private List<EdcrPdfDetail> edcrPdfDetails = new ArrayList<>();
+	@OneToMany(mappedBy = "edcrApplicationDetail", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OrderBy("id DESC ")
+	private List<EdcrPdfDetail> edcrPdfDetails = new ArrayList<>();
 
-    @Transient
-    private Long noOfErrors;
+	private String khataNo;
+	
+	private String mauza;
 
-    @Transient
-    private PlanInformation planInformation;
-    
+	private String plotNo;
 
-    @Length(min = 1, max = 128)
-    private String comparisonDcrNumber;
+	private BigDecimal plotArea;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Transient
+	private Long noOfErrors;
 
-    @Override
-    protected void setId(final Long id) {
-        this.id = id;
-    }
+	@Transient
+	private PlanInformation planInformation;
 
-    public EdcrApplication getApplication() {
-        return application;
-    }
+	@Length(min = 1, max = 128)
+	private String comparisonDcrNumber;
 
-    public void setApplication(EdcrApplication application) {
-        this.application = application;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    public FileStoreMapper getDxfFileId() {
-        return dxfFileId;
-    }
+	@Override
+	protected void setId(final Long id) {
+		this.id = id;
+	}
 
-    public void setDxfFileId(FileStoreMapper dxfFileId) {
-        this.dxfFileId = dxfFileId;
-    }
+	public EdcrApplication getApplication() {
+		return application;
+	}
 
-    public FileStoreMapper getReportOutputId() {
-        return reportOutputId;
-    }
+	public void setApplication(EdcrApplication application) {
+		this.application = application;
+	}
 
-    public void setReportOutputId(FileStoreMapper reportOutputId) {
-        this.reportOutputId = reportOutputId;
-    }
+	public FileStoreMapper getDxfFileId() {
+		return dxfFileId;
+	}
 
-    public String getStatus() {
-        return status;
-    }
+	public void setDxfFileId(FileStoreMapper dxfFileId) {
+		this.dxfFileId = dxfFileId;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	public FileStoreMapper getReportOutputId() {
+		return reportOutputId;
+	}
 
-    public FileStoreMapper getPlanDetailFileStore() {
-        return planDetailFileStore;
-    }
+	public void setReportOutputId(FileStoreMapper reportOutputId) {
+		this.reportOutputId = reportOutputId;
+	}
 
-    public void setPlanDetailFileStore(FileStoreMapper planDetailFileStore) {
-        this.planDetailFileStore = planDetailFileStore;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public String getDcrNumber() {
-        return dcrNumber;
-    }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-    public void setDcrNumber(String dcrNumber) {
-        this.dcrNumber = dcrNumber;
-    }
+	public FileStoreMapper getPlanDetailFileStore() {
+		return planDetailFileStore;
+	}
 
-    public FileStoreMapper getScrutinizedDxfFileId() {
-        return scrutinizedDxfFileId;
-    }
+	public void setPlanDetailFileStore(FileStoreMapper planDetailFileStore) {
+		this.planDetailFileStore = planDetailFileStore;
+	}
 
-    public void setScrutinizedDxfFileId(FileStoreMapper scrutinizedDxfFileId) {
-        this.scrutinizedDxfFileId = scrutinizedDxfFileId;
-    }
+	public String getDcrNumber() {
+		return dcrNumber;
+	}
 
-    public List<EdcrPdfDetail> getEdcrPdfDetails() {
-        return edcrPdfDetails;
-    }
+	public void setDcrNumber(String dcrNumber) {
+		this.dcrNumber = dcrNumber;
+	}
 
-    public void setEdcrPdfDetails(List<EdcrPdfDetail> edcrPdfDetails) {
-        this.edcrPdfDetails = edcrPdfDetails;
-    }
+	public FileStoreMapper getScrutinizedDxfFileId() {
+		return scrutinizedDxfFileId;
+	}
 
-    public Long getNoOfErrors() {
-        return noOfErrors;
-    }
+	public void setScrutinizedDxfFileId(FileStoreMapper scrutinizedDxfFileId) {
+		this.scrutinizedDxfFileId = scrutinizedDxfFileId;
+	}
 
-    public void setNoOfErrors(Long noOfErrors) {
-        this.noOfErrors = noOfErrors;
-    }
+	public List<EdcrPdfDetail> getEdcrPdfDetails() {
+		return edcrPdfDetails;
+	}
 
-    public PlanInformation getPlanInformation() {
-        return planInformation;
-    }
+	public void setEdcrPdfDetails(List<EdcrPdfDetail> edcrPdfDetails) {
+		this.edcrPdfDetails = edcrPdfDetails;
+	}
 
-    public void setPlanInformation(PlanInformation planInformation) {
-        this.planInformation = planInformation;
-    }
+	public Long getNoOfErrors() {
+		return noOfErrors;
+	}
 
-    public Plan getPlan() {
-        return plan;
-    }
+	public void setNoOfErrors(Long noOfErrors) {
+		this.noOfErrors = noOfErrors;
+	}
 
-    public void setPlan(Plan plan) {
-        this.plan = plan;
-    }
+	public PlanInformation getPlanInformation() {
+		return planInformation;
+	}
 
-    public String getComparisonDcrNumber() {
-        return comparisonDcrNumber;
-    }
+	public void setPlanInformation(PlanInformation planInformation) {
+		this.planInformation = planInformation;
+	}
 
-    public void setComparisonDcrNumber(String comparisonDcrNumber) {
-        this.comparisonDcrNumber = comparisonDcrNumber;
-    }
+	public Plan getPlan() {
+		return plan;
+	}
 
+	public void setPlan(Plan plan) {
+		this.plan = plan;
+	}
+
+	public String getComparisonDcrNumber() {
+		return comparisonDcrNumber;
+	}
+
+	public void setComparisonDcrNumber(String comparisonDcrNumber) {
+		this.comparisonDcrNumber = comparisonDcrNumber;
+	}
+
+	public String getKhataNo() {
+		return khataNo;
+	}
+
+	public void setKhataNo(String khataNo) {
+		this.khataNo = khataNo;
+	}
+
+	public String getMauza() {
+		return mauza;
+	}
+
+	public void setMauza(String mauza) {
+		this.mauza = mauza;
+	}
+
+	public String getPlotNo() {
+		return plotNo;
+	}
+
+	public void setPlotNo(String plotNo) {
+		this.plotNo = plotNo;
+	}
+
+	public BigDecimal getPlotArea() {
+		return plotArea;
+	}
+
+	public void setPlotArea(BigDecimal plotArea) {
+		this.plotArea = plotArea;
+	}
 
 	
-    
-    
-
 }

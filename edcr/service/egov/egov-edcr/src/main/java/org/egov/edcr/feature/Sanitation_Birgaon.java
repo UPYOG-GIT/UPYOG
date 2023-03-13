@@ -330,7 +330,7 @@ public class Sanitation_Birgaon extends FeatureProcess {
 
 	@Override
 	public Plan process(Plan pl) {
-		verifyDimesions(pl);
+//		verifyDimesions(pl);
 		checkCount(pl);
 		return pl;
 	}
@@ -400,226 +400,237 @@ public class Sanitation_Birgaon extends FeatureProcess {
 				Map<Integer, Integer> failedAreaSpWcMap = new ConcurrentHashMap<>();
 				Map<Integer, Integer> failedDimensionSpWcMap = new ConcurrentHashMap<>();
 				for (Occupancy type : b.getBuilding().getTotalArea()) {
-					double carpetArea = 0d;
-					if (type.getCarpetArea() != null && type.getCarpetArea().doubleValue() > 0) {
-						carpetArea = type.getCarpetArea().doubleValue();
-					} else {
-						pl.addError("Invalid carpet area",
-								"Carpet area is not calculated . Some thing wrong with builtup area");
-						return;
-					}
-					LOG.info(type.getType() + " area" + carpetArea);
+					if (type.getTypeHelper() != null
+							&& (type.getTypeHelper().getSubtype() != null || type.getTypeHelper().getType() != null)) {
+						double carpetArea = 0d;
+						double builtUpArea = type.getBuiltUpArea().doubleValue();
+						if (type.getCarpetArea() != null && type.getCarpetArea().doubleValue() > 0) {
+							carpetArea = type.getCarpetArea().doubleValue();
+						} else {
+							pl.addError("Invalid carpet area",
+									"Carpet area is not calculated . Some thing wrong with builtup area");
+							return;
+						}
+						LOG.info(type.getType() + " area" + carpetArea);
 
-					OccupancyHelperDetail o = type.getTypeHelper().getSubtype() != null
-							? type.getTypeHelper().getSubtype()
-							: type.getTypeHelper().getType();
-					switch (o.getCode()) {
+						OccupancyHelperDetail o = type.getTypeHelper().getSubtype() != null
+								? type.getTypeHelper().getSubtype()
+								: type.getTypeHelper().getType();
+						switch (o.getCode()) {
 
-					case DxfFileConstants.A:
-					case DxfFileConstants.A_AF:
-					case DxfFileConstants.A_R: // added
-						if (b.getResidentialBuilding())
-							accepted = processSpecialWaterClosetForResidential(b, helper, scrutinyDetail,
-									requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap, failedDimensionSpWcMap);
-						break;
-
-					case DxfFileConstants.A_SR:
-						processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-								failedDimensionSpWcMap);
-						break;
-
-					case DxfFileConstants.A_HE:
-						helper.maleWc += carpetArea * 2 / (4.75 * 3 * 10);
-						helper.femaleWc += carpetArea / (4.75 * 3 * 8);
-						helper.urinal += carpetArea * 2 / (4.75 * 3 * 25);
-						helper.maleWash += carpetArea * 2 / (4.75 * 3 * 10);
-						helper.femaleWash += carpetArea / (4.75 * 3 * 10);
-						helper.maleBath += carpetArea * 2 / (4.75 * 3 * 10);
-						helper.femaleBath += carpetArea / (4.75 * 3 * 10);
-						processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-								failedDimensionSpWcMap);
-						helper.ruleNo.add(RULE_54_6);
-						break;
-					case DxfFileConstants.B:
-					case DxfFileConstants.B2:
-					case DxfFileConstants.B_HEI:
-						helper.maleWc += carpetArea * 2 / (4.75 * 3 * 40);
-						helper.femaleWc += carpetArea / (4.75 * 3 * 25);
-						helper.urinal += carpetArea * 2 / (4.75 * 3 * 50);
-						helper.maleWash += carpetArea * 2 / (4.75 * 3 * 40);
-						helper.femaleWash += carpetArea / (4.75 * 3 * 40);
-						processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-								failedDimensionSpWcMap);
-						helper.ruleNo.add(RULE_54_6);
-						break;
-					case DxfFileConstants.C_MIP:
-						if (pl.getPlanInformation().getNoOfBeds() == null) {
+						case DxfFileConstants.A:
+						case DxfFileConstants.A_AF:
+						case DxfFileConstants.A_R: // added
+//							if (b.getResidentialBuilding())
+//								accepted = processSpecialWaterClosetForResidential(b, helper, scrutinyDetail,
+//										requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap, failedDimensionSpWcMap);
+							helper.maleWc += 1d;
+//							helper.femaleWc += 1d;
+//							helper.urinal += 1d;
 							break;
-						}
-						double noofBeds = pl.getPlanInformation().getNoOfBeds().doubleValue();
-						if (pl.getPlanInformation().getNoOfBeds() != null)
-							helper.maleWc += noofBeds / 8;
-						helper.femaleWc += noofBeds / 8;
-						helper.maleWash += 2 + (noofBeds - 30) / 30;
-						helper.femaleWash += 2 + (noofBeds - 30) / 30;
-						helper.maleBath += noofBeds / 8;
-						helper.femaleBath += noofBeds / 8;
-						helper.abultionTap += helper.maleWc + helper.femaleWc + carpetArea / (4.75 * 3);
-						processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-								failedDimensionSpWcMap);
-						helper.ruleNo.add(RULE_55_12);
-						break;
 
-					case DxfFileConstants.C_MOP:
-						helper.maleWc += carpetArea * 2 / (4.75 * 3 * 100);
-						helper.femaleWc += carpetArea / (4.75 * 3 * 8);
-						helper.urinal += carpetArea * 2 / (4.75 * 3 * 50);
-						helper.maleWash += carpetArea * 2 / (4.75 * 100);
-						helper.femaleWash += carpetArea / (4.75 * 100);
-						// helper.maleBath = carpetArea * 2 / (4.75 * 3 * 10);
-						// helper.femaleBath = carpetArea / (4.75 * 3 * 10);
-						processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-								failedDimensionSpWcMap);
-						helper.ruleNo.add(RULE_55_12);
-						break;
-
-					case DxfFileConstants.C_MA:
-						helper.ruleNo.add(RULE_55_12);
-						helper.maleWc += carpetArea * 2 / (4.75 * 3 * 25);
-						helper.femaleWc += carpetArea / (4.75 * 3 * 15);
-
-						helper.maleWash += carpetArea * 2 / (4.75 * 3 * 25);
-						helper.femaleWash += carpetArea * 2 / (4.75 * 3 * 25);
-						Double noOfPersons = carpetArea * 2 / (4.75 * 3);
-						BigDecimal noOfPersonsBig = BigDecimal.valueOf(noOfPersons).divide(BigDecimal.ONE,
-								RoundingMode.HALF_UP);
-						int noofPerson = noOfPersonsBig.intValue();
-
-						if (noofPerson >= 7 && noofPerson <= 20) {
-							helper.urinal += 1d;
-						} else if (noofPerson <= 45) {
-							helper.urinal += 2d;
-						} else if (noofPerson <= 70) {
-							helper.urinal += 3d;
-						} else if (noofPerson <= 100) {
-							helper.urinal += 4d;
-						} else if (noofPerson <= 200) {
-							helper.urinal += 4d + noofPerson * 0.3d;
-						} else if (noofPerson > 200) {
-							helper.urinal += 4d + noofPerson * 0.55d;
-						}
-
-						helper.abultionTap += helper.maleWc + helper.femaleWc + carpetArea / (4.75 * 50);
-						processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-								failedDimensionSpWcMap);
-						break;
-					case DxfFileConstants.D:
-					case DxfFileConstants.D_AW:
-						helper.maleWc += carpetArea * 2 / (3 * 200);
-						helper.femaleWc += carpetArea / (3 * 100);
-						helper.urinal += carpetArea * 2 / (3 * 50);
-						helper.maleWash += carpetArea * 2 / (3 * 200);
-						helper.femaleWash += carpetArea / (2 * 3 * 200);
-						// helper.maleBath += carpetArea * 2 / (4.75 * 3 * 10);
-						// helper.femaleBath += carpetArea / (4.75 * 3 * 10);
-						processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-								failedDimensionSpWcMap);
-						helper.ruleNo.add(RULE_55_12);
-						break;
-					case DxfFileConstants.D_BT:
-						helper.ruleNo.add(RULE_55_12);
-						if (carpetArea <= 1000) {
-							helper.maleWc += 4d;
-						} else {
-							helper.maleWc += 4d + (carpetArea - 1000);
-						}
-
-						if (carpetArea <= 1000) {
-							helper.urinal += 6d;
-						} else {
-							helper.urinal += 6d + (carpetArea - 1000) / 6;
-						}
-						helper.maleWc += carpetArea * 2 / (3 * 200);
-						helper.femaleWc += carpetArea / (3 * 100);
-						helper.urinal += carpetArea * 2 / (3 * 50);
-						helper.maleWash += 4d;
-						helper.femaleWash += 4d;
-						processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-								failedDimensionSpWcMap);
-						// helper.maleBath += carpetArea * 2 / (4.75 * 3 * 10);
-						// helper.femaleBath += carpetArea / (4.75 * 3 * 10);
-						helper.ruleNo.add(RULE_54_6);
-						break;
-					case DxfFileConstants.E:
-					case DxfFileConstants.F:
-					case DxfFileConstants.F_K:
-						helper.maleWc += carpetArea * 2 / (4.75 * 3 * 25);
-						helper.femaleWc += carpetArea / (4.75 * 3 * 15);
-						helper.urinal += carpetArea * 2 / (4.75 * 3 * 25);
-
-						helper.ruleNo.add("56(3C)");
-						helper.ruleDescription = SANITY_RULE_DESC + o.getCode();
-						if ((o.equals(DxfFileConstants.F) || o.equals(DxfFileConstants.F_K)))
+						case DxfFileConstants.A_SR:
 							processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
 									failedDimensionSpWcMap);
+							break;
 
-						break;
-					case DxfFileConstants.H:
-						helper.maleWc += carpetArea * 2 / (3 * 30 * 50);
-						helper.femaleWc += carpetArea / (3 * 30 * 25);
-						helper.urinal += carpetArea * 2 / (3 * 30 * 100);
-						helper.ruleNo.add("58(6)");
-						break;
-					case DxfFileConstants.F_H:
-						helper.maleWc += carpetArea * 2 / (4.75 * 3 * 25);
-						helper.femaleWc += carpetArea / (4.75 * 3 * 15);
-						helper.urinal += carpetArea * 2 / (4.75 * 3 * 25);
-						// preferable one on each floor to be implemented
-						helper.maleWash += carpetArea * 2 / (4.75 * 3 * 100);
-						helper.femaleWash += carpetArea / (4.75 * 3 * 100);
-						helper.commonBath += carpetArea * 2 / (4.75 * 100);
-						processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-								failedDimensionSpWcMap);
-						// helper.femaleBath += carpetArea / (4.75 * 3 * 10);
-						helper.ruleNo.add(RULE_54_6);
-						break;
-					case DxfFileConstants.G:
-					case DxfFileConstants.G_SI:
-						helper.maleWc += carpetArea * 2 / (4.75 * 3 * 25);
-						helper.femaleWc += carpetArea / (4.75 * 3 * 15);
-						helper.urinal += carpetArea * 2 / (4.75 * 3 * 25);
-						// preferable one on each floor to be implemented
-						helper.ruleNo.add("57(13)");
-						// accepted = processSanity(pl, b, carpetArea, helper,
-						// scrutinyDetail, type);
-						break;
-					case DxfFileConstants.I1:
-					case DxfFileConstants.I2:
-						double floorArea = carpetArea + (carpetArea * 25 / 100);
-						Double maleOccupant = floorArea * 2 / (3 * 30);
-						Double femaleOccupant = floorArea / (3 * 30);
-						if (maleOccupant.intValue() <= 50) {
+						case DxfFileConstants.A_HE:
+							helper.maleWc += carpetArea * 2 / (4.75 * 3 * 10);
+							helper.femaleWc += carpetArea / (4.75 * 3 * 8);
+							helper.urinal += carpetArea * 2 / (4.75 * 3 * 25);
+							helper.maleWash += carpetArea * 2 / (4.75 * 3 * 10);
+							helper.femaleWash += carpetArea / (4.75 * 3 * 10);
+							helper.maleBath += carpetArea * 2 / (4.75 * 3 * 10);
+							helper.femaleBath += carpetArea / (4.75 * 3 * 10);
+							processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
+									failedDimensionSpWcMap);
+							helper.ruleNo.add(RULE_54_6);
+							break;
+						case DxfFileConstants.B:
+						case DxfFileConstants.B2:
+						case DxfFileConstants.B_HEI:
+							helper.maleWc += carpetArea * 2 / (4.75 * 3 * 40);
+							helper.femaleWc += carpetArea / (4.75 * 3 * 25);
+							helper.urinal += carpetArea * 2 / (4.75 * 3 * 50);
+							helper.maleWash += carpetArea * 2 / (4.75 * 3 * 40);
+							helper.femaleWash += carpetArea / (4.75 * 3 * 40);
+							processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
+									failedDimensionSpWcMap);
+							helper.ruleNo.add(RULE_54_6);
+							break;
+						case DxfFileConstants.C_MIP:
+							if (pl.getPlanInformation().getNoOfBeds() == null) {
+								break;
+							}
+							double noofBeds = pl.getPlanInformation().getNoOfBeds().doubleValue();
+							if (pl.getPlanInformation().getNoOfBeds() != null)
+								helper.maleWc += noofBeds / 8;
+							helper.femaleWc += noofBeds / 8;
+							helper.maleWash += 2 + (noofBeds - 30) / 30;
+							helper.femaleWash += 2 + (noofBeds - 30) / 30;
+							helper.maleBath += noofBeds / 8;
+							helper.femaleBath += noofBeds / 8;
+							helper.abultionTap += helper.maleWc + helper.femaleWc + carpetArea / (4.75 * 3);
+							processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
+									failedDimensionSpWcMap);
+							helper.ruleNo.add(RULE_55_12);
+							break;
+
+						case DxfFileConstants.C_MOP:
+							helper.maleWc += carpetArea * 2 / (4.75 * 3 * 100);
+							helper.femaleWc += carpetArea / (4.75 * 3 * 8);
+							helper.urinal += carpetArea * 2 / (4.75 * 3 * 50);
+							helper.maleWash += carpetArea * 2 / (4.75 * 100);
+							helper.femaleWash += carpetArea / (4.75 * 100);
+							// helper.maleBath = carpetArea * 2 / (4.75 * 3 * 10);
+							// helper.femaleBath = carpetArea / (4.75 * 3 * 10);
+							processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
+									failedDimensionSpWcMap);
+							helper.ruleNo.add(RULE_55_12);
+							break;
+
+						case DxfFileConstants.C_MA:
+							helper.ruleNo.add(RULE_55_12);
+							helper.maleWc += carpetArea * 2 / (4.75 * 3 * 25);
+							helper.femaleWc += carpetArea / (4.75 * 3 * 15);
+
+							helper.maleWash += carpetArea * 2 / (4.75 * 3 * 25);
+							helper.femaleWash += carpetArea * 2 / (4.75 * 3 * 25);
+							Double noOfPersons = carpetArea * 2 / (4.75 * 3);
+							BigDecimal noOfPersonsBig = BigDecimal.valueOf(noOfPersons).divide(BigDecimal.ONE,
+									RoundingMode.HALF_UP);
+							int noofPerson = noOfPersonsBig.intValue();
+
+							if (noofPerson >= 7 && noofPerson <= 20) {
+								helper.urinal += 1d;
+							} else if (noofPerson <= 45) {
+								helper.urinal += 2d;
+							} else if (noofPerson <= 70) {
+								helper.urinal += 3d;
+							} else if (noofPerson <= 100) {
+								helper.urinal += 4d;
+							} else if (noofPerson <= 200) {
+								helper.urinal += 4d + noofPerson * 0.3d;
+							} else if (noofPerson > 200) {
+								helper.urinal += 4d + noofPerson * 0.55d;
+							}
+
+							helper.abultionTap += helper.maleWc + helper.femaleWc + carpetArea / (4.75 * 50);
+							processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
+									failedDimensionSpWcMap);
+							break;
+						case DxfFileConstants.D:
+						case DxfFileConstants.D_AW:
+							helper.maleWc += carpetArea * 2 / (3 * 200);
+							helper.femaleWc += carpetArea / (3 * 100);
+							helper.urinal += carpetArea * 2 / (3 * 50);
+							helper.maleWash += carpetArea * 2 / (3 * 200);
+							helper.femaleWash += carpetArea / (2 * 3 * 200);
+							// helper.maleBath += carpetArea * 2 / (4.75 * 3 * 10);
+							// helper.femaleBath += carpetArea / (4.75 * 3 * 10);
+							processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
+									failedDimensionSpWcMap);
+							helper.ruleNo.add(RULE_55_12);
+							break;
+						case DxfFileConstants.D_BT:
+							helper.ruleNo.add(RULE_55_12);
+							if (carpetArea <= 1000) {
+								helper.maleWc += 4d;
+							} else {
+								helper.maleWc += 4d + (carpetArea - 1000);
+							}
+
+							if (carpetArea <= 1000) {
+								helper.urinal += 6d;
+							} else {
+								helper.urinal += 6d + (carpetArea - 1000) / 6;
+							}
+							helper.maleWc += carpetArea * 2 / (3 * 200);
+							helper.femaleWc += carpetArea / (3 * 100);
+							helper.urinal += carpetArea * 2 / (3 * 50);
+							helper.maleWash += 4d;
+							helper.femaleWash += 4d;
+							processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
+									failedDimensionSpWcMap);
+							// helper.maleBath += carpetArea * 2 / (4.75 * 3 * 10);
+							// helper.femaleBath += carpetArea / (4.75 * 3 * 10);
+							helper.ruleNo.add(RULE_54_6);
+							break;
+						case DxfFileConstants.E:
+						case DxfFileConstants.F:
+						case DxfFileConstants.F_K:
 							helper.maleWc += 1d;
-						} else {
-							helper.maleWc += 1 + (maleOccupant - 50) / 70;
-						}
+							helper.femaleWc += 1d;
+							helper.urinal += 1d;
+//							helper.maleWc += carpetArea * 2 / (4.75 * 3 * 25);
+//							helper.femaleWc += carpetArea / (4.75 * 3 * 15);
+//							helper.urinal += carpetArea * 2 / (4.75 * 3 * 25);
+//							helper.requiredWC += 1;
 
-						if (femaleOccupant.intValue() <= 50) {
-							helper.femaleWc += 2d;
-						} else {
-							helper.femaleWc += 2 + (maleOccupant - 50) / 70;
-						}
-						helper.maleWash += floorArea / (30 * 50);
-						double noOfPerson = floorArea * 2 / (3 * 30);
-						helper.urinal += noOfPerson / 100;
-						helper.ruleNo.add("59(7)");
-						// accepted = processSanity(pl, b, floorArea, helper,
-						// scrutinyDetail, type);
-						break;
+							helper.ruleNo.add("56(3C)");
+							helper.ruleDescription = SANITY_RULE_DESC + o.getCode();
+							if ((o.equals(DxfFileConstants.F) || o.equals(DxfFileConstants.F_K)))
+								processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
+										failedDimensionSpWcMap);
 
-					}
-					if (!accepted) {
-						allStatus = false;
+							break;
+						case DxfFileConstants.H:
+							helper.maleWc += carpetArea * 2 / (3 * 30 * 50);
+							helper.femaleWc += carpetArea / (3 * 30 * 25);
+							helper.urinal += carpetArea * 2 / (3 * 30 * 100);
+							helper.ruleNo.add("58(6)");
+							break;
+						case DxfFileConstants.F_H:
+							helper.maleWc += carpetArea * 2 / (4.75 * 3 * 25);
+							helper.femaleWc += carpetArea / (4.75 * 3 * 15);
+							helper.urinal += carpetArea * 2 / (4.75 * 3 * 25);
+							// preferable one on each floor to be implemented
+							helper.maleWash += carpetArea * 2 / (4.75 * 3 * 100);
+							helper.femaleWash += carpetArea / (4.75 * 3 * 100);
+							helper.commonBath += carpetArea * 2 / (4.75 * 100);
+							processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
+									failedDimensionSpWcMap);
+							// helper.femaleBath += carpetArea / (4.75 * 3 * 10);
+							helper.ruleNo.add(RULE_54_6);
+							break;
+						case DxfFileConstants.G:
+						case DxfFileConstants.G_SI:
+							helper.maleWc += carpetArea * 2 / (4.75 * 3 * 25);
+							helper.femaleWc += carpetArea / (4.75 * 3 * 15);
+							helper.urinal += carpetArea * 2 / (4.75 * 3 * 25);
+							// preferable one on each floor to be implemented
+							helper.ruleNo.add("57(13)");
+							// accepted = processSanity(pl, b, carpetArea, helper,
+							// scrutinyDetail, type);
+							break;
+						case DxfFileConstants.I1:
+						case DxfFileConstants.I2:
+							double floorArea = carpetArea + (carpetArea * 25 / 100);
+							Double maleOccupant = floorArea * 2 / (3 * 30);
+							Double femaleOccupant = floorArea / (3 * 30);
+							if (maleOccupant.intValue() <= 50) {
+								helper.maleWc += 1d;
+							} else {
+								helper.maleWc += 1 + (maleOccupant - 50) / 70;
+							}
+
+							if (femaleOccupant.intValue() <= 50) {
+								helper.femaleWc += 2d;
+							} else {
+								helper.femaleWc += 2 + (maleOccupant - 50) / 70;
+							}
+							helper.maleWash += floorArea / (30 * 50);
+							double noOfPerson = floorArea * 2 / (3 * 30);
+							helper.urinal += noOfPerson / 100;
+							helper.ruleNo.add("59(7)");
+							// accepted = processSanity(pl, b, floorArea, helper,
+							// scrutinyDetail, type);
+							break;
+
+						}
+						if (!accepted) {
+							allStatus = false;
+						}
 					}
 
 				}
@@ -652,32 +663,32 @@ public class Sanitation_Birgaon extends FeatureProcess {
 								String.valueOf(helper.providedSpecialWc.intValue()), Result.Accepted.getResultVal(),
 								scrutinyDetail);
 					}
-					if (helper.failedAreaSpecialWc > 0 && helper.failedAreaSpecialWc <= helper.requiredSpecialWc) {
-						addReportDetail(ruleNo, BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Area", MINIMUM_AREA_SPWC,
-								String.valueOf(helper.failedAreaSpecialWc.intValue()) + " not having area 2.625 M2",
-								Result.Not_Accepted.getResultVal(), scrutinyDetail);
-					} else {
-						addReportDetail(ruleNo, BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Area", MINIMUM_AREA_SPWC,
-								String.valueOf(
-										helper.providedSpecialWc.intValue() - helper.failedAreaSpecialWc.intValue())
-										+ " having area 2.625 M2",
-								Result.Accepted.getResultVal(), scrutinyDetail);
-					}
+					/*
+					 * if (helper.failedAreaSpecialWc > 0 && helper.failedAreaSpecialWc <=
+					 * helper.requiredSpecialWc) { addReportDetail(ruleNo,
+					 * BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Area", MINIMUM_AREA_SPWC,
+					 * String.valueOf(helper.failedAreaSpecialWc.intValue()) +
+					 * " not having area 2.625 M2", Result.Not_Accepted.getResultVal(),
+					 * scrutinyDetail); } else { addReportDetail(ruleNo,
+					 * BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Area", MINIMUM_AREA_SPWC,
+					 * String.valueOf( helper.providedSpecialWc.intValue() -
+					 * helper.failedAreaSpecialWc.intValue()) + " having area 2.625 M2",
+					 * Result.Accepted.getResultVal(), scrutinyDetail); }
+					 */
 
-					if (helper.failedDimensionSpecialWc > 0
-							&& helper.failedDimensionSpecialWc <= helper.requiredSpecialWc) {
-						addReportDetail(ruleNo, BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Dimension",
-								MINIMUM_DIMENSION_SPWC,
-								String.valueOf(helper.failedDimensionSpecialWc.intValue())
-										+ " not having dimension 1.5M",
-								Result.Not_Accepted.getResultVal(), scrutinyDetail);
-					} else {
-						addReportDetail(ruleNo, BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Dimension",
-								MINIMUM_DIMENSION_SPWC,
-								String.valueOf(helper.providedSpecialWc.intValue()
-										- helper.failedDimensionSpecialWc.intValue()) + " having dimension 1.5M",
-								Result.Accepted.getResultVal(), scrutinyDetail);
-					}
+					/*
+					 * if (helper.failedDimensionSpecialWc > 0 && helper.failedDimensionSpecialWc <=
+					 * helper.requiredSpecialWc) { addReportDetail(ruleNo,
+					 * BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Dimension",
+					 * MINIMUM_DIMENSION_SPWC,
+					 * String.valueOf(helper.failedDimensionSpecialWc.intValue()) +
+					 * " not having dimension 1.5M", Result.Not_Accepted.getResultVal(),
+					 * scrutinyDetail); } else { addReportDetail(ruleNo,
+					 * BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Dimension",
+					 * MINIMUM_DIMENSION_SPWC, String.valueOf(helper.providedSpecialWc.intValue() -
+					 * helper.failedDimensionSpecialWc.intValue()) + " having dimension 1.5M",
+					 * Result.Accepted.getResultVal(), scrutinyDetail); }
+					 */
 
 				}
 				accepted = processSanity(pl, b, helper, scrutinyDetail);
@@ -738,8 +749,8 @@ public class Sanitation_Birgaon extends FeatureProcess {
 						providedSpWcMap.put(f.getNumber(), 1);
 				}
 
-				validateDimensionOfSPWC(f.getSpecialWaterClosets(), f.getNumber(), failedAreaSpWcMap,
-						failedDimensionSpWcMap, providedSpWcMap);
+//				validateDimensionOfSPWC(f.getSpecialWaterClosets(), f.getNumber(), failedAreaSpWcMap,
+//						failedDimensionSpWcMap, providedSpWcMap);
 			}
 		}
 	}
@@ -763,8 +774,8 @@ public class Sanitation_Birgaon extends FeatureProcess {
 					notFound = true;
 				}
 
-				validateDimensionOfSPWC(f.getSpecialWaterClosets(), f.getNumber(), failedAreaSpWcMap,
-						failedDimensionSpWcMap, providedSpWcMap);
+//				validateDimensionOfSPWC(f.getSpecialWaterClosets(), f.getNumber(), failedAreaSpWcMap,
+//						failedDimensionSpWcMap, providedSpWcMap);
 
 			}
 		}
@@ -827,8 +838,8 @@ public class Sanitation_Birgaon extends FeatureProcess {
 				wcList.addAll(sanityDetails.getMaleWaterClosets());
 				wcList.addAll(sanityDetails.getFemaleWaterClosets());
 				wcList.addAll(sanityDetails.getCommonWaterClosets());
-				checkDimension(totalWCExpected.intValue(), detail, wcList, 1d, 1.1d, BLDG_PART_WATER_CLOSET,
-						DIMESION_DESC_KEY, RULE_38_1);
+//				checkDimension(totalWCExpected.intValue(), detail, wcList, 1d, 1.1d, BLDG_PART_WATER_CLOSET,
+//						DIMESION_DESC_KEY, RULE_38_1);
 
 				expected = "" + totalWCExpected.intValue();
 				actual = "" + totalWCActual.intValue();
@@ -850,8 +861,8 @@ public class Sanitation_Birgaon extends FeatureProcess {
 			expected = "" + helper.urinal.intValue();
 			actual = "" + urinalActual.intValue();
 			if (helper.urinal.intValue() >= 0) {
-				checkDimension(helper.urinal.intValue(), detail, sanityDetails.getUrinals(), 0.6d, 0.42d,
-						BLDG_PART_URINAL, DIMESION_DESC_KEY, RULE_38_1);
+//				checkDimension(helper.urinal.intValue(), detail, sanityDetails.getUrinals(), 0.6d, 0.42d,
+//						BLDG_PART_URINAL, DIMESION_DESC_KEY, RULE_38_1);
 				if (helper.urinal.intValue() > urinalActual.intValue()) {
 					addReportDetail(helper.ruleNo, description, expected, actual, Result.Not_Accepted.getResultVal(),
 							detail);
@@ -906,11 +917,11 @@ public class Sanitation_Birgaon extends FeatureProcess {
 			wcrList.addAll(sanityDetails.getFemaleRoomsWithWaterCloset());
 			wcrList.addAll(sanityDetails.getCommonRoomsWithWaterCloset());
 			if (totalBathExpected.intValue() >= 0) {
-				checkDimension(totalBathExpected.intValue(), detail, wcList, 1.1d, 1.5d, BLDG_PART_BATHROOM,
-						DIMESION_DESC_KEY, RULE_38_1);
-
-				checkDimension(totalBathExpected.intValue(), detail, wcrList, 1.1d, 2.2d, MALE_BATH_WITH_WC,
-						DIMESION_DESC_KEY, RULE_38_1);
+//				checkDimension(totalBathExpected.intValue(), detail, wcList, 1.1d, 1.5d, BLDG_PART_BATHROOM,
+//						DIMESION_DESC_KEY, RULE_38_1);
+//
+//				checkDimension(totalBathExpected.intValue(), detail, wcrList, 1.1d, 2.2d, MALE_BATH_WITH_WC,
+//						DIMESION_DESC_KEY, RULE_38_1);
 
 				if (totalBathExpected.intValue() > totalActualBath) {
 					addReportDetail(helper.ruleNo, description, expected, actual, Result.Not_Accepted.getResultVal(),

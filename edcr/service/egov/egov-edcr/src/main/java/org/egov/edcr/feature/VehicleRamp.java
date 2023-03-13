@@ -70,7 +70,7 @@ import org.springframework.stereotype.Service;
 public class VehicleRamp extends FeatureProcess {
 
 	private static final String SUBRULE_40_8 = "40-8";
-	private static final String DESCRIPTION = "Vehicle Ramp";
+	private static final String DESCRIPTION_VR = "Vehicle Ramp";
 	private static final String FLOOR = "Floor";
 	private static final String FLIGHT = "Flight";
 	@Override
@@ -103,9 +103,11 @@ public class VehicleRamp extends FeatureProcess {
 			for (Floor floor : block.getBuilding().getFloors()) {
 				coverParkingArea = coverParkingArea.add(floor.getParking().getCoverCars().stream()
 						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
-				basementParkingArea = basementParkingArea.add(floor.getParking().getBasementCars().stream()
-						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
+//				basementParkingArea = basementParkingArea.add(floor.getParking().getBasementCars().stream()
+//						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
 			}
+			basementParkingArea = pl.getParkingDetails().getBasementCars().stream()
+					.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
 		}
 		HashMap<String, String> errors = new HashMap<>();
 		BigDecimal totalProvidedCarParkArea = coverParkingArea.add(basementParkingArea);
@@ -114,7 +116,7 @@ public class VehicleRamp extends FeatureProcess {
 		boolean valid, valid1, valid2;
 		Map<String, String> details = new HashMap<>();
 		details.put(RULE_NO, SUBRULE_40_8);
-		details.put(DESCRIPTION, DESCRIPTION);
+		details.put(DESCRIPTION, DESCRIPTION_VR);
 		if (totalProvidedCarParkArea != null && totalProvidedCarParkArea.compareTo(BigDecimal.ZERO) > 0) {
 			if (pl != null && !pl.getBlocks().isEmpty()) {
 				for (Block block : pl.getBlocks()) {

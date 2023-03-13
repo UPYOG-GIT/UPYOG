@@ -118,7 +118,7 @@ public class ParkingExtract extends FeatureExtract {
 				Util.getPolyLinesByLayer(pl.getDoc(), s).forEach(
 						dinningPolyline -> block.getDiningSpaces().add(new MeasurementDetail(dinningPolyline, true)));
 			
-			//add for Lower Ground Floor Parking in Birgaon ULB
+			//add for Lower Ground Floor Parking
 			String lowerGroungFloorParkLayer = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + block.getNumber() + "_"
 					+ layerNames.getLayerName("LAYER_NAME_LOWER_GROUND_FLOOR_PARKING");
 			List<String> lowerGroungFloorParkLayerNames = Util.getLayerNamesLike(pl.getDoc(), lowerGroungFloorParkLayer);
@@ -133,6 +133,14 @@ public class ParkingExtract extends FeatureExtract {
 				Util.getPolyLinesByLayer(pl.getDoc(), s).forEach(
 						basementPark -> pl.getParkingDetails().getBasementCars().add(new MeasurementDetail(basementPark, true)));
 		
+			//Added by Bhupesh for Podium Parking Extraction
+			String podiumParkLayer = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + block.getNumber() + "_"
+					+ layerNames.getLayerName("LAYER_NAME_PODIUM_PARKING");
+			List<String> podiumParkLayerNames = Util.getLayerNamesLike(pl.getDoc(), podiumParkLayer);
+			for (String s : podiumParkLayerNames)
+				Util.getPolyLinesByLayer(pl.getDoc(), s).forEach(
+						podiumPark -> pl.getParkingDetails().getBasementCars().add(new MeasurementDetail(podiumPark, true)));
+			
 		}
 
 		Util.getPolyLinesByLayer(pl.getDoc(), layerNames.getLayerName("LAYER_NAME_LOADING_UNLOADING"))

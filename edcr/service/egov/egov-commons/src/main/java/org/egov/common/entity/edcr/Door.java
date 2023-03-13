@@ -58,6 +58,10 @@ private static final long serialVersionUID = 105L;
     
     private List<BigDecimal> widths = new ArrayList<>();
     
+    private BigDecimal doorWidth;
+    
+    private BigDecimal doorHeight;
+    
     private int colorCode;
 
 	public String getName() {
@@ -82,6 +86,22 @@ private static final long serialVersionUID = 105L;
 
 	public void setColorCode(int colorCode) {
 		this.colorCode = colorCode;
+	}
+
+	public BigDecimal getDoorWidth() {
+		return doorWidth;
+	}
+
+	public void setDoorWidth(BigDecimal doorWidth) {
+		this.doorWidth = doorWidth;
+	}
+
+	public BigDecimal getDoorHeight() {
+		return doorHeight;
+	}
+
+	public void setDoorHeight(BigDecimal doorHeight) {
+		this.doorHeight = doorHeight;
 	}
 
 }

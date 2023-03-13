@@ -69,9 +69,12 @@ import org.springframework.stereotype.Service;
 public class LiftService extends FeatureProcess {
 
 	private static final String SUBRULE_48_DESC = "Minimum number of lifts for block %s";
+	private static final String SUBRULE_DESC = "Minimum number of lifts for block %s";
 	private static final String SUBRULE_48 = "48";
+	private static final String SUBRULE = "Table 4e";
 	private static final String REMARKS = "Remarks";
 	private static final String SUBRULE_48_DESCRIPTION = "Minimum number of lifts";
+	private static final String SUBRULE_DESCRIPTION = "Minimum number of lifts";
 	private static final String SUBRULE_40A_3 = "40A-3";
 	private static final String SUBRULE_118 = "118";
 	private static final String SUBRULE_118_DESCRIPTION = "Minimum dimension Of lift %s on floor %s";
@@ -101,15 +104,17 @@ public class LiftService extends FeatureProcess {
 	@Override
 	public Plan process(Plan plan) {
 		// validate(plan);
-		boolean isReport = false;
+
 		if (plan != null && !plan.getBlocks().isEmpty()) {
 			blk: for (Block block : plan.getBlocks()) {
 				scrutinyDetail = new ScrutinyDetail();
 				scrutinyDetail.addColumnHeading(1, RULE_NO);
-				scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-				scrutinyDetail.addColumnHeading(3, REQUIRED);
-				scrutinyDetail.addColumnHeading(4, PROVIDED);
-				scrutinyDetail.addColumnHeading(5, STATUS);
+				scrutinyDetail.addColumnHeading(2, OCCUPANCY);
+				scrutinyDetail.addColumnHeading(3, BUILDING_HEIGHT);
+				scrutinyDetail.addColumnHeading(4, DESCRIPTION);
+				scrutinyDetail.addColumnHeading(5, REQUIRED);
+				scrutinyDetail.addColumnHeading(6, PROVIDED);
+				scrutinyDetail.addColumnHeading(7, STATUS);
 //				scrutinyDetail.addColumnHeading(6, REMARKS);
 				scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Lift - Minimum Required");
 
@@ -131,7 +136,9 @@ public class LiftService extends FeatureProcess {
 					 * block.getBuilding().getOccupancies().stream() .map(occupancy ->
 					 * occupancy.getType()).collect(Collectors.toList());
 					 */
-					BigDecimal noOfLiftsRqrd;
+					BigDecimal buildingHeight = block.getBuilding().getBuildingHeight();
+					BigDecimal noOfLiftsRqrd = BigDecimal.ZERO;
+					boolean isReport = false;
 					/*
 					 * To be added Rule 48 Lift shall be provided for buildings above 15 m. height
 					 * in case of apartments, group housing, commercial, institutional and office
@@ -151,6 +158,11 @@ public class LiftService extends FeatureProcess {
 //                                    || DxfFileConstants.F
 //                                            .equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype()
 //                                                    .getCode()))) {
+
+					String occupancyType = (occupancyTypeHelper.getType() != null)
+							? occupancyTypeHelper.getType().getName()
+							: null;
+//					String occupancyType=occupancyTypeHelper.getType().getName();
 					if (block.getBuilding().getIsHighRise() && ((occupancyTypeHelper.getSubtype() != null
 							&& DxfFileConstants.A_AF.equals(occupancyTypeHelper.getSubtype().getCode()))
 							|| occupancyTypeHelper.getType() != null
@@ -165,14 +177,21 @@ public class LiftService extends FeatureProcess {
 						}
 						if (valid) {
 							isReport = true;
-							setReportOutputDetails(plan, SUBRULE_48, SUBRULE_48_DESCRIPTION, noOfLiftsRqrd.toString(),
-									block.getNumberOfLifts(), Result.Accepted.getResultVal(), "", scrutinyDetail);
+							setReportOutputDetails(plan, SUBRULE, SUBRULE_DESCRIPTION, occupancyType,
+									buildingHeight.toString(), noOfLiftsRqrd.toString(), block.getNumberOfLifts(),
+									Result.Accepted.getResultVal(), "", scrutinyDetail);
 						} else {
 							isReport = true;
-							setReportOutputDetails(plan, SUBRULE_48, SUBRULE_48_DESCRIPTION, noOfLiftsRqrd.toString(),
-									block.getNumberOfLifts(), Result.Not_Accepted.getResultVal(), "", scrutinyDetail);
+							setReportOutputDetails(plan, SUBRULE, SUBRULE_DESCRIPTION, occupancyType,
+									buildingHeight.toString(), noOfLiftsRqrd.toString(), block.getNumberOfLifts(),
+									Result.Not_Accepted.getResultVal(), "", scrutinyDetail);
 						}
 
+					} else {
+//					if (!isReport) {
+						setReportOutputDetails(plan, SUBRULE, SUBRULE_DESCRIPTION, occupancyType,
+								buildingHeight.toString(), noOfLiftsRqrd.toString(), block.getNumberOfLifts(),
+								Result.Accepted.getResultVal(), "", scrutinyDetail);
 					}
 				}
 
@@ -208,16 +227,16 @@ public class LiftService extends FeatureProcess {
 
 			}
 		}
-//		if (!isReport) {
-//			plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//		}
 		return plan;
 	}
 
-	private void setReportOutputDetails(Plan plan, String ruleNo, String ruleDesc, String expected, String actual,
-			String status, String remarks, ScrutinyDetail scrutinyDetail) {
+	private void setReportOutputDetails(Plan plan, String ruleNo, String ruleDesc, String occupancyType,
+			String buildingHeight, String expected, String actual, String status, String remarks,
+			ScrutinyDetail scrutinyDetail) {
 		Map<String, String> details = new HashMap<>();
 		details.put(RULE_NO, ruleNo);
+		details.put(OCCUPANCY, occupancyType);
+		details.put(BUILDING_HEIGHT, buildingHeight);
 		details.put(DESCRIPTION, ruleDesc);
 		details.put(REQUIRED, expected);
 		details.put(PROVIDED, actual);
