@@ -54,13 +54,16 @@ import lombok.extern.slf4j.Slf4j;
 public class CcavenueGateway implements Gateway {
 
 	private final String GATEWAY_NAME = "CCAVENUE";
-	private final String ACCESS_CODE;
-	private final String WORKING_KEY;
+	private String ACCESS_CODE;
+//	private final String ACCESS_CODE;
+	private String WORKING_KEY;
+//	private final String WORKING_KEY;
 	private final String MERCHANT_URL_PAY;
 	private final String MERCHANT_URL_STATUS;
 	private final String MERCHANT_PATH_PAY;
 	private final String MERCHANT_PATH_STATUS;
-	private final String MERCHANT_ID;
+	private String MERCHANT_ID;
+//	private final String MERCHANT_ID;
 	private final String COMMAND;
 	private final String REQUEST_TYPE;
 	private final String RESPONSE_TYPE;
@@ -137,9 +140,14 @@ public class CcavenueGateway implements Gateway {
 	public URI generateRedirectURI(Transaction transaction) {
 
 		log.info("Inside CCAvenue generateRedirectURI()");
-		Random random = new Random();
-		int randomNumber = random.nextInt(90000000) + 10000000;
-
+//		Random random = new Random();
+//		int randomNumber = random.nextInt(90000000) + 10000000;
+		
+		String tenantId=transaction.getTenantId();
+		
+		//set MerchantId, WorkingKey and AccessKey according to tenantId
+		setGatewayDetails(tenantId);
+		
 		log.info("transaction.getTxnId() : " + transaction.getTxnId());
 //		String orderNumber = "CG" + randomNumber;
 		String orderNumber = transaction.getTxnId();
@@ -337,6 +345,12 @@ public class CcavenueGateway implements Gateway {
 
 //			String encResp = resp.getEncResp();
 			String encResp = params.get("encResp");
+			
+			String tenantId=currentStatus.getTenantId();
+			
+			//set MerchantId, WorkingKey and AccessKey according to tenantId
+			setGatewayDetails(tenantId);
+			
 //			String orderNo = resp.getOrderNo();
 			log.info("encResp: " + encResp);
 			CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
@@ -426,6 +440,12 @@ public class CcavenueGateway implements Gateway {
 		String orderStatusQueryJson = "{ \"order_no\":\"" + orderNo + "\" }";
 
 		String encryptedJsonData = "";
+		
+		String tenantId=currentStatus.getTenantId();
+		
+		//set MerchantId, WorkingKey and AccessKey according to tenantId
+		setGatewayDetails(tenantId);
+		
 		CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
 		encryptedJsonData = ccavenueUtis.encrypt(orderStatusQueryJson);
 
@@ -572,6 +592,13 @@ public class CcavenueGateway implements Gateway {
 		 * currencyCode|r equestDateTime|successUrl|failUrl|additionalField1|
 		 * additionalField2| additionalField3| additionalField4| additionalField5
 		 */
+		
+		
+		String tenantId=transaction.getTenantId();
+		
+		//set MerchantId, WorkingKey and AccessKey according to tenantId
+		setGatewayDetails(tenantId);
+		
 		String urlData = null;
 		HashMap<String, String> queryMap = new HashMap<>();
 		queryMap.put(MESSAGE_TYPE_KEY, MESSAGE_TYPE);
@@ -673,6 +700,18 @@ public class CcavenueGateway implements Gateway {
 	private String getReturnUrl(String callbackUrl, String baseurl) {
 		return UriComponentsBuilder.fromHttpUrl(baseurl).queryParam(ORIGINAL_RETURN_URL_KEY, callbackUrl).build()
 				.toUriString();
+	}
+	
+	private void setGatewayDetails(String tenantId) {
+		if(tenantId.equals("cg.birgaon")) {
+			MERCHANT_ID="2136858";
+			ACCESS_CODE="AVWN26KC60AF20NWFA";
+			WORKING_KEY="B27E5242E8FC395A07F65AB900F021FA";
+		} else if (tenantId.equals("cg.dhamtari")){
+			MERCHANT_ID="1941257";
+			ACCESS_CODE="AVII96KA89BB16IIBB";
+			WORKING_KEY="D682025F99E01FA0F0FAA079B1B3F793";
+		}
 	}
 
 }
