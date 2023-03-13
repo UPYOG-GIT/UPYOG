@@ -417,13 +417,15 @@ public class MDMSService {
 					}
 					
 					Integer countPayTyrate = bpaRepository.getCountOfPaytyrate(tenantid,paytyid,pCategory);
-					log.info("countPayTyrate: "+countPayTyrate);
+					log.info("paytyid-------"+paytyid+"  pCategory--------"+pCategory+"  countPayTyrate: "+countPayTyrate);
 					
 					if(countPayTyrate.equals(0)) {
 						throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "No pay type rate entry found for  this id");
 
 					}
 					
+					
+					log.info("bcategory--"+bcategory+"subcate----"+subcate);
 					Map<String,Object> detailPayTyrate = bpaRepository.getDetailOfPaytyrate(tenantid,paytyid,pCategory,countPayTyrate,bcategory,subcate);
 					log.info("detailPayTyrate : "+detailPayTyrate.toString());
 					
@@ -638,6 +640,8 @@ public class MDMSService {
 					//FOR SLAB 'S'
 					//check for slab.
 //						Math.ceil(Area);
+						log.info("b_category=="+b_category+"--s_category--"+s_category+"-- Math.ceil(Area)--"+Math.ceil(Area));
+					
 						List<Map<String, Object>> slabResult = bpaRepository.getDetailOfSlabMaster(b_category,s_category,tenantid,paytyid,pCategory,Math.ceil(Area));
 						
 						if(slabResult.isEmpty()) {
