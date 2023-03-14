@@ -455,46 +455,69 @@ public class SideYardService_Dhamtari extends SideYardService {
 			double minMeanlength, double maxMeanLength, final OccupancyTypeHelper mostRestrictiveOccupancy,
 			SideYardResult sideYard1Result, SideYardResult sideYard2Result, String rule, String subRule, Boolean valid2,
 			Boolean valid1, BigDecimal side2val, BigDecimal side1val, BigDecimal widthOfPlot, BigDecimal depthOfPlot) {
-		if (depthOfPlot.compareTo(BigDecimal.valueOf(7)) <= 0 
-			&& widthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
-			side2val = BigDecimal.ZERO;
+		
+		
+		if (widthOfPlot.compareTo(BigDecimal.valueOf(7)) < 0 ) {
 			side1val = BigDecimal.ZERO;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(9)) <= 0 
-				&& widthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
-			side2val = BigDecimal.ZERO;
+		} else if (widthOfPlot.compareTo(BigDecimal.valueOf(7)) > 0
+				&& widthOfPlot.compareTo(BigDecimal.valueOf(9)) <= 0) {
 			side1val = SIDEVALUE_TWO;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(11.10)) <= 0 
-				&& widthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) {
-			side2val = BigDecimal.ZERO;
+		} else if (widthOfPlot.compareTo(BigDecimal.valueOf(9)) > 0
+				&& widthOfPlot.compareTo(BigDecimal.valueOf(12)) <= 0) {
 			side1val = SIDEVALUE_TWOPOINTFIVE;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12)) <= 0 
-				&& widthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) {
-			side2val = SIDEVALUE_ONEPOINTFIVE;
-			side1val = SIDEVALUE_TWOPOINTFIVE;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0 
-				&& widthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) {
-			side2val = SIDEVALUE_ONEPOINTFIVE;
+		} else if (widthOfPlot.compareTo(BigDecimal.valueOf(12)) > 0
+				&& widthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
 			side1val = SIDEVALUE_THREE;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0 
-				&& widthOfPlot.compareTo(BigDecimal.valueOf(24)) <= 0) {
-			side2val = SIDEVALUE_TWOPOINTFIVE;
-			side1val = SIDEVALUE_THREEPOINTFIVE;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0 
-				&& widthOfPlot.compareTo(BigDecimal.valueOf(30)) <= 0) {
-			side2val = SIDEVALUE_THREE;
+		} else if (widthOfPlot.compareTo(BigDecimal.valueOf(15)) > 0
+				&& widthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) {
 			side1val = SIDEVALUE_FOUR;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(20)) <= 0 
-				&& widthOfPlot.compareTo(BigDecimal.valueOf(30)) <= 0) {
-			side2val = SIDEVALUE_THREE;
-			side1val = SIDEVALUE_FOURPOINTFIVE;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(25)) <= 0 
-				&& widthOfPlot.compareTo(BigDecimal.valueOf(30)) <= 0) {
-			side2val = SIDEVALUE_FOURPOINTFIVE;
-			side1val = SIDEVALUE_FOURPOINTFIVE;
-		} else {
-			side2val = SIDEVALUE_FOURPOINTFIVE;
+		} else if (widthOfPlot.compareTo(BigDecimal.valueOf(18)) > 0) {
 			side1val = SIDEVALUE_FOURPOINTFIVE;
 		}
+		
+		if (widthOfPlot.compareTo(BigDecimal.valueOf(11.10)) < 0 ) {
+			side2val = BigDecimal.ZERO;
+		} else if (widthOfPlot.compareTo(BigDecimal.valueOf(11.10)) > 0
+				&& widthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
+			side2val = SIDEVALUE_ONEPOINTFIVE;
+		} else if (widthOfPlot.compareTo(BigDecimal.valueOf(15)) > 0
+				&& widthOfPlot.compareTo(BigDecimal.valueOf(25)) <= 0) {
+			side2val = SIDEVALUE_THREE;
+		} else if (widthOfPlot.compareTo(BigDecimal.valueOf(25)) > 0) {
+			side2val = SIDEVALUE_FOURPOINTFIVE;
+		}
+		
+		
+		/*
+		 * if (depthOfPlot.compareTo(BigDecimal.valueOf(7)) <= 0 &&
+		 * widthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) { side2val =
+		 * BigDecimal.ZERO; side1val = BigDecimal.ZERO; } else if
+		 * (depthOfPlot.compareTo(BigDecimal.valueOf(9)) <= 0 &&
+		 * widthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) { side2val =
+		 * BigDecimal.ZERO; side1val = SIDEVALUE_TWO; } else if
+		 * (depthOfPlot.compareTo(BigDecimal.valueOf(11.10)) <= 0 &&
+		 * widthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) { side2val =
+		 * BigDecimal.ZERO; side1val = SIDEVALUE_TWOPOINTFIVE; } else if
+		 * (depthOfPlot.compareTo(BigDecimal.valueOf(12)) <= 0 &&
+		 * widthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) { side2val =
+		 * SIDEVALUE_ONEPOINTFIVE; side1val = SIDEVALUE_TWOPOINTFIVE; } else if
+		 * (depthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0 &&
+		 * widthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) { side2val =
+		 * SIDEVALUE_ONEPOINTFIVE; side1val = SIDEVALUE_THREE; } else if
+		 * (depthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0 &&
+		 * widthOfPlot.compareTo(BigDecimal.valueOf(24)) <= 0) { side2val =
+		 * SIDEVALUE_TWOPOINTFIVE; side1val = SIDEVALUE_THREEPOINTFIVE; } else if
+		 * (depthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0 &&
+		 * widthOfPlot.compareTo(BigDecimal.valueOf(30)) <= 0) { side2val =
+		 * SIDEVALUE_THREE; side1val = SIDEVALUE_FOUR; } else if
+		 * (depthOfPlot.compareTo(BigDecimal.valueOf(20)) <= 0 &&
+		 * widthOfPlot.compareTo(BigDecimal.valueOf(30)) <= 0) { side2val =
+		 * SIDEVALUE_THREE; side1val = SIDEVALUE_FOURPOINTFIVE; } else if
+		 * (depthOfPlot.compareTo(BigDecimal.valueOf(25)) <= 0 &&
+		 * widthOfPlot.compareTo(BigDecimal.valueOf(30)) <= 0) { side2val =
+		 * SIDEVALUE_FOURPOINTFIVE; side1val = SIDEVALUE_FOURPOINTFIVE; } else {
+		 * side2val = SIDEVALUE_FOURPOINTFIVE; side1val = SIDEVALUE_FOURPOINTFIVE; }
+		 */
 
 		if (max >= side1val.doubleValue())
 			valid1 = true;
