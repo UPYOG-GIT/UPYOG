@@ -4,7 +4,7 @@ import { Route, Link, useHistory, useLocation } from "react-router-dom";
 
 const CitizenHomeCard = ({ header, links, state, Icon, Info, isInfo = false, styles }) => {
   const location = useLocation();
-  console.log("location--" + JSON.stringify(location));
+ 
   return (
     <div className="CitizenHomeCard" style={styles ? styles : {}}>
 

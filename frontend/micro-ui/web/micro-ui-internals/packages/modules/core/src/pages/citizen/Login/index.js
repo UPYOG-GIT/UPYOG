@@ -67,6 +67,9 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
   const { pathname } = useLocation();
 
+  // console.log("city" + JSON.stringify(city))
+  // console.log("cities" + JSON.stringify(cities))
+
 
   useEffect(() => {
     let errorTimeout;
@@ -331,6 +334,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   function selectCity(city) {
     setSelectedCity(city);
     setShowError(false);
+   
   }
 
   return (
@@ -458,14 +462,17 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                       cities.map((city) => (
 
                         <MenuItem key={city.code} value={city.code}>
-                          {city.name}
+                          {city.name} {"Municipal Corporation"} 
                         </MenuItem>
                       ))}
                   </Select>
                   {showError && <CardLabelError>{t("CS_CITIZEN_DETAILS_ERROR_MSG1")}</CardLabelError>}
+                
                 </FormControl>
+                
 
               )}
+              
 
               {location.pathname === "/digit-ui/citizen/login" ? (
                 <Button
@@ -566,8 +573,10 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         {/* </AppContainer> */}
       </Switch>
     </div >
+    
 
   );
+
 };
 
 export default Login;

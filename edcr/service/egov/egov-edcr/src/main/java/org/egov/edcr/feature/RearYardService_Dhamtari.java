@@ -306,27 +306,45 @@ public class RearYardService_Dhamtari extends RearYardService {
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult, String subRule,
 			String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot,BigDecimal widthOfPlot, Boolean valid) {
 
-		if (depthOfPlot.compareTo(BigDecimal.valueOf(4)) < 0 
-				&& widthOfPlot.compareTo(BigDecimal.valueOf(8)) < 0) {
+		if (depthOfPlot.compareTo(BigDecimal.valueOf(12)) < 0 ) {
 			minVal = BigDecimal.ZERO;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(9)) <= 0
-				&& widthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
+		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12)) > 0
+				&& depthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
 			minVal = REARYARDMINIMUM_DISTANCE_1_5;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0
-				&& widthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) {
+		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(15)) > 0
+				&& depthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) {
 			minVal = REARYARDMINIMUM_DISTANCE_2;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0
-				&& widthOfPlot.compareTo(BigDecimal.valueOf(24)) <= 0) {
+		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18)) > 0
+				&& depthOfPlot.compareTo(BigDecimal.valueOf(24)) <= 0) {
 			minVal = REARYARDMINIMUM_DISTANCE_2_5;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(20)) <= 0
-				&& widthOfPlot.compareTo(BigDecimal.valueOf(30)) <= 0) {
+		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24)) > 0
+				&& depthOfPlot.compareTo(BigDecimal.valueOf(30)) <= 0) {
 			minVal = REARYARDMINIMUM_DISTANCE_3;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(25)) <= 0
-				&& widthOfPlot.compareTo(BigDecimal.valueOf(30)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_4_5;
-		} else {
+		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(30)) > 0) {
 			minVal = REARYARDMINIMUM_DISTANCE_4_5;
 		}
+		
+		
+		/*
+		 * if (depthOfPlot.compareTo(BigDecimal.valueOf(4)) < 0 &&
+		 * widthOfPlot.compareTo(BigDecimal.valueOf(8)) < 0) { minVal = BigDecimal.ZERO;
+		 * } else if (depthOfPlot.compareTo(BigDecimal.valueOf(9)) <= 0 &&
+		 * widthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) { minVal =
+		 * REARYARDMINIMUM_DISTANCE_1_5; } else if
+		 * (depthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0 &&
+		 * widthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) { minVal =
+		 * REARYARDMINIMUM_DISTANCE_2; } else if
+		 * (depthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0 &&
+		 * widthOfPlot.compareTo(BigDecimal.valueOf(24)) <= 0) { minVal =
+		 * REARYARDMINIMUM_DISTANCE_2_5; } else if
+		 * (depthOfPlot.compareTo(BigDecimal.valueOf(20)) <= 0 &&
+		 * widthOfPlot.compareTo(BigDecimal.valueOf(30)) <= 0) { minVal =
+		 * REARYARDMINIMUM_DISTANCE_3; } else if
+		 * (depthOfPlot.compareTo(BigDecimal.valueOf(25)) <= 0 &&
+		 * widthOfPlot.compareTo(BigDecimal.valueOf(30)) <= 0) { minVal =
+		 * REARYARDMINIMUM_DISTANCE_4_5; } else { minVal = REARYARDMINIMUM_DISTANCE_4_5;
+		 * }
+		 */
 
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
 		/*
