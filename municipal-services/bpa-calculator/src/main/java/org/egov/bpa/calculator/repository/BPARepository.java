@@ -75,8 +75,8 @@ public class BPARepository {
 	public Integer getCountOfPaytyrate(String tenantid,int id,Integer pCategory) {
 		String sql = "select count(*)from pay_tp_rate_master "
 				+ "where  ulb_tenantid=? "
-				+ "and typeId=? "
-				+ "and p_category=?";
+				+ " and typeId=? "
+				+ " and p_category=?";
 		
 		log.info("BPARepository.getCountOfPaytyrate: "+sql);
 		return jdbcTemplate.queryForObject(sql, new Object[] { tenantid,id,pCategory }, Integer.class);
@@ -84,9 +84,9 @@ public class BPARepository {
 	
 	public Map<String,Object> getDetailOfPaytyrate(String tenantid,int id,Integer pCategory,int countPayTyrate, Integer bcategory,Integer subcate) {
 		String sql = "select * from pay_tp_rate_master "
-				+ "where  ulb_tenantid=? "
-				+ "and typeId=? "
-				+ "and p_category=? ";
+				+ "where  ulb_tenantid='"+tenantid+"'"
+				+ " and typeId="+id
+				+ " and p_category="+pCategory;
 		
 		if(countPayTyrate>1) {
 			if(!bcategory.equals(null) && !bcategory.equals(0)) {
@@ -98,13 +98,14 @@ public class BPARepository {
 		}
 		
 		log.info("BPARepository.getDetailOfPaytyrate: "+sql);
-		return jdbcTemplate.queryForMap(sql, new Object[] { tenantid,id,pCategory });
+//		return jdbcTemplate.queryForMap(sql, new Object[] { tenantid,id,pCategory });
+		return jdbcTemplate.queryForMap(sql);
 	}
 	
 	public List<Map<String, Object>> getDetailOfSlabMaster(Integer bcatefromrate, Integer subcatefromrate,String tenantid,int id, Integer pCategory,Double area ){
-		String sql ="select * from slab_master where ulb_tenantid=? "
-				+ "and paytype_id=? and p_category=? "
-				+ "and from_val <= ? ";
+		String sql ="select * from slab_master where ulb_tenantid='"+tenantid+"'"
+				+ " and paytype_id="+id+" and p_category="+pCategory
+				+ " and from_val <="+area;
 		if(!bcatefromrate.equals(null) && !bcatefromrate.equals(0)) {
 			 sql +=" and  b_category ="+bcatefromrate;
 		}
@@ -114,7 +115,8 @@ public class BPARepository {
 			sql+= " order by from_val";
 			
 			log.info("BPARepository.getDetailOfSlabMaster: "+sql);
-			return jdbcTemplate.queryForList(sql, new Object[] { tenantid,id,pCategory,area});	
+//			return jdbcTemplate.queryForList(sql, new Object[] { tenantid,id,pCategory,area});
+			return jdbcTemplate.queryForList(sql);
 	}
 	
 	

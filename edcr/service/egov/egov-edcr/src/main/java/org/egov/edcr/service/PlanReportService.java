@@ -272,28 +272,33 @@ public class PlanReportService {
             FastReportBuilder frb = new FastReportBuilder();
 
             AbstractColumn floor = ColumnBuilder.getNew().setColumnProperty("floorNo", String.class.getName())
-                    .setTitle("Floor").setWidth(45).setHeaderStyle(reportService.getBldgDetlsHeaderStyle()).build();
+                    .setTitle("Floor").setWidth(35).setHeaderStyle(reportService.getBldgDetlsHeaderStyle()).build();
 
             AbstractColumn occupancy = ColumnBuilder.getNew().setColumnProperty("occupancy", String.class.getName())
-                    .setTitle("Occupancy/Sub Occupancy").setWidth(125).setHeaderStyle(reportService.getBldgDetlsHeaderStyle())
+                    .setTitle("Occupancy").setWidth(100).setHeaderStyle(reportService.getBldgDetlsHeaderStyle())
                     .build();
+            
+            AbstractColumn subOccupancy = ColumnBuilder.getNew().setColumnProperty("subOccupancy", String.class.getName())
+            		.setTitle("Sub Occupancy").setWidth(100).setHeaderStyle(reportService.getBldgDetlsHeaderStyle())
+            		.build();
 
             AbstractColumn builtUpArea = ColumnBuilder.getNew()
                     .setColumnProperty("builtUpArea", BigDecimal.class.getName()).setTitle("Built Up Area in m²")
-                    .setWidth(120).setStyle(reportService.getNumberStyle()).build();
+                    .setWidth(100).setStyle(reportService.getNumberStyle()).build();
             frb.addGlobalFooterVariable(builtUpArea, DJCalculation.SUM, reportService.getTotalNumberStyle());
 
             AbstractColumn floorArea = ColumnBuilder.getNew().setColumnProperty("floorArea", BigDecimal.class.getName())
-                    .setTitle("Floor Area in m²").setWidth(120).setStyle(reportService.getNumberStyle()).build();
+                    .setTitle("Floor Area in m²").setWidth(100).setStyle(reportService.getNumberStyle()).build();
             frb.addGlobalFooterVariable(floorArea, DJCalculation.SUM, reportService.getTotalNumberStyle());
 
             AbstractColumn carpetArea = ColumnBuilder.getNew()
                     .setColumnProperty("carpetArea", BigDecimal.class.getName()).setTitle("Carpet Area in m²")
-                    .setWidth(120).setStyle(reportService.getNumberStyle()).build();
+                    .setWidth(95).setStyle(reportService.getNumberStyle()).build();
             frb.addGlobalFooterVariable(carpetArea, DJCalculation.SUM, reportService.getTotalNumberStyle());
 
             frb.addColumn(floor);
             frb.addColumn(occupancy);
+            frb.addColumn(subOccupancy);
             frb.addColumn(builtUpArea);
             frb.addColumn(floorArea);
             frb.addColumn(carpetArea);
@@ -1031,14 +1036,18 @@ public class PlanReportService {
                             if (!occupancies.isEmpty()) {
 
                                 for (Occupancy occupancy : occupancies) {
+                                    String subOccupancyName = "";
                                     String occupancyName = "";
-                                    if (occupancy.getTypeHelper() != null)
+                                    if (occupancy.getTypeHelper() != null) {
                                         if (occupancy.getTypeHelper().getSubtype() != null)
-                                            occupancyName = occupancy.getTypeHelper().getSubtype().getName();
+                                            subOccupancyName = occupancy.getTypeHelper().getSubtype().getName();
                                         else {
                                             if (occupancy.getTypeHelper().getType() != null)
-                                                occupancyName = occupancy.getTypeHelper().getType().getName();
+                                                subOccupancyName = occupancy.getTypeHelper().getType().getName();
                                         }
+                                    if (occupancy.getTypeHelper().getType() != null)
+                                    	occupancyName = occupancy.getTypeHelper().getType().getName();
+                                    }
                                     DcrReportFloorDetail dcrReportFloorDetail = new DcrReportFloorDetail();
                                     String floorNo;
                                     if (floor.getTerrace())
@@ -1049,6 +1058,7 @@ public class PlanReportService {
                                         floorNo = String.valueOf(floor.getNumber());
                                     dcrReportFloorDetail.setFloorNo(floorNo);
                                     dcrReportFloorDetail.setOccupancy(occupancyName);
+                                    dcrReportFloorDetail.setSubOccupancy(subOccupancyName);
                                     dcrReportFloorDetail.setBuiltUpArea(
                                             occupancy.getExistingBuiltUpArea().compareTo(BigDecimal.ZERO) > 0
                                                     ? occupancy.getBuiltUpArea()

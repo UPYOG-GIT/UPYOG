@@ -65,104 +65,101 @@ import org.springframework.stereotype.Service;
 @Service
 public class Basement extends FeatureProcess {
 
-    private static final Logger LOG = LogManager.getLogger(Basement.class);
-    private static final String RULE_46_6A = "46-6a";
-    private static final String RULE_46_6C = "46-6c";
-    public static final String BASEMENT_DESCRIPTION_ONE = "Height from the floor to the soffit of the roof slab or ceiling";
-    public static final String BASEMENT_DESCRIPTION_TWO = "Minimum height of the ceiling of upper basement above ground level";
+	private static final Logger LOG = LogManager.getLogger(Basement.class);
+	private static final String RULE_46_6A = "46-6a";
+	private static final String RULE_46_6C = "46-6c";
+	public static final String BASEMENT_DESCRIPTION_ONE = "Height from the floor to the soffit of the roof slab or ceiling";
+	public static final String BASEMENT_DESCRIPTION = "Basement Present";
+	public static final String BASEMENT_DESCRIPTION_TWO = "Minimum height of the ceiling of upper basement above ground level";
 
-    @Override
-    public Plan validate(Plan pl) {
+	@Override
+	public Plan validate(Plan pl) {
 
-        return pl;
-    }
+		return pl;
+	}
 
-    @Override
-    public Plan process(Plan pl) {
+	@Override
+	public Plan process(Plan pl) {
 
-        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_Basement");
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        scrutinyDetail.addColumnHeading(3, REQUIRED);
-        scrutinyDetail.addColumnHeading(4, PROVIDED);
-        scrutinyDetail.addColumnHeading(5, STATUS);
+		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+		scrutinyDetail.setKey("Common_Basement");
+//        scrutinyDetail.addColumnHeading(1, RULE_NO);
+		scrutinyDetail.addColumnHeading(1, DESCRIPTION);
+		scrutinyDetail.addColumnHeading(2, PRESENTED);
+//        scrutinyDetail.addColumnHeading(4, PROVIDED);
+		scrutinyDetail.addColumnHeading(3, STATUS);
 
-        Map<String, String> details = new HashMap<>();
+		Map<String, String> details = new HashMap<>();
 
-        BigDecimal minLength = BigDecimal.ZERO;
+		BigDecimal minLength = BigDecimal.ZERO;
 
-        if (pl.getBlocks() != null) {
-            for (Block b : pl.getBlocks()) {
-                if (b.getBuilding() != null && b.getBuilding().getFloors() != null
-                        && !b.getBuilding().getFloors().isEmpty()) {
+		if (pl.getBlocks() != null) {
+			for (Block b : pl.getBlocks()) {
+				if (b.getBuilding() != null && b.getBuilding().getFloors() != null
+						&& !b.getBuilding().getFloors().isEmpty()) {
+					boolean isPresent = false;
+					for (Floor f : b.getBuilding().getFloors()) {
+						
+						if (f.getNumber() == -1) {
+							isPresent = true;
 
-                    for (Floor f : b.getBuilding().getFloors()) {
+							/*
+							 * if (f.getHeightFromTheFloorToCeiling() != null &&
+							 * !f.getHeightFromTheFloorToCeiling().isEmpty()) {
+							 * 
+							 * minLength =
+							 * f.getHeightFromTheFloorToCeiling().stream().reduce(BigDecimal::min).get();
+							 * 
+							 * if (minLength.compareTo(BigDecimal.valueOf(2.4)) >= 0) { details.put(RULE_NO,
+							 * RULE_46_6A); details.put(DESCRIPTION, BASEMENT_DESCRIPTION_ONE);
+							 * details.put(REQUIRED, ">= 2.4"); details.put(PROVIDED, minLength.toString());
+							 * details.put(STATUS, Result.Accepted.getResultVal());
+							 * scrutinyDetail.getDetail().add(details);
+							 * 
+							 * } else { details = new HashMap<>(); details.put(RULE_NO, RULE_46_6A);
+							 * details.put(DESCRIPTION, BASEMENT_DESCRIPTION_ONE); details.put(REQUIRED,
+							 * ">= 2.4"); details.put(PROVIDED, minLength.toString()); details.put(STATUS,
+							 * Result.Not_Accepted.getResultVal()); scrutinyDetail.getDetail().add(details);
+							 * } } minLength = BigDecimal.ZERO; if (f.getHeightOfTheCeilingOfUpperBasement()
+							 * != null && !f.getHeightOfTheCeilingOfUpperBasement().isEmpty()) {
+							 * 
+							 * minLength =
+							 * f.getHeightOfTheCeilingOfUpperBasement().stream().reduce(BigDecimal::min).get
+							 * ();
+							 * 
+							 * if (minLength.compareTo(BigDecimal.valueOf(1.2)) >= 0 &&
+							 * minLength.compareTo(BigDecimal.valueOf(1.5)) < 0) { details = new
+							 * HashMap<>(); details.put(RULE_NO, RULE_46_6C); details.put(DESCRIPTION,
+							 * BASEMENT_DESCRIPTION_TWO); details.put(REQUIRED, "Between 1.2 to 1.5");
+							 * details.put(PROVIDED, minLength.toString()); details.put(STATUS,
+							 * Result.Accepted.getResultVal()); scrutinyDetail.getDetail().add(details);
+							 * 
+							 * } else { details = new HashMap<>(); details.put(RULE_NO, RULE_46_6C);
+							 * details.put(DESCRIPTION, BASEMENT_DESCRIPTION_TWO); details.put(REQUIRED,
+							 * "Between 1.2 to 1.5"); details.put(PROVIDED, minLength.toString());
+							 * details.put(STATUS, Result.Not_Accepted.getResultVal());
+							 * scrutinyDetail.getDetail().add(details); } }
+							 */
 
-                        if (f.getNumber() == -1) {
+						}
+//                        else {
+//                        	details.put(PRESENTED, "No");
+//                        }
+					}
+					scrutinyDetail.getDetail().add(details);
+					details.put(DESCRIPTION, BASEMENT_DESCRIPTION);
+					details.put(STATUS, "");
+					details.put(PRESENTED, isPresent ? "Yes" : "No");
+					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+				}
+			}
+		}
+		return pl;
+	}
 
-                            if (f.getHeightFromTheFloorToCeiling() != null
-                                    && !f.getHeightFromTheFloorToCeiling().isEmpty()) {
-
-                                minLength = f.getHeightFromTheFloorToCeiling().stream().reduce(BigDecimal::min).get();
-
-                                if (minLength.compareTo(BigDecimal.valueOf(2.4)) >= 0) {
-                                    details.put(RULE_NO, RULE_46_6A);
-                                    details.put(DESCRIPTION, BASEMENT_DESCRIPTION_ONE);
-                                    details.put(REQUIRED, ">= 2.4");
-                                    details.put(PROVIDED, minLength.toString());
-                                    details.put(STATUS, Result.Accepted.getResultVal());
-                                    scrutinyDetail.getDetail().add(details);
-
-                                } else {
-                                    details = new HashMap<>();
-                                    details.put(RULE_NO, RULE_46_6A);
-                                    details.put(DESCRIPTION, BASEMENT_DESCRIPTION_ONE);
-                                    details.put(REQUIRED, ">= 2.4");
-                                    details.put(PROVIDED, minLength.toString());
-                                    details.put(STATUS, Result.Not_Accepted.getResultVal());
-                                    scrutinyDetail.getDetail().add(details);
-                                }
-                            }
-                            minLength = BigDecimal.ZERO;
-                            if (f.getHeightOfTheCeilingOfUpperBasement() != null
-                                    && !f.getHeightOfTheCeilingOfUpperBasement().isEmpty()) {
-
-                                minLength = f.getHeightOfTheCeilingOfUpperBasement().stream().reduce(BigDecimal::min).get();
-
-                                if (minLength.compareTo(BigDecimal.valueOf(1.2)) >= 0
-                                        && minLength.compareTo(BigDecimal.valueOf(1.5)) < 0) {
-                                    details = new HashMap<>();
-                                    details.put(RULE_NO, RULE_46_6C);
-                                    details.put(DESCRIPTION, BASEMENT_DESCRIPTION_TWO);
-                                    details.put(REQUIRED, "Between 1.2 to 1.5");
-                                    details.put(PROVIDED, minLength.toString());
-                                    details.put(STATUS, Result.Accepted.getResultVal());
-                                    scrutinyDetail.getDetail().add(details);
-
-                                } else {
-                                    details = new HashMap<>();
-                                    details.put(RULE_NO, RULE_46_6C);
-                                    details.put(DESCRIPTION, BASEMENT_DESCRIPTION_TWO);
-                                    details.put(REQUIRED, "Between 1.2 to 1.5");
-                                    details.put(PROVIDED, minLength.toString());
-                                    details.put(STATUS, Result.Not_Accepted.getResultVal());
-                                    scrutinyDetail.getDetail().add(details);
-                                }
-                            }
-
-                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                        }
-                    }
-                }
-            }
-        }
-        return pl;
-    }
-
-    @Override
-    public Map<String, Date> getAmendments() {
-        return new LinkedHashMap<>();
-    }
+	@Override
+	public Map<String, Date> getAmendments() {
+		return new LinkedHashMap<>();
+	}
 
 }
