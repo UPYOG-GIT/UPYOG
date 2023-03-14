@@ -177,9 +177,10 @@ public class MDMSService {
 			JSONArray parkDetails11 = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking\")].detail[0].Provided");
 			log.info("parkDetails11====:----- " +parkDetails11.toString());
 			String totalParkArea = parkDetails11.get(0).toString();
-			
-			
+		
 			String zonedesc = context.read("edcrDetail[0].planDetail.planInfoProperties.DEVELOPMENT_ZONE");
+			
+			JSONArray block =  context.read("edcrDetail[0].planDetail.blocks[0]");
 			
 			additionalDetails.put("appDate", appDate.toString());
 			additionalDetails.put("appNum", appNum.toString());
@@ -190,6 +191,7 @@ public class MDMSService {
 			additionalDetails.put("subcate", scategory+"");
 			additionalDetails.put("totalParkArea", totalParkArea);
 			additionalDetails.put("zonedesc", zonedesc.toString());
+			additionalDetails.put("block", block.toString());
 			
 			log.info("additionalDetails---------"+additionalDetails);
 			Map<String, String> responseMap1 = feeCalculation(additionalDetails);
@@ -342,7 +344,7 @@ public class MDMSService {
 		log.info("appDate----"+appDate);
 		String zonedesc = data.get("zonedesc").toString();
 		log.info("zonedesc----"+zonedesc);
-		
+		List<Map<String,Object>>  blockDetail = (List<Map<String,Object>>)data.get("block");
 		
 		String feety ="";
 		String brkflg="";
@@ -376,7 +378,7 @@ public class MDMSService {
 		if(occupancyType.equals("Residential")) {
 			pCategory =1;
 		}
-		else if(occupancyType.equals("Commercial")) {
+		else if(occupancyType.equals("Mercantile / Commercial")) {
 			pCategory =2;
 		}
 		else if(occupancyType.equals("INDUSTRIAL")) {
@@ -410,9 +412,17 @@ public class MDMSService {
 			}
 			if(brkflg.equals("")) {
 				if(item.get("zdaflg").equals("N")) {
+					
+					
+					log.info("blockDetail==="+blockDetail);
+					
+					log.info("blockDetail size==="+blockDetail.size());
+					
+					for(Map<String,Object>  eachBlockDetail:blockDetail) {
+						log.info("eachBlockDetail===="+eachBlockDetail);
+					}
+					
 					int paytyid = Integer.parseInt(item.get("id").toString());
-					
-					
 					
 					if(totalParkArea>0) {
 						ParkArea = totalParkArea;
@@ -928,7 +938,7 @@ public class MDMSService {
 				
 			}//end of tpd_zdaflg='N'
 			else if (item.get("zdaflg").equals("Y")){				
-				//have to verify this logic of calculation -----------------------------
+				//have to verify this logic of calculation ----this calculation is not require for CG told by ved sir-------------------------
 				if (!zonedesc.equals(null) && plotares>0){
 					Area =	plotares;
 					if(zonedesc.equals("DA-01")) Rate=7.29;
