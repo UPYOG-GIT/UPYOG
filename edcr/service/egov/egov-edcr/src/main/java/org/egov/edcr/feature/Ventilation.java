@@ -81,47 +81,49 @@ public class Ventilation extends FeatureProcess {
 		for (Block b : pl.getBlocks()) {
 			ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 			scrutinyDetail.setKey("Common_Ventilation");
-			scrutinyDetail.addColumnHeading(1, RULE_NO);
-			scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-			scrutinyDetail.addColumnHeading(3, REQUIRED);
-			scrutinyDetail.addColumnHeading(4, PROVIDED);
-			scrutinyDetail.addColumnHeading(5, STATUS);
+//			scrutinyDetail.addColumnHeading(1, RULE_NO);
+			scrutinyDetail.addColumnHeading(1, DESCRIPTION);
+			scrutinyDetail.addColumnHeading(2, PRESENTED);
+//			scrutinyDetail.addColumnHeading(3, REQUIRED);
+//			scrutinyDetail.addColumnHeading(4, PROVIDED);
+			scrutinyDetail.addColumnHeading(3, STATUS);
+			Map<String, String> details = new HashMap<>();
 
 			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
 					&& !b.getBuilding().getFloors().isEmpty()) {
-
+				boolean isPresent=false;
 				for (Floor f : b.getBuilding().getFloors()) {
-					Map<String, String> details = new HashMap<>();
-					details.put(RULE_NO, RULE_43);
-					details.put(DESCRIPTION, LIGHT_VENTILATION_DESCRIPTION);
-
+					
+//					details.put(RULE_NO, RULE_43);
+					
 					if (f.getLightAndVentilation() != null && f.getLightAndVentilation().getMeasurements() != null
 							&& !f.getLightAndVentilation().getMeasurements().isEmpty()) {
-
-						BigDecimal totalVentilationArea = f.getLightAndVentilation().getMeasurements().stream()
-								.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
-						BigDecimal totalCarpetArea = f.getOccupancies().stream().map(Occupancy::getCarpetArea)
-								.reduce(BigDecimal.ZERO, BigDecimal::add);
-
-						if (totalVentilationArea.compareTo(BigDecimal.ZERO) > 0) {
-							if (totalVentilationArea.compareTo(totalCarpetArea.divide(BigDecimal.valueOf(8)).setScale(2,
-									BigDecimal.ROUND_HALF_UP)) >= 0) {
-								details.put(REQUIRED, "Minimum 1/8th of the floor area ");
-								details.put(PROVIDED, "Ventilation area " + totalVentilationArea + " of Carpet Area   "
-										+ totalCarpetArea + " at floor " + f.getNumber());
-								details.put(STATUS, Result.Accepted.getResultVal());
-								scrutinyDetail.getDetail().add(details);
-								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-
-							} else {
-								details.put(REQUIRED, "Minimum 1/8th of the floor area ");
-								details.put(PROVIDED, "Ventilation area " + totalVentilationArea + " of Carpet Area   "
-										+ totalCarpetArea + " at floor " + f.getNumber());
-								details.put(STATUS, Result.Not_Accepted.getResultVal());
-								scrutinyDetail.getDetail().add(details);
-								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-							}
-						} /*
+						isPresent=true;
+						/*
+						 * BigDecimal totalVentilationArea =
+						 * f.getLightAndVentilation().getMeasurements().stream()
+						 * .map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
+						 * BigDecimal totalCarpetArea =
+						 * f.getOccupancies().stream().map(Occupancy::getCarpetArea)
+						 * .reduce(BigDecimal.ZERO, BigDecimal::add);
+						 * 
+						 * if (totalVentilationArea.compareTo(BigDecimal.ZERO) > 0) { if
+						 * (totalVentilationArea.compareTo(totalCarpetArea.divide(BigDecimal.valueOf(8))
+						 * .setScale(2, BigDecimal.ROUND_HALF_UP)) >= 0) { details.put(REQUIRED,
+						 * "Minimum 1/8th of the floor area "); details.put(PROVIDED,
+						 * "Ventilation area " + totalVentilationArea + " of Carpet Area   " +
+						 * totalCarpetArea + " at floor " + f.getNumber()); details.put(STATUS,
+						 * Result.Accepted.getResultVal()); scrutinyDetail.getDetail().add(details);
+						 * pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+						 * 
+						 * } else { details.put(REQUIRED, "Minimum 1/8th of the floor area ");
+						 * details.put(PROVIDED, "Ventilation area " + totalVentilationArea +
+						 * " of Carpet Area   " + totalCarpetArea + " at floor " + f.getNumber());
+						 * details.put(STATUS, Result.Not_Accepted.getResultVal());
+						 * scrutinyDetail.getDetail().add(details);
+						 * pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail); } }
+						 */ 
+						/*
 							 * else { details.put(REQUIRED,
 							 * "Minimum 1/8th of the floor area ");
 							 * details.put(PROVIDED,
@@ -145,6 +147,11 @@ public class Ventilation extends FeatureProcess {
 						 */
 
 				}
+				scrutinyDetail.getDetail().add(details);
+				details.put(DESCRIPTION, LIGHT_VENTILATION_DESCRIPTION);
+				details.put(PRESENTED, isPresent ? "Yes" : "No");
+				details.put(STATUS, "");
+				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 			}
 
 		}

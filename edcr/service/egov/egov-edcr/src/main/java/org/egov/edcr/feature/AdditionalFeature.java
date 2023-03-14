@@ -187,6 +187,7 @@ public class AdditionalFeature extends FeatureProcess {
 		}
 //
 		validatePlinthHeight(pl, errors);
+		isHighRise(pl, errors);
 //        // validateIntCourtYard(pl, errors);
 //        validateBarrierFreeAccess(pl, errors);
 //        validateBasement(pl, errors);
@@ -194,6 +195,28 @@ public class AdditionalFeature extends FeatureProcess {
 //        validateFireDeclaration(pl, errors);
 
 		return pl;
+	}
+
+	private void isHighRise(Plan pl, HashMap<String, String> errors) {
+		if (pl.getBlocks() != null && !pl.getBlocks().isEmpty()) {
+			for (Block b : pl.getBlocks()) {
+				ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+				scrutinyDetail.addColumnHeading(1, DESCRIPTION);
+				scrutinyDetail.addColumnHeading(2, "High Rise");
+				scrutinyDetail.addColumnHeading(3, STATUS);
+				scrutinyDetail.setKey("Block_" + b.getNumber() + "_" + "High Rise");
+				if (b.getBuilding() != null) {
+					boolean isHighRise = b.getBuilding().getIsHighRise();
+					Map<String, String> details = new HashMap<>();
+					details.put(DESCRIPTION, "Building is High Rise or Not");
+					details.put("High Rise", isHighRise ? "Yes" : "No");
+					details.put(STATUS,"");
+					scrutinyDetail.getDetail().add(details);
+					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+				}
+
+			}
+		}
 	}
 
 	private void validateFireDeclaration(Plan pl, HashMap<String, String> errors) {

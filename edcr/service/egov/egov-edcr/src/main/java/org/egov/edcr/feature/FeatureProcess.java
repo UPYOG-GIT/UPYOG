@@ -67,6 +67,7 @@ public abstract class FeatureProcess {
 	public static final String OCCUPANCY = "Occupancy";
 	public static final String FIELDVERIFIED = "Field Verified";
 	public static final String REQUIRED = "Required";
+	public static final String PRESENTED = "Presented";
 	public static final String REQUIRED_MTR = "Required (MTR)";
 	public static final String MIN_REQUIRED = "Min Required";
 	public static final String PERMITTED = "Permitted";
