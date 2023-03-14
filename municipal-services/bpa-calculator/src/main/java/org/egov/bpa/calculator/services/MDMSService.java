@@ -180,7 +180,8 @@ public class MDMSService {
 		
 			String zonedesc = context.read("edcrDetail[0].planDetail.planInfoProperties.DEVELOPMENT_ZONE");
 			
-			JSONArray block =  context.read("edcrDetail[0].planDetail.blocks[0]");
+			LinkedHashMap block =  context.read("edcrDetail[0].planDetail.blocks[0]");
+//			JSONArray block =  context.read("edcrDetail[0].planDetail.blocks[0]");
 			
 			additionalDetails.put("appDate", appDate.toString());
 			additionalDetails.put("appNum", appNum.toString());
