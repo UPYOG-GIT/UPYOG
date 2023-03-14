@@ -337,8 +337,8 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(OpenStairService.class);
         features.add(pf);
 
-//        pf = new PlanFeature(Ventilation.class);
-//        features.add(pf);
+        pf = new PlanFeature(Ventilation.class);
+        features.add(pf);
         
         pf = new PlanFeature(VehicleRamp.class);
         features.add(pf);

@@ -54,6 +54,8 @@ public class DcrReportFloorDetail {
     private String floorNo;
 
     private String occupancy;
+    
+    private String subOccupancy;
 
     private BigDecimal builtUpArea;
 
@@ -110,4 +112,13 @@ public class DcrReportFloorDetail {
     public void setBuiltUpDeductionArea(BigDecimal builtUpDeductionArea) {
         this.builtUpDeductionArea = builtUpDeductionArea;
     }
+
+	public String getSubOccupancy() {
+		return subOccupancy;
+	}
+
+	public void setSubOccupancy(String subOccupancy) {
+		this.subOccupancy = subOccupancy;
+	}
+    
 }
