@@ -412,6 +412,8 @@ public class MDMSService {
 				if(item.get("zdaflg").equals("N")) {
 					int paytyid = Integer.parseInt(item.get("id").toString());
 					
+					
+					
 					if(totalParkArea>0) {
 						ParkArea = totalParkArea;
 					}
@@ -440,6 +442,7 @@ public class MDMSService {
 					Double rate_ind   = Double.valueOf(detailPayTyrate.get("rate_ind").toString());
 					Double perval    = Double.valueOf(detailPayTyrate.get("perval").toString());
 					
+					log.info("p_category=="+p_category+"b_category=="+b_category+"s_category=="+s_category+"unitid=="+unitid+"calcon=="+calcon+"calcact=="+calcact+"rate_res=="+rate_res+"rate_comm=="+rate_comm+"rate_ind=="+rate_ind+"perval=="+perval);
 					
 					if (b_category.equals(null) || b_category.equals(0)) bcategory=0; 
 					if (s_category.equals(null) || s_category.equals(0)) s_category=0; 
@@ -649,9 +652,11 @@ public class MDMSService {
 							
 						}
 						
+						log.info("slabResult------"+slabResult.toString());
+						
 						String s_oper = "";
-						Integer sFromVal = 0;
-						Integer sToVal = 0;
+						Double sFromVal = 0.0;
+						Double sToVal = 0d;
 						Double sres_rate = 0.0;
 						Double scom_rate = 0.0;
 						Double sind_rate = 0.0;
@@ -659,17 +664,22 @@ public class MDMSService {
 						Double maxlimit=0.0;
 						
 						for(Map<String, Object> sResulte : slabResult) {
-							Integer lsFromVal=0;
-							Integer lsToVal=0;
+//							Integer sFromVal=0;
+//							Integer sToVal=0;
 							
-							if(!sResulte.get("to_val").equals(0) && !sResulte.get("to_val").equals(null)) {
+							log.info("sResulte-----"+sResulte.toString());
+							log.info("to val-------"+sResulte.get("to_val"));
+//							if(Double.valueOf(sResulte.get("to_val").toString())!=0 && !sResulte.get("to_val").equals(null)) {
+								if(Double.valueOf(sResulte.get("to_val").toString())!=0) {	
+									log.info("not equal to 0");
 								if(Math.ceil(Area)<=Double.valueOf(sResulte.get("to_val").toString()))
 								{
+									log.info("<=Math ceil(Area)");
 									//slab found 								
 									//get value
 									 s_oper = sResulte.get("operation").toString();
-									 sFromVal = Integer.parseInt(sResulte.get("to_val").toString());
-									 sToVal = Integer.parseInt(sResulte.get("from_val").toString());
+									 sFromVal = Double.valueOf(sResulte.get("to_val").toString());
+									 sToVal = Double.valueOf(sResulte.get("from_val").toString());
 									 sres_rate = Double.valueOf(sResulte.get("rate_res").toString());
 									 scom_rate = Double.valueOf(sResulte.get("rate_comm").toString());
 									 sind_rate = Double.valueOf(sResulte.get("rate_ind").toString());
@@ -685,9 +695,10 @@ public class MDMSService {
 							}
 							else {
 								if(!sResulte.get("from_val").equals(0)){  //but TOVAL=0/null
+									log.info("elas of not equal to 0");
 									 s_oper = sResulte.get("operation").toString();
-									 sFromVal = Integer.parseInt(sResulte.get("to_val").toString());
-									 sToVal = Integer.parseInt(sResulte.get("from_val").toString());							
+									 sFromVal = Double.valueOf(sResulte.get("to_val").toString());
+									 sToVal = Double.valueOf(sResulte.get("from_val").toString());							
 									 sres_rate = Double.valueOf(sResulte.get("rate_res").toString());
 									 scom_rate = Double.valueOf(sResulte.get("rate_comm").toString());
 									 sind_rate = Double.valueOf(sResulte.get("rate_ind").toString());
@@ -698,7 +709,9 @@ public class MDMSService {
 									break;
 								} 
 							}
+								log.info("s_oper=="+s_oper+"sFromVal=="+sFromVal+"sToVal=="+sToVal+"sres_rate=="+sres_rate+"scom_rate=="+scom_rate+"sind_rate=="+sind_rate+"multpval=="+multpval+"maxlimit=="+maxlimit);
 						}//end of each slab
+						log.info("s_oper=="+s_oper+"sFromVal=="+sFromVal+"sToVal=="+sToVal+"sres_rate=="+sres_rate+"scom_rate=="+scom_rate+"sind_rate=="+sind_rate+"multpval=="+multpval+"maxlimit=="+maxlimit);
 						
 //						START FROM HERE				
 						//SET Default Area & Rate Category wise For Rate & Slab Master
@@ -910,7 +923,7 @@ public class MDMSService {
 					ptarea+=(double)Area;		//each building total area for the fee
 					
 					
-					log.info("End-------End---------End---------End-------End");
+					log.info("End--Value--"+Value+"---End--trate---"+trate+"----End--ptarea--"+ptarea+"-----End-------End");
 				//}//end of for each building loop
 				
 			}//end of tpd_zdaflg='N'
