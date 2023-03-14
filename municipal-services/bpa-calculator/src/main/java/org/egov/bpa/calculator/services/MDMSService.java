@@ -167,9 +167,9 @@ public class MDMSService {
 			Integer bcategory = bpaRepository.getBcategoryId(bCate.toString());
 			log.info("bcategory: "+bcategory+"");
 			
-			log.info("isnullsu======="+context.read("$.edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype"));
+			log.info("isnullsu======="+context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype"));
 			
-			String isnullsubCate = context.read("$.edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype");
+			String isnullsubCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype");
 			
 			log.info("isnullsubCate---"+isnullsubCate);
 			Integer scategory=0;
