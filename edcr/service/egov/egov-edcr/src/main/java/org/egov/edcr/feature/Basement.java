@@ -82,7 +82,7 @@ public class Basement extends FeatureProcess {
 	public Plan process(Plan pl) {
 
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Basement");
+//		scrutinyDetail.setKey("Common_Basement");
 //        scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(1, DESCRIPTION);
 		scrutinyDetail.addColumnHeading(2, PRESENTED);
@@ -95,6 +95,7 @@ public class Basement extends FeatureProcess {
 
 		if (pl.getBlocks() != null) {
 			for (Block b : pl.getBlocks()) {
+				scrutinyDetail.setKey("Block_" + b.getNumber() + "_" + "Basement");
 				if (b.getBuilding() != null && b.getBuilding().getFloors() != null
 						&& !b.getBuilding().getFloors().isEmpty()) {
 					boolean isPresent = false;

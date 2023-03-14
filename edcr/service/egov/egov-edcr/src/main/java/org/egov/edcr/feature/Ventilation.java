@@ -80,7 +80,7 @@ public class Ventilation extends FeatureProcess {
 	public Plan process(Plan pl) {
 		for (Block b : pl.getBlocks()) {
 			ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-			scrutinyDetail.setKey("Common_Ventilation");
+//			scrutinyDetail.setKey("Common_Ventilation");
 //			scrutinyDetail.addColumnHeading(1, RULE_NO);
 			scrutinyDetail.addColumnHeading(1, DESCRIPTION);
 			scrutinyDetail.addColumnHeading(2, PRESENTED);
@@ -91,6 +91,7 @@ public class Ventilation extends FeatureProcess {
 
 			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
 					&& !b.getBuilding().getFloors().isEmpty()) {
+				scrutinyDetail.setKey("Block_" + b.getNumber() + "_" + "Ventilation");
 				boolean isPresent=false;
 				for (Floor f : b.getBuilding().getFloors()) {
 					
