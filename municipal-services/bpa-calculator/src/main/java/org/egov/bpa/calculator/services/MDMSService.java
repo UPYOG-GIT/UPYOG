@@ -166,12 +166,21 @@ public class MDMSService {
 			
 			Integer bcategory = bpaRepository.getBcategoryId(bCate.toString());
 			log.info("bcategory: "+bcategory+"");
+			String isnullsubCate = context.read("$.edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype");
 			
-			String subCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype.name");
-			log.info("subcate:----- " +subCate);
+			Integer scategory=0;
+			if(!isnullsubCate.equals(null)) {
+				String subCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype.name");
+				log.info("subcate:----- " +subCate);
+				 scategory = bpaRepository.getScategoryId(subCate.toString(),bcategory);
+				log.info("scategory: "+scategory+"");
+			}
+			else {
+				scategory=null;
+			}
 			
-			Integer scategory = bpaRepository.getScategoryId(subCate.toString(),bcategory);
-			log.info("scategory: "+scategory+"");
+			
+			
 //			Map parkDetails = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[6]");
 //			log.info("totalparkarea:----- " +parkDetails.toString());
 			JSONArray parkDetails11 = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking\")].detail[0].Provided");
