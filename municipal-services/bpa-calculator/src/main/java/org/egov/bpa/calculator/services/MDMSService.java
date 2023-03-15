@@ -102,28 +102,28 @@ public class MDMSService {
 	public Map getCalculationType(RequestInfo requestInfo, BPA bpa, Object mdmsData, String feeType) {
 		HashMap<String, Object> calculationType = new HashMap<>();
 		try {
-			if (feeType.equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE)) {
-				log.info("inside sancFee if condition......");
-				String consumerCode = bpa.getApplicationNo();
-				log.info("consumerCode: " + consumerCode);
-				Map sancFeeMap = new HashMap();
-				try {
-					String[] SancFee = bpaRepository.getSanctionFeeAmount(consumerCode);
-					log.info("SancFee from DB: " + SancFee.toString());
-					if (SancFee.length != 0) {
-						Double totalSancFeeAmount = Double.valueOf(SancFee[SancFee.length - 1]);
-						log.info("totalSancFeeAmount: " + totalSancFeeAmount);
-						sancFeeMap.put(BPACalculatorConstants.MDMS_CALCULATIONTYPE_AMOUNT, totalSancFeeAmount);
-						return sancFeeMap;
-					} else {
-						log.error("Sanction Fee not found in DB");
-						throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "Sanction Fee not found");
-					}
-				} catch (Exception ex) {
-					log.error("Exception in SancFee condition: " + ex);
-					throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "Sanction Fee not found");
-				}
-			}
+//			if (feeType.equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE)) {
+//				log.info("inside sancFee if condition......");
+//				String consumerCode = bpa.getApplicationNo();
+//				log.info("consumerCode: " + consumerCode);
+//				Map sancFeeMap = new HashMap();
+//				try {
+//					String[] SancFee = bpaRepository.getSanctionFeeAmount(consumerCode);
+//					log.info("SancFee from DB: " + SancFee.toString());
+//					if (SancFee.length != 0) {
+//						Double totalSancFeeAmount = Double.valueOf(SancFee[SancFee.length - 1]);
+//						log.info("totalSancFeeAmount: " + totalSancFeeAmount);
+//						sancFeeMap.put(BPACalculatorConstants.MDMS_CALCULATIONTYPE_AMOUNT, totalSancFeeAmount);
+//						return sancFeeMap;
+//					} else {
+//						log.error("Sanction Fee not found in DB");
+//						throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "Sanction Fee not found");
+//					}
+//				} catch (Exception ex) {
+//					log.error("Exception in SancFee condition: " + ex);
+//					throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "Sanction Fee not found");
+//				}
+//			}
 
 			List jsonOutput = JsonPath.read(mdmsData, BPACalculatorConstants.MDMS_CALCULATIONTYPE_PATH);
 			LinkedHashMap responseMap = edcrService.getEDCRDetails(requestInfo, bpa);
@@ -167,23 +167,23 @@ public class MDMSService {
 			Integer bcategory = bpaRepository.getBcategoryId(bCate.toString());
 			log.info("bcategory: "+bcategory+"");
 			
-			log.info("isnullsu======="+context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype"));
+			//log.info("isnullsu======="+context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype"));
 			
-			String isnullsubCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype");
+			//String isnullsubCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype");
 //			isnullsubCate.isNull("sfvs");
 			
-			log.info("isnullsubCate---"+isnullsubCate);
+			//log.info("isnullsubCate---"+isnullsubCate);
 			Integer scategory=0;
-			if(!isnullsubCate.equals(null)) {
-				log.info("T/F===="+(!isnullsubCate.equals(null)));
+			//if(!isnullsubCate.equals(null)) {
+				//log.info("T/F===="+(!isnullsubCate.equals(null)));
 				String subCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype.name");
 				log.info("subcate:----- " +subCate);
 				 scategory = bpaRepository.getScategoryId(subCate.toString(),bcategory);
 				log.info("scategory: "+scategory+"");
-			}
-			else {
-				scategory=null;
-			}
+			//}
+//			else {
+//				scategory=null;
+//			}
 			
 			
 			
