@@ -170,12 +170,20 @@ public class MDMSService {
 			log.info("isnullsu======="+context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype"));
 			
 			String isnullsubCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype");
+<<<<<<< HEAD
 //			isnullsubCate.isNull("sfvs");
 			log.info("isnullsubCate---"+isnullsubCate);
 			Integer scategory=0;
 			if(!isnullsubCate.isEmpty()) {
 //				log.info("T/F===="+(!isnullsubCate.equals(null)));
 				log.info("jdkjhsdkj----------");
+=======
+			
+			log.info("isnullsubCate---"+isnullsubCate);
+			Integer scategory=0;
+			if(!isnullsubCate.equals(null)) {
+				log.info("T/F===="+(!isnullsubCate.equals(null)));
+>>>>>>> 10d5b897c20cfa42b3734bd0efbaff462062f64a
 				String subCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype.name");
 				log.info("subcate:----- " +subCate);
 				 scategory = bpaRepository.getScategoryId(subCate.toString(),bcategory);
