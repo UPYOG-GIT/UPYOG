@@ -1,0 +1,2 @@
+
+INSERT INTO egbpa_sub_occupancy(id, code, name, ordernumber, isactive, createdby, createddate, lastmodifieddate, lastmodifiedby, version, maxcoverage, minfar, maxfar, occupancy, description, colorcode)  VALUES (nextval('seq_egbpa_sub_occupancy'), 'F', 'Mercantile / Commercial', 63, 't', 1, now(), now(), 1, 0,10, 15, 0, (select id from egbpa_occupancy where code='F'), 'Mercantile / Commercial', 7);
