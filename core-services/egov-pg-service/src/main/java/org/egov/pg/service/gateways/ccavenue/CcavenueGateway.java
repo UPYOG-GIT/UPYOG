@@ -110,13 +110,13 @@ public class CcavenueGateway implements Gateway {
 		this.restTemplate = restTemplate;
 		this.objectMapper = objectMapper;
 		this.ACTIVE = Boolean.valueOf(environment.getRequiredProperty("ccavenue.active"));
-		this.ACCESS_CODE = environment.getRequiredProperty("ccavenue.access.code");
-		this.WORKING_KEY = environment.getRequiredProperty("ccavenue.working.key");
+//		this.ACCESS_CODE = environment.getRequiredProperty("ccavenue.access.code");
+//		this.WORKING_KEY = environment.getRequiredProperty("ccavenue.working.key");
 		this.MERCHANT_URL_PAY = environment.getRequiredProperty("ccavenue.url");
 		this.MERCHANT_URL_STATUS = environment.getRequiredProperty("payu.url.status");
 		this.MERCHANT_PATH_PAY = environment.getRequiredProperty("payu.path.pay");
 		this.MERCHANT_PATH_STATUS = environment.getRequiredProperty("payu.path.status");
-		this.MERCHANT_ID = environment.getRequiredProperty("ccavenue.merchant.id");
+//		this.MERCHANT_ID = environment.getRequiredProperty("ccavenue.merchant.id");
 		this.WS_URL = environment.getRequiredProperty("ccavenue.path.wsurl");
 		this.RETURN_URL = environment.getRequiredProperty("ccavenue.redirect.url");
 		this.REDIRECT_URL = environment.getRequiredProperty("ccavenue.redirect.url");
@@ -352,7 +352,8 @@ public class CcavenueGateway implements Gateway {
 
 			// set MerchantId, WorkingKey and AccessKey according to tenantId
 			setGatewayDetails(tenantId);
-
+			log.info("fetchStatus: MERCHANT_ID: " + MERCHANT_ID + ", WORKING_KEY: " + WORKING_KEY + ", ACCESS_CODE: "
+					+ ACCESS_CODE);
 //			String orderNo = resp.getOrderNo();
 			log.info("encResp: " + encResp);
 			CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
@@ -447,7 +448,8 @@ public class CcavenueGateway implements Gateway {
 
 		// set MerchantId, WorkingKey and AccessKey according to tenantId
 		setGatewayDetails(tenantId);
-
+		log.info("fetchStatusFromGateway: MERCHANT_ID: " + MERCHANT_ID + ", WORKING_KEY: " + WORKING_KEY
+				+ ", ACCESS_CODE: " + ACCESS_CODE);
 		CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
 		encryptedJsonData = ccavenueUtis.encrypt(orderStatusQueryJson);
 
@@ -599,7 +601,8 @@ public class CcavenueGateway implements Gateway {
 
 		// set MerchantId, WorkingKey and AccessKey according to tenantId
 		setGatewayDetails(tenantId);
-
+		log.info("generateRedirectFormData: MERCHANT_ID: " + MERCHANT_ID + ", WORKING_KEY: " + WORKING_KEY
+				+ ", ACCESS_CODE: " + ACCESS_CODE);
 		String urlData = null;
 		HashMap<String, String> queryMap = new HashMap<>();
 		queryMap.put(MESSAGE_TYPE_KEY, MESSAGE_TYPE);
@@ -704,6 +707,7 @@ public class CcavenueGateway implements Gateway {
 	}
 
 	private void setGatewayDetails(String tenantId) {
+		log.info("inside setGatewayDetails..... tenantId: " + tenantId);
 		if (tenantId.equals("cg.birgaon")) {
 			this.MERCHANT_ID = "2136858";
 			this.ACCESS_CODE = "AVWN26KC60AF20NWFA";
