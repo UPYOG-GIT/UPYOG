@@ -24,11 +24,13 @@ public class BPARepository {
 	
 	public Integer getBcategoryId(String bcat) {
 		String sql = "select id from bcategory_master where lower(description) =? ";
+		log.info("BPARepository.getBcategoryId Query : " + sql);
 		return jdbcTemplate.queryForObject(sql, new Object[] {bcat.toLowerCase()}, Integer.class);
 	}
 	
 	public Integer getScategoryId(String scat,Integer bcat) {
 		String sql = "select id from bscategory_master where lower(description) =? and catid =? ";
+		log.info("BPARepository.getScategoryId Query : " + sql);
 		return jdbcTemplate.queryForObject(sql,new Object[] {scat.toLowerCase(),bcat},Integer.class);
 	}
 
