@@ -167,11 +167,26 @@ public class MDMSService {
 			Integer bcategory = bpaRepository.getBcategoryId(bCate.toString());
 			log.info("bcategory: "+bcategory+"");
 			
-			String subCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype.name");
-			log.info("subcate:----- " +subCate);
+			log.info("isnullsu======="+context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype"));
 			
-			Integer scategory = bpaRepository.getScategoryId(subCate.toString(),bcategory);
-			log.info("scategory: "+scategory+"");
+			String isnullsubCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype");
+//			isnullsubCate.isNull("sfvs");
+			log.info("isnullsubCate---"+isnullsubCate);
+			Integer scategory=0;
+			if(!isnullsubCate.isEmpty()) {
+//				log.info("T/F===="+(!isnullsubCate.equals(null)));
+				log.info("jdkjhsdkj----------");
+				String subCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype.name");
+				log.info("subcate:----- " +subCate);
+				 scategory = bpaRepository.getScategoryId(subCate.toString(),bcategory);
+				log.info("scategory: "+scategory+"");
+			}
+			else {
+				scategory=null;
+			}
+			
+			
+			
 //			Map parkDetails = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[6]");
 //			log.info("totalparkarea:----- " +parkDetails.toString());
 			JSONArray parkDetails11 = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking\")].detail[0].Provided");
@@ -180,7 +195,7 @@ public class MDMSService {
 		
 			String zonedesc = context.read("edcrDetail[0].planDetail.planInfoProperties.DEVELOPMENT_ZONE");
 			
-			LinkedHashMap block =  context.read("edcrDetail[0].planDetail.blocks[0]");
+//			LinkedHashMap block =  context.read("edcrDetail[0].planDetail.blocks[0]");
 //			JSONArray block =  context.read("edcrDetail[0].planDetail.blocks[0]");
 			
 			additionalDetails.put("appDate", appDate.toString());
@@ -192,7 +207,7 @@ public class MDMSService {
 			additionalDetails.put("subcate", scategory+"");
 			additionalDetails.put("totalParkArea", totalParkArea);
 			additionalDetails.put("zonedesc", zonedesc.toString());
-			additionalDetails.put("block", block.toString());
+//			additionalDetails.put("block", block.toString());
 			
 			log.info("additionalDetails---------"+additionalDetails);
 			Map<String, String> responseMap1 = feeCalculation(additionalDetails);
@@ -345,7 +360,7 @@ public class MDMSService {
 		log.info("appDate----"+appDate);
 		String zonedesc = data.get("zonedesc").toString();
 		log.info("zonedesc----"+zonedesc);
-		List<Map<String,Object>>  blockDetail = (List<Map<String,Object>>)data.get("block");
+//		List<Map<String,Object>>  blockDetail = (List<Map<String,Object>>)data.get("block");
 		
 		String feety ="";
 		String brkflg="";
@@ -415,13 +430,13 @@ public class MDMSService {
 				if(item.get("zdaflg").equals("N")) {
 					
 					
-					log.info("blockDetail==="+blockDetail);
+//					log.info("blockDetail==="+blockDetail);
 					
-					log.info("blockDetail size==="+blockDetail.size());
+//					log.info("blockDetail size==="+blockDetail.size());
 					
-					for(Map<String,Object>  eachBlockDetail:blockDetail) {
-						log.info("eachBlockDetail===="+eachBlockDetail);
-					}
+//					for(Map<String,Object>  eachBlockDetail:blockDetail) {
+//						log.info("eachBlockDetail===="+eachBlockDetail);
+//					}
 					
 					int paytyid = Integer.parseInt(item.get("id").toString());
 					
