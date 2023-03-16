@@ -417,8 +417,8 @@ public class MDMSService {
 		log.info("com_area----"+com_area);
 		Double ind_area = Double.valueOf(data.get("IndArea").toString());
 		log.info("ind_area----"+ind_area);
-		boolean isHighRise = (boolean) data.get("isHighRisetf");
-		log.info("ind_area----"+isHighRise);
+		boolean isHighRise = Boolean.parseBoolean(data.get("isHighRisetf").toString());
+		log.info("isHighRise----"+isHighRise);
 		
 		String heightcat="";
 		
