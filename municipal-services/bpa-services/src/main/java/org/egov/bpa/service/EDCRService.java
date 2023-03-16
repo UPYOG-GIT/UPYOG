@@ -198,23 +198,23 @@ public class EDCRService {
 			String filterExp = "";
 			List<String> riskTypes = new ArrayList<String>();
 			if (plotArea > 1000 || buildingHeight >= 15) {
-				filterExp = "$.[?((@.fromPlotArea < " + plotArea + " ) || ( @.fromBuildingHeight < " + buildingHeight
-						+ "  ))].riskType";
+//				filterExp = "$.[?((@.fromPlotArea < " + plotArea + " ) || ( @.fromBuildingHeight < " + buildingHeight
+//						+ "  ))].riskType";
 //				log.info("filterExp: " + filterExp);
 //
 //				riskTypes = JsonPath.read(jsonOutput, filterExp);
-//				riskTypes.add("HIGH");
+				riskTypes.add("HIGH");
 			} else {
 				filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
 						+ ") && ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
 						+ buildingHeight + "  ))].riskType";
-//				log.info("filterExp: " + filterExp);
-//
-//				riskTypes = JsonPath.read(jsonOutput, filterExp);
-			}
-			log.info("filterExp: " + filterExp);
+				log.info("filterExp: " + filterExp);
 
-			riskTypes = JsonPath.read(jsonOutput, filterExp);
+				riskTypes = JsonPath.read(jsonOutput, filterExp);
+			}
+//			log.info("filterExp: " + filterExp);
+//
+//			riskTypes = JsonPath.read(jsonOutput, filterExp);
 			log.info("riskTypes: " + riskTypes);
 
 			if (!CollectionUtils.isEmpty(riskTypes)
