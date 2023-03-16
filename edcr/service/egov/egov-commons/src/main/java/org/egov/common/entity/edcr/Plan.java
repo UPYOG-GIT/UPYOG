@@ -163,9 +163,6 @@ public class Plan implements Serializable {
     // area.
     private transient BigDecimal totalSurrenderRoadArea = BigDecimal.ZERO;
     
-    private transient BigDecimal roadArea = BigDecimal.ZERO;
-    
-    private transient BigDecimal netPlotArea = BigDecimal.ZERO;
     
     // Distance of plot with external entities like rive, lake, monuments, government building etc are grouped.
     private DistanceToExternalEntity distanceToExternalEntity = new DistanceToExternalEntity();
@@ -663,21 +660,6 @@ public class Plan implements Serializable {
         this.icts = icts;
     }
 
-	public BigDecimal getRoadArea() {
-		return roadArea;
-	}
-
-	public void setRoadArea(BigDecimal roadArea) {
-		this.roadArea = roadArea;
-	}
-
-	public BigDecimal getNetPlotArea() {
-		return netPlotArea;
-	}
-
-	public void setNetPlotArea(BigDecimal netPlotArea) {
-		this.netPlotArea = netPlotArea;
-	}
 
     
 }

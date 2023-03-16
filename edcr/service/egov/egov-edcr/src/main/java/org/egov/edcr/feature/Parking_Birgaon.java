@@ -364,7 +364,8 @@ public class Parking_Birgaon extends FeatureProcess {
 		// checkDimensionForTwoWheelerParking(pl, helper);
 		// checkAreaForLoadUnloadSpaces(pl);
 		boolean isSingleFamilyRes=false;
-		if (occupancyTypeHelper.getSubtype() != null && A_R.equals(occupancyTypeHelper.getSubtype().getCode())) {
+		if (occupancyTypeHelper != null
+				&& occupancyTypeHelper.getSubtype() != null && A_R.equals(occupancyTypeHelper.getSubtype().getCode())) {
 			isSingleFamilyRes=true;
 		}
 		if (totalProvidedCarParkArea.doubleValue() == 0 && !isSingleFamilyRes
