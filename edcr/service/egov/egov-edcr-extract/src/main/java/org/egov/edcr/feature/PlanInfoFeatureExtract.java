@@ -51,7 +51,7 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 
 		pl.setVirtualBuilding(virtualBuilding);
 
-//		extractRoadArea(pl);
+		extractRoadArea(pl);
 
 		extractPlotDetails(pl);
 
@@ -79,13 +79,13 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		for(DXFLWPolyline roadAreaLayerPolyLine : roadAreaLayerNames) {
 //			if (roadAreaLayer.) {
 //				DXFLWPolyline frontRoadAreaPolyLine = roadAreaLayer.get(0);
-				((PlotDetail) pl.getPlot()).setRoadAreaPolyLine(roadAreaLayerPolyLine);
+				((PlotDetail) pl.getPlot()).setPolyLine(roadAreaLayerPolyLine);
 //				pl.getPlot().addRoadArea(Util.getPolyLineArea(frontRoadAreaPolyLine));
 				roadArea=roadArea.add(Util.getPolyLineArea(roadAreaLayerPolyLine));
 //			}
 		}
 		
-		pl.setRoadArea(roadArea.setScale(2, RoundingMode.HALF_UP));
+		pl.getPlot().setRoadArea(roadArea.setScale(2, RoundingMode.HALF_UP));
 	}
 
 	private void extractPlotDetails(PlanDetail pl) {
@@ -96,7 +96,7 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 			DXFLWPolyline plotBndryPolyLine = plotBoundaries.get(0);
 			((PlotDetail) pl.getPlot()).setPolyLine(plotBndryPolyLine);
 			pl.getPlot().setPlotBndryArea(Util.getPolyLineArea(plotBndryPolyLine));
-//			pl.getPlot().setNetPlotArea(pl.getPlot().getPlotBndryArea().subtract(pl.getPlot().getRoadArea()));
+			pl.getPlot().setNetPlotArea(pl.getPlot().getPlotBndryArea().subtract(pl.getPlot().getRoadArea()));
 //			pl.getPlot().setNetPlotArea(pl.getPlot().getPlotBndryArea().subtract(pl.getRoadArea()));
 		} else
 			pl.addError(layerNames.getLayerName("LAYER_NAME_PLOT_BOUNDARY"),

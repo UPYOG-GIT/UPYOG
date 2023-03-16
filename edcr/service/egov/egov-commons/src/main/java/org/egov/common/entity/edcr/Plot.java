@@ -77,9 +77,9 @@ public class Plot extends Measurement {
 
     private BigDecimal plotBndryArea;
 
-    private BigDecimal roadArea;
+    private BigDecimal roadArea=BigDecimal.ZERO;
     
-    private BigDecimal netPlotArea;
+    private BigDecimal netPlotArea=BigDecimal.ZERO;
 
     public SetBack getLevelZeroSetBack() {
         SetBack setBack = null;
