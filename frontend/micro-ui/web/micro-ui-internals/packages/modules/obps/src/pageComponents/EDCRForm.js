@@ -1,7 +1,7 @@
 import { CardLabel, Dropdown, FormStep, Loader, TextInput, Toast, UploadFile } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
-import { getPattern, stringReplaceAll, sortDropdownNames  } from "../utils";
+import { getPattern, stringReplaceAll, sortDropdownNames } from "../utils";
 
 const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, addNewOwner, isShowToast, isSubmitBtnDisable, setIsShowToast }) => {
     const { pathname: url } = useLocation();
@@ -18,7 +18,7 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
     const history = useHistory();
 
 
-    let validation = { };
+    let validation = {};
 
 
     function setApplicantName(e) {
@@ -29,10 +29,25 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
         setTenantIdData(value);
     }
 
-    function selectfile(e) {
-        setUploadedFile(e.target.files[0]);
-        setFile(e.target.files[0]);
-    }
+    // function selectfile(e) {
+    //     setUploadedFile(e.target.files[0]);
+    //     setFile(e.target.files[0]);
+    // }
+
+    const selectfile = (event) => {
+        const file = event.target.files[0];
+
+        if (file.type !== "image/vnd.dxf") {
+            setError("Only .dxf files are accepted");
+            alert("Only .dxf files are accepted")
+            setUploadedFile(null);
+            return;
+        }
+
+        setFile(file);
+        setError("");
+        setUploadedFile(file.name);
+    };
 
     const onSkip = () => {
         setUploadMessage("NEED TO DELETE");
@@ -63,8 +78,8 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
         if (isShowToast) {
             history.replace(
                 `/digit-ui/citizen/obps/edcrscrutiny/apply/acknowledgement`,
-                { data: isShowToast?.label ? isShowToast?.label : "BPA_INTERNAL_SERVER_ERROR", type: "ERROR"}
-              );
+                { data: isShowToast?.label ? isShowToast?.label : "BPA_INTERNAL_SERVER_ERROR", type: "ERROR" }
+            );
         }
     }, [uploadMessage, isShowToast, isSubmitBtnDisable]);
 
@@ -73,7 +88,7 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
     }
 
     const handleSubmit = () => {
-        const data = { };
+        const data = {};
         data.tenantId = tenantIdData;
         data.applicantName = name;
         data.file = file;
@@ -83,7 +98,7 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
     if (isLoading || isSubmitBtnDisable) {
         return <Loader />;
     }
-    
+
     return (
         <FormStep
             t={t}

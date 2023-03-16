@@ -104,9 +104,6 @@ export const SelectPaymentType = (props) => {
               return curr;
             }, {});
 
-            console.log(gatewayParam);
-            console.log(gatewayParam.txURL+"="+gatewayParam.command);
-
 
           var newForm = $("<form>", {
             action: gatewayParam.txURL+"="+gatewayParam.command,

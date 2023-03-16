@@ -195,15 +195,22 @@ public class MDMSService {
 			String zonedesc = context.read("edcrDetail[0].planDetail.planInfoProperties.DEVELOPMENT_ZONE");
 			
 			ArrayList<LinkedHashMap> block =  context.read("edcrDetail[0].planDetail.blocks");
-			log.info("block LinkedHashMap===="+block);
+//			log.info("block LinkedHashMap===="+block);
 			
-//			for(Map)
+			Double ResArea =0d;
+			 Double CommArea =0d;
+			 Double IndArea =0d;
+			 boolean isHighRisetf =false;
 			
 			for(LinkedHashMap blockMap:block) {
 				HashMap building = (HashMap) blockMap.get("building");
-				 log.info("blockMap======"+building);
+//				 log.info("blockMap======"+building);
 				 ArrayList<LinkedHashMap> floor = (ArrayList<LinkedHashMap>) building.get("floors");
-				 log.info("floor======"+floor);
+//				 log.info("floor======"+floor);
+				 
+				  isHighRisetf = (boolean) building.get("isHighRise");
+				 log.info("isHighRisetf-------"+isHighRisetf);
+				 
 				 for(LinkedHashMap floorMap :floor) {
 					 ArrayList<LinkedHashMap> getOccupancies = (ArrayList<LinkedHashMap>) floorMap.get("occupancies"); 
 					 for(LinkedHashMap getOccupanciesMap :getOccupancies) {
@@ -215,16 +222,18 @@ public class MDMSService {
 						 String nameOcc =(String) typeOcc.get("name");
 						 log.info("nameOcc====="+nameOcc);
 						 
+						 
+						 
 						 if(nameOcc.equals("Residential")) {
-							 Double ResArea = (Double) getOccupanciesMap.get("floorArea"); 
+							  ResArea += (Double) getOccupanciesMap.get("floorArea"); 
 							 log.info("ResArea====="+ResArea);
 						 }
 						 else if(nameOcc.equals("Mercantile / Commercial")) {
-							 Double CommArea = (Double) getOccupanciesMap.get("floorArea"); 
+							  CommArea += (Double) getOccupanciesMap.get("floorArea"); 
 							 log.info("CommArea====="+CommArea);
 						 }
 						 else if(nameOcc.equals("Industrial")) {
-							 Double IndArea = (Double) getOccupanciesMap.get("floorArea"); 
+							  IndArea += (Double) getOccupanciesMap.get("floorArea"); 
 							 log.info("IndArea====="+IndArea);
 						 }
 						 else {
@@ -246,7 +255,10 @@ public class MDMSService {
 			additionalDetails.put("subcate", scategory+"");
 			additionalDetails.put("totalParkArea", totalParkArea);
 			additionalDetails.put("zonedesc", zonedesc.toString());
-//			additionalDetails.put("block", block.toString());
+			additionalDetails.put("ResArea", ResArea.toString());
+			additionalDetails.put("CommArea", CommArea.toString());
+			additionalDetails.put("IndArea", IndArea.toString());
+			additionalDetails.put("isHighRisetf", isHighRisetf+"");
 			
 			log.info("additionalDetails---------"+additionalDetails);
 			Map<String, String> responseMap1 = feeCalculation(additionalDetails);
@@ -399,11 +411,28 @@ public class MDMSService {
 		log.info("appDate----"+appDate);
 		String zonedesc = data.get("zonedesc").toString();
 		log.info("zonedesc----"+zonedesc);
-//		List<Map<String,Object>>  blockDetail = (List<Map<String,Object>>)data.get("block");
+		Double res_area = Double.valueOf(data.get("ResArea").toString());
+		log.info("res_area----"+res_area);
+		Double com_area = Double.valueOf(data.get("CommArea").toString());
+		log.info("com_area----"+com_area);
+		Double ind_area = Double.valueOf(data.get("IndArea").toString());
+		log.info("ind_area----"+ind_area);
+		boolean isHighRise = Boolean.parseBoolean(data.get("isHighRisetf").toString());
+		log.info("isHighRise----"+isHighRise);
+		
+		String heightcat="";
+		
+		if(isHighRise) {
+			 heightcat = "HR";
+		}
+		else {
+			 heightcat = "NH";
+		}
+		
 		
 		String feety ="";
 		String brkflg="";
-		String heightcat = "NH";
+//		String heightcat = "NH";
 		String newrevise = "NEW";
 		Integer pCategory = 0;
 		Double Area=0.0;			//Area used for Calculation
@@ -418,9 +447,9 @@ public class MDMSService {
 		int lackshect= (100000/10000);	//1Lacks/Hector //190413 -use to calcualte Postapproal-RainHarvesting Charges 1lacks/hector-this will be fetch from table either loc or paytype for rainharvesting
 		Double netplot_area = 0.0;//have to add actual ploat area from dxf file 
 		String calcact="";
-		Double res_area = 171.03;
-		Double com_area = 0.0;
-		Double ind_area = 0.0;
+//		Double res_area = 171.03;
+//		Double com_area = 0.0;
+//		Double ind_area = 0.0;
 		Double res_unit = 5.0;
 		
 		if(feetype.equals("ApplicationFee")) {
