@@ -1,5 +1,6 @@
 package org.egov.bpa.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -195,20 +196,25 @@ public class EDCRService {
 			List jsonOutput = JsonPath.read(masterData, BPAConstants.RISKTYPE_COMPUTATION);
 			log.info("jsonOutput: " + jsonOutput);
 			String filterExp = "";
+			List<String> riskTypes = new ArrayList<String>();
 			if (plotArea > 1000 || buildingHeight >= 15) {
-				filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
-						+ ") || ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
-						+ buildingHeight + "  ))].riskType";
+//				filterExp = "$.[?((@.fromPlotArea < " + plotArea + " ) || ( @.fromBuildingHeight < " + buildingHeight
+//						+ "  ))].riskType";
+//				log.info("filterExp: " + filterExp);
+//
+//				riskTypes = JsonPath.read(jsonOutput, filterExp);
+				riskTypes.add("HIGH");
 			} else {
 				filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
 						+ ") && ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
 						+ buildingHeight + "  ))].riskType";
+				log.info("filterExp: " + filterExp);
+
+				riskTypes = JsonPath.read(jsonOutput, filterExp);
 			}
-
-			log.info("filterExp: " + filterExp);
-
-			List<String> riskTypes = JsonPath.read(jsonOutput, filterExp);
-
+//			log.info("filterExp: " + filterExp);
+//
+//			riskTypes = JsonPath.read(jsonOutput, filterExp);
 			log.info("riskTypes: " + riskTypes);
 
 			if (!CollectionUtils.isEmpty(riskTypes)
