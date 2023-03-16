@@ -603,13 +603,14 @@ public class Far_Dhamtari extends Far {
 
 		pl.setTotalSurrenderRoadArea(surrenderRoadArea.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
 				DcrConstants.ROUNDMODE_MEASUREMENTS));
-		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getArea().add(surrenderRoadArea) : BigDecimal.ZERO;
+//		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getArea().add(surrenderRoadArea) : BigDecimal.ZERO;
+		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getPlotBndryArea() : BigDecimal.ZERO;
 //		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getNetPlotArea() : BigDecimal.ZERO;
-		BigDecimal addedFloorArea=pl.getPlot().getNetPlotArea().add(pl.getPlot().getRoadArea().multiply(BigDecimal.valueOf(2)));
+		BigDecimal netPlotArea=pl.getPlot().getNetPlotArea().add(pl.getPlot().getRoadArea().multiply(BigDecimal.valueOf(2)));
 		if (plotArea.doubleValue() > 0)
 //			providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(plotArea, DECIMALDIGITS_MEASUREMENTS,
 //					ROUNDMODE_MEASUREMENTS);
-		providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(addedFloorArea, DECIMALDIGITS_MEASUREMENTS,
+		providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(netPlotArea, DECIMALDIGITS_MEASUREMENTS,
 				ROUNDMODE_MEASUREMENTS);
 		
 
@@ -626,7 +627,7 @@ public class Far_Dhamtari extends Far {
 		details.put("Road Area", pl.getPlot().getRoadArea().toString());
 		details.put("Recreationsl Space", recreationSpaceArea.toString());
 //		details.put("Net Plot Area", pl.getPlot().getNetPlotArea().toString());
-		details.put("Net Plot Area", addedFloorArea.toString());
+		details.put("Net Plot Area", netPlotArea.toString());
 		details.put(STATUS, "");
 
 		scrutinyDetail.getDetail().add(details);

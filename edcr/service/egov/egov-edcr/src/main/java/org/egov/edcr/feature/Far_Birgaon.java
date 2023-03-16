@@ -602,14 +602,15 @@ public class Far_Birgaon extends Far {
 
 		pl.setTotalSurrenderRoadArea(surrenderRoadArea.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
 				DcrConstants.ROUNDMODE_MEASUREMENTS));
-		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getArea().add(surrenderRoadArea) : BigDecimal.ZERO;
+//		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getArea().add(surrenderRoadArea) : BigDecimal.ZERO;
+		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getPlotBndryArea() : BigDecimal.ZERO;
 //		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getNetPlotArea() : BigDecimal.ZERO;
-		BigDecimal addedFloorArea = pl.getPlot().getNetPlotArea()
+		BigDecimal netPlotArea = pl.getPlot().getNetPlotArea()
 				.add(pl.getPlot().getRoadArea().multiply(BigDecimal.valueOf(2)));
 		if (plotArea.doubleValue() > 0)
 //			providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(plotArea, DECIMALDIGITS_MEASUREMENTS,
 //					ROUNDMODE_MEASUREMENTS);
-			providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(addedFloorArea, DECIMALDIGITS_MEASUREMENTS,
+			providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(netPlotArea, DECIMALDIGITS_MEASUREMENTS,
 					ROUNDMODE_MEASUREMENTS);
 
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
@@ -621,11 +622,11 @@ public class Far_Birgaon extends Far {
 		scrutinyDetail.setKey("Common_FAR Validating");
 
 		Map<String, String> details = new HashMap<>();
-		details.put("Gross Plot Area", pl.getPlot().getArea().toString());
+		details.put("Gross Plot Area", pl.getPlot().getPlotBndryArea().toString());
 		details.put("Road Area", pl.getPlot().getRoadArea().toString());
 		details.put("Recreationsl Space", recreationSpaceArea.toString());
 //		details.put("Net Plot Area", pl.getPlot().getNetPlotArea().toString());
-		details.put("Net Plot Area", addedFloorArea.toString());
+		details.put("Net Plot Area", netPlotArea.toString());
 		details.put(STATUS, "");
 
 		scrutinyDetail.getDetail().add(details);
