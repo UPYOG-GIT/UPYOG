@@ -391,6 +391,10 @@ public class MDMSService {
 			feety = "Post";
 		} 
 		
+		int index = occupancyType.indexOf(",");
+		log.info("index-----"+index);
+		log.info("find ','------"+occupancyType.indexOf(","));
+		
 		if(occupancyType.equals("Residential")) {
 			pCategory =1;
 		}
@@ -400,7 +404,8 @@ public class MDMSService {
 		else if(occupancyType.equals("INDUSTRIAL")) {
 			pCategory =3;
 		}
-		else if(occupancyType.equals("MIX")) {
+//		else if(occupancyType.equals("MIX")) {
+		else if(occupancyType.equals("Residential,Mercantile / Commercial")) {
 			pCategory =4;
 		}
 		
