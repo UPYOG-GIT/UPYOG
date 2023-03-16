@@ -204,6 +204,36 @@ public class MDMSService {
 				 log.info("blockMap======"+building);
 				 ArrayList<LinkedHashMap> floor = (ArrayList<LinkedHashMap>) building.get("floors");
 				 log.info("floor======"+floor);
+				 for(LinkedHashMap floorMap :floor) {
+					 ArrayList<LinkedHashMap> getOccupancies = (ArrayList<LinkedHashMap>) floorMap.get("occupancies"); 
+					 for(LinkedHashMap getOccupanciesMap :getOccupancies) {
+						 HashMap typeHelper = (HashMap) getOccupanciesMap.get("typeHelper"); 
+						 log.info("typeHelper====="+typeHelper);
+						 HashMap typeOcc =(HashMap) typeHelper.get("type");
+						 log.info("typeOcc====="+typeOcc);
+						 
+						 String nameOcc =(String) typeOcc.get("name");
+						 log.info("nameOcc====="+nameOcc);
+						 
+						 if(nameOcc.equals("Residential")) {
+							 Double ResArea = (Double) getOccupanciesMap.get("floorArea"); 
+							 log.info("ResArea====="+ResArea);
+						 }
+						 else if(nameOcc.equals("Mercantile / Commercial")) {
+							 Double CommArea = (Double) getOccupanciesMap.get("floorArea"); 
+							 log.info("CommArea====="+CommArea);
+						 }
+						 else if(nameOcc.equals("Industrial")) {
+							 Double IndArea = (Double) getOccupanciesMap.get("floorArea"); 
+							 log.info("IndArea====="+IndArea);
+						 }
+						 else {
+							 throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "Not a valid occupency"); 
+						 }
+						 
+					 }
+					   
+				 }
 			}
 			
 			
