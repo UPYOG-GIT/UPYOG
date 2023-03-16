@@ -195,8 +195,11 @@ public class MDMSService {
 		
 			String zonedesc = context.read("edcrDetail[0].planDetail.planInfoProperties.DEVELOPMENT_ZONE");
 			
-//			LinkedHashMap block =  context.read("edcrDetail[0].planDetail.blocks[0]");
-//			JSONArray block =  context.read("edcrDetail[0].planDetail.blocks[0]");
+			LinkedHashMap block =  context.read("edcrDetail[0].planDetail.blocks[0]");
+			log.info("block LinkedHashMap===="+block);
+			
+			JSONArray block1 =  context.read("edcrDetail[0].planDetail.blocks[0]");
+			log.info("block JSONArray===="+block1);
 			
 			additionalDetails.put("appDate", appDate.toString());
 			additionalDetails.put("appNum", appNum.toString());
@@ -391,9 +394,10 @@ public class MDMSService {
 			feety = "Post";
 		} 
 		
-		int index = occupancyType.indexOf(",");
-		log.info("index-----"+index);
-		log.info("find ','------"+occupancyType.indexOf(","));
+//		 if((occupancyType.split(",")).length>1) {
+//			 log.info("index-----");
+//		 }
+		
 		
 		if(occupancyType.equals("Residential")) {
 			pCategory =1;
@@ -405,7 +409,7 @@ public class MDMSService {
 			pCategory =3;
 		}
 //		else if(occupancyType.equals("MIX")) {
-		else if(occupancyType.equals("Residential,Mercantile / Commercial")) {
+		else if((occupancyType.split(",")).length>1) {
 			pCategory =4;
 		}
 		
