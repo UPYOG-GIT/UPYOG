@@ -366,7 +366,8 @@ public class Parking_Dhamtari extends FeatureProcess {
 		// checkDimensionForTwoWheelerParking(pl, helper);
 		// checkAreaForLoadUnloadSpaces(pl);
 		boolean isSingleFamilyRes = false;
-		if (occupancyTypeHelper.getSubtype() != null && A_R.equals(occupancyTypeHelper.getSubtype().getCode())) {
+		if (occupancyTypeHelper != null && occupancyTypeHelper.getSubtype() != null
+				&& A_R.equals(occupancyTypeHelper.getSubtype().getCode())) {
 			isSingleFamilyRes = true;
 		}
 		if (totalProvidedCarParkArea.doubleValue() == 0 && !isSingleFamilyRes
@@ -420,7 +421,7 @@ public class Parking_Dhamtari extends FeatureProcess {
 				requiredEcs = totalBuiltupArea.doubleValue() / 100;
 			}
 		} else if (mostRestrictiveOccupancy != null && F.equals(mostRestrictiveOccupancy.getType().getCode())) {
-			// Commercial (F) 
+			// Commercial (F)
 			requiredEcs = totalBuiltupArea.doubleValue() / 100;
 		} else if (mostRestrictiveOccupancy != null && G.equals(mostRestrictiveOccupancy.getType().getCode())) {
 			// Industrial

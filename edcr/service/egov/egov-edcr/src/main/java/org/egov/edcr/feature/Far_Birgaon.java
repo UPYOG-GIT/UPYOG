@@ -182,18 +182,18 @@ public class Far_Birgaon extends Far {
 			BigDecimal existingBltUpArea = BigDecimal.ZERO;
 			BigDecimal carpetArea = BigDecimal.ZERO;
 			BigDecimal existingCarpetArea = BigDecimal.ZERO;
-			
+
 			Building building = blk.getBuilding();
 			for (Floor flr : building.getFloors()) {
 				for (Occupancy occupancy : flr.getOccupancies()) {
 					validate2(pl, blk, flr, occupancy);
 
 					if (!occupancy.getRecreationalSpace().isEmpty()) {
-						for(Measurement recreationalSpaceMeasuremnt:occupancy.getRecreationalSpace()) {
-							recreationSpaceArea =recreationSpaceArea.add(recreationalSpaceMeasuremnt.getArea());
+						for (Measurement recreationalSpaceMeasuremnt : occupancy.getRecreationalSpace()) {
+							recreationSpaceArea = recreationSpaceArea.add(recreationalSpaceMeasuremnt.getArea());
 						}
 //						recreationSpaceArea = occupancy.getRecreationalSpace().get(0).getArea();
-						
+
 					}
 					recreationSpaceArea = occupancy.getRecreationalSpace().isEmpty() ? BigDecimal.valueOf(0)
 							: recreationSpaceArea.add(occupancy.getRecreationalSpace().get(0).getArea());
@@ -604,13 +604,13 @@ public class Far_Birgaon extends Far {
 				DcrConstants.ROUNDMODE_MEASUREMENTS));
 		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getArea().add(surrenderRoadArea) : BigDecimal.ZERO;
 //		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getNetPlotArea() : BigDecimal.ZERO;
-		BigDecimal addedFloorArea=pl.getPlot().getNetPlotArea().add(pl.getPlot().getRoadArea().multiply(BigDecimal.valueOf(2)));
+		BigDecimal addedFloorArea = pl.getPlot().getNetPlotArea()
+				.add(pl.getPlot().getRoadArea().multiply(BigDecimal.valueOf(2)));
 		if (plotArea.doubleValue() > 0)
 //			providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(plotArea, DECIMALDIGITS_MEASUREMENTS,
 //					ROUNDMODE_MEASUREMENTS);
-		providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(addedFloorArea, DECIMALDIGITS_MEASUREMENTS,
-				ROUNDMODE_MEASUREMENTS);
-		
+			providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(addedFloorArea, DECIMALDIGITS_MEASUREMENTS,
+					ROUNDMODE_MEASUREMENTS);
 
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.addColumnHeading(1, "Gross Plot Area");
@@ -621,7 +621,7 @@ public class Far_Birgaon extends Far {
 		scrutinyDetail.setKey("Common_FAR Validating");
 
 		Map<String, String> details = new HashMap<>();
-		details.put("Gross Plot Area",  pl.getPlot().getArea().toString());
+		details.put("Gross Plot Area", pl.getPlot().getArea().toString());
 		details.put("Road Area", pl.getPlot().getRoadArea().toString());
 		details.put("Recreationsl Space", recreationSpaceArea.toString());
 //		details.put("Net Plot Area", pl.getPlot().getNetPlotArea().toString());
@@ -630,8 +630,7 @@ public class Far_Birgaon extends Far {
 
 		scrutinyDetail.getDetail().add(details);
 		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-		
-		
+
 		pl.setFarDetails(new FarDetails());
 		pl.getFarDetails().setProvidedFar(providedFar.doubleValue());
 		String typeOfArea = pl.getPlanInformation().getTypeOfArea();
