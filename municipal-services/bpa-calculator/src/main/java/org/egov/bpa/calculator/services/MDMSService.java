@@ -200,7 +200,7 @@ public class MDMSService {
 			Double ResArea =0d;
 			 Double CommArea =0d;
 			 Double IndArea =0d;
-			 String isHighRisetf ="";
+			 boolean isHighRisetf =false;
 			
 			for(LinkedHashMap blockMap:block) {
 				HashMap building = (HashMap) blockMap.get("building");
@@ -208,7 +208,7 @@ public class MDMSService {
 				 ArrayList<LinkedHashMap> floor = (ArrayList<LinkedHashMap>) building.get("floors");
 //				 log.info("floor======"+floor);
 				 
-				  isHighRisetf = (String) building.get("isHighRise");
+				  isHighRisetf = (boolean) building.get("isHighRise");
 				 log.info("isHighRisetf-------"+isHighRisetf);
 				 
 				 for(LinkedHashMap floorMap :floor) {
@@ -258,7 +258,7 @@ public class MDMSService {
 			additionalDetails.put("ResArea", ResArea.toString());
 			additionalDetails.put("CommArea", CommArea.toString());
 			additionalDetails.put("IndArea", IndArea.toString());
-			additionalDetails.put("isHighRisetf", isHighRisetf.toString());
+			additionalDetails.put("isHighRisetf", isHighRisetf+"");
 			
 			log.info("additionalDetails---------"+additionalDetails);
 			Map<String, String> responseMap1 = feeCalculation(additionalDetails);
@@ -417,16 +417,16 @@ public class MDMSService {
 		log.info("com_area----"+com_area);
 		Double ind_area = Double.valueOf(data.get("IndArea").toString());
 		log.info("ind_area----"+ind_area);
-		String isHighRise = data.get("isHighRisetf").toString();
+		boolean isHighRise = (boolean) data.get("isHighRisetf");
 		log.info("ind_area----"+isHighRise);
 		
 		String heightcat="";
 		
-		if(isHighRise.equals("false")) {
-			 heightcat = "NH";
+		if(isHighRise) {
+			 heightcat = "HR";
 		}
 		else {
-			 heightcat = "HR";
+			 heightcat = "NH";
 		}
 		
 		
