@@ -194,9 +194,16 @@ public class EDCRService {
 //			log.info("masterData: " + masterData);
 			List jsonOutput = JsonPath.read(masterData, BPAConstants.RISKTYPE_COMPUTATION);
 			log.info("jsonOutput: " + jsonOutput);
-			String filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
-					+ ") && ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
-					+ buildingHeight + "  ))].riskType";
+			String filterExp = "";
+			if (plotArea > 1000 || buildingHeight >= 15) {
+				filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
+						+ ") || ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
+						+ buildingHeight + "  ))].riskType";
+			} else {
+				filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
+						+ ") && ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
+						+ buildingHeight + "  ))].riskType";
+			}
 
 			log.info("filterExp: " + filterExp);
 
