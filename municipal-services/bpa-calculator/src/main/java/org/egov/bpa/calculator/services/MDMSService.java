@@ -138,7 +138,7 @@ public class MDMSService {
 
 //			log.info("context logg:======= " + context.jsonString());
 
-			Double plotArea =Double.valueOf(context.read("edcrDetail[0].planDetail.planInformation.plotArea"));
+			Double plotArea =Double.valueOf(context.read("edcrDetail[0].planDetail.planInformation.plotArea").toString());
 			log.info("plotArea context.read -----" + context.read("edcrDetail[0].planDetail.planInformation.plotArea"));
 			log.info("plotArea  ---  " + plotArea);
 //			JSONArray occupancyType = context.read("edcrDetail[0].planDetail.planInformation.occupancy");
