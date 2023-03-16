@@ -6,7 +6,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.lang.Math;
+
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 
 import org.egov.bpa.calculator.config.BPACalculatorConfig;
 import org.egov.bpa.calculator.repository.BPARepository;
@@ -25,10 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -195,8 +194,18 @@ public class MDMSService {
 		
 			String zonedesc = context.read("edcrDetail[0].planDetail.planInfoProperties.DEVELOPMENT_ZONE");
 			
-//			LinkedHashMap block =  context.read("edcrDetail[0].planDetail.blocks[0]");
-//			JSONArray block =  context.read("edcrDetail[0].planDetail.blocks[0]");
+			ArrayList<LinkedHashMap> block =  context.read("edcrDetail[0].planDetail.blocks");
+			log.info("block LinkedHashMap===="+block);
+			
+//			for(Map)
+			
+			for(LinkedHashMap blockMap:block) {
+				HashMap building = (HashMap) blockMap.get("building");
+				 log.info("blockMap======"+building);
+				 ArrayList<LinkedHashMap> floor = (ArrayList<LinkedHashMap>) building.get("floors");
+				 log.info("floor======"+floor);
+			}
+			
 			
 			additionalDetails.put("appDate", appDate.toString());
 			additionalDetails.put("appNum", appNum.toString());
@@ -391,9 +400,10 @@ public class MDMSService {
 			feety = "Post";
 		} 
 		
-		int index = occupancyType.indexOf(",");
-		log.info("index-----"+index);
-		log.info("find ','------"+occupancyType.indexOf(","));
+//		 if((occupancyType.split(",")).length>1) {
+//			 log.info("index-----");
+//		 }
+		
 		
 		if(occupancyType.equals("Residential")) {
 			pCategory =1;
@@ -405,7 +415,7 @@ public class MDMSService {
 			pCategory =3;
 		}
 //		else if(occupancyType.equals("MIX")) {
-		else if(occupancyType.equals("Residential,Mercantile / Commercial")) {
+		else if((occupancyType.split(",")).length>1) {
 			pCategory =4;
 		}
 		
