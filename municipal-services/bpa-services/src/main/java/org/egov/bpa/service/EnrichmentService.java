@@ -1,6 +1,7 @@
 package org.egov.bpa.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -255,13 +256,24 @@ public class EnrichmentService {
 //				Double buildingHeight = context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeight");
 
 			List jsonOutput = JsonPath.read(masterData, BPAConstants.RISKTYPE_COMPUTATION);
-			String filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
-					+ ") || ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
-					+ buildingHeight + "  ))].riskType";
+			String filterExp = "";
+			List<String> riskTypes = new ArrayList<String>();
+			if (plotArea > 1000 || buildingHeight >= 15) {
+//				filterExp = "$.[?((@.fromPlotArea < " + plotArea + " ) || ( @.fromBuildingHeight < " + buildingHeight
+//						+ "  ))].riskType";
+				riskTypes.add("HIGH");
+			} else {
+				filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
+						+ ") && ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
+						+ buildingHeight + "  ))].riskType";
+				log.info("filterExp: " + filterExp);
 
-			log.info("filterExp: " + filterExp);
+				riskTypes = JsonPath.read(jsonOutput, filterExp);
+			}
 
-			List<String> riskTypes = JsonPath.read(jsonOutput, filterExp);
+//			log.info("filterExp: " + filterExp);
+//
+//			 riskTypes = JsonPath.read(jsonOutput, filterExp);
 
 			log.info("riskTypes: " + riskTypes.toString());
 

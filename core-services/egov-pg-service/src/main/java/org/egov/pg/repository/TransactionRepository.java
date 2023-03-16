@@ -50,5 +50,10 @@ public class TransactionRepository {
 		String sql = "select txn_response from eg_pg_resp where txn_id=?";
 		return jdbcTemplate.queryForObject(sql, new Object[] { txnId }, String.class);
 	}
+	
+	public String getTenantId(String txnId) {
+		String sql = "select tenant_id from eg_pg_transactions where txn_id=?";
+		return jdbcTemplate.queryForObject(sql, new Object[] { txnId }, String.class);
+	}
 
 }

@@ -43,7 +43,7 @@ public class RedirectController {
 	@Value("${ccavenue.citizen.redirect.domain.name}")
 	private String niwaspassRedirectDomain;
 
-	@Value("${ccavenue.working.key}")
+//	@Value("${ccavenue.working.key}")
 	private String workingKey;
 
 	private final TransactionService transactionService;
@@ -58,14 +58,20 @@ public class RedirectController {
 
 	@PostMapping(value = "/transaction/v1/_redirect", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public ResponseEntity<Object> method(@RequestBody MultiValueMap<String, String> formData) {
+		log.info("Inside /transaction/v1/_redirect controller");
+		String orderNo = formData.get("orderNo").get(0);
+		String tenantId = transactionService.getTenantId(orderNo);
+		log.info("tenantId: " + tenantId);
+		getWorkingKey(tenantId);
+		log.info("workingKey: " + workingKey);
 		SecretKeySpec skey = new SecretKeySpec(getMD5(workingKey), "AES");
 		this.setupCrypto(skey);
-		log.info("inside /transaction/v1/_redirect controller");
+//		log.info("inside /transaction/v1/_redirect controller");
 		log.info("formData: " + formData.toString());
 //		CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
 		CcavenueResponse ccavenueResponse = new CcavenueResponse();
 		String encResp = formData.get("encResp").get(0);
-		String orderNo = formData.get("orderNo").get(0);
+
 		log.info("encResp: " + encResp);
 		ccavenueResponse.setEncResp(encResp);
 		ccavenueResponse.setOrderNo(orderNo);
@@ -203,6 +209,15 @@ public class RedirectController {
 			return md.digest(bytesOfMessage);
 		} catch (Exception e) {
 			return null;
+		}
+	}
+
+	private void getWorkingKey(String tenantId) {
+		log.info("inside getWorkingKey..... tenantId: " + tenantId);
+		if (tenantId.equals("cg.birgaon")) {
+			this.workingKey = "B27E5242E8FC395A07F65AB900F021FA";
+		} else if (tenantId.equals("cg.dhamtari")) {
+			this.workingKey = "D682025F99E01FA0F0FAA079B1B3F793";
 		}
 	}
 }

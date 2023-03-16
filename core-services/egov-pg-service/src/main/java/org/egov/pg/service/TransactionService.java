@@ -174,5 +174,9 @@ public class TransactionService {
 	public String getResponse(String txnId) {
 		return transactionRepository.fetchResponse(txnId);
 	}
+	
+	public String getTenantId(String txnId) {
+		return transactionRepository.getTenantId(txnId);
+	}
 
 }

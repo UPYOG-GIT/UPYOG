@@ -6,7 +6,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.lang.Math;
+
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 
 import org.egov.bpa.calculator.config.BPACalculatorConfig;
 import org.egov.bpa.calculator.repository.BPARepository;
@@ -25,10 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -102,28 +101,28 @@ public class MDMSService {
 	public Map getCalculationType(RequestInfo requestInfo, BPA bpa, Object mdmsData, String feeType) {
 		HashMap<String, Object> calculationType = new HashMap<>();
 		try {
-			if (feeType.equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE)) {
-				log.info("inside sancFee if condition......");
-				String consumerCode = bpa.getApplicationNo();
-				log.info("consumerCode: " + consumerCode);
-				Map sancFeeMap = new HashMap();
-				try {
-					String[] SancFee = bpaRepository.getSanctionFeeAmount(consumerCode);
-					log.info("SancFee from DB: " + SancFee.toString());
-					if (SancFee.length != 0) {
-						Double totalSancFeeAmount = Double.valueOf(SancFee[SancFee.length - 1]);
-						log.info("totalSancFeeAmount: " + totalSancFeeAmount);
-						sancFeeMap.put(BPACalculatorConstants.MDMS_CALCULATIONTYPE_AMOUNT, totalSancFeeAmount);
-						return sancFeeMap;
-					} else {
-						log.error("Sanction Fee not found in DB");
-						throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "Sanction Fee not found");
-					}
-				} catch (Exception ex) {
-					log.error("Exception in SancFee condition: " + ex);
-					throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "Sanction Fee not found");
-				}
-			}
+//			if (feeType.equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE)) {
+//				log.info("inside sancFee if condition......");
+//				String consumerCode = bpa.getApplicationNo();
+//				log.info("consumerCode: " + consumerCode);
+//				Map sancFeeMap = new HashMap();
+//				try {
+//					String[] SancFee = bpaRepository.getSanctionFeeAmount(consumerCode);
+//					log.info("SancFee from DB: " + SancFee.toString());
+//					if (SancFee.length != 0) {
+//						Double totalSancFeeAmount = Double.valueOf(SancFee[SancFee.length - 1]);
+//						log.info("totalSancFeeAmount: " + totalSancFeeAmount);
+//						sancFeeMap.put(BPACalculatorConstants.MDMS_CALCULATIONTYPE_AMOUNT, totalSancFeeAmount);
+//						return sancFeeMap;
+//					} else {
+//						log.error("Sanction Fee not found in DB");
+//						throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "Sanction Fee not found");
+//					}
+//				} catch (Exception ex) {
+//					log.error("Exception in SancFee condition: " + ex);
+//					throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "Sanction Fee not found");
+//				}
+//			}
 
 			List jsonOutput = JsonPath.read(mdmsData, BPACalculatorConstants.MDMS_CALCULATIONTYPE_PATH);
 			LinkedHashMap responseMap = edcrService.getEDCRDetails(requestInfo, bpa);
@@ -195,8 +194,48 @@ public class MDMSService {
 		
 			String zonedesc = context.read("edcrDetail[0].planDetail.planInfoProperties.DEVELOPMENT_ZONE");
 			
-//			LinkedHashMap block =  context.read("edcrDetail[0].planDetail.blocks[0]");
-//			JSONArray block =  context.read("edcrDetail[0].planDetail.blocks[0]");
+			ArrayList<LinkedHashMap> block =  context.read("edcrDetail[0].planDetail.blocks");
+			log.info("block LinkedHashMap===="+block);
+			
+//			for(Map)
+			
+			for(LinkedHashMap blockMap:block) {
+				HashMap building = (HashMap) blockMap.get("building");
+				 log.info("blockMap======"+building);
+				 ArrayList<LinkedHashMap> floor = (ArrayList<LinkedHashMap>) building.get("floors");
+				 log.info("floor======"+floor);
+				 for(LinkedHashMap floorMap :floor) {
+					 ArrayList<LinkedHashMap> getOccupancies = (ArrayList<LinkedHashMap>) floorMap.get("occupancies"); 
+					 for(LinkedHashMap getOccupanciesMap :getOccupancies) {
+						 HashMap typeHelper = (HashMap) getOccupanciesMap.get("typeHelper"); 
+						 log.info("typeHelper====="+typeHelper);
+						 HashMap typeOcc =(HashMap) typeHelper.get("type");
+						 log.info("typeOcc====="+typeOcc);
+						 
+						 String nameOcc =(String) typeOcc.get("name");
+						 log.info("nameOcc====="+nameOcc);
+						 
+						 if(nameOcc.equals("Residential")) {
+							 Double ResArea = (Double) getOccupanciesMap.get("floorArea"); 
+							 log.info("ResArea====="+ResArea);
+						 }
+						 else if(nameOcc.equals("Mercantile / Commercial")) {
+							 Double CommArea = (Double) getOccupanciesMap.get("floorArea"); 
+							 log.info("CommArea====="+CommArea);
+						 }
+						 else if(nameOcc.equals("Industrial")) {
+							 Double IndArea = (Double) getOccupanciesMap.get("floorArea"); 
+							 log.info("IndArea====="+IndArea);
+						 }
+						 else {
+							 throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "Not a valid occupency"); 
+						 }
+						 
+					 }
+					   
+				 }
+			}
+			
 			
 			additionalDetails.put("appDate", appDate.toString());
 			additionalDetails.put("appNum", appNum.toString());
@@ -391,6 +430,11 @@ public class MDMSService {
 			feety = "Post";
 		} 
 		
+//		 if((occupancyType.split(",")).length>1) {
+//			 log.info("index-----");
+//		 }
+		
+		
 		if(occupancyType.equals("Residential")) {
 			pCategory =1;
 		}
@@ -400,7 +444,8 @@ public class MDMSService {
 		else if(occupancyType.equals("INDUSTRIAL")) {
 			pCategory =3;
 		}
-		else if(occupancyType.equals("MIX")) {
+//		else if(occupancyType.equals("MIX")) {
+		else if((occupancyType.split(",")).length>1) {
 			pCategory =4;
 		}
 		
