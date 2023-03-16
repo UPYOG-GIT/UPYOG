@@ -261,106 +261,123 @@ public class MDMSService {
 			additionalDetails.put("isHighRisetf", isHighRisetf+"");
 			
 			log.info("additionalDetails---------"+additionalDetails);
-			Map<String, String> responseMap1 = feeCalculation(additionalDetails);
+			Double responseMap1 = feeCalculation(additionalDetails);
 			
 			log.info("responseMap1----------"+responseMap1);
+			
+			List<Object> calTypes = new ArrayList<>();
+			calTypes.add(responseMap1);
+			log.info("calTypes plotArea ----  " + calTypes);
+			log.info("calTypes.size(): " + calTypes.size());
+			
+			if (calTypes.size() == 0) {
+				log.info("================should not enter==========");
+				return defaultMap(feeType);
+			}
+			Object obj = calTypes.get(0);
+			calculationType = (HashMap<String, Object>) obj;
+			
+			
 //			added end----- auto calculation--------------------------------------------			
 			
 			
 			
 			
-			if (((plotArea <= 500.00) && (additionalDetails.get("occupancyType").equals("Residential")))) {
+//			if (((plotArea <= 500.00) && (additionalDetails.get("occupancyType").equals("Residential")))) {
 //	     		   String filterExp = "$.[?(@.amount==1)]";
-				String filterExp = "$.[?(@.feeType=='" + feeType + "')]";
-				log.info("filterExp--------" + filterExp);
-				List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
-				log.info("calTypes plotArea ----  " + calTypes);
-				log.info("calTypes.size(): " + calTypes.size());
-				if (calTypes.size() == 0) {
-					log.info("================should not enter==========");
-					return defaultMap(feeType);
-				}
-				Object obj = calTypes.get(0);
-				calculationType = (HashMap<String, Object>) obj;
-			} else {
-
-				JSONArray serviceType = context.read("edcrDetail.*.applicationSubType");
-				if (CollectionUtils.isEmpty(serviceType)) {
-					serviceType.add("NEW_CONSTRUCTION");
-				}
-				JSONArray applicationType = context.read("edcrDetail.*.appliactionType");
-				if (StringUtils.isEmpty(applicationType)) {
-					applicationType.add("permit");
-				}
-				additionalDetails.put("applicationType", applicationType.get(0).toString());
-				additionalDetails.put("serviceType", serviceType.get(0).toString());
-
-				log.info("context totalBuiltupare"
-						+ context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea"));
-				Double totalBuitUpArea = context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea");
-				log.info("totalBuitUpArea: " + totalBuitUpArea);
-
-				additionalDetails.put("totalBuitUpArea", totalBuitUpArea.toString());
-
-				log.info("JSONArray occupancyType ki value :--------- " + occupancyType.get(0).toString()
-						+ "=========JSONArray totalBuitUpArea ki value:----" + totalBuitUpArea.toString());
-				log.info("occupancyType form additional=====:  " + additionalDetails.get("occupancyType"));
-				log.info("totalBuitUpArea form additional=====:  " + additionalDetails.get("totalBuitUpArea"));
-//             log.debug("applicationType is " + additionalDetails.get("applicationType"));
-//             log.debug("serviceType is " + additionalDetails.get("serviceType"));
-				log.info("applicationType: " + additionalDetails.get("applicationType"));
-				String filterExp = "$.[?((@.applicationType == '" + additionalDetails.get("applicationType")
-						+ "' || @.applicationType === 'ALL' ) &&  @.feeType == '" + feeType + "')]";
-				List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
-				log.info("calTypes10: " + calTypes);
-
-				log.info("serviceType: " + additionalDetails.get("serviceType"));
-				filterExp = "$.[?(@.serviceType == '" + additionalDetails.get("serviceType")
-						+ "' || @.serviceType === 'ALL' )]";
-				calTypes = JsonPath.read(calTypes, filterExp);
-				log.info("calTypes11: " + calTypes);
-//            
-//             filterExp = "$.[?(@.riskType == '"+bpa.getRiskType()+"' || @.riskType === 'ALL' )]";
-//             calTypes = JsonPath.read(calTypes, filterExp);
-
-//             ----added by manisha for filter amount-------
-				filterExp = "$.[?(@.occupancyType == '" + additionalDetails.get("occupancyType") + "')]";
-				log.info("filterExp:------ " + filterExp);
-				calTypes = JsonPath.read(calTypes, filterExp);
-				log.info("calTypes12: " + calTypes);
-//			log.info("calTypes(JsonPath.read(jsonOutput, filterExp) : " + calTypes);
-
-				filterExp = "$.[?(@.builtupAreaFrom <=" + additionalDetails.get("totalBuitUpArea")
-						+ "&& @.builtupAreaTo >=" + additionalDetails.get("totalBuitUpArea") + ")]";
-				log.info("filterExp:------ " + filterExp);
-				calTypes = JsonPath.read(calTypes, filterExp);
-				log.info("calTypes14: " + calTypes);
-
-//			log.info("calTypes = JsonPath.read(calTypes, filterExp): " + calTypes);
-
-//             ----added by manisha for filter amount-------
-
-				if (calTypes.size() > 1) {
-					filterExp = "$.[?(@.riskType == '" + bpa.getRiskType() + "' )]";
-					calTypes = JsonPath.read(calTypes, filterExp);
-					log.info("calTypes15: " + calTypes);
-				}
-
-				if (calTypes.size() == 0) {
-					log.info("================should not enter==========");
-					return defaultMap(feeType);
-				}
-
-				log.info("calTypes--------------" + calTypes + "==========calTypes.get(0)==========" + calTypes.get(0));
-				Object obj = calTypes.get(0);
-
-				int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-
-				String financialYear = currentYear + "-" + (currentYear + 1);
-//			System.out.println(financialYear);
-
-				calculationType = (HashMap<String, Object>) obj;
-			}
+//				String filterExp = "$.[?(@.feeType=='" + feeType + "')]";
+//				log.info("filterExp--------" + filterExp);
+//				List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
+//				List<Object> calTypes = new ArrayList<>();
+//				calTypes.add("");
+//				log.info("calTypes plotArea ----  " + calTypes);
+//				log.info("calTypes.size(): " + calTypes.size());
+//				if (calTypes.size() == 0) {
+//					log.info("================should not enter==========");
+//					return defaultMap(feeType);
+//				}
+//				Object obj = calTypes.get(0);
+//				calculationType = (HashMap<String, Object>) obj;
+//			}
+//			else {
+//
+//				JSONArray serviceType = context.read("edcrDetail.*.applicationSubType");
+//				if (CollectionUtils.isEmpty(serviceType)) {
+//					serviceType.add("NEW_CONSTRUCTION");
+//				}
+//				JSONArray applicationType = context.read("edcrDetail.*.appliactionType");
+//				if (StringUtils.isEmpty(applicationType)) {
+//					applicationType.add("permit");
+//				}
+//				additionalDetails.put("applicationType", applicationType.get(0).toString());
+//				additionalDetails.put("serviceType", serviceType.get(0).toString());
+//
+//				log.info("context totalBuiltupare"
+//						+ context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea"));
+//				Double totalBuitUpArea = context.read("edcrDetail[0].planDetail.virtualBuilding.totalBuitUpArea");
+//				log.info("totalBuitUpArea: " + totalBuitUpArea);
+//
+//				additionalDetails.put("totalBuitUpArea", totalBuitUpArea.toString());
+//
+//				log.info("JSONArray occupancyType ki value :--------- " + occupancyType.get(0).toString()
+//						+ "=========JSONArray totalBuitUpArea ki value:----" + totalBuitUpArea.toString());
+//				log.info("occupancyType form additional=====:  " + additionalDetails.get("occupancyType"));
+//				log.info("totalBuitUpArea form additional=====:  " + additionalDetails.get("totalBuitUpArea"));
+////             log.debug("applicationType is " + additionalDetails.get("applicationType"));
+////             log.debug("serviceType is " + additionalDetails.get("serviceType"));
+//				log.info("applicationType: " + additionalDetails.get("applicationType"));
+//				String filterExp = "$.[?((@.applicationType == '" + additionalDetails.get("applicationType")
+//						+ "' || @.applicationType === 'ALL' ) &&  @.feeType == '" + feeType + "')]";
+//				List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
+//				log.info("calTypes10: " + calTypes);
+//
+//				log.info("serviceType: " + additionalDetails.get("serviceType"));
+//				filterExp = "$.[?(@.serviceType == '" + additionalDetails.get("serviceType")
+//						+ "' || @.serviceType === 'ALL' )]";
+//				calTypes = JsonPath.read(calTypes, filterExp);
+//				log.info("calTypes11: " + calTypes);
+////            
+////             filterExp = "$.[?(@.riskType == '"+bpa.getRiskType()+"' || @.riskType === 'ALL' )]";
+////             calTypes = JsonPath.read(calTypes, filterExp);
+//
+////             ----added by manisha for filter amount-------
+//				filterExp = "$.[?(@.occupancyType == '" + additionalDetails.get("occupancyType") + "')]";
+//				log.info("filterExp:------ " + filterExp);
+//				calTypes = JsonPath.read(calTypes, filterExp);
+//				log.info("calTypes12: " + calTypes);
+////			log.info("calTypes(JsonPath.read(jsonOutput, filterExp) : " + calTypes);
+//
+//				filterExp = "$.[?(@.builtupAreaFrom <=" + additionalDetails.get("totalBuitUpArea")
+//						+ "&& @.builtupAreaTo >=" + additionalDetails.get("totalBuitUpArea") + ")]";
+//				log.info("filterExp:------ " + filterExp);
+//				calTypes = JsonPath.read(calTypes, filterExp);
+//				log.info("calTypes14: " + calTypes);
+//
+////			log.info("calTypes = JsonPath.read(calTypes, filterExp): " + calTypes);
+//
+////             ----added by manisha for filter amount-------
+//
+//				if (calTypes.size() > 1) {
+//					filterExp = "$.[?(@.riskType == '" + bpa.getRiskType() + "' )]";
+//					calTypes = JsonPath.read(calTypes, filterExp);
+//					log.info("calTypes15: " + calTypes);
+//				}
+//
+//				if (calTypes.size() == 0) {
+//					log.info("================should not enter==========");
+//					return defaultMap(feeType);
+//				}
+//
+//				log.info("calTypes--------------" + calTypes + "==========calTypes.get(0)==========" + calTypes.get(0));
+//				Object obj = calTypes.get(0);
+//
+//				int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+//
+//				String financialYear = currentYear + "-" + (currentYear + 1);
+////			System.out.println(financialYear);
+//
+//				calculationType = (HashMap<String, Object>) obj;
+//			}
 		} catch (Exception e) {
 			log.error("Exception :" + e);
 			throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR, "Failed to get calculationType");
@@ -385,7 +402,8 @@ public class MDMSService {
 	}
 	
 
-	private Map<String, String> feeCalculation(Map data) {
+//	private Map<String, String> feeCalculation(Map data) {
+	private Double feeCalculation(Map data) {
 		
 		log.info("Data  "+data);
 		String feetype = data.get("feeType").toString();
@@ -491,9 +509,14 @@ public class MDMSService {
 		
 		List<Map<String,Object>> result  = bpaRepository.getPaytyData(tenantid,feety,occupancyType,plotares,heightcat,newrevise);
 		
+		String  unitid ="";
 		log.info("result--0-----"+result.toString());
 		
 		for(Map<String,Object> item : result) {
+			
+			String pId = item.get("id").toString();
+			String chargesTy = item.get("charges_type_name").toString();
+			
 			if (feety.equals("Pre"))	
 			{
 				if(heightcat.equals("NH") && newrevise.equals("REVISED")) {
@@ -534,7 +557,7 @@ public class MDMSService {
 					Integer p_category = Integer.parseInt(detailPayTyrate.get("p_category").toString());
 					Integer b_category = Integer.parseInt(detailPayTyrate.get("b_category").toString());
 					Integer s_category = Integer.parseInt(detailPayTyrate.get("s_category").toString());
-					String  unitid     = detailPayTyrate.get("unitid").toString();
+					  unitid     = detailPayTyrate.get("unitid").toString();
 					String calcon = detailPayTyrate.get("calcon").toString();
 					calcact  = detailPayTyrate.get("calcact").toString();
 					Double rate_res  = Double.valueOf(detailPayTyrate.get("rate_res").toString());
@@ -1023,7 +1046,7 @@ public class MDMSService {
 					ptarea+=(double)Area;		//each building total area for the fee
 					
 					
-					log.info("End--Value--"+Value+"---End--trate---"+trate+"----End--ptarea--"+ptarea+"-----End-------End");
+					log.info("End--Value--"+Value+"---End--trate---"+trate+"----End--ptarea--"+ptarea+"---unitid--"+unitid+"--End-------End");
 				//}//end of for each building loop
 				
 			}//end of tpd_zdaflg='N'
@@ -1048,12 +1071,12 @@ public class MDMSService {
 			//insert data in data base-------------
 			
 		}//End of for each fee type
-		Map<String, String> list = new HashMap<String, String>();
-		list.put("Value",Value.toString());
-		list.put("trate",trate.toString());
-		list.put("calcact",calcact.toString());
+//		Map<String, String> list = new HashMap<String, String>();
+//		list.put("Value",Value.toString());
+//		list.put("trate",trate.toString());
+//		list.put("calcact",calcact.toString());
 
-		return list;
+		return Value;
 	}
 
 }
