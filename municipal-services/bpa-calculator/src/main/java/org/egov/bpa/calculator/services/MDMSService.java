@@ -220,16 +220,23 @@ public class MDMSService {
 					 for(LinkedHashMap getOccupanciesMap :getOccupancies) {
 						 log.info("getOccupanciesMap-------"+getOccupanciesMap);
 						 
+										 
 						 HashMap typeHelper = (HashMap) getOccupanciesMap.get("typeHelper"); 
 						 log.info("typeHelper====="+typeHelper);
+						
+						 log.info("typeHelper size----- "+typeHelper.size());
+						 
+						 if(typeHelper.size() == 0) {
+							 continue;
+						 }
+						 
 						 HashMap typeOcc =(HashMap) typeHelper.get("type");
 						 log.info("typeOcc====="+typeOcc);
-						 
+						 					 
 						 String nameOcc =(String) typeOcc.get("name");
 						 log.info("nameOcc====="+nameOcc);
 						 
-						 
-						 
+						 						 
 						 if(nameOcc.equals("Residential")) {
 							  ResArea += (Double) getOccupanciesMap.get("floorArea"); 
 							 log.info("ResArea====="+ResArea);
