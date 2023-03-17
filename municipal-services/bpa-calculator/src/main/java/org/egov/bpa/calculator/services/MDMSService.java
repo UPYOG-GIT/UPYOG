@@ -275,8 +275,8 @@ public class MDMSService {
 				return defaultMap(feeType);
 			}
 			Object obj = calTypes.get(0);
-			calculationType = (HashMap<String, Object>) obj;
-			
+//			calculationType = (HashMap<String, Object>) obj;
+			calculationType.put(BPACalculatorConstants.MDMS_CALCULATIONTYPE_AMOUNT, obj);
 			
 //			added end----- auto calculation--------------------------------------------			
 			
