@@ -212,8 +212,14 @@ public class MDMSService {
 				 log.info("isHighRisetf-------"+isHighRisetf);
 				 
 				 for(LinkedHashMap floorMap :floor) {
+					 log.info("floorMap-------"+floorMap);
+					 
 					 ArrayList<LinkedHashMap> getOccupancies = (ArrayList<LinkedHashMap>) floorMap.get("occupancies"); 
+					 log.info("getOccupancies-------"+getOccupancies);
+					 
 					 for(LinkedHashMap getOccupanciesMap :getOccupancies) {
+						 log.info("getOccupanciesMap-------"+getOccupanciesMap);
+						 
 						 HashMap typeHelper = (HashMap) getOccupanciesMap.get("typeHelper"); 
 						 log.info("typeHelper====="+typeHelper);
 						 HashMap typeOcc =(HashMap) typeHelper.get("type");
