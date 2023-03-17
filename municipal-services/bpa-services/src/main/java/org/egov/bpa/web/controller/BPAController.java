@@ -23,6 +23,7 @@ import org.egov.bpa.web.model.BSCategoryRequest;
 import org.egov.bpa.web.model.BSCategoryRequestWrapper;
 import org.egov.bpa.web.model.PayTpRateRequest;
 import org.egov.bpa.web.model.PayTpRateRequestWrapper;
+import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
 import org.egov.bpa.web.model.PayTypeFeeDetailRequestWrapper;
 import org.egov.bpa.web.model.PayTypeRequest;
 import org.egov.bpa.web.model.PayTypeRequestWrapper;
@@ -173,13 +174,11 @@ public class BPAController {
 
 	@PostMapping(value = "/_createfeedetail")
 	public ResponseEntity<Object> createFeeDetails(
-			@RequestBody List<PayTypeFeeDetailRequestWrapper> payTypeFeeDetailRequestWrapper) {
-//		@RequestBody RequestInfo requestInfo,
-//		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
-//		return new ResponseEntity<>(responseList, HttpStatus.OK);
-//		PayTypeFeeDetailRequest payTypeFeeDetailRequest = payTypeFeeDetailRequestWrapper.
+			@RequestBody PayTypeFeeDetailRequestWrapper payTypeFeeDetailRequestWrapper) {
 		try {
-			int[] insertResult = bpaService.createFeeDetail(payTypeFeeDetailRequestWrapper);
+			PayTypeFeeDetailRequest payTypeFeeDetailRequest = payTypeFeeDetailRequestWrapper.getPayTypeFeeDetailRequest();
+			
+			int[] insertResult = bpaService.createFeeDetail(payTypeFeeDetailRequest);
 			if (insertResult.length > 0) {
 				return new ResponseEntity<>(insertResult, HttpStatus.OK);
 			} else {
@@ -193,13 +192,17 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_updatefeedetail")
-	public ResponseEntity<List<Map<String, Object>>> updateFeeDetails(@RequestParam String tenantId) {
-//		@RequestBody RequestInfo requestInfo,
-//		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
-//		return new ResponseEntity<>(responseList, HttpStatus.OK);
-		return null;
+	public ResponseEntity<Object> updateFeeDetails(@RequestBody PayTypeFeeDetailRequestWrapper payTypeFeeDetailRequestWrapper) {
+		PayTypeFeeDetailRequest payTypeFeeDetailRequest = payTypeFeeDetailRequestWrapper.getPayTypeFeeDetailRequest();
+		int updateResult = bpaService.updateFeeDetails(payTypeFeeDetailRequest);
+		return new ResponseEntity<>(updateResult, HttpStatus.OK);
 	}
-
+	
+	@PostMapping(value = "/_searchfeedetails")
+	public ResponseEntity<List<Map<String, Object>>> getFeeDetails(@RequestParam String tenantId, @RequestParam String applicationNo,@RequestParam int id) {
+		List<Map<String, Object>> sqlResponseList = bpaService.getFeeDetails(tenantId, applicationNo, id);
+		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
+	}
 	@PostMapping(value = "/_deletefeedetail")
 	public ResponseEntity<List<Map<String, Object>>> deleteFeeDetails(@RequestParam String tenantId) {
 //		@RequestBody RequestInfo requestInfo,

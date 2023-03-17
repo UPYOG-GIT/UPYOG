@@ -57,5 +57,14 @@ public class PayTypeFeeDetailRequest {
 	@JsonProperty("paymentType")
 	private String paymentType = null;
 	
+	@JsonProperty("updatedBy")
+    private String updatedBy = null;
+	
+	@JsonProperty("id")
+    private String id = null;
+	
+	@JsonProperty("tipRate")
+    private String tipRate = null;
+	
 	
 }
