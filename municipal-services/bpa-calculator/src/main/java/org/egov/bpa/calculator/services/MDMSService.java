@@ -485,7 +485,7 @@ public class MDMSService {
 		Double res_unit = 5.0;
 		
 		
-		Map<String, Object> feeDetailMap = new HashMap<String, Object>();
+		List<HashMap<String, Object>> feeDetailMap = new ArrayList<HashMap<String, Object>>();
 		
 		if(feetype.equals("ApplicationFee")) {
 			feety = "Pre";
@@ -530,6 +530,7 @@ public class MDMSService {
 		log.info("result--0-----"+result.toString());
 		
 		for(Map<String,Object> item : result) {
+			HashMap<String, Object> feeMap = new HashMap<String, Object>();
 			
 //			String pId = item.get("id").toString();
 			String chargesTy = item.get("charges_type_name").toString();
@@ -1065,16 +1066,16 @@ public class MDMSService {
 					
 					log.info("End--Value--"+Value+"-----trate---"+trate+"----End--ptarea--"+ptarea+"---unitid--"+unitid+"--End----paytyid--"+paytyid+"----chargesTy--"+chargesTy+"----calcact--"+calcact+"----tenantid--"+tenantid+"----feety--"+feety+"----applicationNo--"+applicationNo+"---End");
 				
-					feeDetailMap.put("ApplicationNo", applicationNo);
-					feeDetailMap.put("FeeType", feety);
-					feeDetailMap.put("Tenantid", tenantid);
-					feeDetailMap.put("Operation", calcact);
-					feeDetailMap.put("ChargesType", chargesTy);
-					feeDetailMap.put("PayTypeId", paytyid);
-					feeDetailMap.put("UnitId", unitid);
-					feeDetailMap.put("PropValue", ptarea);
-					feeDetailMap.put("Rate", trate);
-					feeDetailMap.put("Value", Value);
+					feeMap.put("ApplicationNo", applicationNo);
+					feeMap.put("FeeType", feety);
+					feeMap.put("Tenantid", tenantid);
+					feeMap.put("Operation", calcact);
+					feeMap.put("ChargesType", chargesTy);
+					feeMap.put("PayTypeId", paytyid);
+					feeMap.put("UnitId", unitid);
+					feeMap.put("PropValue", ptarea);
+					feeMap.put("Rate", trate);
+					feeMap.put("Value", Value);
 					
 					
 					//}//end of for each building loop
@@ -1099,7 +1100,7 @@ public class MDMSService {
 			
 		}//end of if $lbrkflg
 			//insert data in data base-------------
-			
+			feeDetailMap.add(feeMap);
 		}//End of for each fee type
 		
 		log.info("feeDetailMap-List-------"+feeDetailMap);
