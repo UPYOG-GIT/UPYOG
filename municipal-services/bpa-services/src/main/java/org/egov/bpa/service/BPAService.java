@@ -28,6 +28,7 @@ import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPASearchCriteria;
 import org.egov.bpa.web.model.BSCategoryRequest;
 import org.egov.bpa.web.model.PayTpRateRequest;
+import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
 import org.egov.bpa.web.model.PayTypeFeeDetailRequestWrapper;
 import org.egov.bpa.web.model.PayTypeRequest;
 import org.egov.bpa.web.model.ProposalTypeRequest;
@@ -820,9 +821,20 @@ public class BPAService {
 		}
 	}
 
-	public int[] createFeeDetail(List<PayTypeFeeDetailRequestWrapper> payTypeFeeDetailRequestWrapper) {
-		return repository.createFeeDetail(payTypeFeeDetailRequestWrapper);
+	public int[] createFeeDetail(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
+		return repository.createFeeDetail(payTypeFeeDetailRequest);
 	}
+	
+	public int updateFeeDetails(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
+		return repository.updateFeeDetails(payTypeFeeDetailRequest);
+	}
+	
+	public List<Map<String, Object>> getFeeDetails(String tenantId, String applicationNo, int id) {
+		List<Map<String, Object>> resultList = repository.getFeeDetails( tenantId, applicationNo, id);
+		log.info("getPayTypeByTenantId: " + resultList.toString());
+		return resultList;
+	}
+
 
 	public int createPayType(PayTypeRequest payTypeRequest) {
 		return repository.createPayType(payTypeRequest);

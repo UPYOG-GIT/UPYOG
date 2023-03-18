@@ -212,18 +212,31 @@ public class MDMSService {
 				 log.info("isHighRisetf-------"+isHighRisetf);
 				 
 				 for(LinkedHashMap floorMap :floor) {
+					 log.info("floorMap-------"+floorMap);
+					 
 					 ArrayList<LinkedHashMap> getOccupancies = (ArrayList<LinkedHashMap>) floorMap.get("occupancies"); 
+					 log.info("getOccupancies-------"+getOccupancies);
+					 
 					 for(LinkedHashMap getOccupanciesMap :getOccupancies) {
+						 log.info("getOccupanciesMap-------"+getOccupanciesMap);
+						 
+										 
 						 HashMap typeHelper = (HashMap) getOccupanciesMap.get("typeHelper"); 
 						 log.info("typeHelper====="+typeHelper);
+						
+						 log.info("typeHelper size----- "+typeHelper.size());
+						 
+						 if(typeHelper.size() == 0) {
+							 continue;
+						 }
+						 
 						 HashMap typeOcc =(HashMap) typeHelper.get("type");
 						 log.info("typeOcc====="+typeOcc);
-						 
+						 					 
 						 String nameOcc =(String) typeOcc.get("name");
 						 log.info("nameOcc====="+nameOcc);
 						 
-						 
-						 
+						 						 
 						 if(nameOcc.equals("Residential")) {
 							  ResArea += (Double) getOccupanciesMap.get("floorArea"); 
 							 log.info("ResArea====="+ResArea);
@@ -275,8 +288,9 @@ public class MDMSService {
 				return defaultMap(feeType);
 			}
 			Object obj = calTypes.get(0);
-			calculationType = (HashMap<String, Object>) obj;
-			
+			log.info("obj-----"+obj);
+//			calculationType = (HashMap<String, Object>) obj;
+			calculationType.put(BPACalculatorConstants.MDMS_CALCULATIONTYPE_AMOUNT, obj);
 			
 //			added end----- auto calculation--------------------------------------------			
 			
