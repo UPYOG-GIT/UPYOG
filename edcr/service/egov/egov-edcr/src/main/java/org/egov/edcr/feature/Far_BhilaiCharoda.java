@@ -637,7 +637,7 @@ public class Far_BhilaiCharoda extends Far {
 		scrutinyDetail.setKey("Common_FAR Validating");
 
 		Map<String, String> details = new HashMap<>();
-		details.put("Gross Plot Area",  pl.getPlot().getArea().toString());
+		details.put("Gross Plot Area",  pl.getPlot().getPlotBndryArea().toString());
 		details.put("Road Area", pl.getPlot().getRoadArea().toString());
 		details.put("Recreationsl Space", recreationSpaceArea.toString());
 //		details.put("Net Plot Area", pl.getPlot().getNetPlotArea().toString());

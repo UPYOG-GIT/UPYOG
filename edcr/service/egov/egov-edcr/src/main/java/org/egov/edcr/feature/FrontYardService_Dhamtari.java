@@ -307,26 +307,8 @@ public class FrontYardService_Dhamtari extends FrontYardService {
 	private Boolean commercial(Integer level, String blockName, BigDecimal min, BigDecimal mean,
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot) {
-		if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_2_5;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_3;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(12.2)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_3;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12.2)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(15.25)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_3;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(15.25)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_4;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_5;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) > 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_6;
-		}
+		
+		minVal = FRONTYARDMINIMUM_DISTANCE_4_5;
 
 		/*
 		 * if (-1 == level) { rule = BSMT_FRONT_YARD_DESC; subRuleDesc =

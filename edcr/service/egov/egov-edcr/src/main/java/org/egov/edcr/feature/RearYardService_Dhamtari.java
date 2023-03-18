@@ -428,15 +428,16 @@ public class RearYardService_Dhamtari extends RearYardService {
 	private Boolean commercial(Block block, Integer level, final BigDecimal min, final BigDecimal mean,
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult, String subRule,
 			String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot, Boolean valid) {
-		if (depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) <= 0) {
-			minVal = BigDecimal.ZERO;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_1_5;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) > 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_3;
-		}
-
+		
+		minVal = REARYARDMINIMUM_DISTANCE_4_5;
+		/*
+		 * if (depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) <= 0) { minVal =
+		 * BigDecimal.ZERO; } else if (depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) >
+		 * 0 && depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) { minVal =
+		 * REARYARDMINIMUM_DISTANCE_1_5; } else if
+		 * (depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) > 0) { minVal =
+		 * REARYARDMINIMUM_DISTANCE_3; }
+		 */
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
 		/*
 		 * if (-1 == level) { subRule = SUB_RULE_24_12; rule = BSMT_REAR_YARD_DESC;
