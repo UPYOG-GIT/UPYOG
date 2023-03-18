@@ -330,7 +330,7 @@ public class Sanitation extends FeatureProcess {
 
 	@Override
 	public Plan process(Plan pl) {
-		verifyDimesions(pl);
+//		verifyDimesions(pl);
 		checkCount(pl);
 		return pl;
 	}
@@ -403,6 +403,7 @@ public class Sanitation extends FeatureProcess {
 					if (type.getTypeHelper() != null
 							&& (type.getTypeHelper().getSubtype() != null || type.getTypeHelper().getType() != null)) {
 						double carpetArea = 0d;
+						double builtUpArea = type.getBuiltUpArea().doubleValue();
 						if (type.getCarpetArea() != null && type.getCarpetArea().doubleValue() > 0) {
 							carpetArea = type.getCarpetArea().doubleValue();
 						} else {
@@ -419,14 +420,20 @@ public class Sanitation extends FeatureProcess {
 
 						case DxfFileConstants.A:
 						case DxfFileConstants.A_AF:
-							if (b.getResidentialBuilding())
-								accepted = processSpecialWaterClosetForResidential(b, helper, scrutinyDetail,
-										requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap, failedDimensionSpWcMap);
+						case DxfFileConstants.A_R: // added
+//							if (b.getResidentialBuilding())
+//								accepted = processSpecialWaterClosetForResidential(b, helper, scrutinyDetail,
+//										requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap, failedDimensionSpWcMap);
+							helper.maleWc += 1d;
+//							helper.femaleWc += 1d;
+//							helper.urinal += 1d;
 							break;
+
 						case DxfFileConstants.A_SR:
 							processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
 									failedDimensionSpWcMap);
 							break;
+
 						case DxfFileConstants.A_HE:
 							helper.maleWc += carpetArea * 2 / (4.75 * 3 * 10);
 							helper.femaleWc += carpetArea / (4.75 * 3 * 8);
@@ -552,9 +559,13 @@ public class Sanitation extends FeatureProcess {
 						case DxfFileConstants.E:
 						case DxfFileConstants.F:
 						case DxfFileConstants.F_K:
-							helper.maleWc += carpetArea * 2 / (4.75 * 3 * 25);
-							helper.femaleWc += carpetArea / (4.75 * 3 * 15);
-							helper.urinal += carpetArea * 2 / (4.75 * 3 * 25);
+							helper.maleWc += 1d;
+							helper.femaleWc += 1d;
+							helper.urinal += 1d;
+//							helper.maleWc += carpetArea * 2 / (4.75 * 3 * 25);
+//							helper.femaleWc += carpetArea / (4.75 * 3 * 15);
+//							helper.urinal += carpetArea * 2 / (4.75 * 3 * 25);
+//							helper.requiredWC += 1;
 
 							helper.ruleNo.add("56(3C)");
 							helper.ruleDescription = SANITY_RULE_DESC + o.getCode();
@@ -621,6 +632,7 @@ public class Sanitation extends FeatureProcess {
 							allStatus = false;
 						}
 					}
+
 				}
 				for (Map.Entry<Integer, Integer> req : requiredSpWcMap.entrySet()) {
 					helper.requiredSpecialWc += req.getValue();
@@ -651,32 +663,32 @@ public class Sanitation extends FeatureProcess {
 								String.valueOf(helper.providedSpecialWc.intValue()), Result.Accepted.getResultVal(),
 								scrutinyDetail);
 					}
-					if (helper.failedAreaSpecialWc > 0 && helper.failedAreaSpecialWc <= helper.requiredSpecialWc) {
-						addReportDetail(ruleNo, BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Area", MINIMUM_AREA_SPWC,
-								String.valueOf(helper.failedAreaSpecialWc.intValue()) + " not having area 2.625 M2",
-								Result.Not_Accepted.getResultVal(), scrutinyDetail);
-					} else {
-						addReportDetail(ruleNo, BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Area", MINIMUM_AREA_SPWC,
-								String.valueOf(
-										helper.providedSpecialWc.intValue() - helper.failedAreaSpecialWc.intValue())
-										+ " having area 2.625 M2",
-								Result.Accepted.getResultVal(), scrutinyDetail);
-					}
+					/*
+					 * if (helper.failedAreaSpecialWc > 0 && helper.failedAreaSpecialWc <=
+					 * helper.requiredSpecialWc) { addReportDetail(ruleNo,
+					 * BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Area", MINIMUM_AREA_SPWC,
+					 * String.valueOf(helper.failedAreaSpecialWc.intValue()) +
+					 * " not having area 2.625 M2", Result.Not_Accepted.getResultVal(),
+					 * scrutinyDetail); } else { addReportDetail(ruleNo,
+					 * BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Area", MINIMUM_AREA_SPWC,
+					 * String.valueOf( helper.providedSpecialWc.intValue() -
+					 * helper.failedAreaSpecialWc.intValue()) + " having area 2.625 M2",
+					 * Result.Accepted.getResultVal(), scrutinyDetail); }
+					 */
 
-					if (helper.failedDimensionSpecialWc > 0
-							&& helper.failedDimensionSpecialWc <= helper.requiredSpecialWc) {
-						addReportDetail(ruleNo, BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Dimension",
-								MINIMUM_DIMENSION_SPWC,
-								String.valueOf(helper.failedDimensionSpecialWc.intValue())
-										+ " not having dimension 1.5M",
-								Result.Not_Accepted.getResultVal(), scrutinyDetail);
-					} else {
-						addReportDetail(ruleNo, BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Dimension",
-								MINIMUM_DIMENSION_SPWC,
-								String.valueOf(helper.providedSpecialWc.intValue()
-										- helper.failedDimensionSpecialWc.intValue()) + " having dimension 1.5M",
-								Result.Accepted.getResultVal(), scrutinyDetail);
-					}
+					/*
+					 * if (helper.failedDimensionSpecialWc > 0 && helper.failedDimensionSpecialWc <=
+					 * helper.requiredSpecialWc) { addReportDetail(ruleNo,
+					 * BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Dimension",
+					 * MINIMUM_DIMENSION_SPWC,
+					 * String.valueOf(helper.failedDimensionSpecialWc.intValue()) +
+					 * " not having dimension 1.5M", Result.Not_Accepted.getResultVal(),
+					 * scrutinyDetail); } else { addReportDetail(ruleNo,
+					 * BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Dimension",
+					 * MINIMUM_DIMENSION_SPWC, String.valueOf(helper.providedSpecialWc.intValue() -
+					 * helper.failedDimensionSpecialWc.intValue()) + " having dimension 1.5M",
+					 * Result.Accepted.getResultVal(), scrutinyDetail); }
+					 */
 
 				}
 				accepted = processSanity(pl, b, helper, scrutinyDetail);
@@ -737,8 +749,8 @@ public class Sanitation extends FeatureProcess {
 						providedSpWcMap.put(f.getNumber(), 1);
 				}
 
-				validateDimensionOfSPWC(f.getSpecialWaterClosets(), f.getNumber(), failedAreaSpWcMap,
-						failedDimensionSpWcMap, providedSpWcMap);
+//				validateDimensionOfSPWC(f.getSpecialWaterClosets(), f.getNumber(), failedAreaSpWcMap,
+//						failedDimensionSpWcMap, providedSpWcMap);
 			}
 		}
 	}
@@ -762,8 +774,8 @@ public class Sanitation extends FeatureProcess {
 					notFound = true;
 				}
 
-				validateDimensionOfSPWC(f.getSpecialWaterClosets(), f.getNumber(), failedAreaSpWcMap,
-						failedDimensionSpWcMap, providedSpWcMap);
+//				validateDimensionOfSPWC(f.getSpecialWaterClosets(), f.getNumber(), failedAreaSpWcMap,
+//						failedDimensionSpWcMap, providedSpWcMap);
 
 			}
 		}
@@ -826,8 +838,8 @@ public class Sanitation extends FeatureProcess {
 				wcList.addAll(sanityDetails.getMaleWaterClosets());
 				wcList.addAll(sanityDetails.getFemaleWaterClosets());
 				wcList.addAll(sanityDetails.getCommonWaterClosets());
-				checkDimension(totalWCExpected.intValue(), detail, wcList, 1d, 1.1d, BLDG_PART_WATER_CLOSET,
-						DIMESION_DESC_KEY, RULE_38_1);
+//				checkDimension(totalWCExpected.intValue(), detail, wcList, 1d, 1.1d, BLDG_PART_WATER_CLOSET,
+//						DIMESION_DESC_KEY, RULE_38_1);
 
 				expected = "" + totalWCExpected.intValue();
 				actual = "" + totalWCActual.intValue();
@@ -849,8 +861,8 @@ public class Sanitation extends FeatureProcess {
 			expected = "" + helper.urinal.intValue();
 			actual = "" + urinalActual.intValue();
 			if (helper.urinal.intValue() >= 0) {
-				checkDimension(helper.urinal.intValue(), detail, sanityDetails.getUrinals(), 0.6d, 0.42d,
-						BLDG_PART_URINAL, DIMESION_DESC_KEY, RULE_38_1);
+//				checkDimension(helper.urinal.intValue(), detail, sanityDetails.getUrinals(), 0.6d, 0.42d,
+//						BLDG_PART_URINAL, DIMESION_DESC_KEY, RULE_38_1);
 				if (helper.urinal.intValue() > urinalActual.intValue()) {
 					addReportDetail(helper.ruleNo, description, expected, actual, Result.Not_Accepted.getResultVal(),
 							detail);
@@ -905,11 +917,11 @@ public class Sanitation extends FeatureProcess {
 			wcrList.addAll(sanityDetails.getFemaleRoomsWithWaterCloset());
 			wcrList.addAll(sanityDetails.getCommonRoomsWithWaterCloset());
 			if (totalBathExpected.intValue() >= 0) {
-				checkDimension(totalBathExpected.intValue(), detail, wcList, 1.1d, 1.5d, BLDG_PART_BATHROOM,
-						DIMESION_DESC_KEY, RULE_38_1);
-
-				checkDimension(totalBathExpected.intValue(), detail, wcrList, 1.1d, 2.2d, MALE_BATH_WITH_WC,
-						DIMESION_DESC_KEY, RULE_38_1);
+//				checkDimension(totalBathExpected.intValue(), detail, wcList, 1.1d, 1.5d, BLDG_PART_BATHROOM,
+//						DIMESION_DESC_KEY, RULE_38_1);
+//
+//				checkDimension(totalBathExpected.intValue(), detail, wcrList, 1.1d, 2.2d, MALE_BATH_WITH_WC,
+//						DIMESION_DESC_KEY, RULE_38_1);
 
 				if (totalBathExpected.intValue() > totalActualBath) {
 					addReportDetail(helper.ruleNo, description, expected, actual, Result.Not_Accepted.getResultVal(),

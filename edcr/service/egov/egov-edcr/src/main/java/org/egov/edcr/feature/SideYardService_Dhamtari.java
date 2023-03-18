@@ -677,17 +677,18 @@ public class SideYardService_Dhamtari extends SideYardService {
 			double minMeanlength, double maxMeanLength, final OccupancyTypeHelper mostRestrictiveOccupancy,
 			SideYardResult sideYard1Result, SideYardResult sideYard2Result, String rule, String subRule, Boolean valid2,
 			Boolean valid1, BigDecimal side2val, BigDecimal side1val, BigDecimal widthOfPlot) {
-		if (widthOfPlot.compareTo(BigDecimal.valueOf(15.25)) <= 0) {
-			side2val = BigDecimal.ZERO;
-			side1val = BigDecimal.ZERO;
-		} else if (widthOfPlot.compareTo(BigDecimal.valueOf(15.25)) > 0
-				&& widthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) {
-			side2val = SIDEVALUE_TWO;
-			side1val = SIDEVALUE_THREE;
-		} else if (widthOfPlot.compareTo(BigDecimal.valueOf(18.3)) > 0) {
-			side2val = SIDEVALUE_THREE;
-			side1val = SIDEVALUE_THREE;
-		}
+		
+		side2val = SIDEVALUE_FOURPOINTFIVE;
+		side1val = SIDEVALUE_FOURPOINTFIVE;
+		/*
+		 * if (widthOfPlot.compareTo(BigDecimal.valueOf(15.25)) <= 0) { side2val =
+		 * BigDecimal.ZERO; side1val = BigDecimal.ZERO; } else if
+		 * (widthOfPlot.compareTo(BigDecimal.valueOf(15.25)) > 0 &&
+		 * widthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) { side2val =
+		 * SIDEVALUE_TWO; side1val = SIDEVALUE_THREE; } else if
+		 * (widthOfPlot.compareTo(BigDecimal.valueOf(18.3)) > 0) { side2val =
+		 * SIDEVALUE_THREE; side1val = SIDEVALUE_THREE; }
+		 */
 
 		if (max >= side1val.doubleValue())
 			valid1 = true;

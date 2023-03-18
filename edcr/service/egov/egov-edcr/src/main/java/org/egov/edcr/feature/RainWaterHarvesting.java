@@ -94,7 +94,7 @@ public class RainWaterHarvesting extends FeatureProcess {
         String subRule = RULE_51;
         String subRuleDesc = RULE_51_DESCRIPTION;
         // BigDecimal expectedTankCapacity = BigDecimal.ZERO;
-        BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getArea() : BigDecimal.ZERO;
+        BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getPlotBndryArea() : BigDecimal.ZERO;
         OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding() != null
                 ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
                 : null;

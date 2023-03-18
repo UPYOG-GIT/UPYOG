@@ -120,7 +120,7 @@ public class Coverage_Dhamtari extends Coverage {
 		BigDecimal totalCoverage = BigDecimal.ZERO;
 		BigDecimal totalCoverageArea = BigDecimal.ZERO;
 		BigDecimal area = pl.getPlot().getArea(); // add for get total plot area
-
+		boolean isCenterArea = pl.getPlanInformation().isCenterArea();
 		// add for getting OccupancyType
 		OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
 //		String a=mostRestrictiveOccupancy.getType().getCode();
@@ -178,7 +178,7 @@ public class Coverage_Dhamtari extends Coverage {
 			if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
 				permissibleCoverageValue = getPermissibleCoverageForResidential(area, developmentZone);
 			} else if (F.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForCommercial(area, developmentZone);
+				permissibleCoverageValue = getPermissibleCoverageForCommercial(area, developmentZone,isCenterArea);
 			} else if (G.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
 				permissibleCoverageValue = getPermissibleCoverageForIndustrial(area, developmentZone);
 			}
@@ -238,28 +238,34 @@ public class Coverage_Dhamtari extends Coverage {
 	 * to get coverage permissible value for Commercial
 	 */
 
-	private BigDecimal getPermissibleCoverageForCommercial(BigDecimal area, String developmentZone) {
+	private BigDecimal getPermissibleCoverageForCommercial(BigDecimal area, String developmentZone, boolean isCenterArea) {
 		LOG.info("inside getPermissibleCoverageForCommercial()");
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
 
 //		switch (developmentZone) {
 //
 //		case "DA-01":
-		if (area.compareTo(BigDecimal.valueOf(150)) <= 0) {
-			permissibleCoverage = BigDecimal.valueOf(60);
-		} else if (area.compareTo(BigDecimal.valueOf(150)) > 0 && area.compareTo(BigDecimal.valueOf(240)) <= 0) {
-			permissibleCoverage = BigDecimal.valueOf(55);
-		} else if (area.compareTo(BigDecimal.valueOf(240)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
-			permissibleCoverage = BigDecimal.valueOf(50);
-		} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(750)) <= 0) {
-			permissibleCoverage = BigDecimal.valueOf(45);
-		} else if (area.compareTo(BigDecimal.valueOf(750)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-			permissibleCoverage = BigDecimal.valueOf(40);
-		} else if (area.compareTo(BigDecimal.valueOf(500)) > 0) {
-			permissibleCoverage = BigDecimal.valueOf(35);
-		}
+		/*
+		 * if (area.compareTo(BigDecimal.valueOf(150)) <= 0) { permissibleCoverage =
+		 * BigDecimal.valueOf(60); } else if (area.compareTo(BigDecimal.valueOf(150)) >
+		 * 0 && area.compareTo(BigDecimal.valueOf(240)) <= 0) { permissibleCoverage =
+		 * BigDecimal.valueOf(55); } else if (area.compareTo(BigDecimal.valueOf(240)) >
+		 * 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) { permissibleCoverage =
+		 * BigDecimal.valueOf(50); } else if (area.compareTo(BigDecimal.valueOf(500)) >
+		 * 0 && area.compareTo(BigDecimal.valueOf(750)) <= 0) { permissibleCoverage =
+		 * BigDecimal.valueOf(45); } else if (area.compareTo(BigDecimal.valueOf(750)) >
+		 * 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) { permissibleCoverage =
+		 * BigDecimal.valueOf(40); } else if (area.compareTo(BigDecimal.valueOf(500)) >
+		 * 0) { permissibleCoverage = BigDecimal.valueOf(35); }
+		 */
 //			break;
 //		}
+		
+		if (isCenterArea) {
+			permissibleCoverage = BigDecimal.valueOf(80);
+		} else {
+			permissibleCoverage = BigDecimal.valueOf(70);
+		}
 		LOG.info("return from getPermissibleCoverageForCommercial()");
 		return permissibleCoverage;
 	}

@@ -136,6 +136,8 @@ public class Far_Dhamtari extends Far {
 	private static final BigDecimal ONE_POINTTWOFIVE = BigDecimal.valueOf(1.25); // used for residential
 	private static final BigDecimal ONE_POINTFIVE = BigDecimal.valueOf(1.5); // used for commercial
 	private static final BigDecimal ONE_POINTSEVENFIVE = BigDecimal.valueOf(1.75); // used for commercial
+	private static final BigDecimal ONE_POINTEIGHT = BigDecimal.valueOf(1.8); // used for commercial
+	private static final BigDecimal TWO = BigDecimal.valueOf(2);
 	private static final BigDecimal TWO_POINTFIVE = BigDecimal.valueOf(2.5);
 	private static final BigDecimal FIFTEEN = BigDecimal.valueOf(15);
 
@@ -623,7 +625,7 @@ public class Far_Dhamtari extends Far {
 		scrutinyDetail.setKey("Common_FAR Validating");
 
 		Map<String, String> details = new HashMap<>();
-		details.put("Gross Plot Area",  pl.getPlot().getArea().toString());
+		details.put("Gross Plot Area",  pl.getPlot().getPlotBndryArea().toString());
 		details.put("Road Area", pl.getPlot().getRoadArea().toString());
 		details.put("Recreationsl Space", recreationSpaceArea.toString());
 //		details.put("Net Plot Area", pl.getPlot().getNetPlotArea().toString());
@@ -955,11 +957,18 @@ public class Far_Dhamtari extends Far {
 
 		String expectedResult = StringUtils.EMPTY;
 		boolean isAccepted = false;
+		boolean isCenterArea = pl.getPlanInformation().isCenterArea();
 
-		isAccepted = far.compareTo(ONE_POINTFIVE) <= 0;
-		pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
-		expectedResult = "<= 1.5";
-
+		if (isCenterArea) {
+			pl.getFarDetails().setPermissableFar(TWO.doubleValue());
+			expectedResult = "<= 2.0";
+		} else {
+			pl.getFarDetails().setPermissableFar(ONE_POINTEIGHT.doubleValue());
+			expectedResult = "<= 1.80";
+		}
+		
+		isAccepted = far.compareTo(ONE_POINTTWOFIVE) <= 0;
+		
 		String occupancyName = occupancyType.getType().getName();
 		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
 			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
