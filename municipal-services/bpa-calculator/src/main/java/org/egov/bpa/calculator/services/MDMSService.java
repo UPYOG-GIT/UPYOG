@@ -484,6 +484,9 @@ public class MDMSService {
 //		Double ind_area = 0.0;
 		Double res_unit = 5.0;
 		
+		
+		Map<String, Object> feeDetailMap = new HashMap<String, Object>();
+		
 		if(feetype.equals("ApplicationFee")) {
 			feety = "Pre";
 		}
@@ -1061,7 +1064,20 @@ public class MDMSService {
 					
 					
 					log.info("End--Value--"+Value+"-----trate---"+trate+"----End--ptarea--"+ptarea+"---unitid--"+unitid+"--End----paytyid--"+paytyid+"----chargesTy--"+chargesTy+"----calcact--"+calcact+"----tenantid--"+tenantid+"----feety--"+feety+"----applicationNo--"+applicationNo+"---End");
-				//}//end of for each building loop
+				
+					feeDetailMap.put("ApplicationNo", applicationNo);
+					feeDetailMap.put("FeeType", feety);
+					feeDetailMap.put("Tenantid", tenantid);
+					feeDetailMap.put("Operation", calcact);
+					feeDetailMap.put("ChargesType", chargesTy);
+					feeDetailMap.put("PayTypeId", paytyid);
+					feeDetailMap.put("UnitId", unitid);
+					feeDetailMap.put("PropValue", ptarea);
+					feeDetailMap.put("Rate", trate);
+					feeDetailMap.put("Value", Value);
+					
+					
+					//}//end of for each building loop
 				
 			}//end of tpd_zdaflg='N'
 			else if (item.get("zdaflg").equals("Y")){				
@@ -1085,6 +1101,8 @@ public class MDMSService {
 			//insert data in data base-------------
 			
 		}//End of for each fee type
+		
+		log.info("feeDetailMap-List-------"+feeDetailMap);
 //		Map<String, String> list = new HashMap<String, String>();
 //		list.put("Value",Value.toString());
 //		list.put("trate",trate.toString());
