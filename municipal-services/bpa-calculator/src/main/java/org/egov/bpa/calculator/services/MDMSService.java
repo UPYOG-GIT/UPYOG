@@ -163,7 +163,7 @@ public class MDMSService {
 			String bCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].type.name");
 			log.info("bcate:----- " +bCate);
 			
-			Integer bcategory = bpaRepository.getBcategoryId(bCate.toString());
+			Integer bcategory = bpaRepository.getBcategoryId(bCate.toString(),tenantid);
 			log.info("bcategory: "+bcategory+"");
 			
 			//log.info("isnullsu======="+context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype"));
@@ -177,7 +177,7 @@ public class MDMSService {
 				//log.info("T/F===="+(!isnullsubCate.equals(null)));
 				String subCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype.name");
 				log.info("subcate:----- " +subCate);
-				 scategory = bpaRepository.getScategoryId(subCate.toString(),bcategory);
+				 scategory = bpaRepository.getScategoryId(subCate.toString(),bcategory,tenantid);
 				log.info("scategory: "+scategory+"");
 			//}
 //			else {
