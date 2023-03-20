@@ -500,17 +500,17 @@ public class MDMSService {
 		
 		
 		if(occupancyType.equals("Residential")) {
-			pCategory =1;
+			pCategory =1; //this is srno. of proposal type master based on occupency
 		}
 		else if(occupancyType.equals("Mercantile / Commercial")) {
-			pCategory =2;
+			pCategory =2; //this is srno. of proposal type master based on occupency
 		}
 		else if(occupancyType.equals("INDUSTRIAL")) {
-			pCategory =3;
+			pCategory =3; //this is srno. of proposal type master based on occupency
 		}
 //		else if(occupancyType.equals("MIX")) {
 		else if((occupancyType.split(",")).length>1) {
-			pCategory =4;
+			pCategory =4; //this is srno. of proposal type master based on occupency
 		}
 		
 		
@@ -1075,9 +1075,11 @@ public class MDMSService {
 					feeMap.put("UnitId", unitid);
 					feeMap.put("PropValue", ptarea);
 					feeMap.put("Rate", trate);
-					feeMap.put("Value", Value);
-					
-					
+					feeMap.put("Amount", Value);
+					feeMap.put("bill_id", "");
+					feeMap.put("createdby", "");
+					feeMap.put("updatedby", "");
+					feeMap.put("updateddate", "");
 					//}//end of for each building loop
 				
 			}//end of tpd_zdaflg='N'
@@ -1101,6 +1103,8 @@ public class MDMSService {
 		}//end of if $lbrkflg
 			//insert data in data base-------------
 			feeDetailMap.add(feeMap);
+			log.info("feeDetailMap-List-------"+feeDetailMap);
+			bpaRepository.createFeeDetail(feeDetailMap);
 		}//End of for each fee type
 		
 		log.info("feeDetailMap-List-------"+feeDetailMap);
