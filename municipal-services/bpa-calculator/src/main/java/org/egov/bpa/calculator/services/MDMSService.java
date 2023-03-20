@@ -163,7 +163,7 @@ public class MDMSService {
 			String bCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].type.name");
 			log.info("bcate:----- " +bCate);
 			
-			Integer bcategory = bpaRepository.getBcategoryId(bCate.toString());
+			Integer bcategory = bpaRepository.getBcategoryId(bCate.toString(),tenantid);
 			log.info("bcategory: "+bcategory+"");
 			
 			//log.info("isnullsu======="+context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype"));
@@ -177,7 +177,7 @@ public class MDMSService {
 				//log.info("T/F===="+(!isnullsubCate.equals(null)));
 				String subCate = context.read("edcrDetail[0].planDetail.virtualBuilding.occupancyTypes[0].subtype.name");
 				log.info("subcate:----- " +subCate);
-				 scategory = bpaRepository.getScategoryId(subCate.toString(),bcategory);
+				 scategory = bpaRepository.getScategoryId(subCate.toString(),bcategory,tenantid);
 				log.info("scategory: "+scategory+"");
 			//}
 //			else {
@@ -484,6 +484,9 @@ public class MDMSService {
 //		Double ind_area = 0.0;
 		Double res_unit = 5.0;
 		
+		
+		List<HashMap<String, Object>> feeDetailMap = new ArrayList<HashMap<String, Object>>();
+		
 		if(feetype.equals("ApplicationFee")) {
 			feety = "Pre";
 		}
@@ -511,7 +514,7 @@ public class MDMSService {
 		}
 		
 		
-		if (feety.equals("Pre"))	
+		if (feety.equalsIgnoreCase("Pre"))	
 		{
 			//for hight rise----------
 			log.info("-------------inside hight rise-----------");
@@ -523,15 +526,16 @@ public class MDMSService {
 		
 		List<Map<String,Object>> result  = bpaRepository.getPaytyData(tenantid,feety,occupancyType,plotares,heightcat,newrevise);
 		
-		String  unitid ="";
+//		String  unitid ="";
 		log.info("result--0-----"+result.toString());
 		
 		for(Map<String,Object> item : result) {
+			HashMap<String, Object> feeMap = new HashMap<String, Object>();
 			
-			String pId = item.get("id").toString();
+//			String pId = item.get("id").toString();
 			String chargesTy = item.get("charges_type_name").toString();
 			
-			if (feety.equals("Pre"))	
+			if (feety.equalsIgnoreCase("Pre"))	
 			{
 				if(heightcat.equals("NH") && newrevise.equals("REVISED")) {
 					log.info("------------REVISED----------");
@@ -571,7 +575,7 @@ public class MDMSService {
 					Integer p_category = Integer.parseInt(detailPayTyrate.get("p_category").toString());
 					Integer b_category = Integer.parseInt(detailPayTyrate.get("b_category").toString());
 					Integer s_category = Integer.parseInt(detailPayTyrate.get("s_category").toString());
-					  unitid     = detailPayTyrate.get("unitid").toString();
+					String unitid     = detailPayTyrate.get("unitid").toString();
 					String calcon = detailPayTyrate.get("calcon").toString();
 					calcact  = detailPayTyrate.get("calcact").toString();
 					Double rate_res  = Double.valueOf(detailPayTyrate.get("rate_res").toString());
@@ -927,7 +931,7 @@ public class MDMSService {
 									Rate=sres_rate+scom_rate;		
 									Val=(double)Rate+(((double)Area-((double)sFromVal-1))*(double)multpval);
 									
-									if(ParkArea>0 && feety.equals("Pre")){ //means parking=Y & Scrutiny
+									if(ParkArea>0 && feety.equalsIgnoreCase("Pre")){ //means parking=Y & Scrutiny
 										//for Mix if res_area>com_area then add parking area in res_area else in com_area which one is greater.
 										if ((double)res_area>(double)com_area){
 											Area=(double)res_area+ParkArea;	//Resi greater
@@ -1060,8 +1064,21 @@ public class MDMSService {
 					ptarea+=(double)Area;		//each building total area for the fee
 					
 					
-					log.info("End--Value--"+Value+"---End--trate---"+trate+"----End--ptarea--"+ptarea+"---unitid--"+unitid+"--End-------End");
-				//}//end of for each building loop
+					log.info("End--Value--"+Value+"-----trate---"+trate+"----End--ptarea--"+ptarea+"---unitid--"+unitid+"--End----paytyid--"+paytyid+"----chargesTy--"+chargesTy+"----calcact--"+calcact+"----tenantid--"+tenantid+"----feety--"+feety+"----applicationNo--"+applicationNo+"---End");
+				
+					feeMap.put("ApplicationNo", applicationNo);
+					feeMap.put("FeeType", feety);
+					feeMap.put("Tenantid", tenantid);
+					feeMap.put("Operation", calcact);
+					feeMap.put("ChargesType", chargesTy);
+					feeMap.put("PayTypeId", paytyid);
+					feeMap.put("UnitId", unitid);
+					feeMap.put("PropValue", ptarea);
+					feeMap.put("Rate", trate);
+					feeMap.put("Value", Value);
+					
+					
+					//}//end of for each building loop
 				
 			}//end of tpd_zdaflg='N'
 			else if (item.get("zdaflg").equals("Y")){				
@@ -1083,8 +1100,10 @@ public class MDMSService {
 			
 		}//end of if $lbrkflg
 			//insert data in data base-------------
-			
+			feeDetailMap.add(feeMap);
 		}//End of for each fee type
+		
+		log.info("feeDetailMap-List-------"+feeDetailMap);
 //		Map<String, String> list = new HashMap<String, String>();
 //		list.put("Value",Value.toString());
 //		list.put("trate",trate.toString());

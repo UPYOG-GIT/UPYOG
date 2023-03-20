@@ -22,16 +22,16 @@ public class BPARepository {
 //		return null;
 	}
 	
-	public Integer getBcategoryId(String bcat) {
-		String sql = "select id from bcategory_master where lower(description) =? ";
+	public Integer getBcategoryId(String bcat,String tenantid) {
+		String sql = "select id from bcategory_master where ulb_tenantid =? and lower(description) =?";
 		log.info("BPARepository.getBcategoryId Query : " + sql);
-		return jdbcTemplate.queryForObject(sql, new Object[] {bcat.toLowerCase()}, Integer.class);
+		return jdbcTemplate.queryForObject(sql, new Object[] {tenantid,bcat.toLowerCase()}, Integer.class);
 	}
 	
-	public Integer getScategoryId(String scat,Integer bcat) {
-		String sql = "select id from bscategory_master where lower(description) =? and catid =? ";
+	public Integer getScategoryId(String scat,Integer bcat,String tenantid) {
+		String sql = "select id from bscategory_master where ulb_tenantid =? and lower(description) =? and catid =? ";
 		log.info("BPARepository.getScategoryId Query : " + sql);
-		return jdbcTemplate.queryForObject(sql,new Object[] {scat.toLowerCase(),bcat},Integer.class);
+		return jdbcTemplate.queryForObject(sql,new Object[] {tenantid,scat.toLowerCase(),bcat},Integer.class);
 	}
 
 	public List<Map<String, Object>> getPaytyData(String tenantid, String feetype, String occupancyType, Double plotares, String heightcat, String newrevise ) {
