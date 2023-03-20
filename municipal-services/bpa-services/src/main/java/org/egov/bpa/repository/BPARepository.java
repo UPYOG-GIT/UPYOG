@@ -252,7 +252,7 @@ public class BPARepository {
 	// fetch data from proposal_type_master table
 	public List<Map<String, Object>> getProposalTypeByTenantId(String tenantId) {
 
-		String query = "select id,description,defunt from proposal_type_master where ulb_tenantid=?";
+		String query = "select id,srno,description,defunt from proposal_type_master where ulb_tenantid=?";
 		return jdbcTemplate.queryForList(query, new Object[] { tenantId });
 	}
 
