@@ -1073,9 +1073,9 @@ public class MDMSService {
 					feeMap.put("ChargesType", chargesTy);
 					feeMap.put("PayTypeId", paytyid);
 					feeMap.put("UnitId", unitid);
-					feeMap.put("PropValue", ptarea);
+					feeMap.put("PropValue", Area);
 					feeMap.put("Rate", trate);
-					feeMap.put("Amount", Value);
+					feeMap.put("Amount", Val);
 					feeMap.put("bill_id", "");
 					feeMap.put("createdby", "");
 					feeMap.put("updatedby", "");

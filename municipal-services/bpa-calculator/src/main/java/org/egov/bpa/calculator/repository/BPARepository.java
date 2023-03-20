@@ -138,27 +138,28 @@ public class BPARepository {
 		int count = 1;
 
 		List<Object[]> parameters = new ArrayList<Object[]>();
+		log.info("feeList.size(): " + feeList.size());
 		for (HashMap<String, Object> feeMap : feeList) {
 //			PayTypeFeeDetailRequest payTypeFeeDetailRequest = payTypeFeeDetailRequestWrapper
 //					.getPayTypeFeeDetailRequest();
 
-			
 			parameters.add(new Object[] { feeMap.get("PayTypeId"), feeMap.get("FeeType"), count++,
 					feeMap.get("Tenantid"), feeMap.get("ApplicationNo"), feeMap.get("UnitId"),
 					feeMap.get("ChargesType"), feeMap.get("PropValue"), feeMap.get("Amount"), feeMap.get("Rate"),
 					feeMap.get("Operation") });
 		}
+		log.info("parameters :"+parameters.toString());
 		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
 
-		log.info("insertQuery-----"+insertQuery);
-		
+		log.info("insertQuery-----" + insertQuery);
+
 		int[] insertBkResult = jdbcTemplate.batchUpdate(insertBkQuery, parameters);
 
-		log.info("insertBkResult-----"+insertBkResult);
-		
-		log.info("BPARepository.createFeeDetail: " + insertResult + " data inserted into fee_details table");
+		log.info("insertBkResult-----" + insertBkResult.toString());
+
+		log.info("BPARepository.createFeeDetail: " + insertResult.toString() + " data inserted into fee_details table");
 //		return insertResult;
-	
+
 	}
 
 }
