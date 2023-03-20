@@ -60,7 +60,7 @@ public class BPARepository {
 			}
 
 			if ((occupancyType.equals("Residential") && plotares <= 500)) {
-				sql += "and id <> 1";
+				sql += "and charges_type_name = 'Application Fees'";
 			}
 
 		}
