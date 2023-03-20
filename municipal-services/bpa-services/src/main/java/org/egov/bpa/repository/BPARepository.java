@@ -154,18 +154,18 @@ public class BPARepository {
 	public int updateFeeDetails(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
 		LocalDateTime date = LocalDateTime.now();
 
-		String updateQuery = "update fee_details set amount='" + payTypeFeeDetailRequest.getAmount()
-				+ "',,updatedby='" + payTypeFeeDetailRequest.getUpdatedBy() + "',updateddate='" + date
-				+ "' where application_no ='" + payTypeFeeDetailRequest.getApplicationNo() + "' and ulb_tenantid ='"
+		String updateQuery = "update fee_details set amount='" + payTypeFeeDetailRequest.getAmount() + "',,updatedby='"
+				+ payTypeFeeDetailRequest.getUpdatedBy() + "',updateddate='" + date + "' where application_no ='"
+				+ payTypeFeeDetailRequest.getApplicationNo() + "' and ulb_tenantid ='"
 				+ payTypeFeeDetailRequest.getTenantId() + "'" + " and id=" + payTypeFeeDetailRequest.getId();
 		int updateResult = jdbcTemplate.update(updateQuery);
 		log.info("BPARepository.updatePayType: " + updateResult + " data updated into paytype_master table");
 		return updateResult;
 	}
 
-	public List<Map<String, Object>> getFeeDetails(String tenantId, String applicationNo, int id) {
-		String query = "select paytype_id,feetype,srno,bill_id,unit,charges_type_name,prop_plot_area,amount,rate,type from fee_details where ulb_tenantid=? and application_no=? and id=?";
-		return jdbcTemplate.queryForList(query, new Object[] { tenantId, applicationNo, id });
+	public List<Map<String, Object>> getFeeDetails(String applicationNo) {
+		String query = "select id,ulb_tenantid,paytype_id,feetype,srno,bill_id,unit,charges_type_name,prop_plot_area,amount,rate,type from fee_details where and application_no=?";
+		return jdbcTemplate.queryForList(query, new Object[] { applicationNo });
 
 	}
 
