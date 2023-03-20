@@ -15,8 +15,14 @@ import lombok.Setter;
 @Setter
 public class PayTypeFeeDetailRequest {
 
+	@JsonProperty("id")
+    private int id;
+	
 	@JsonProperty("payTypeId")
 	private int payTypeId=0;
+	
+	@JsonProperty("feeType")
+	private String feeType = null;
 	
 	@JsonProperty("tenantId")
 	private String tenantId=null;
@@ -27,44 +33,28 @@ public class PayTypeFeeDetailRequest {
 	@JsonProperty("applicationNo")
 	private String applicationNo = null;
 	
-	@JsonProperty("unitId")
-	private String unitId = null;
-	
-	@JsonProperty("payId")
-	private String payId = null;
+	@JsonProperty("unit")
+	private String unit = null;
 	
 	@JsonProperty("chargesTypeName")
 	private String chargesTypeName = null;
 	
+	@JsonProperty("propPlotArea")
+	private double propPlotArea;
+	
 	@JsonProperty("amount")
-	private String amount = null;
+	private double amount;
 	
-	@JsonProperty("statusType")
-	private String statusType = null;
+	@JsonProperty("rate")
+    private double rate;
 	
-	@JsonProperty("propValue")
-	private String propValue = null;
-	
-	@JsonProperty("value")
-	private String value = null;
-	
-	@JsonProperty("status")
-	private String status = null;
-	
+	@JsonProperty("type")
+	private String type = null;
+		
 	@JsonProperty("createdBy")
 	private String createdBy = null;
 	
-	@JsonProperty("paymentType")
-	private String paymentType = null;
-	
 	@JsonProperty("updatedBy")
     private String updatedBy = null;
-	
-	@JsonProperty("id")
-    private String id = null;
-	
-	@JsonProperty("tipRate")
-    private String tipRate = null;
-	
 	
 }
