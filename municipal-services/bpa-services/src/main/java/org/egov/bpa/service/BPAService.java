@@ -125,8 +125,9 @@ public class BPAService {
 		if (bpaRequest.getBPA().getTenantId().split("\\.").length == 1) {
 			throw new CustomException(BPAErrorConstants.INVALID_TENANT, " Application cannot be create at StateLevel");
 		}
-		
-		log.info("bpaRequest.getBPA().getLandInfo().getAddress(): " + bpaRequest.getBPA().getLandInfo().getAddress().toString());
+
+		log.info("bpaRequest.getBPA().getLandInfo().getAddress(): "
+				+ bpaRequest.getBPA().getLandInfo().getAddress().toString());
 		// Since approval number should be generated at approve stage
 		if (!StringUtils.isEmpty(bpaRequest.getBPA().getApprovalNo())) {
 			bpaRequest.getBPA().setApprovalNo(null);
@@ -824,29 +825,28 @@ public class BPAService {
 	public int[] createFeeDetail(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
 		return repository.createFeeDetail(payTypeFeeDetailRequest);
 	}
-	
+
 	public int updateFeeDetails(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
 		return repository.updateFeeDetails(payTypeFeeDetailRequest);
 	}
-	
-	public List<Map<String, Object>> getFeeDetails(String tenantId, String applicationNo, int id) {
-		List<Map<String, Object>> resultList = repository.getFeeDetails( tenantId, applicationNo, id);
+
+	public List<Map<String, Object>> getFeeDetails(String applicationNo) {
+		List<Map<String, Object>> resultList = repository.getFeeDetails(applicationNo);
 		log.info("getPayTypeByTenantId: " + resultList.toString());
 		return resultList;
 	}
 
-
 	public int createPayType(PayTypeRequest payTypeRequest) {
 		return repository.createPayType(payTypeRequest);
 	}
-	
+
 	public List<Map<String, Object>> getPayTypeByTenantId(String tenantId) {
 
 		List<Map<String, Object>> resultList = repository.getPayTypeByTenantId(tenantId);
 		log.info("getPayTypeByTenantId: " + resultList.toString());
 		return resultList;
 	}
-	
+
 	public int updatePayType(PayTypeRequest payTypeRequest) {
 		return repository.updatePayType(payTypeRequest);
 	}
@@ -860,7 +860,7 @@ public class BPAService {
 		log.info("getProposalTypeByTenantId: " + resultList.toString());
 		return resultList;
 	}
-	
+
 	public int updateProposalType(ProposalTypeRequest proposalTypeRequest) {
 		return repository.updateProposalType(proposalTypeRequest);
 	}
@@ -874,7 +874,7 @@ public class BPAService {
 		log.info("getBCategoryByTenantId: " + resultList.toString());
 		return resultList;
 	}
-	
+
 	public int updateBCategory(BCategoryRequest bCategoryRequest) {
 		return repository.updateBCategory(bCategoryRequest);
 	}
@@ -888,7 +888,7 @@ public class BPAService {
 		log.info("getBSCategoryByTenantId: " + resultList.toString());
 		return resultList;
 	}
-	
+
 	public int updateBSCategory(BSCategoryRequest bSCategoryRequest) {
 		return repository.updateBSCategory(bSCategoryRequest);
 	}
@@ -917,7 +917,7 @@ public class BPAService {
 		log.info("getPayTpRateByTenantIdAndTypeId: " + resultList.toString());
 		return resultList;
 	}
-	
+
 	public int deleteSlabMasterById(int id) {
 		return repository.deleteSlabMasterById(id);
 	}
