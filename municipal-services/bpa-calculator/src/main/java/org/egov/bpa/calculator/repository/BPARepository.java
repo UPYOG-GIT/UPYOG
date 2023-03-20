@@ -147,7 +147,13 @@ public class BPARepository {
 					feeMap.get("Tenantid"), feeMap.get("ApplicationNo"), feeMap.get("UnitId"),
 					feeMap.get("ChargesType"), feeMap.get("PropValue"), feeMap.get("Amount"), feeMap.get("Rate"),
 					feeMap.get("Operation") });
+			
+			log.info( feeMap.get("PayTypeId")+" "+feeMap.get("FeeType")+" "+count+++" "+
+					feeMap.get("Tenantid")+" "+ feeMap.get("ApplicationNo")+" "+ feeMap.get("UnitId")+" "+
+					feeMap.get("ChargesType")+" "+ feeMap.get("PropValue")+" "+ feeMap.get("Amount")+" "+ feeMap.get("Rate")+" "+
+					feeMap.get("Operation"));
 		}
+		log.info("parameterssize() :"+parameters.size());
 		log.info("parameters :"+parameters.toString());
 		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
 
@@ -155,9 +161,9 @@ public class BPARepository {
 
 		int[] insertBkResult = jdbcTemplate.batchUpdate(insertBkQuery, parameters);
 
-		log.info("insertBkResult-----" + insertBkResult.toString());
+		log.info("insertBkResult-----" + insertBkResult.length);
 
-		log.info("BPARepository.createFeeDetail: " + insertResult.toString() + " data inserted into fee_details table");
+		log.info("BPARepository.createFeeDetail: " + insertResult.length + " data inserted into fee_details table");
 //		return insertResult;
 
 	}
