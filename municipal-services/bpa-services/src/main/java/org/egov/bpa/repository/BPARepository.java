@@ -119,48 +119,55 @@ public class BPARepository {
 
 	public int[] createFeeDetail(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
 
+		String query = "SELECT COUNT(*) FROM fee_details WHERE feetype=? and ulb_tenantid=?";
+		int count = jdbcTemplate.queryForObject(query,
+				new Object[] { payTypeFeeDetailRequest.getFeeType(), payTypeFeeDetailRequest.getTenantId() },
+				Integer.class);
+		log.info("createPayTpRate count : " + count);
+		count = count + 1;
+
 		LocalDateTime date = LocalDateTime.now();
-		String insertQuery = "insert into pre_post_fee_details(paytype_id,ulb_tenantid,bill_id,application_no,"
-				+ "unit_id,pay_id,charges_type_name,amount,status_type,propvalue,value,status,createdby,payment_type,tip_rate,createddate)"
-				+ "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'" + date + "')";
+		String insertQuery = "insert into fee_details(paytype_id,feetype,srno,ulb_tenantid,bill_id,application_no,"
+				+ "unit,charges_type_name,prop_plot_area,amount,rate,type,createdby,createddate)"
+				+ "values (?,?,?,?,?,?,?,?,?,?,?,?,?,'" + date + "')";
+//		String insertQuery = "insert into pre_post_fee_details(paytype_id,ulb_tenantid,bill_id,application_no,"
+//				+ "unit_id,pay_id,charges_type_name,amount,status_type,propvalue,value,status,createdby,payment_type,tip_rate,createddate)"
+//				+ "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'" + date + "')";
 
 		List<Object[]> parameters = new ArrayList<Object[]>();
 //		for (PayTypeFeeDetailRequestWrapper payTypeFeeDetailRequestWrapper : payTypeFeeDetailRequestWrapperList) {
 //			PayTypeFeeDetailRequest payTypeFeeDetailRequest = payTypeFeeDetailRequestWrapper
 //					.getPayTypeFeeDetailRequest();
-			parameters.add(new Object[] { payTypeFeeDetailRequest.getPayTypeId(), payTypeFeeDetailRequest.getTenantId(),
-					payTypeFeeDetailRequest.getBillId(), payTypeFeeDetailRequest.getApplicationNo(),
-					payTypeFeeDetailRequest.getUnitId(), payTypeFeeDetailRequest.getPayId(),
-					payTypeFeeDetailRequest.getChargesTypeName(), payTypeFeeDetailRequest.getAmount(),
-					payTypeFeeDetailRequest.getStatusType(), payTypeFeeDetailRequest.getPropValue(),
-					payTypeFeeDetailRequest.getValue(), payTypeFeeDetailRequest.getStatus(),
-					payTypeFeeDetailRequest.getCreatedBy(), payTypeFeeDetailRequest.getPaymentType(),
-					payTypeFeeDetailRequest.getTipRate()
-					});
+		parameters.add(new Object[] { payTypeFeeDetailRequest.getPayTypeId(), payTypeFeeDetailRequest.getFeeType(),
+				count, payTypeFeeDetailRequest.getTenantId(), payTypeFeeDetailRequest.getBillId(),
+				payTypeFeeDetailRequest.getApplicationNo(), payTypeFeeDetailRequest.getUnit(),
+				payTypeFeeDetailRequest.getChargesTypeName(), payTypeFeeDetailRequest.getPropPlotArea(),
+				payTypeFeeDetailRequest.getAmount(), payTypeFeeDetailRequest.getRate(),
+				payTypeFeeDetailRequest.getType(), payTypeFeeDetailRequest.getCreatedBy() });
 //		}
 		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
 
 		log.info("BPARepository.createFeeDetail: " + insertResult + " data inserted into pre_post_fee_details table");
 		return insertResult;
 	}
-	
-	public int updateFeeDetails(PayTypeFeeDetailRequest payTypeFeeDetailRequest)  {
+
+	public int updateFeeDetails(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
 		LocalDateTime date = LocalDateTime.now();
 
-		String updateQuery = "update pre_post_fee_details set amount='" + payTypeFeeDetailRequest.getAmount()
-				+ "',,updatedby='" + payTypeFeeDetailRequest.getUpdatedBy() + "',updateddate='"
-				+ date + "' where application_no ='" + payTypeFeeDetailRequest.getApplicationNo()+"' and ulb_tenantid ='"+payTypeFeeDetailRequest.getTenantId()+"'"
-						+ " and id="+payTypeFeeDetailRequest.getId();
+		String updateQuery = "update fee_details set amount='" + payTypeFeeDetailRequest.getAmount()
+				+ "',,updatedby='" + payTypeFeeDetailRequest.getUpdatedBy() + "',updateddate='" + date
+				+ "' where application_no ='" + payTypeFeeDetailRequest.getApplicationNo() + "' and ulb_tenantid ='"
+				+ payTypeFeeDetailRequest.getTenantId() + "'" + " and id=" + payTypeFeeDetailRequest.getId();
 		int updateResult = jdbcTemplate.update(updateQuery);
 		log.info("BPARepository.updatePayType: " + updateResult + " data updated into paytype_master table");
 		return updateResult;
 	}
-	
+
 	public List<Map<String, Object>> getFeeDetails(String tenantId, String applicationNo, int id) {
-		String query = "select paytype_id,bill_id,unit_id,pay_id,charges_type_name,amount,status_type,propvalue,value,status,payment_type from pre_post_fee_details where ulb_tenantid=? and application_no=? and id=?";
+		String query = "select paytype_id,feetype,srno,bill_id,unit,charges_type_name,prop_plot_area,amount,rate,type from fee_details where ulb_tenantid=? and application_no=? and id=?";
 		return jdbcTemplate.queryForList(query, new Object[] { tenantId, applicationNo, id });
 
-	}	
+	}
 
 	public int createPayType(PayTypeRequest payTypeRequest) {
 
@@ -218,10 +225,16 @@ public class BPARepository {
 
 	public int createProposalType(ProposalTypeRequest proposalTypeRequest) {
 
+		String query = "SELECT COUNT(*) FROM proposal_type_master WHERE ulb_tenantid=?";
+		int count = jdbcTemplate.queryForObject(query, new Object[] { proposalTypeRequest.getTenantId() },
+				Integer.class);
+		log.info("createPayTpRate count : " + count);
+		count = count + 1;
+
 		LocalDateTime date = LocalDateTime.now();
 
-		String insertQuery = "insert into proposal_type_master(ulb_tenantid,description,defunt,createdby,createddate) "
-				+ "values ('" + proposalTypeRequest.getTenantId() + "','" + proposalTypeRequest.getDesc() + "','"
+		String insertQuery = "insert into proposal_type_master(srno,ulb_tenantid,description,defunt,createdby,createddate) "
+				+ "values (count,'" + proposalTypeRequest.getTenantId() + "','" + proposalTypeRequest.getDesc() + "','"
 				+ proposalTypeRequest.getDefunt() + "','" + proposalTypeRequest.getCreatedBy() + "','" + date + "')";
 
 //		Object parameters = new Object();
@@ -239,7 +252,7 @@ public class BPARepository {
 	// fetch data from proposal_type_master table
 	public List<Map<String, Object>> getProposalTypeByTenantId(String tenantId) {
 
-		String query = "select id,description,defunt from proposal_type_master where ulb_tenantid=?";
+		String query = "select id,srno,description,defunt from proposal_type_master where ulb_tenantid=?";
 		return jdbcTemplate.queryForList(query, new Object[] { tenantId });
 	}
 
