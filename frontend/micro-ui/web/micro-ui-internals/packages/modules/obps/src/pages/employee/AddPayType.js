@@ -2,12 +2,8 @@ import React, { useEffect, useState,useRef} from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
 import {
-  Card, Header,Modal, Dropdown, CardLabel, TextInput, SubmitBar, Toast,CloseSvg, Table,DeleteIcon, LabelFieldPair, Loader, Row, StatusTable, BackButton
+  Card, Header,Modal, Dropdown, CardLabel, TextInput, SubmitBar, Toast,CloseSvg, Table,DeleteIcon, LabelFieldPair, Loader, Row, CheckBox, BackButton
 } from "@egovernments/digit-ui-react-components";
-
-
-
-
 
 
 const AddPayType = () => {
@@ -34,8 +30,53 @@ const AddPayType = () => {
 
   const dropDownData1 = [{code:"c",value:"c"},{code:"a",value:"a"},{code:"b",value:"b"}];
 
-
+  const [selectRow, setSelectRow] = useState(false);
   const [feeDetailtblval,setfeeDetailtblval]= useState([]);
+  let { uuid } = Digit.UserService.getUser()?.info || {};
+
+  function getRowId(rowid) {
+    console.log("rowid-------"+rowid);
+    setSelectRow(rowid);
+  }
+  console.log("selectRow------"+selectRow);
+  console.log("modalPyType ==== "+modalPyType);
+
+  const insertNewRow =async (e)=>{
+    e.preventDefault();
+
+    const PayTypeFeeDetailRequest = {
+      tenantId:tenantId,
+      billId:"",
+      applicationNo:id,
+      unit:modalUnit,
+      payTypeId:modalPyType,
+      chargesTypeName:modalPyType,
+      amount:modalValue,
+      rate:modalRate,
+      propPlotArea:"",
+      type:"",
+      feeType:"Post",
+      createdBy:uuid
+    };
+  
+    closeModal();  
+    setModalDes("");
+    setModalPyType("");
+    setModalRate(0);
+    setModalValue(0);
+    
+    const FeeDetailResp = await Digit.OBPSAdminService.createFeeDetail({PayTypeFeeDetailRequest});
+   
+    if(FeeDetailResp>0){
+      setShowToast({ key: false, label: "Successfully Added ", bgcolor: "#4BB543" });
+    }
+    else{
+      setShowToast({ key: true, label: "Fail To Add", bgcolor: "red" });
+    }
+  
+    // console.log("demandCreateres-----"+JSON.stringify(PayTypeResp));
+  
+   }
 
   useEffect( async ()=>{
     let feeDetails = await Digit.OBPSAdminService.getFeeDetails(id);
@@ -46,6 +87,20 @@ const AddPayType = () => {
   const GetCell = (value) => <span className="cell-text">{t(value)}</span>;
   const columns = React.useMemo(() => {
     return [
+      {
+        Header: t("Select"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return (
+            <CheckBox
+            // onChange={getRowId(row.original?.id)}
+            checked={selectRow}
+            //  label={Refundable}
+            pageType={'employee'}
+          />
+          );
+        },
+      },
       {
         Header: t("Sno"),
         disableSortBy: true,
@@ -132,7 +187,7 @@ const AddPayType = () => {
   const { data = {}, isLoading } = Digit.Hooks.obps.useBPADetailsPage(tenantId, { applicationNo: id });
   useEffect( async ()=>{
     let paytypeRule = await Digit.OBPSAdminService.getPaytype(tenantId);
-    setDropDownData(dropDownData);
+    setDropDownData(paytypeRule);
     console.log("drop--gh--"+JSON.stringify(paytypeRule)); 
   },[])
   // 
@@ -270,7 +325,7 @@ const AddPayType = () => {
       />
 
       <button type="button" className="button-sub-text" onClick={()=>setModalData(true)} style={{margin:"10px",backgroundColor: "#008CBA"}}>Add New Row</button>
-      <button type="button" className="button-sub-text" onClick={()=>setModalData(true)} style={{margin:"10px",backgroundColor: "#008CBA"}}>Delete</button>
+      <button type="button" className="button-sub-text"  style={{margin:"10px",backgroundColor: "#008CBA"}}>Delete</button>
       {modalData ? (
         <Modal
           hideSubmit={true}
@@ -348,8 +403,8 @@ const AddPayType = () => {
                         type="number"
                       />
               </LabelFieldPair>
-              <button
-                // onClick={updateProfile}
+              <button 
+                onClick={insertNewRow}
                 style={{
                   marginTop: "24px",
                   backgroundColor: "#F47738",

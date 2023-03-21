@@ -14,8 +14,9 @@ const PayTypeRate = () => {
   const [PyCalculatOn ,setPyCalculatOn] = useState("");
   const [PyOperation ,setPyOperation] = useState("");
   const [PyPropCategory ,setPyPropCategory] = useState("");
-  const [PyBuildCategory ,setPyBuildCategory] = useState({code: 'RESIDENTIAL', value: 1});
-  const [PySubCategory ,setPySubCategory] = useState("");
+  const [PyBuildCategory ,setPyBuildCategory] = useState({code: "", value: "null"});
+  // const [PyBuildCategory ,setPyBuildCategory] = useState("");
+  const [PySubCategory ,setPySubCategory] = useState({code: "", value: "null"});
   const [resrate,setresrate] = useState(0);
   const [commrate,setcommrate] = useState(0);
   const [indrate,setindrate] = useState(0);
@@ -94,6 +95,8 @@ const PayTypeRate = () => {
   },[])
 
   useEffect( async ()=>{
+    if(PyBuildCategory != "null"){
+
     let cateId = PyBuildCategory.value;
     let BStype = await Digit.OBPSAdminService.getBSCategory(tenantId, cateId);
     let BSCatetydrop=[];
@@ -106,6 +109,7 @@ const PayTypeRate = () => {
       }
     });
     setSubCategorydropdown(BSCatetydrop);
+  }
   },[PyBuildCategory])
 
   useEffect( async ()=>{

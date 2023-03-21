@@ -136,6 +136,7 @@ const Urls = {
     getslab:"/bpa-services/v1/bpa/_searchslab",
     createSlab:"/bpa-services/v1/bpa/_createslab",
     getfeedetails:"/bpa-services/v1/bpa/_searchfeedetails",
+    createFeedetail:"/bpa-services/v1/bpa/_createfeedetail",
   },
 
   edcr: {

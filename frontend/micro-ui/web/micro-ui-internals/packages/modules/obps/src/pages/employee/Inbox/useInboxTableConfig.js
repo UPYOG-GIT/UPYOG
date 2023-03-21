@@ -54,7 +54,7 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
             accessor: row => GetStatusCell(row?.sla),
         },
         {
-            Header: t("Add Charges"),
+            Header: t("Payment Verification"),
             accessor: "PostFee",
             disableSortBy: true,
             Cell: ({ row }) => {
@@ -62,7 +62,7 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
             return (
                 <div>
                 <Link to={`${parentRoute}/addnew/paytype/${row.original["applicationId"]}`}>
-                    <button type="button" className="link">Add Charges</button>
+                    <button type="button" className="link">Payment Verification</button>
                 </Link>
                 </div>
             );

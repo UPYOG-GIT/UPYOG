@@ -10,8 +10,9 @@ const SlabEntry = () => {
   const [modalData, setModalData] = useState(false);
   const [SlabPyType,setSlabPyType] = useState({code: 'Building Permission Fee(nhnew)', value: 1});
   const [PyPropCat,setPyPropCat] = useState("");
-  const [PyBuildCat,setPyBuildCat] = useState({code: 'RESIDENTIAL', value: 1});
-  const [PySubCat,setPySubCat] = useState("");
+  const [PyBuildCat,setPyBuildCat] = useState({code: "", value: "null"});
+  // const [PyBuildCat,setPyBuildCat] = useState("");
+  const [PySubCat,setPySubCat] = useState({code: "", value: "null"});
   const [PyFromValue,setPyFromValue] = useState(0);
   const [PyToValue,setPyToValue] = useState(0);
   const [PyOperation ,setPyOperation] = useState("");
@@ -86,6 +87,7 @@ const SlabEntry = () => {
   },[])
 
   useEffect( async ()=>{
+    if(PyBuildCat.value != "null"){
     let cateId = PyBuildCat.value;
     let BStype = await Digit.OBPSAdminService.getBSCategory(tenantId, cateId);
     let BSCatetydrop=[];
@@ -98,6 +100,7 @@ const SlabEntry = () => {
       }
     });
     setSubCatdropdown(BSCatetydrop);
+  }
   },[PyBuildCat])
 
   

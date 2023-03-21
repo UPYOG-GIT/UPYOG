@@ -142,4 +142,17 @@ export const OBPSAdminService = {
     .catch((err) => {
       return err;
     }),
+    createFeeDetail: (data) =>
+    ServiceRequest({
+      serviceName: "bpa-services",
+      url: Urls.obps.createFeedetail,
+      data: data,
+      auth: false,
+    })
+    .then((d) => {
+      return d;
+    })
+    .catch((err) => {
+      return err;
+    }),
 }
