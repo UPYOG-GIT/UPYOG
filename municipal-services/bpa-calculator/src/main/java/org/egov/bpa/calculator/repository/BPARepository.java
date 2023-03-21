@@ -165,7 +165,7 @@ public class BPARepository {
 					+ payTypeFeeDetailRequest.getType() + "','" + date + "')";
 //			
 			String insertBkQuery = "insert into fee_details_bkup(paytype_id,feetype,srno,ulb_tenantid,"
-					+ "application_no,unit,charges_type_name,prop_plot_area,amount,rate,type,createddate)" + "values ("
+					+ "application_no,unit,charges_type_name,prop_plot_area,amount,rate,type,createddate)" + "values ('"
 					+ payTypeFeeDetailRequest.getPayTypeId() + "','" + payTypeFeeDetailRequest.getFeeType() + "',"
 					+ count + ",'" + payTypeFeeDetailRequest.getTenantId() + "','"
 					+ payTypeFeeDetailRequest.getApplicationNo() + "','" + payTypeFeeDetailRequest.getUnit() + "','"
