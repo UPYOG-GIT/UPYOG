@@ -829,6 +829,10 @@ public class BPAService {
 	public int updateFeeDetails(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
 		return repository.updateFeeDetails(payTypeFeeDetailRequest);
 	}
+	
+	public int deleteFeeDetailsById(List<Integer> ids) {
+		return repository.deleteFeeDetailsById(ids);
+	}
 
 	public List<Map<String, Object>> getFeeDetails(String applicationNo) {
 		List<Map<String, Object>> resultList = repository.getFeeDetails(applicationNo);

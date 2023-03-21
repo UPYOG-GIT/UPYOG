@@ -1,21 +1,17 @@
 package org.egov.bpa.calculator.services;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
 
 import org.egov.bpa.calculator.config.BPACalculatorConfig;
 import org.egov.bpa.calculator.repository.BPARepository;
 import org.egov.bpa.calculator.repository.ServiceRequestRepository;
 import org.egov.bpa.calculator.utils.BPACalculatorConstants;
 import org.egov.bpa.calculator.web.models.CalculationReq;
+import org.egov.bpa.calculator.web.models.PayTypeFeeDetailRequest;
 import org.egov.bpa.calculator.web.models.bpa.BPA;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
@@ -26,8 +22,10 @@ import org.egov.tracer.model.CustomException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
+
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -486,6 +484,7 @@ public class MDMSService {
 		
 		
 		List<HashMap<String, Object>> feeDetailMap = new ArrayList<HashMap<String, Object>>();
+		List<PayTypeFeeDetailRequest> feeDetailList = new ArrayList<PayTypeFeeDetailRequest>();
 		
 		if(feetype.equals("ApplicationFee")) {
 			feety = "Pre";
@@ -531,6 +530,7 @@ public class MDMSService {
 		
 		for(Map<String,Object> item : result) {
 			HashMap<String, Object> feeMap = new HashMap<String, Object>();
+			PayTypeFeeDetailRequest payTypeFeeDetailRequest=new PayTypeFeeDetailRequest();
 			
 //			String pId = item.get("id").toString();
 			String chargesTy = item.get("charges_type_name").toString();
@@ -1065,7 +1065,20 @@ public class MDMSService {
 					
 					
 					log.info("End--Value--"+Value+"-----trate---"+trate+"----End--ptarea--"+ptarea+"---unitid--"+unitid+"--End----paytyid--"+paytyid+"----chargesTy--"+chargesTy+"----calcact--"+calcact+"----tenantid--"+tenantid+"----feety--"+feety+"----applicationNo--"+applicationNo+"---End");
-				
+					
+					payTypeFeeDetailRequest.setApplicationNo(applicationNo);
+					payTypeFeeDetailRequest.setFeeType(feety);
+					payTypeFeeDetailRequest.setTenantId(tenantid);
+					payTypeFeeDetailRequest.setType(calcact);
+					payTypeFeeDetailRequest.setChargesTypeName(chargesTy);
+					payTypeFeeDetailRequest.setPayTypeId(paytyid);
+					payTypeFeeDetailRequest.setUnit(unitid);
+					payTypeFeeDetailRequest.setPropPlotArea(Area);
+					payTypeFeeDetailRequest.setRate(trate);
+					payTypeFeeDetailRequest.setAmount(Val);
+					payTypeFeeDetailRequest.setBillId("");
+					payTypeFeeDetailRequest.setCreatedBy("");
+					
 					feeMap.put("ApplicationNo", applicationNo);
 					feeMap.put("FeeType", feety);
 					feeMap.put("Tenantid", tenantid);
@@ -1102,9 +1115,12 @@ public class MDMSService {
 			
 		}//end of if $lbrkflg
 			//insert data in data base-------------
-			feeDetailMap.add(feeMap);
-			log.info("feeDetailMap-List-------"+feeDetailMap);
-			bpaRepository.createFeeDetail(feeDetailMap);
+//			feeDetailMap.add(feeMap);
+			feeDetailList.add(payTypeFeeDetailRequest);
+			log.info("feeDetailMap-List-------"+feeDetailList.toString());
+//			log.info("feeDetailMap-List-------"+feeDetailMap);
+//			bpaRepository.createFeeDetail(feeDetailMap);
+			bpaRepository.createFeeDetail(feeDetailList);
 		}//End of for each fee type
 		
 		log.info("feeDetailMap-List-------"+feeDetailMap);

@@ -145,12 +145,13 @@ public class BPARepository {
 				payTypeFeeDetailRequest.getType(), payTypeFeeDetailRequest.getCreatedBy() });
 //		}
 //		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
-		int insertResult = jdbcTemplate.update(insertQuery,  payTypeFeeDetailRequest.getPayTypeId(), payTypeFeeDetailRequest.getFeeType(),
-				count, payTypeFeeDetailRequest.getTenantId(), payTypeFeeDetailRequest.getBillId(),
-				payTypeFeeDetailRequest.getApplicationNo(), payTypeFeeDetailRequest.getUnit(),
-				payTypeFeeDetailRequest.getChargesTypeName(), payTypeFeeDetailRequest.getPropPlotArea(),
-				payTypeFeeDetailRequest.getAmount(), payTypeFeeDetailRequest.getRate(),
-				payTypeFeeDetailRequest.getType(), payTypeFeeDetailRequest.getCreatedBy());
+		int insertResult = jdbcTemplate.update(insertQuery, payTypeFeeDetailRequest.getPayTypeId(),
+				payTypeFeeDetailRequest.getFeeType(), count, payTypeFeeDetailRequest.getTenantId(),
+				payTypeFeeDetailRequest.getBillId(), payTypeFeeDetailRequest.getApplicationNo(),
+				payTypeFeeDetailRequest.getUnit(), payTypeFeeDetailRequest.getChargesTypeName(),
+				payTypeFeeDetailRequest.getPropPlotArea(), payTypeFeeDetailRequest.getAmount(),
+				payTypeFeeDetailRequest.getRate(), payTypeFeeDetailRequest.getType(),
+				payTypeFeeDetailRequest.getCreatedBy());
 
 		log.info("BPARepository.createFeeDetail: " + insertResult + " data inserted into pre_post_fee_details table");
 		return insertResult;
@@ -173,12 +174,12 @@ public class BPARepository {
 		return jdbcTemplate.queryForList(query, new Object[] { applicationNo });
 
 	}
-	
+
 	public int deleteFeeDetailsById(List<Integer> ids) {
 		String deleteQuery = "DELETE FROM fee_details WHERE id IN (:msgNos)";
 //		List<Integer> params = <array list of number>;
 		Map namedParameters = Collections.singletonMap("msgNos", ids);
-		int deleteResult = jdbcTemplate.update(deleteQuery);
+		int deleteResult = jdbcTemplate.update(deleteQuery, namedParameters);
 		log.info("BPARepository.deletePayTpRateById: " + deleteResult
 				+ " data deleted from pay_tp_rate_master table of id(s) : " + ids.toString());
 		return deleteResult;
@@ -249,8 +250,9 @@ public class BPARepository {
 		LocalDateTime date = LocalDateTime.now();
 
 		String insertQuery = "insert into proposal_type_master(srno,ulb_tenantid,description,defunt,createdby,createddate) "
-				+ "values (count,'" + proposalTypeRequest.getTenantId() + "','" + proposalTypeRequest.getDesc() + "','"
-				+ proposalTypeRequest.getDefunt() + "','" + proposalTypeRequest.getCreatedBy() + "','" + date + "')";
+				+ "values (" + count + ",'" + proposalTypeRequest.getTenantId() + "','" + proposalTypeRequest.getDesc()
+				+ "','" + proposalTypeRequest.getDefunt() + "','" + proposalTypeRequest.getCreatedBy() + "','" + date
+				+ "')";
 
 //		Object parameters = new Object();
 //		parameters = new Object[] { proposalTypeRequest.getTenantId(), proposalTypeRequest.getDesc(),
