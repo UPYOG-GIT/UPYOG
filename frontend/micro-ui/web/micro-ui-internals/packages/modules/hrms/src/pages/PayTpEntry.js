@@ -171,7 +171,7 @@ const addPayType =async (e)=>{
         columns={columns}
         className="customTable table-border-style"       
         // manualPagination={false}
-        // isPaginationRequired={false}---------both are commnented because of testing in live it should open
+        // isPaginationRequired={false}
         getCellProps={(cellInfo) => {
           return {
             style: {
