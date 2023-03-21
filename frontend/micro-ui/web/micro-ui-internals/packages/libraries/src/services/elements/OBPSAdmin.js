@@ -56,6 +56,14 @@ export const OBPSAdminService = {
       userService: false,
       method: "POST"
     }),
+    getFeeDetails: (applicationNo) =>
+    Request({
+      url: Urls.obps.getfeedetails,
+      params: {applicationNo},
+      auth: false,
+      userService: false,
+      method: "POST"
+    }),
     createPayType: (data) =>
     ServiceRequest({
       serviceName: "bpa-services",

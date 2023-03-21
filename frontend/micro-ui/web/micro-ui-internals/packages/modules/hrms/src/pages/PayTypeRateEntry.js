@@ -267,8 +267,8 @@ const PayTypeRate = () => {
         data={PaytpRatetblval}
         columns={columns}
         className="customTable table-border-style"       
-        manualPagination={false}
-        isPaginationRequired={false}
+        // manualPagination={false}
+        // isPaginationRequired={false}
         getCellProps={(cellInfo) => {
           return {
             style: {

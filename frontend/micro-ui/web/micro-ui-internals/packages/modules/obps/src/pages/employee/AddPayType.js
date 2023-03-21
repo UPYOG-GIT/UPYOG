@@ -2,19 +2,11 @@ import React, { useEffect, useState,useRef} from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
 import {
-  Card, Header,Modal, Dropdown, CardLabel, TextInput, SubmitBar, Toast,CloseSvg, EditPencilIcon,DeleteIcon, LabelFieldPair, Loader, Row, StatusTable, BackButton
+  Card, Header,Modal, Dropdown, CardLabel, TextInput, SubmitBar, Toast,CloseSvg, Table,DeleteIcon, LabelFieldPair, Loader, Row, StatusTable, BackButton
 } from "@egovernments/digit-ui-react-components";
 
 
-const getDatafromLS=(id)=>{
-  const data = localStorage.getItem('modalList'+id);
-  if(data){
-    return JSON.parse(data);
-  }
-  else{
-    return []
-  }
-}
+
 
 
 
@@ -31,7 +23,7 @@ const AddPayType = () => {
   const [modalValue,setModalValue] = useState(0);
   const [dropDownData,setDropDownData] = useState([]);
   const { id } = useParams();
-  const [modalList,setModalList] = useState(getDatafromLS(id));
+  const [modalList,setModalList] = useState();
  
   const setPayRule = (value) => setModalPyType(value);
 
@@ -42,7 +34,64 @@ const AddPayType = () => {
 
   const dropDownData1 = [{code:"c",value:"c"},{code:"a",value:"a"},{code:"b",value:"b"}];
 
- 
+
+  const [feeDetailtblval,setfeeDetailtblval]= useState([]);
+
+  useEffect( async ()=>{
+    let feeDetails = await Digit.OBPSAdminService.getFeeDetails(id);
+    setfeeDetailtblval(feeDetails);
+  },[modalData])
+
+
+  const GetCell = (value) => <span className="cell-text">{t(value)}</span>;
+  const columns = React.useMemo(() => {
+    return [
+      {
+        Header: t("Sno"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.id}`);
+        },
+      },
+      {
+        Header: t("Description"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.charges_type_name}`);
+        },
+      },
+      {
+        Header: t("Proposed Area"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.prop_plot_area }`);
+        },
+      },
+      {
+        Header: t("Measurement Unit"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.unit}`);
+        },
+      },
+      {
+        Header: t("Rate"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.rate}`);
+        },
+      },
+      {
+        Header: t("Value"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.amount}`);
+        },
+      },
+    ];
+  }, []);
+
+
 
   const handleAddAmountSubmit =(e)=>{
       e.preventDefault();
@@ -70,19 +119,19 @@ const AddPayType = () => {
 
   
 
-  let totalAmount = modalList.length>0?(modalList.map(item=>amount += parseInt(item.modalValue))).slice(-1):amount;
+  // let totalAmount = modalList.length>0?(modalList.map(item=>amount += parseInt(item.modalValue))).slice(-1):amount;
   //  console.log(totalAmount.slice(-1));
   
 
-  if(modalList.length>0){
-        modalList.map(item=>(
-        amount +=item.modalValue));
-  }
+  // if(modalList.length>0){
+  //       modalList.map(item=>(
+  //       amount +=item.modalValue));
+  // }
 
 
   const { data = {}, isLoading } = Digit.Hooks.obps.useBPADetailsPage(tenantId, { applicationNo: id });
   useEffect( async ()=>{
-    let paytypeRule = await Digit.OBPSService.getPaytype(tenantId);
+    let paytypeRule = await Digit.OBPSAdminService.getPaytype(tenantId);
     setDropDownData(dropDownData);
     console.log("drop--gh--"+JSON.stringify(paytypeRule)); 
   },[])
@@ -106,61 +155,14 @@ const AddPayType = () => {
     setModalData(false);
   };
 
-
-
   function setPostFees(e) {
     setPostFee(e.target.value);
   }
 
-  
-  let demandCreateres = {};
-  let fetchBillRess = {};
-
   const onSubmits = async (e) => {
     e.preventDefault();
 
-    const data = {
-      tenantId: tenantId,
-      consumerCode: id,
-      consumerType: "",
-      businessService: "BPA.NC_SAN_FEE",
-      taxPeriodFrom: "1554076799000",
-      taxPeriodTo: "1585679399000",
-      demandDetails: [
-        {
-          taxHeadMasterCode: "BPA_SANC_FEES",
-          taxAmount: postFee,
-          collectionAmount: 0
-        }
-      ],
-      minimumAmountPayable: 1,
-      additionalDetails: {
-        HI: "hii"
-      }
-
-    };
-
-
-   
-    const demandCreateres = await Digit.PaymentService.demandCreate({ Demands: [{ ...data }] });
-    // console.log("demandCreateres "+demandCreateres+"-----"+demandCreateres?.ResponseInfo);
-
-    if (demandCreateres?.ResponseInfo?.status === "201 CREATED") {
-      fetchBillRess = await Digit.PaymentService.fetchBill(tenantId, { consumerCode: id, businessService: "BPA.NC_SAN_FEE" });
-
-      if (fetchBillRess?.Bill?.[0]?.billDetails?.length > 0) {
-        setShowToast({ key: false, label: "Successfully Added ", bgcolor: "#5CF409" });
-
-      } else {
-        setShowToast({ key: true, label: "Bill FAILL", bgcolor: "red" });
-      }
-
-    }
-    else {
-      setShowToast({ key: true, label: "Demand Fail", bgcolor: "red" });
-    }
-
-  };
+  }
 
   
 
@@ -199,7 +201,7 @@ const AddPayType = () => {
 
 
       <React.Fragment></React.Fragment>
-      <div>
+      {/* <div>
       <table style={{ border: "1px solid #494442", textAlign: "left", borderCollapse: "collapse", width: "100%" }}>
        <thead>
         <tr>
@@ -245,8 +247,30 @@ const AddPayType = () => {
        
       </table>
       <button type="button" className="button-sub-text" onClick={()=>setModalData(true)} style={{marginTop:"10px",backgroundColor: "#008CBA"}}>Add New Row</button>
-      </div>                
+      </div>                 */}
 
+      <Table
+        t={t}
+        data={feeDetailtblval}
+        columns={columns}
+        className="customTable table-border-style"       
+        // manualPagination={false}
+        // isPaginationRequired={false}
+        getCellProps={(cellInfo) => {
+          return {
+            style: {
+              padding: "20px 18px",
+              fontSize: "16px",
+              borderTop: "1px solid grey",
+              textAlign: "left",
+              verticalAlign: "middle",
+            },
+          };
+        }}
+      />
+
+      <button type="button" className="button-sub-text" onClick={()=>setModalData(true)} style={{margin:"10px",backgroundColor: "#008CBA"}}>Add New Row</button>
+      <button type="button" className="button-sub-text" onClick={()=>setModalData(true)} style={{margin:"10px",backgroundColor: "#008CBA"}}>Delete</button>
       {modalData ? (
         <Modal
           hideSubmit={true}
@@ -344,7 +368,7 @@ const AddPayType = () => {
         </Modal>
       ) : null}
       
-      
+
       {showToast && (
         <Toast
           error={showToast.key}

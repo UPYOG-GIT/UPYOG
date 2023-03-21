@@ -136,8 +136,8 @@ const SubCategoryEntry = () => {
         data={Subcattblval}
         columns={columns}
         className="customTable table-border-style"
-        manualPagination={false}
-        isPaginationRequired={false}
+        // manualPagination={false}
+        // isPaginationRequired={false}
         getCellProps={(cellInfo) => {
           return {
             style: {
