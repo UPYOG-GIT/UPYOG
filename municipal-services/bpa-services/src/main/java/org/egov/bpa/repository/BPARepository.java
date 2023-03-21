@@ -164,7 +164,7 @@ public class BPARepository {
 	}
 
 	public List<Map<String, Object>> getFeeDetails(String applicationNo) {
-		String query = "select id,ulb_tenantid,paytype_id,feetype,srno,bill_id,unit,charges_type_name,prop_plot_area,amount,rate,type from fee_details where and application_no=?";
+		String query = "select id,ulb_tenantid,paytype_id,feetype,srno,bill_id,unit,charges_type_name,prop_plot_area,amount,rate,type from fee_details where application_no=?";
 		return jdbcTemplate.queryForList(query, new Object[] { applicationNo });
 
 	}
