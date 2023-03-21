@@ -177,8 +177,8 @@ public class BPAController {
 			PayTypeFeeDetailRequest payTypeFeeDetailRequest = payTypeFeeDetailRequestWrapper
 					.getPayTypeFeeDetailRequest();
 
-			int[] insertResult = bpaService.createFeeDetail(payTypeFeeDetailRequest);
-			if (insertResult.length > 0) {
+			int insertResult = bpaService.createFeeDetail(payTypeFeeDetailRequest);
+			if (insertResult > 0) {
 				return new ResponseEntity<>(insertResult, HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
@@ -205,7 +205,7 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_deletefeedetail")
-	public ResponseEntity<List<Map<String, Object>>> deleteFeeDetails(@RequestParam String tenantId) {
+	public ResponseEntity<List<Map<String, Object>>> deleteFeeDetails(@RequestParam int[] id) {
 //		@RequestBody RequestInfo requestInfo,
 //		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
 //		return new ResponseEntity<>(responseList, HttpStatus.OK);

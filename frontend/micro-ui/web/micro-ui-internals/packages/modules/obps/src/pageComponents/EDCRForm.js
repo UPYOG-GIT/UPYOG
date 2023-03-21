@@ -29,25 +29,25 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
         setTenantIdData(value);
     }
 
-    // function selectfile(e) {
-    //     setUploadedFile(e.target.files[0]);
-    //     setFile(e.target.files[0]);
-    // }
+    function selectfile(e) {
+        setUploadedFile(e.target.files[0]);
+        setFile(e.target.files[0]);
+    }
 
-    const selectfile = (event) => {
-        const file = event.target.files[0];
+    // const selectfile = (event) => {
+    //     const file = event.target.files[0];
 
-        if (file.type !== "image/vnd.dxf") {
-            setError("Only .dxf files are accepted");
-            alert("Only .dxf files are accepted")
-            setUploadedFile(null);
-            return;
-        }
+    //     if (file.type !== "image/vnd.dxf") {
+    //         setError("Only .dxf files are accepted");
+    //         alert("Only .dxf files are accepted")
+    //         setUploadedFile(null);
+    //         return;
+    //     }
 
-        setFile(file);
-        setError("");
-        setUploadedFile(file.name);
-    };
+    //     setFile(file);
+    //     setError("");
+    //     setUploadedFile(file.name);
+    // };
 
     const onSkip = () => {
         setUploadMessage("NEED TO DELETE");

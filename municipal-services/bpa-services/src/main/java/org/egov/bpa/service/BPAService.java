@@ -822,7 +822,7 @@ public class BPAService {
 		}
 	}
 
-	public int[] createFeeDetail(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
+	public int createFeeDetail(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
 		return repository.createFeeDetail(payTypeFeeDetailRequest);
 	}
 

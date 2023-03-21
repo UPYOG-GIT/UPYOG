@@ -2,6 +2,7 @@ package org.egov.bpa.repository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +17,6 @@ import org.egov.bpa.web.model.BPASearchCriteria;
 import org.egov.bpa.web.model.BSCategoryRequest;
 import org.egov.bpa.web.model.PayTpRateRequest;
 import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
-import org.egov.bpa.web.model.PayTypeFeeDetailRequestWrapper;
 import org.egov.bpa.web.model.PayTypeRequest;
 import org.egov.bpa.web.model.ProposalTypeRequest;
 import org.egov.bpa.web.model.SlabMasterRequest;
@@ -24,7 +24,6 @@ import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -117,7 +116,7 @@ public class BPARepository {
 		return BPAData;
 	}
 
-	public int[] createFeeDetail(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
+	public int createFeeDetail(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
 
 		String query = "SELECT COUNT(*) FROM fee_details WHERE feetype=? and ulb_tenantid=?";
 		int count = jdbcTemplate.queryForObject(query,
@@ -145,7 +144,13 @@ public class BPARepository {
 				payTypeFeeDetailRequest.getAmount(), payTypeFeeDetailRequest.getRate(),
 				payTypeFeeDetailRequest.getType(), payTypeFeeDetailRequest.getCreatedBy() });
 //		}
-		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
+//		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
+		int insertResult = jdbcTemplate.update(insertQuery,  payTypeFeeDetailRequest.getPayTypeId(), payTypeFeeDetailRequest.getFeeType(),
+				count, payTypeFeeDetailRequest.getTenantId(), payTypeFeeDetailRequest.getBillId(),
+				payTypeFeeDetailRequest.getApplicationNo(), payTypeFeeDetailRequest.getUnit(),
+				payTypeFeeDetailRequest.getChargesTypeName(), payTypeFeeDetailRequest.getPropPlotArea(),
+				payTypeFeeDetailRequest.getAmount(), payTypeFeeDetailRequest.getRate(),
+				payTypeFeeDetailRequest.getType(), payTypeFeeDetailRequest.getCreatedBy());
 
 		log.info("BPARepository.createFeeDetail: " + insertResult + " data inserted into pre_post_fee_details table");
 		return insertResult;
@@ -164,9 +169,19 @@ public class BPARepository {
 	}
 
 	public List<Map<String, Object>> getFeeDetails(String applicationNo) {
-		String query = "select id,ulb_tenantid,paytype_id,feetype,srno,bill_id,unit,charges_type_name,prop_plot_area,amount,rate,type from fee_details where and application_no=?";
+		String query = "select id,ulb_tenantid,paytype_id,feetype,srno,bill_id,unit,charges_type_name,prop_plot_area,amount,rate,type from fee_details where application_no=?";
 		return jdbcTemplate.queryForList(query, new Object[] { applicationNo });
 
+	}
+	
+	public int deleteFeeDetailsById(List<Integer> ids) {
+		String deleteQuery = "DELETE FROM fee_details WHERE id IN (:msgNos)";
+//		List<Integer> params = <array list of number>;
+		Map namedParameters = Collections.singletonMap("msgNos", ids);
+		int deleteResult = jdbcTemplate.update(deleteQuery);
+		log.info("BPARepository.deletePayTpRateById: " + deleteResult
+				+ " data deleted from pay_tp_rate_master table of id(s) : " + ids.toString());
+		return deleteResult;
 	}
 
 	public int createPayType(PayTypeRequest payTypeRequest) {
