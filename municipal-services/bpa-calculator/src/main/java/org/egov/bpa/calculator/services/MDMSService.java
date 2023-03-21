@@ -1067,8 +1067,9 @@ public class MDMSService {
 					log.info("End--Value--"+Value+"-----trate---"+trate+"----End--ptarea--"+ptarea+"---unitid--"+unitid+"--End----paytyid--"+paytyid+"----chargesTy--"+chargesTy+"----calcact--"+calcact+"----tenantid--"+tenantid+"----feety--"+feety+"----applicationNo--"+applicationNo+"---End");
 					
 					payTypeFeeDetailRequest.setApplicationNo(applicationNo);
-					payTypeFeeDetailRequest.setFeeType(feetype);
+					payTypeFeeDetailRequest.setFeeType(feety);
 					payTypeFeeDetailRequest.setTenantId(tenantid);
+					payTypeFeeDetailRequest.setType(calcact);
 					payTypeFeeDetailRequest.setChargesTypeName(chargesTy);
 					payTypeFeeDetailRequest.setPayTypeId(paytyid);
 					payTypeFeeDetailRequest.setUnit(unitid);
