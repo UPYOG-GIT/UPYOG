@@ -139,7 +139,17 @@ public class BPARepository {
 
 		List<Object[]> parameters = new ArrayList<Object[]>();
 		log.info("feeList.size(): " + feeList.size());
-		for (HashMap<String, Object> feeMap : feeList) {
+//		for (int i = 0; i < feeList.size(); i++) {
+//			HashMap<String, Object> feeMap = new HashMap<String, Object>();
+//			feeMap = feeList.get(i);
+//			log.info("feeMap :" + feeMap);
+//			
+//		}
+//		for (HashMap<String, Object> feeMap : feeList) {
+		for (int i = 0; i < feeList.size(); i++) {
+			HashMap<String, Object> feeMap = new HashMap<String, Object>();
+			feeMap = feeList.get(i);
+			log.info("feeMap :" + feeMap);
 
 //			String insertQuery = "insert into fee_details(paytype_id,feetype,srno,ulb_tenantid,"
 //					+ "application_no,unit,charges_type_name,prop_plot_area,amount,rate,type,createddate)" + "values ('"
@@ -185,6 +195,8 @@ public class BPARepository {
 			log.info("insertBkResult-----" + insertBkResult);
 
 			count += 1;
+			insertQuery = null;
+			insertBkQuery = null;
 
 		}
 //		log.info("parameterssize() :" + parameters.size());
