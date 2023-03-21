@@ -205,11 +205,22 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_deletefeedetail")
-	public ResponseEntity<List<Map<String, Object>>> deleteFeeDetails(@RequestParam int[] id) {
+	public ResponseEntity<Object> deleteFeeDetails(@RequestParam List<Integer> ids) {
 //		@RequestBody RequestInfo requestInfo,
 //		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
 //		return new ResponseEntity<>(responseList, HttpStatus.OK);
-		return null;
+		try {
+			int deleteResult = bpaService.deleteFeeDetailsById(ids);
+			if (deleteResult > 0) {
+				return new ResponseEntity<>(deleteResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(deleteResult, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in createPayType: " + ex);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+		}
+//		return null;
 	}
 
 	@PostMapping(value = "/_createproposaltype")
@@ -334,8 +345,18 @@ public class BPAController {
 
 	@PostMapping(value = "/_deletepaytprate")
 	public ResponseEntity<Object> deletePayTpRateById(@RequestParam int id) {
+		try {
 		int deleteResult = bpaService.deletePayTpRateById(id);
-		return new ResponseEntity<>(deleteResult, HttpStatus.OK);
+		if (deleteResult > 0) {
+			return new ResponseEntity<>(deleteResult, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(deleteResult, HttpStatus.BAD_REQUEST);
+		}
+	} catch (Exception ex) {
+		log.error("Exception in createPayType: " + ex);
+		return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+	}
+//		return new ResponseEntity<>(deleteResult, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/_createslab")

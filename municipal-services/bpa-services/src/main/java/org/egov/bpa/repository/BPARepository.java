@@ -178,7 +178,7 @@ public class BPARepository {
 		String deleteQuery = "DELETE FROM fee_details WHERE id IN (:msgNos)";
 //		List<Integer> params = <array list of number>;
 		Map namedParameters = Collections.singletonMap("msgNos", ids);
-		int deleteResult = jdbcTemplate.update(deleteQuery);
+		int deleteResult = jdbcTemplate.update(deleteQuery,namedParameters);
 		log.info("BPARepository.deletePayTpRateById: " + deleteResult
 				+ " data deleted from pay_tp_rate_master table of id(s) : " + ids.toString());
 		return deleteResult;
