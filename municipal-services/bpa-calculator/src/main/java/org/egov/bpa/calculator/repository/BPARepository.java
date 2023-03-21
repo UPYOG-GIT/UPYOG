@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.bpa.calculator.web.models.PayTypeFeeDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -124,7 +125,8 @@ public class BPARepository {
 		return jdbcTemplate.queryForList(sql);
 	}
 
-	public void createFeeDetail(List<HashMap<String, Object>> feeList) {
+//	public void createFeeDetail(List<HashMap<String, Object>> feeList) {
+	public void createFeeDetail(List<PayTypeFeeDetailRequest> feeList) {
 
 		LocalDateTime date = LocalDateTime.now();
 //		String insertQuery = "insert into fee_details(paytype_id,feetype,srno,ulb_tenantid,"
@@ -145,11 +147,13 @@ public class BPARepository {
 //			log.info("feeMap :" + feeMap);
 //			
 //		}
-//		for (HashMap<String, Object> feeMap : feeList) {
-		for (int i = 0; i < feeList.size(); i++) {
-			HashMap<String, Object> feeMap = new HashMap<String, Object>();
-			feeMap = feeList.get(i);
-			log.info("feeMap :" + feeMap);
+		for (PayTypeFeeDetailRequest payTypeFeeDetailRequest : feeList) {
+			Object parameter = new Object();
+
+//		for (int i = 0; i < feeList.size(); i++) {
+//			HashMap<String, Object> feeMap = new HashMap<String, Object>();
+//			feeMap = feeList.get(i);
+//			log.info("feeMap :" + feeMap);
 
 //			String insertQuery = "insert into fee_details(paytype_id,feetype,srno,ulb_tenantid,"
 //					+ "application_no,unit,charges_type_name,prop_plot_area,amount,rate,type,createddate)" + "values ('"
@@ -177,20 +181,23 @@ public class BPARepository {
 //					feeMap.get("Tenantid"), feeMap.get("ApplicationNo"), feeMap.get("UnitId"),
 //					feeMap.get("ChargesType"), feeMap.get("PropValue"), feeMap.get("Amount"), feeMap.get("Rate"),
 //					feeMap.get("Operation") });
-
-			int insertResult = jdbcTemplate.update(insertQuery, feeMap.get("PayTypeId"), feeMap.get("FeeType"), count++,
-					feeMap.get("Tenantid"), feeMap.get("ApplicationNo"), feeMap.get("UnitId"),
-					feeMap.get("ChargesType"), feeMap.get("PropValue"), feeMap.get("Amount"), feeMap.get("Rate"),
-					feeMap.get("Operation"));
+			payTypeFeeDetailRequest.getPayTypeId();
+			parameter = new Object[] { payTypeFeeDetailRequest.getPayTypeId(), payTypeFeeDetailRequest.getFeeType(),
+					count, payTypeFeeDetailRequest.getTenantId(), payTypeFeeDetailRequest.getApplicationNo(),
+					payTypeFeeDetailRequest.getUnit(), payTypeFeeDetailRequest.getChargesTypeName(),
+					payTypeFeeDetailRequest.getPropPlotArea(), payTypeFeeDetailRequest.getAmount(),
+					payTypeFeeDetailRequest.getRate(),payTypeFeeDetailRequest.getType() };
+			int insertResult = jdbcTemplate.update(insertQuery, parameter);
+//			int insertResult = jdbcTemplate.update(insertQuery, feeMap.get("PayTypeId"), feeMap.get("FeeType"), count,
+//					feeMap.get("Tenantid"), feeMap.get("ApplicationNo"), feeMap.get("UnitId"),
+//					feeMap.get("ChargesType"), feeMap.get("PropValue"), feeMap.get("Amount"), feeMap.get("Rate"),
+//					feeMap.get("Operation"));
 
 			log.info("BPARepository.createFeeDetail: " + insertResult + " data inserted into fee_details table");
 
 //			log.info("insertQuery-----" + insertQuery);
 
-			int insertBkResult = jdbcTemplate.update(insertBkQuery, feeMap.get("PayTypeId"), feeMap.get("FeeType"),
-					count++, feeMap.get("Tenantid"), feeMap.get("ApplicationNo"), feeMap.get("UnitId"),
-					feeMap.get("ChargesType"), feeMap.get("PropValue"), feeMap.get("Amount"), feeMap.get("Rate"),
-					feeMap.get("Operation"));
+			int insertBkResult = jdbcTemplate.update(insertBkQuery, parameter);
 
 			log.info("insertBkResult-----" + insertBkResult);
 
