@@ -1120,9 +1120,10 @@ public class MDMSService {
 			log.info("feeDetailMap-List-------"+feeDetailList.toString());
 //			log.info("feeDetailMap-List-------"+feeDetailMap);
 //			bpaRepository.createFeeDetail(feeDetailMap);
-			bpaRepository.createFeeDetail(feeDetailList);
+//			bpaRepository.createFeeDetail(feeDetailList);
 			count+=1;
 		}//End of for each fee type
+		bpaRepository.createFeeDetail(feeDetailList);
 		
 		log.info("feeDetailMap-List-------"+feeDetailMap);
 //		Map<String, String> list = new HashMap<String, String>();
