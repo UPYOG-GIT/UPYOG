@@ -155,39 +155,42 @@ public class BPARepository {
 //			feeMap = feeList.get(i);
 //			log.info("feeMap :" + feeMap);
 
-//			String insertQuery = "insert into fee_details(paytype_id,feetype,srno,ulb_tenantid,"
-//					+ "application_no,unit,charges_type_name,prop_plot_area,amount,rate,type,createddate)" + "values ('"
-//					+ feeMap.get("PayTypeId") + "','" + feeMap.get("FeeType") + "'," + count + ",'"
-//					+ feeMap.get("Tenantid") + "','" + feeMap.get("ApplicationNo") + "','" + feeMap.get("UnitId")
-//					+ "','" + feeMap.get("ChargesType") + "'," + feeMap.get("PropValue") + "," + feeMap.get("Amount")
-//					+ "," + feeMap.get("Rate") + ",'" + feeMap.get("Operation") + "','" + date + "')";
-//			
-//			String insertBkQuery = "insert into fee_details_bkup(paytype_id,feetype,srno,ulb_tenantid,"
-//					+ "application_no,unit,charges_type_name,prop_plot_area,amount,rate,type,createddate)" + "values ("
-//					+ feeMap.get("PayTypeId") + ",'" + feeMap.get("FeeType") + "'," + count + ",'"
-//					+ feeMap.get("Tenantid") + "','" + feeMap.get("ApplicationNo") + "','" + feeMap.get("UnitId")
-//					+ "','" + feeMap.get("ChargesType") + "'," + feeMap.get("PropValue") + "," + feeMap.get("Amount")
-//					+ "," + feeMap.get("Rate") + ",'" + feeMap.get("Operation") + "','" + date + "')";
-
 			String insertQuery = "insert into fee_details(paytype_id,feetype,srno,ulb_tenantid,"
-					+ "application_no,unit,charges_type_name,prop_plot_area,amount,rate,type,createddate)"
-					+ "values (?,?,?,?,?,?,?,?,?,?,?,'" + date + "')";
-
+					+ "application_no,unit,charges_type_name,prop_plot_area,amount,rate,type,createddate)" + "values ('"
+					+ payTypeFeeDetailRequest.getPayTypeId() + "','" + payTypeFeeDetailRequest.getFeeType() + "',"
+					+ count + ",'" + payTypeFeeDetailRequest.getTenantId() + "','"
+					+ payTypeFeeDetailRequest.getApplicationNo() + "','" + payTypeFeeDetailRequest.getUnit() + "','"
+					+ payTypeFeeDetailRequest.getChargesTypeName() + "'," + payTypeFeeDetailRequest.getPropPlotArea()
+					+ "," + payTypeFeeDetailRequest.getAmount() + "," + payTypeFeeDetailRequest.getRate() + ",'"
+					+ payTypeFeeDetailRequest.getType() + "','" + date + "')";
+//			
 			String insertBkQuery = "insert into fee_details_bkup(paytype_id,feetype,srno,ulb_tenantid,"
-					+ "application_no,unit,charges_type_name,prop_plot_area,amount,rate,type,createddate)"
-					+ "values (?,?,?,?,?,?,?,?,?,?,?,'" + date + "')";
+					+ "application_no,unit,charges_type_name,prop_plot_area,amount,rate,type,createddate)" + "values ("
+					+ payTypeFeeDetailRequest.getPayTypeId() + "','" + payTypeFeeDetailRequest.getFeeType() + "',"
+					+ count + ",'" + payTypeFeeDetailRequest.getTenantId() + "','"
+					+ payTypeFeeDetailRequest.getApplicationNo() + "','" + payTypeFeeDetailRequest.getUnit() + "','"
+					+ payTypeFeeDetailRequest.getChargesTypeName() + "'," + payTypeFeeDetailRequest.getPropPlotArea()
+					+ "," + payTypeFeeDetailRequest.getAmount() + "," + payTypeFeeDetailRequest.getRate() + ",'"
+					+ payTypeFeeDetailRequest.getType() + "','" + date + "')";
+
+//			String insertQuery = "insert into fee_details(paytype_id,feetype,srno,ulb_tenantid,"
+//					+ "application_no,unit,charges_type_name,prop_plot_area,amount,rate,type,createddate)"
+//					+ "values (?,?,?,?,?,?,?,?,?,?,?,'" + date + "')";
+//
+//			String insertBkQuery = "insert into fee_details_bkup(paytype_id,feetype,srno,ulb_tenantid,"
+//					+ "application_no,unit,charges_type_name,prop_plot_area,amount,rate,type,createddate)"
+//					+ "values (?,?,?,?,?,?,?,?,?,?,?,'" + date + "')";
 
 //			parameters.add(new Object[] { feeMap.get("PayTypeId"), feeMap.get("FeeType"), count++,
 //					feeMap.get("Tenantid"), feeMap.get("ApplicationNo"), feeMap.get("UnitId"),
 //					feeMap.get("ChargesType"), feeMap.get("PropValue"), feeMap.get("Amount"), feeMap.get("Rate"),
 //					feeMap.get("Operation") });
-			payTypeFeeDetailRequest.getPayTypeId();
-			parameter = new Object[] { payTypeFeeDetailRequest.getPayTypeId(), payTypeFeeDetailRequest.getFeeType(),
-					count, payTypeFeeDetailRequest.getTenantId(), payTypeFeeDetailRequest.getApplicationNo(),
-					payTypeFeeDetailRequest.getUnit(), payTypeFeeDetailRequest.getChargesTypeName(),
-					payTypeFeeDetailRequest.getPropPlotArea(), payTypeFeeDetailRequest.getAmount(),
-					payTypeFeeDetailRequest.getRate(),payTypeFeeDetailRequest.getType() };
-			int insertResult = jdbcTemplate.update(insertQuery, parameter);
+//			parameter = new Object[] { payTypeFeeDetailRequest.getPayTypeId(), payTypeFeeDetailRequest.getFeeType(),
+//					count, payTypeFeeDetailRequest.getTenantId(), payTypeFeeDetailRequest.getApplicationNo(),
+//					payTypeFeeDetailRequest.getUnit(), payTypeFeeDetailRequest.getChargesTypeName(),
+//					payTypeFeeDetailRequest.getPropPlotArea(), payTypeFeeDetailRequest.getAmount(),
+//					payTypeFeeDetailRequest.getRate(), payTypeFeeDetailRequest.getType() };
+			int insertResult = jdbcTemplate.update(insertQuery);
 //			int insertResult = jdbcTemplate.update(insertQuery, feeMap.get("PayTypeId"), feeMap.get("FeeType"), count,
 //					feeMap.get("Tenantid"), feeMap.get("ApplicationNo"), feeMap.get("UnitId"),
 //					feeMap.get("ChargesType"), feeMap.get("PropValue"), feeMap.get("Amount"), feeMap.get("Rate"),
@@ -197,7 +200,7 @@ public class BPARepository {
 
 //			log.info("insertQuery-----" + insertQuery);
 
-			int insertBkResult = jdbcTemplate.update(insertBkQuery, parameter);
+			int insertBkResult = jdbcTemplate.update(insertBkQuery);
 
 			log.info("insertBkResult-----" + insertBkResult);
 
