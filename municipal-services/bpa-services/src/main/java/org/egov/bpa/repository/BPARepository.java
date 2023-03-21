@@ -117,7 +117,7 @@ public class BPARepository {
 		return BPAData;
 	}
 
-	public int[] createFeeDetail(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
+	public int createFeeDetail(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
 
 		String query = "SELECT COUNT(*) FROM fee_details WHERE feetype=? and ulb_tenantid=?";
 		int count = jdbcTemplate.queryForObject(query,
@@ -145,7 +145,13 @@ public class BPARepository {
 				payTypeFeeDetailRequest.getAmount(), payTypeFeeDetailRequest.getRate(),
 				payTypeFeeDetailRequest.getType(), payTypeFeeDetailRequest.getCreatedBy() });
 //		}
-		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
+//		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
+		int insertResult = jdbcTemplate.update(insertQuery,  payTypeFeeDetailRequest.getPayTypeId(), payTypeFeeDetailRequest.getFeeType(),
+				count, payTypeFeeDetailRequest.getTenantId(), payTypeFeeDetailRequest.getBillId(),
+				payTypeFeeDetailRequest.getApplicationNo(), payTypeFeeDetailRequest.getUnit(),
+				payTypeFeeDetailRequest.getChargesTypeName(), payTypeFeeDetailRequest.getPropPlotArea(),
+				payTypeFeeDetailRequest.getAmount(), payTypeFeeDetailRequest.getRate(),
+				payTypeFeeDetailRequest.getType(), payTypeFeeDetailRequest.getCreatedBy());
 
 		log.info("BPARepository.createFeeDetail: " + insertResult + " data inserted into pre_post_fee_details table");
 		return insertResult;

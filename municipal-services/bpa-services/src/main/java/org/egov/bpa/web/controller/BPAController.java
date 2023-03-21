@@ -177,8 +177,8 @@ public class BPAController {
 			PayTypeFeeDetailRequest payTypeFeeDetailRequest = payTypeFeeDetailRequestWrapper
 					.getPayTypeFeeDetailRequest();
 
-			int[] insertResult = bpaService.createFeeDetail(payTypeFeeDetailRequest);
-			if (insertResult.length > 0) {
+			int insertResult = bpaService.createFeeDetail(payTypeFeeDetailRequest);
+			if (insertResult > 0) {
 				return new ResponseEntity<>(insertResult, HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
