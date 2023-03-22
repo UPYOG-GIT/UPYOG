@@ -206,9 +206,6 @@ public class BPAController {
 
 	@PostMapping(value = "/_deletefeedetail")
 	public ResponseEntity<Object> deleteFeeDetails(@RequestParam List<Integer> ids) {
-//		@RequestBody RequestInfo requestInfo,
-//		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
-//		return new ResponseEntity<>(responseList, HttpStatus.OK);
 		try {
 			int deleteResult = bpaService.deleteFeeDetailsById(ids);
 			if (deleteResult > 0) {
@@ -220,7 +217,22 @@ public class BPAController {
 			log.error("Exception in createPayType: " + ex);
 			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
-//		return null;
+	}
+	
+	@PostMapping(value = "/_verifyfeedetail")
+	public ResponseEntity<Object> verifyFeeDetailsByApplicationNo(@RequestParam String applicationNo,
+			@RequestParam String isVerified)  {
+		try {
+			int updateResult = bpaService.verifyFeeDetailsByApplicationNo(applicationNo,isVerified);
+			if (updateResult > 0) {
+				return new ResponseEntity<>(updateResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(updateResult, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in createPayType: " + ex);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	@PostMapping(value = "/_createproposaltype")

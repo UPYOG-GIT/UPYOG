@@ -165,7 +165,7 @@ public class BPARepository {
 				+ payTypeFeeDetailRequest.getApplicationNo() + "' and ulb_tenantid ='"
 				+ payTypeFeeDetailRequest.getTenantId() + "'" + " and id=" + payTypeFeeDetailRequest.getId();
 		int updateResult = jdbcTemplate.update(updateQuery);
-		log.info("BPARepository.updatePayType: " + updateResult + " data updated into paytype_master table");
+		log.info("BPARepository.updateFeeDetails: " + updateResult + " data updated into paytype_master table");
 		return updateResult;
 	}
 
@@ -184,6 +184,16 @@ public class BPARepository {
 		log.info("BPARepository.deletePayTpRateById: " + deleteResult
 				+ " data deleted from pay_tp_rate_master table of id(s) : " + ids.toString());
 		return deleteResult;
+	}
+
+	public int verifyFeeDetailsByApplicationNo(String applicationNo, String isVerified) {
+
+		String updateQuery = "UPDATE fee_details SET verify='" + isVerified + "' WHERE application_no =" + "'"
+				+ applicationNo + "'";
+		int updateResult = jdbcTemplate.update(updateQuery);
+		log.info("BPARepository.verifyFeeDetailsByApplicationNo: " + updateResult
+				+ " data updated into paytype_master table");
+		return updateResult;
 	}
 
 	public int createPayType(PayTypeRequest payTypeRequest) {

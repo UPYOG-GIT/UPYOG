@@ -829,7 +829,7 @@ public class BPAService {
 	public int updateFeeDetails(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
 		return repository.updateFeeDetails(payTypeFeeDetailRequest);
 	}
-	
+
 	public int deleteFeeDetailsById(List<Integer> ids) {
 		return repository.deleteFeeDetailsById(ids);
 	}
@@ -838,6 +838,10 @@ public class BPAService {
 		List<Map<String, Object>> resultList = repository.getFeeDetails(applicationNo);
 		log.info("getPayTypeByTenantId: " + resultList.toString());
 		return resultList;
+	}
+
+	public int verifyFeeDetailsByApplicationNo(String applicationNo, String isVerified) {
+		return repository.verifyFeeDetailsByApplicationNo(applicationNo, isVerified);
 	}
 
 	public int createPayType(PayTypeRequest payTypeRequest) {
