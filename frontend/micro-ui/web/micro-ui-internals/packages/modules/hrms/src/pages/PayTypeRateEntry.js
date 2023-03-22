@@ -71,7 +71,7 @@ const PayTypeRate = () => {
       if(item.defunt==="N"){
         Proptydrop.push({
           code: item.description,
-          value: item.id
+          value: item.srno
         })
       }
     });
@@ -143,7 +143,7 @@ const PayTypeRate = () => {
     setPyCalculatOn("");
     setPyOperation("");
     setPyPropCategory("");
-    setPyBuildCategory({code: 'RESIDENTIAL', value: 1});
+    setPyBuildCategory({code: "", value: "null"});
     setPySubCategory("");
     setresrate("");
     setcommrate("");

@@ -12,7 +12,7 @@ const AddPayType = () => {
   const [modalData, setModalData] = useState(false);
   
   const [modalId,setModalId] = useState(1);
-  const [modalPyType,setModalPyType] = useState("select");
+  const [modalPyType,setModalPyType] = useState({code: "", value: "null"});
   const [modalDes,setModalDes] = useState("");
   const [modalUnit,setModalUnit] = useState("per Sq. Meter");
   const [modalRate,setModalRate] = useState(0);
@@ -28,18 +28,16 @@ const AddPayType = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
-  const dropDownData1 = [{code:"c",value:"c"},{code:"a",value:"a"},{code:"b",value:"b"}];
-
+  // const dropDownData1 = [{code:"c",value:"c"},{code:"a",value:"a"},{code:"b",value:"b"}];
+  const [totalAmount,setTotalAmount] = useState(0);
   const [selectRow, setSelectRow] = useState(false);
+  const [rowid, setRowid] = useState(0);
   const [feeDetailtblval,setfeeDetailtblval]= useState([]);
   let { uuid } = Digit.UserService.getUser()?.info || {};
 
-  function getRowId(rowid) {
-    console.log("rowid-------"+rowid);
-    setSelectRow(rowid);
-  }
-  console.log("selectRow------"+selectRow);
-  console.log("modalPyType ==== "+modalPyType);
+ 
+  // console.log("selectRow------"+selectRow);
+  console.log("modalPyType ==== "+JSON.stringify(modalPyType.code)+"------"+JSON.stringify(modalPyType.value));
 
   const insertNewRow =async (e)=>{
     e.preventDefault();
@@ -49,8 +47,8 @@ const AddPayType = () => {
       billId:"",
       applicationNo:id,
       unit:modalUnit,
-      payTypeId:modalPyType,
-      chargesTypeName:modalPyType,
+      payTypeId:modalPyType.value,
+      chargesTypeName:modalPyType.code,
       amount:modalValue,
       rate:modalRate,
       propPlotArea:"",
@@ -77,27 +75,33 @@ const AddPayType = () => {
     // console.log("demandCreateres-----"+JSON.stringify(PayTypeResp));
   
    }
-
+   let sumofAmount =0;
   useEffect( async ()=>{
     let feeDetails = await Digit.OBPSAdminService.getFeeDetails(id);
     setfeeDetailtblval(feeDetails);
+    feeDetails.map(item=>{
+      if(item.feetype == "Post"){
+        sumofAmount +=item.amount;
+        setTotalAmount(sumofAmount);
+        console.log("feeDetailtblval ---"+totalAmount+"--- "+JSON.stringify(item.amount));
+      }
+         
+    })
+ 
   },[modalData])
 
-
+console.log(selectRow);
   const GetCell = (value) => <span className="cell-text">{t(value)}</span>;
+  const GetCell1 = (value) => <input type="checkbox" id="vehicle1" onChange={getRowId()}  name="vehicle1" value={value}/>;
   const columns = React.useMemo(() => {
     return [
       {
         Header: t("Select"),
         disableSortBy: true,
-        Cell: ({ row }) => {
+        Cell: ({row}) => {
+          console.log();
           return (
-            <CheckBox
-            // onChange={getRowId(row.original?.id)}
-            checked={selectRow}
-            //  label={Refundable}
-            pageType={'employee'}
-          />
+            GetCell1(`${row.original?.id}`)
           );
         },
       },
@@ -146,7 +150,12 @@ const AddPayType = () => {
     ];
   }, []);
 
-
+  function getRowId() {
+    // console.log("here");
+    // const {value,checked} = e.target;
+    // console.log(`${value} is ${checked}`);
+    // setSelectRow(!selectRow);
+  }
 
   const handleAddAmountSubmit =(e)=>{
       e.preventDefault();
@@ -185,12 +194,27 @@ const AddPayType = () => {
 
 
   const { data = {}, isLoading } = Digit.Hooks.obps.useBPADetailsPage(tenantId, { applicationNo: id });
+  // useEffect( async ()=>{
+  //   let paytypeRule = await Digit.OBPSAdminService.getPaytype(tenantId);
+  //   setDropDownData(paytypeRule);
+  //   console.log("drop--gh--"+JSON.stringify(paytypeRule)); 
+  // },[])
+  
   useEffect( async ()=>{
     let paytypeRule = await Digit.OBPSAdminService.getPaytype(tenantId);
-    setDropDownData(paytypeRule);
-    console.log("drop--gh--"+JSON.stringify(paytypeRule)); 
+    let PyTydrop=[];
+    paytypeRule.map(item=>{
+      if(item.defunt==="N"){
+        PyTydrop.push({
+          code: item.charges_type_name,
+          value: item.id
+        })
+      }
+    });
+    setDropDownData(PyTydrop);
   },[])
-  // 
+
+
 
 
 
@@ -220,7 +244,7 @@ const AddPayType = () => {
   }
 
   
-
+console.log(feeDetailtblval.length);
 
   return (
 
@@ -269,22 +293,28 @@ const AddPayType = () => {
           <th style={{border: "1px solid #494442", textAlign: "left", padding: "15px", backgroundColor: "#04AA6D" }}>Action</th>
         </tr>
         </thead>
-        
-
-        {modalList.length>0 &&<React.Fragment> <tbody>
-                      {modalList.map(item=>(
+                      
+        {feeDetailtblval.length>0?
+        feeDetailtblval.map(item=>{
+          <tr><td>{item.charges_type_name}</td></tr>
+          
+        })
+        :""} */}
+        {/* {feeDetailtblval.length>0 &&<React.Fragment> <tbody>
+                      {feeDetailtblval.map(item=>(
                         <tr>
-                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >{item.modalId}</td>
-                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >{item.modalDes}</td>
-                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >{plotarea}</td>
-                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >{item.modalUnit}</td>
-                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >{item.modalRate}</td>
-                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >{item.modalValue}</td>
-                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >
+                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} ><input type="checkbox" id="vehicle1" onChange={setSelectRow(!selectRow)}  name="vehicle1" /></td>
+                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >{item.id}</td>
+                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >{item.charges_type_name}</td>
+                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >{item.prop_plot_area}</td>
+                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >{item.unit}</td>
+                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >{item.rate}</td>
+                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >{item.amount}</td> */}
+                          {/* <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >
                                 <EditPencilIcon className="icon" />
                                 <DeleteIcon className="icon" style={{ bottom: "5px" }} />
-                        </td>
-                          </tr>
+                        </td> */}
+                          {/* </tr>
                           
                       ))}
                       </tbody> 
@@ -298,20 +328,20 @@ const AddPayType = () => {
                     
                     </React.Fragment>
         }
-        {modalList.length<1 && <div>No rows are added yet</div>}
+        {feeDetailtblval.length<1 && <div>No rows are added yet</div>} */}
        
-      </table>
-      <button type="button" className="button-sub-text" onClick={()=>setModalData(true)} style={{marginTop:"10px",backgroundColor: "#008CBA"}}>Add New Row</button>
-      </div>                 */}
+      {/* </table> */}
+      {/* <button type="button" className="button-sub-text" onClick={()=>setModalData(true)} style={{marginTop:"10px",backgroundColor: "#008CBA"}}>Add New Row</button> */}
+      {/* </div>                 */}
 
       <Table
         t={t}
         data={feeDetailtblval}
         columns={columns}
         className="customTable table-border-style"       
-        // manualPagination={false}
-        // isPaginationRequired={false}
-        getCellProps={(cellInfo) => {
+         manualPagination={false}
+        isPaginationRequired={false}
+        getCellProps={(cellInfo) => { 
           return {
             style: {
               padding: "20px 18px",
@@ -323,7 +353,8 @@ const AddPayType = () => {
           };
         }}
       />
-
+      <h1 className="flex-right">Gross Amount :{totalAmount}</h1>
+    <h1 className="flex-right">Net Amount :{totalAmount}</h1>
       <button type="button" className="button-sub-text" onClick={()=>setModalData(true)} style={{margin:"10px",backgroundColor: "#008CBA"}}>Add New Row</button>
       <button type="button" className="button-sub-text"  style={{margin:"10px",backgroundColor: "#008CBA"}}>Delete</button>
       {modalData ? (

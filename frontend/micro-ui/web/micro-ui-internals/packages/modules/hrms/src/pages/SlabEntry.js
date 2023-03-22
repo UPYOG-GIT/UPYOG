@@ -65,7 +65,7 @@ const SlabEntry = () => {
       if(item.defunt==="N"){
         Proptydrop.push({
           code: item.description,
-          value: item.id
+          value: item.srno
         })
       }
     });
@@ -137,7 +137,7 @@ const SlabEntry = () => {
     setPyToValue(0);
     setPyOperation("");
     setPyPropCat("");
-    setPyBuildCat({code: 'RESIDENTIAL', value: 1});
+    setPyBuildCat({code: "", value: "null"});
     setPySubCat("");
     setPyResRate(0);
     setPyCommRate(0);
