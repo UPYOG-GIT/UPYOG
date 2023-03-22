@@ -527,7 +527,7 @@ public class MDMSService {
 		
 //		String  unitid ="";
 		log.info("result--0-----"+result.toString());
-		
+		int count=1;
 		for(Map<String,Object> item : result) {
 			HashMap<String, Object> feeMap = new HashMap<String, Object>();
 			PayTypeFeeDetailRequest payTypeFeeDetailRequest=new PayTypeFeeDetailRequest();
@@ -1077,7 +1077,7 @@ public class MDMSService {
 					payTypeFeeDetailRequest.setRate(trate);
 					payTypeFeeDetailRequest.setAmount(Val);
 					payTypeFeeDetailRequest.setBillId("");
-					payTypeFeeDetailRequest.setCreatedBy("");
+					payTypeFeeDetailRequest.setSrNo(count);
 					
 					feeMap.put("ApplicationNo", applicationNo);
 					feeMap.put("FeeType", feety);
@@ -1120,8 +1120,10 @@ public class MDMSService {
 			log.info("feeDetailMap-List-------"+feeDetailList.toString());
 //			log.info("feeDetailMap-List-------"+feeDetailMap);
 //			bpaRepository.createFeeDetail(feeDetailMap);
-			bpaRepository.createFeeDetail(feeDetailList);
+//			bpaRepository.createFeeDetail(feeDetailList);
+			count+=1;
 		}//End of for each fee type
+		bpaRepository.createFeeDetail(feeDetailList);
 		
 		log.info("feeDetailMap-List-------"+feeDetailMap);
 //		Map<String, String> list = new HashMap<String, String>();

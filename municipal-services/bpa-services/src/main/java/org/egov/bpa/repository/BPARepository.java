@@ -176,10 +176,11 @@ public class BPARepository {
 	}
 
 	public int deleteFeeDetailsById(List<Integer> ids) {
-		String deleteQuery = "DELETE FROM fee_details WHERE id IN (:msgNos)";
-//		List<Integer> params = <array list of number>;
-		Map namedParameters = Collections.singletonMap("msgNos", ids);
-		int deleteResult = jdbcTemplate.update(deleteQuery, namedParameters);
+//		String deleteQuery = "DELETE FROM fee_details WHERE id IN (:msgNos)";
+		String id = ids.toString().replace("[", "").replace("]", "");
+		String deleteQuery = "DELETE FROM fee_details WHERE id IN (" + id + ")";
+		log.info("deleteQuery: " + deleteQuery);
+		int deleteResult = jdbcTemplate.update(deleteQuery);
 		log.info("BPARepository.deletePayTpRateById: " + deleteResult
 				+ " data deleted from pay_tp_rate_master table of id(s) : " + ids.toString());
 		return deleteResult;
