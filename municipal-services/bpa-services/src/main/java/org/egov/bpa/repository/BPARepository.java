@@ -2,7 +2,7 @@ package org.egov.bpa.repository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -160,7 +160,7 @@ public class BPARepository {
 	public int updateFeeDetails(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
 		LocalDateTime date = LocalDateTime.now();
 
-		String updateQuery = "update fee_details set amount='" + payTypeFeeDetailRequest.getAmount() + "',,updatedby='"
+		String updateQuery = "update fee_details set amount='" + payTypeFeeDetailRequest.getAmount() + "',updatedby='"
 				+ payTypeFeeDetailRequest.getUpdatedBy() + "',updateddate='" + date + "' where application_no ='"
 				+ payTypeFeeDetailRequest.getApplicationNo() + "' and ulb_tenantid ='"
 				+ payTypeFeeDetailRequest.getTenantId() + "'" + " and id=" + payTypeFeeDetailRequest.getId();
@@ -170,12 +170,12 @@ public class BPARepository {
 	}
 
 	public List<Map<String, Object>> getFeeDetails(String applicationNo) {
-		String query = "select id,ulb_tenantid,paytype_id,feetype,srno,bill_id,unit,charges_type_name,prop_plot_area,amount,rate,type from fee_details where application_no=?";
+		String query = "select id,ulb_tenantid,paytype_id,feetype,srno,bill_id,unit,charges_type_name,prop_plot_area,amount,rate,type,verify from fee_details where application_no=? and feetype='Post'";
 		return jdbcTemplate.queryForList(query, new Object[] { applicationNo });
 
 	}
 
-	public int deleteFeeDetailsById(List<Integer> ids) {
+	public int deleteFeeDetailsById(List<Integer> ids, String applicationNo, String feeType) {
 //		String deleteQuery = "DELETE FROM fee_details WHERE id IN (:msgNos)";
 		String id = ids.toString().replace("[", "").replace("]", "");
 		String deleteQuery = "DELETE FROM fee_details WHERE id IN (" + id + ")";
@@ -183,17 +183,31 @@ public class BPARepository {
 		int deleteResult = jdbcTemplate.update(deleteQuery);
 		log.info("BPARepository.deletePayTpRateById: " + deleteResult
 				+ " data deleted from pay_tp_rate_master table of id(s) : " + ids.toString());
+		String totalAmountQuery = "SELECT SUM(amount) as amount from fee_details WHERE application_no='" + applicationNo
+				+ "' and feetype='" + feeType + "'";
+		Map<String, Object> resultMap = jdbcTemplate.queryForMap(totalAmountQuery);
+		updateBillDetailAmount(applicationNo, Double.valueOf(resultMap.get("amount").toString()));
 		return deleteResult;
 	}
 
-	public int verifyFeeDetailsByApplicationNo(String applicationNo, String isVerified, String verifiedBy) {
+	public int verifyFeeDetailsByApplicationNo(String applicationNo, String isVerified, String verifiedBy,
+			String feeType) {
 		LocalDateTime date = LocalDateTime.now();
 		String updateQuery = "UPDATE fee_details SET verify='" + isVerified + "',verifiedby='" + verifiedBy
-				+ "',verifieddate='" + date + "' WHERE application_no =" + "'" + applicationNo + "'";
+				+ "',verifieddate='" + date + "' WHERE application_no =" + "'" + applicationNo + "' and feetype='"
+				+ feeType + "'";
 		int updateResult = jdbcTemplate.update(updateQuery);
 		log.info("BPARepository.verifyFeeDetailsByApplicationNo: " + updateResult
 				+ " data updated into paytype_master table");
 		return updateResult;
+	}
+
+	public void updateBillDetailAmount(String applicationNo, double totalAmount) {
+		String updateQuery = "UPDATE egbs_billdetail_v1 SET amount='" + totalAmount + "' where application_no ='"
+				+ applicationNo + "'";
+		int updateResult = jdbcTemplate.update(updateQuery);
+		log.info("BPARepository.updateFeeDetails: " + updateResult + " data updated into paytype_master table");
+//		return updateResult;
 	}
 
 	public int createPayType(PayTypeRequest payTypeRequest) {

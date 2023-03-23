@@ -205,9 +205,10 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_deletefeedetail")
-	public ResponseEntity<Object> deleteFeeDetails(@RequestParam List<Integer> ids) {
+	public ResponseEntity<Object> deleteFeeDetails(@RequestParam List<Integer> ids,
+			@RequestParam String applicationNo,@RequestParam String feeType) {
 		try {
-			int deleteResult = bpaService.deleteFeeDetailsById(ids);
+			int deleteResult = bpaService.deleteFeeDetailsById(ids,applicationNo,feeType);
 			if (deleteResult > 0) {
 				return new ResponseEntity<>(deleteResult, HttpStatus.OK);
 			} else {
@@ -221,9 +222,9 @@ public class BPAController {
 	
 	@PostMapping(value = "/_verifyfeedetail")
 	public ResponseEntity<Object> verifyFeeDetailsByApplicationNo(@RequestParam String applicationNo,
-			@RequestParam String isVerified, @RequestParam String verifiedBy)  {
+			@RequestParam String isVerified, @RequestParam String verifiedBy, @RequestParam String feeType)  {
 		try {
-			int updateResult = bpaService.verifyFeeDetailsByApplicationNo(applicationNo,isVerified,verifiedBy);
+			int updateResult = bpaService.verifyFeeDetailsByApplicationNo(applicationNo,isVerified,verifiedBy,feeType);
 			if (updateResult > 0) {
 				return new ResponseEntity<>(updateResult, HttpStatus.OK);
 			} else {
