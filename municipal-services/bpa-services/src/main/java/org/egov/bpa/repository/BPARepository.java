@@ -186,10 +186,10 @@ public class BPARepository {
 		return deleteResult;
 	}
 
-	public int verifyFeeDetailsByApplicationNo(String applicationNo, String isVerified) {
-
-		String updateQuery = "UPDATE fee_details SET verify='" + isVerified + "' WHERE application_no =" + "'"
-				+ applicationNo + "'";
+	public int verifyFeeDetailsByApplicationNo(String applicationNo, String isVerified, String verifiedBy) {
+		LocalDateTime date = LocalDateTime.now();
+		String updateQuery = "UPDATE fee_details SET verify='" + isVerified + "',verifiedby='" + verifiedBy
+				+ "',verifieddate='" + date + "' WHERE application_no =" + "'" + applicationNo + "'";
 		int updateResult = jdbcTemplate.update(updateQuery);
 		log.info("BPARepository.verifyFeeDetailsByApplicationNo: " + updateResult
 				+ " data updated into paytype_master table");

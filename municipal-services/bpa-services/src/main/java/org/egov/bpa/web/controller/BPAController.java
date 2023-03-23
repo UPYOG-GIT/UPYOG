@@ -221,9 +221,9 @@ public class BPAController {
 	
 	@PostMapping(value = "/_verifyfeedetail")
 	public ResponseEntity<Object> verifyFeeDetailsByApplicationNo(@RequestParam String applicationNo,
-			@RequestParam String isVerified)  {
+			@RequestParam String isVerified, @RequestParam String verifiedBy)  {
 		try {
-			int updateResult = bpaService.verifyFeeDetailsByApplicationNo(applicationNo,isVerified);
+			int updateResult = bpaService.verifyFeeDetailsByApplicationNo(applicationNo,isVerified,verifiedBy);
 			if (updateResult > 0) {
 				return new ResponseEntity<>(updateResult, HttpStatus.OK);
 			} else {

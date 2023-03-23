@@ -840,8 +840,8 @@ public class BPAService {
 		return resultList;
 	}
 
-	public int verifyFeeDetailsByApplicationNo(String applicationNo, String isVerified) {
-		return repository.verifyFeeDetailsByApplicationNo(applicationNo, isVerified);
+	public int verifyFeeDetailsByApplicationNo(String applicationNo, String isVerified,String verifiedBy) {
+		return repository.verifyFeeDetailsByApplicationNo(applicationNo, isVerified,verifiedBy);
 	}
 
 	public int createPayType(PayTypeRequest payTypeRequest) {
