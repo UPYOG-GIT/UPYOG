@@ -105,9 +105,9 @@ public class BillRepositoryV2 {
 			applicationNo = bill.getConsumerCode();
 			List<BillDetailV2> tempBillDetails = bill.getBillDetails();
 			billDetails.addAll(tempBillDetails);
-
+			billId = bill.getId();
 			for (BillDetailV2 billDetail : tempBillDetails) {
-				billId = billDetail.getBillId();
+//				billId = billDetail.getBillId();
 
 				billDetailIdAndBillMap.put(billDetail.getId(), bill);
 				billAccountDetails.addAll(billDetail.getBillAccountDetails());
