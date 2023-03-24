@@ -1,5 +1,7 @@
 package org.egov.bpa.web.model;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -17,6 +19,9 @@ public class PayTypeFeeDetailRequest {
 
 	@JsonProperty("id")
     private int id;
+	
+	@JsonProperty("ids")
+	private List<Integer> ids;
 	
 	@JsonProperty("payTypeId")
 	private int payTypeId=0;
