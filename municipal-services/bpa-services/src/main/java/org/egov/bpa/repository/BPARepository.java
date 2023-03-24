@@ -154,6 +154,12 @@ public class BPARepository {
 				payTypeFeeDetailRequest.getCreatedBy());
 
 		log.info("BPARepository.createFeeDetail: " + insertResult + " data inserted into pre_post_fee_details table");
+		String totalAmountQuery = "SELECT SUM(amount) as amount from fee_details WHERE application_no='"
+				+ payTypeFeeDetailRequest.getApplicationNo() + "' and feetype='" + payTypeFeeDetailRequest.getFeeType()
+				+ "'";
+		Map<String, Object> resultMap = jdbcTemplate.queryForMap(totalAmountQuery);
+		updateBillDetailAmount(payTypeFeeDetailRequest.getApplicationNo(),
+				Double.valueOf(resultMap.get("amount").toString()));
 		return insertResult;
 	}
 
@@ -203,8 +209,8 @@ public class BPARepository {
 	}
 
 	public void updateBillDetailAmount(String applicationNo, double totalAmount) {
-		String updateQuery = "UPDATE egbs_billdetail_v1 SET amount='" + totalAmount + "' where application_no ='"
-				+ applicationNo + "'";
+		String updateQuery = "UPDATE egbs_billdetail_v1 SET totalamount='" + totalAmount + "' WHERE consumercode ='"
+				+ applicationNo + "' AND businessservice='BPA.NC_SAN_FEE'";
 		int updateResult = jdbcTemplate.update(updateQuery);
 		log.info("BPARepository.updateFeeDetails: " + updateResult + " data updated into paytype_master table");
 //		return updateResult;
