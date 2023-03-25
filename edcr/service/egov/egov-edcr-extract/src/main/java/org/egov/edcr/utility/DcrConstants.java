@@ -59,6 +59,7 @@ public class DcrConstants {
 
     public static final String PLOT_AREA = "Plot Area ";
     public static final String BUILDING_HEIGHT_DESC = "Building height";
+    public static final String FLOOR_HEIGHT_DESC = "Floor height";
     public static final String BUILDING_FOOT_PRINT = "Building foot print";
     public static final String FRONT_YARD_DESC = "Front Setback";
     public static final String REAR_YARD_DESC = "Rear Setback";

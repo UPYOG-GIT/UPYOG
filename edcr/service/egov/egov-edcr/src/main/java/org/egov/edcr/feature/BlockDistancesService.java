@@ -104,7 +104,7 @@ public class BlockDistancesService extends FeatureProcess {
 		for (Block sourceBlock : pl.getBlocks()) {
 			// validation for building height and occupancies present in diagram or not
 			if (sourceBlock.getBuilding() != null) {
-				if (sourceBlock.getBuilding().getBuildingHeight().compareTo(BigDecimal.ZERO) == 0) {
+				if (sourceBlock.getBuilding().getBuildingHeight()==null || sourceBlock.getBuilding().getBuildingHeight().compareTo(BigDecimal.ZERO) == 0) {
 					errors.put(String.format(DcrConstants.BLOCK_BUILDING_HEIGHT, sourceBlock.getNumber()),
 							edcrMessageSource.getMessage(
 									DcrConstants.OBJECTNOTDEFINED, new String[] { String

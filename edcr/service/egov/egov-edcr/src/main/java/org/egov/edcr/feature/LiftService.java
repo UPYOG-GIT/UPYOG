@@ -47,6 +47,9 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.utility.DcrConstants.BUILDING_HEIGHT_DESC;
+import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -144,7 +147,9 @@ public class LiftService extends FeatureProcess {
 					 * in case of apartments, group housing, commercial, institutional and office
 					 * buildings
 					 */
-					OccupancyTypeHelper occupancyTypeHelper = plan.getVirtualBuilding().getMostRestrictiveFarHelper();
+					if (buildingHeight != null) {
+						OccupancyTypeHelper occupancyTypeHelper = plan.getVirtualBuilding()
+								.getMostRestrictiveFarHelper();
 //                    if (block.getBuilding().getIsHighRise() &&
 //                            (DxfFileConstants.A_AF
 //                                    .equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype()
@@ -159,40 +164,44 @@ public class LiftService extends FeatureProcess {
 //                                            .equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype()
 //                                                    .getCode()))) {
 
-					String occupancyType = (occupancyTypeHelper.getType() != null)
-							? occupancyTypeHelper.getType().getName()
-							: null;
+						String occupancyType = (occupancyTypeHelper.getType() != null)
+								? occupancyTypeHelper.getType().getName()
+								: null;
 //					String occupancyType=occupancyTypeHelper.getType().getName();
-					if (block.getBuilding().getIsHighRise() && ((occupancyTypeHelper.getSubtype() != null
-							&& DxfFileConstants.A_AF.equals(occupancyTypeHelper.getSubtype().getCode()))
-							|| occupancyTypeHelper.getType() != null
-									&& (DxfFileConstants.B.equals(occupancyTypeHelper.getType().getCode())
-											|| DxfFileConstants.E.equals(occupancyTypeHelper.getType().getCode())
-											|| DxfFileConstants.F.equals(occupancyTypeHelper.getType().getCode())))) {
-						noOfLiftsRqrd = BigDecimal.valueOf(1);
-						boolean valid = false;
-						if (BigDecimal.valueOf(Double.valueOf(block.getNumberOfLifts()))
-								.compareTo(noOfLiftsRqrd) >= 0) {
-							valid = true;
-						}
-						if (valid) {
-							isReport = true;
+						if (block.getBuilding().getIsHighRise() && ((occupancyTypeHelper.getSubtype() != null
+								&& DxfFileConstants.A_AF.equals(occupancyTypeHelper.getSubtype().getCode()))
+								|| occupancyTypeHelper.getType() != null && (DxfFileConstants.B
+										.equals(occupancyTypeHelper.getType().getCode())
+										|| DxfFileConstants.E.equals(occupancyTypeHelper.getType().getCode())
+										|| DxfFileConstants.F.equals(occupancyTypeHelper.getType().getCode())))) {
+							noOfLiftsRqrd = BigDecimal.valueOf(1);
+							boolean valid = false;
+							if (BigDecimal.valueOf(Double.valueOf(block.getNumberOfLifts()))
+									.compareTo(noOfLiftsRqrd) >= 0) {
+								valid = true;
+							}
+							if (valid) {
+								isReport = true;
+								setReportOutputDetails(plan, SUBRULE, SUBRULE_DESCRIPTION, occupancyType,
+										buildingHeight.toString(), noOfLiftsRqrd.toString(), block.getNumberOfLifts(),
+										Result.Accepted.getResultVal(), "", scrutinyDetail);
+							} else {
+								isReport = true;
+								setReportOutputDetails(plan, SUBRULE, SUBRULE_DESCRIPTION, occupancyType,
+										buildingHeight.toString(), noOfLiftsRqrd.toString(), block.getNumberOfLifts(),
+										Result.Not_Accepted.getResultVal(), "", scrutinyDetail);
+							}
+
+						} else {
+//					if (!isReport) {
 							setReportOutputDetails(plan, SUBRULE, SUBRULE_DESCRIPTION, occupancyType,
 									buildingHeight.toString(), noOfLiftsRqrd.toString(), block.getNumberOfLifts(),
 									Result.Accepted.getResultVal(), "", scrutinyDetail);
-						} else {
-							isReport = true;
-							setReportOutputDetails(plan, SUBRULE, SUBRULE_DESCRIPTION, occupancyType,
-									buildingHeight.toString(), noOfLiftsRqrd.toString(), block.getNumberOfLifts(),
-									Result.Not_Accepted.getResultVal(), "", scrutinyDetail);
 						}
-
-					} else {
-//					if (!isReport) {
-						setReportOutputDetails(plan, SUBRULE, SUBRULE_DESCRIPTION, occupancyType,
-								buildingHeight.toString(), noOfLiftsRqrd.toString(), block.getNumberOfLifts(),
-								Result.Accepted.getResultVal(), "", scrutinyDetail);
-					}
+					} 
+//					else {
+//						plan.addError(BUILDING_HEIGHT_DESC, getLocaleMessage(OBJECTNOTDEFINED, BUILDING_HEIGHT_DESC));
+//					}
 				}
 
 				/*

@@ -3,6 +3,7 @@ package org.egov.bpa.web.controller;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -165,9 +166,18 @@ public class BPAController {
 
 	@PostMapping(value = "/_updatepaytype")
 	public ResponseEntity<Object> updatePayType(@RequestBody PayTypeRequestWrapper payTypeRequestWrapper) {
-		PayTypeRequest payTypeRequest = payTypeRequestWrapper.getPayTypeRequest();
-		int updateResult = bpaService.updatePayType(payTypeRequest);
-		return new ResponseEntity<>(updateResult, HttpStatus.OK);
+		try {
+			PayTypeRequest payTypeRequest = payTypeRequestWrapper.getPayTypeRequest();
+			int updateResult = bpaService.updatePayType(payTypeRequest);
+			if (updateResult > 0) {
+				return new ResponseEntity<>(updateResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(updateResult, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in updatePayType: " + ex);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	@PostMapping(value = "/_createfeedetail")
@@ -184,7 +194,7 @@ public class BPAController {
 				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
 			}
 		} catch (Exception ex) {
-			log.error("Exception in createPayType: " + ex);
+			log.error("Exception in createFeeDetails: " + ex);
 			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 //		return null;
@@ -193,34 +203,68 @@ public class BPAController {
 	@PostMapping(value = "/_updatefeedetail")
 	public ResponseEntity<Object> updateFeeDetails(
 			@RequestBody PayTypeFeeDetailRequestWrapper payTypeFeeDetailRequestWrapper) {
-		PayTypeFeeDetailRequest payTypeFeeDetailRequest = payTypeFeeDetailRequestWrapper.getPayTypeFeeDetailRequest();
-		int updateResult = bpaService.updateFeeDetails(payTypeFeeDetailRequest);
-		return new ResponseEntity<>(updateResult, HttpStatus.OK);
+		try {
+			PayTypeFeeDetailRequest payTypeFeeDetailRequest = payTypeFeeDetailRequestWrapper
+					.getPayTypeFeeDetailRequest();
+			int updateResult = bpaService.updateFeeDetails(payTypeFeeDetailRequest);
+			if (updateResult > 0) {
+				return new ResponseEntity<>(updateResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(updateResult, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in updateFeeDetails: " + ex);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	@PostMapping(value = "/_searchfeedetails")
 	public ResponseEntity<List<Map<String, Object>>> getFeeDetails(@RequestParam String applicationNo) {
+//		try {
 		List<Map<String, Object>> sqlResponseList = bpaService.getFeeDetails(applicationNo);
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
+//		} catch (Exception ex) {
+//			log.error("Exception in getFeeDetails: " + ex);
+//			List errorList = new ArrayList<Map<String, Object>>();
+//			errorList.add(new HashMap<String, Object>().put("Error", ex.toString()));
+//			return new ResponseEntity<>(errorList, HttpStatus.BAD_REQUEST);
+//		}
 	}
 
 	@PostMapping(value = "/_deletefeedetail")
-	public ResponseEntity<Object> deleteFeeDetails(@RequestParam List<Integer> ids) {
-//		@RequestBody RequestInfo requestInfo,
-//		List<Map<String,Object>> responseList = bpaService.getPayTypeByTenantId(tenantId);
-//		return new ResponseEntity<>(responseList, HttpStatus.OK);
+	public ResponseEntity<Object> deleteFeeDetails(
+			@RequestBody PayTypeFeeDetailRequestWrapper payTypeFeeDetailRequestWrapper) {
 		try {
-			int deleteResult = bpaService.deleteFeeDetailsById(ids);
+			PayTypeFeeDetailRequest payTypeFeeDetailRequest = payTypeFeeDetailRequestWrapper
+					.getPayTypeFeeDetailRequest();
+			int deleteResult = bpaService.deleteFeeDetailsById(payTypeFeeDetailRequest.getIds(),
+					payTypeFeeDetailRequest.getApplicationNo(), payTypeFeeDetailRequest.getFeeType());
 			if (deleteResult > 0) {
 				return new ResponseEntity<>(deleteResult, HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>(deleteResult, HttpStatus.BAD_REQUEST);
 			}
 		} catch (Exception ex) {
-			log.error("Exception in createPayType: " + ex);
+			log.error("Exception in deleteFeeDetails: " + ex);
 			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
-//		return null;
+	}
+
+	@PostMapping(value = "/_verifyfeedetail")
+	public ResponseEntity<Object> verifyFeeDetailsByApplicationNo(@RequestParam String applicationNo,
+			@RequestParam String isVerified, @RequestParam String verifiedBy, @RequestParam String feeType) {
+		try {
+			int updateResult = bpaService.verifyFeeDetailsByApplicationNo(applicationNo, isVerified, verifiedBy,
+					feeType);
+			if (updateResult > 0) {
+				return new ResponseEntity<>(updateResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(updateResult, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in verifyFeeDetailsByApplicationNo: " + ex);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	@PostMapping(value = "/_createproposaltype")
@@ -238,7 +282,7 @@ public class BPAController {
 				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
 			}
 		} catch (Exception ex) {
-			log.error("Exception in createPayType: " + ex);
+			log.error("Exception in createProposalType: " + ex);
 			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 //		return null;
@@ -246,16 +290,32 @@ public class BPAController {
 
 	@PostMapping(value = "/_searchproposaltype")
 	public ResponseEntity<List<Map<String, Object>>> getProposalTypeByTenantId(@RequestParam String tenantId) {
+//		try {
 		List<Map<String, Object>> sqlResponseList = bpaService.getProposalTypeByTenantId(tenantId);
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
+//		} catch (Exception ex) {
+//			log.error("Exception in getProposalTypeByTenantId: " + ex);
+//			List errorList = new ArrayList<Map<String, Object>>();
+//			errorList.add(new HashMap<String, Object>().put("Error", ex.toString()));
+//			return new ResponseEntity<>(errorList, HttpStatus.BAD_REQUEST);
+//		}
 	}
 
 	@PostMapping(value = "/_updateproposaltype")
 	public ResponseEntity<Object> updateProposalType(
 			@RequestBody ProposalTypeRequestWrapper proposalTypeRequestWrapper) {
-		ProposalTypeRequest proposalTypeRequest = proposalTypeRequestWrapper.getProposalTypeRequest();
-		int updateResult = bpaService.updateProposalType(proposalTypeRequest);
-		return new ResponseEntity<>(updateResult, HttpStatus.OK);
+		try {
+			ProposalTypeRequest proposalTypeRequest = proposalTypeRequestWrapper.getProposalTypeRequest();
+			int updateResult = bpaService.updateProposalType(proposalTypeRequest);
+			if (updateResult > 0) {
+				return new ResponseEntity<>(updateResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(updateResult, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in updateProposalType: " + ex);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	@PostMapping(value = "/_createbcategory")
@@ -269,7 +329,7 @@ public class BPAController {
 				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
 			}
 		} catch (Exception ex) {
-			log.error("Exception in createPayType: " + ex);
+			log.error("Exception in createBCategory: " + ex);
 			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 //		return null;
@@ -277,15 +337,31 @@ public class BPAController {
 
 	@PostMapping(value = "/_searchbcategory")
 	public ResponseEntity<List<Map<String, Object>>> getBCategoryByTenantId(@RequestParam String tenantId) {
+//		try {
 		List<Map<String, Object>> sqlResponseList = bpaService.getBCategoryByTenantId(tenantId);
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
+//		} catch (Exception ex) {
+//			log.error("Exception in getBCategoryByTenantId: " + ex);
+//			List errorList = new ArrayList<Map<String, Object>>();
+//			errorList.add(new HashMap<String, Object>().put("Error", ex.toString()));
+//			return new ResponseEntity<>(errorList, HttpStatus.BAD_REQUEST);
+//		}
 	}
 
 	@PostMapping(value = "/_updatebcategory")
 	public ResponseEntity<Object> updateBCategory(@RequestBody BCategoryRequestWrapper bCategoryRequestWrapper) {
-		BCategoryRequest bCategoryRequest = bCategoryRequestWrapper.getBCategoryRequest();
-		int updateResult = bpaService.updateBCategory(bCategoryRequest);
-		return new ResponseEntity<>(updateResult, HttpStatus.OK);
+		try {
+			BCategoryRequest bCategoryRequest = bCategoryRequestWrapper.getBCategoryRequest();
+			int updateResult = bpaService.updateBCategory(bCategoryRequest);
+			if (updateResult > 0) {
+				return new ResponseEntity<>(updateResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(updateResult, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in updateBCategory: " + ex);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	@PostMapping(value = "/_createbscategory")
@@ -299,10 +375,9 @@ public class BPAController {
 				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
 			}
 		} catch (Exception ex) {
-			log.error("Exception in createPayType: " + ex);
+			log.error("Exception in createBSCategory: " + ex);
 			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
-//		return null;
 	}
 
 	@PostMapping(value = "/_searchbscategory")
@@ -314,9 +389,18 @@ public class BPAController {
 
 	@PostMapping(value = "/_updatebscategory")
 	public ResponseEntity<Object> updateBSCategory(@RequestBody BSCategoryRequestWrapper bSCategoryRequestWrapper) {
-		BSCategoryRequest bSCategoryRequest = bSCategoryRequestWrapper.getBSCategoryRequest();
-		int updateResult = bpaService.updateBSCategory(bSCategoryRequest);
-		return new ResponseEntity<>(updateResult, HttpStatus.OK);
+		try {
+			BSCategoryRequest bSCategoryRequest = bSCategoryRequestWrapper.getBSCategoryRequest();
+			int updateResult = bpaService.updateBSCategory(bSCategoryRequest);
+			if (updateResult > 0) {
+				return new ResponseEntity<>(updateResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(updateResult, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in updateBSCategory: " + ex);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	@PostMapping(value = "/_createpaytprate")
@@ -330,7 +414,7 @@ public class BPAController {
 				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
 			}
 		} catch (Exception ex) {
-			log.error("Exception in createPayType: " + ex);
+			log.error("Exception in createPayTpRate: " + ex);
 			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 //		return null;
@@ -346,17 +430,16 @@ public class BPAController {
 	@PostMapping(value = "/_deletepaytprate")
 	public ResponseEntity<Object> deletePayTpRateById(@RequestParam int id) {
 		try {
-		int deleteResult = bpaService.deletePayTpRateById(id);
-		if (deleteResult > 0) {
-			return new ResponseEntity<>(deleteResult, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(deleteResult, HttpStatus.BAD_REQUEST);
+			int deleteResult = bpaService.deletePayTpRateById(id);
+			if (deleteResult > 0) {
+				return new ResponseEntity<>(deleteResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(deleteResult, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in deletePayTpRateById: " + ex);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
-	} catch (Exception ex) {
-		log.error("Exception in createPayType: " + ex);
-		return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
-	}
-//		return new ResponseEntity<>(deleteResult, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/_createslab")
@@ -370,7 +453,7 @@ public class BPAController {
 				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
 			}
 		} catch (Exception ex) {
-			log.error("Exception in createPayType: " + ex);
+			log.error("Exception in createSlabMaster: " + ex);
 			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 //		return null;
@@ -385,7 +468,16 @@ public class BPAController {
 
 	@PostMapping(value = "/_deleteslab")
 	public ResponseEntity<Object> deleteSlabMasterById(@RequestParam int id) {
-		int deleteResult = bpaService.deleteSlabMasterById(id);
-		return new ResponseEntity<>(deleteResult, HttpStatus.OK);
+		try {
+			int deleteResult = bpaService.deleteSlabMasterById(id);
+			if (deleteResult > 0) {
+				return new ResponseEntity<>(deleteResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(deleteResult, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in deleteSlabMasterById: " + ex);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+		}
 	}
 }

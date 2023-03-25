@@ -48,6 +48,7 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -829,15 +830,19 @@ public class BPAService {
 	public int updateFeeDetails(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
 		return repository.updateFeeDetails(payTypeFeeDetailRequest);
 	}
-	
-	public int deleteFeeDetailsById(List<Integer> ids) {
-		return repository.deleteFeeDetailsById(ids);
+
+	public int deleteFeeDetailsById(List<Integer> ids, String applicationNo, String feeType) {
+		return repository.deleteFeeDetailsById(ids,applicationNo, feeType);
 	}
 
 	public List<Map<String, Object>> getFeeDetails(String applicationNo) {
 		List<Map<String, Object>> resultList = repository.getFeeDetails(applicationNo);
 		log.info("getPayTypeByTenantId: " + resultList.toString());
 		return resultList;
+	}
+
+	public int verifyFeeDetailsByApplicationNo(String applicationNo, String isVerified,String verifiedBy,String feeType) {
+		return repository.verifyFeeDetailsByApplicationNo(applicationNo, isVerified,verifiedBy,feeType);
 	}
 
 	public int createPayType(PayTypeRequest payTypeRequest) {
