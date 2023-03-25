@@ -136,14 +136,14 @@ public class BPAController {
 		try {
 			PayTypeRequest payTypeRequest = payTypeRequestWrapper.getPayTypeRequest();
 			int insertResult = bpaService.createPayType(payTypeRequest);
-//			if (insertResult > 0) {
-			return new ResponseEntity<>(insertResult + " record inserted", HttpStatus.OK);
-//			} else {
-//				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
-//			}
+			if (insertResult > 0) {
+				return new ResponseEntity<>(insertResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
+			}
 		} catch (Exception ex) {
 			log.error("Exception in createPayType: " + ex);
-			return new ResponseEntity<>(ex.toString(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 //		return null;
 	}
@@ -169,10 +169,14 @@ public class BPAController {
 		try {
 			PayTypeRequest payTypeRequest = payTypeRequestWrapper.getPayTypeRequest();
 			int updateResult = bpaService.updatePayType(payTypeRequest);
-			return new ResponseEntity<>(updateResult + " record updated", HttpStatus.OK);
+			if (updateResult > 0) {
+				return new ResponseEntity<>(updateResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(updateResult, HttpStatus.BAD_REQUEST);
+			}
 		} catch (Exception ex) {
 			log.error("Exception in updatePayType: " + ex);
-			return new ResponseEntity<>(ex.toString(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -184,10 +188,14 @@ public class BPAController {
 					.getPayTypeFeeDetailRequest();
 
 			int insertResult = bpaService.createFeeDetail(payTypeFeeDetailRequest);
-			return new ResponseEntity<>(insertResult + " record inserted", HttpStatus.OK);
+			if (insertResult > 0) {
+				return new ResponseEntity<>(insertResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
+			}
 		} catch (Exception ex) {
 			log.error("Exception in createFeeDetails: " + ex);
-			return new ResponseEntity<>(ex.toString(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 //		return null;
 	}
@@ -199,24 +207,28 @@ public class BPAController {
 			PayTypeFeeDetailRequest payTypeFeeDetailRequest = payTypeFeeDetailRequestWrapper
 					.getPayTypeFeeDetailRequest();
 			int updateResult = bpaService.updateFeeDetails(payTypeFeeDetailRequest);
-			return new ResponseEntity<>(updateResult + " record updated", HttpStatus.OK);
+			if (updateResult > 0) {
+				return new ResponseEntity<>(updateResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(updateResult, HttpStatus.BAD_REQUEST);
+			}
 		} catch (Exception ex) {
 			log.error("Exception in updateFeeDetails: " + ex);
-			return new ResponseEntity<>(ex.toString(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 	}
 
 	@PostMapping(value = "/_searchfeedetails")
 	public ResponseEntity<List<Map<String, Object>>> getFeeDetails(@RequestParam String applicationNo) {
-		try {
-			List<Map<String, Object>> sqlResponseList = bpaService.getFeeDetails(applicationNo);
-			return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
-		} catch (Exception ex) {
-			log.error("Exception in getFeeDetails: " + ex);
-			List errorList = new ArrayList<Map<String, Object>>();
-			errorList.add(new HashMap<String, Object>().put("Error", ex.toString()));
-			return new ResponseEntity<>(errorList, HttpStatus.BAD_REQUEST);
-		}
+//		try {
+		List<Map<String, Object>> sqlResponseList = bpaService.getFeeDetails(applicationNo);
+		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
+//		} catch (Exception ex) {
+//			log.error("Exception in getFeeDetails: " + ex);
+//			List errorList = new ArrayList<Map<String, Object>>();
+//			errorList.add(new HashMap<String, Object>().put("Error", ex.toString()));
+//			return new ResponseEntity<>(errorList, HttpStatus.BAD_REQUEST);
+//		}
 	}
 
 	@PostMapping(value = "/_deletefeedetail")
@@ -227,10 +239,14 @@ public class BPAController {
 					.getPayTypeFeeDetailRequest();
 			int deleteResult = bpaService.deleteFeeDetailsById(payTypeFeeDetailRequest.getIds(),
 					payTypeFeeDetailRequest.getApplicationNo(), payTypeFeeDetailRequest.getFeeType());
-			return new ResponseEntity<>(deleteResult + " record deleted", HttpStatus.OK);
+			if (deleteResult > 0) {
+				return new ResponseEntity<>(deleteResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(deleteResult, HttpStatus.BAD_REQUEST);
+			}
 		} catch (Exception ex) {
 			log.error("Exception in deleteFeeDetails: " + ex);
-			return new ResponseEntity<>(ex.toString(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -240,10 +256,14 @@ public class BPAController {
 		try {
 			int updateResult = bpaService.verifyFeeDetailsByApplicationNo(applicationNo, isVerified, verifiedBy,
 					feeType);
-			return new ResponseEntity<>(updateResult + " record updated", HttpStatus.OK);
+			if (updateResult > 0) {
+				return new ResponseEntity<>(updateResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(updateResult, HttpStatus.BAD_REQUEST);
+			}
 		} catch (Exception ex) {
 			log.error("Exception in verifyFeeDetailsByApplicationNo: " + ex);
-			return new ResponseEntity<>(ex.toString(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -256,25 +276,29 @@ public class BPAController {
 		try {
 			ProposalTypeRequest proposalTypeRequest = proposalTypeRequestWrapper.getProposalTypeRequest();
 			int insertResult = bpaService.createProposalType(proposalTypeRequest);
-			return new ResponseEntity<>(insertResult + " record inserted", HttpStatus.OK);
+			if (insertResult > 0) {
+				return new ResponseEntity<>(insertResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
+			}
 		} catch (Exception ex) {
 			log.error("Exception in createProposalType: " + ex);
-			return new ResponseEntity<>(ex.toString(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 //		return null;
 	}
 
 	@PostMapping(value = "/_searchproposaltype")
 	public ResponseEntity<List<Map<String, Object>>> getProposalTypeByTenantId(@RequestParam String tenantId) {
-		try {
-			List<Map<String, Object>> sqlResponseList = bpaService.getProposalTypeByTenantId(tenantId);
-			return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
-		} catch (Exception ex) {
-			log.error("Exception in getProposalTypeByTenantId: " + ex);
-			List errorList = new ArrayList<Map<String, Object>>();
-			errorList.add(new HashMap<String, Object>().put("Error", ex.toString()));
-			return new ResponseEntity<>(errorList, HttpStatus.BAD_REQUEST);
-		}
+//		try {
+		List<Map<String, Object>> sqlResponseList = bpaService.getProposalTypeByTenantId(tenantId);
+		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
+//		} catch (Exception ex) {
+//			log.error("Exception in getProposalTypeByTenantId: " + ex);
+//			List errorList = new ArrayList<Map<String, Object>>();
+//			errorList.add(new HashMap<String, Object>().put("Error", ex.toString()));
+//			return new ResponseEntity<>(errorList, HttpStatus.BAD_REQUEST);
+//		}
 	}
 
 	@PostMapping(value = "/_updateproposaltype")
@@ -283,10 +307,14 @@ public class BPAController {
 		try {
 			ProposalTypeRequest proposalTypeRequest = proposalTypeRequestWrapper.getProposalTypeRequest();
 			int updateResult = bpaService.updateProposalType(proposalTypeRequest);
-			return new ResponseEntity<>(updateResult + " record updated", HttpStatus.OK);
+			if (updateResult > 0) {
+				return new ResponseEntity<>(updateResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(updateResult, HttpStatus.BAD_REQUEST);
+			}
 		} catch (Exception ex) {
 			log.error("Exception in updateProposalType: " + ex);
-			return new ResponseEntity<>(ex.toString(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -295,25 +323,29 @@ public class BPAController {
 		try {
 			BCategoryRequest bCategoryRequest = bCategoryRequestWrapper.getBCategoryRequest();
 			int insertResult = bpaService.createBCategory(bCategoryRequest);
-			return new ResponseEntity<>(insertResult + " record inserted", HttpStatus.OK);
+			if (insertResult > 0) {
+				return new ResponseEntity<>(insertResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
+			}
 		} catch (Exception ex) {
 			log.error("Exception in createBCategory: " + ex);
-			return new ResponseEntity<>(ex.toString(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 //		return null;
 	}
 
 	@PostMapping(value = "/_searchbcategory")
 	public ResponseEntity<List<Map<String, Object>>> getBCategoryByTenantId(@RequestParam String tenantId) {
-		try {
-			List<Map<String, Object>> sqlResponseList = bpaService.getBCategoryByTenantId(tenantId);
-			return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
-		} catch (Exception ex) {
-			log.error("Exception in getBCategoryByTenantId: " + ex);
-			List errorList = new ArrayList<Map<String, Object>>();
-			errorList.add(new HashMap<String, Object>().put("Error", ex.toString()));
-			return new ResponseEntity<>(errorList, HttpStatus.BAD_REQUEST);
-		}
+//		try {
+		List<Map<String, Object>> sqlResponseList = bpaService.getBCategoryByTenantId(tenantId);
+		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
+//		} catch (Exception ex) {
+//			log.error("Exception in getBCategoryByTenantId: " + ex);
+//			List errorList = new ArrayList<Map<String, Object>>();
+//			errorList.add(new HashMap<String, Object>().put("Error", ex.toString()));
+//			return new ResponseEntity<>(errorList, HttpStatus.BAD_REQUEST);
+//		}
 	}
 
 	@PostMapping(value = "/_updatebcategory")
@@ -321,10 +353,14 @@ public class BPAController {
 		try {
 			BCategoryRequest bCategoryRequest = bCategoryRequestWrapper.getBCategoryRequest();
 			int updateResult = bpaService.updateBCategory(bCategoryRequest);
-			return new ResponseEntity<>(updateResult + " record updated", HttpStatus.OK);
+			if (updateResult > 0) {
+				return new ResponseEntity<>(updateResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(updateResult, HttpStatus.BAD_REQUEST);
+			}
 		} catch (Exception ex) {
 			log.error("Exception in updateBCategory: " + ex);
-			return new ResponseEntity<>(ex.toString(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -333,25 +369,22 @@ public class BPAController {
 		try {
 			BSCategoryRequest bSCategoryRequest = bSCategoryRequestWrapper.getBSCategoryRequest();
 			int insertResult = bpaService.createBSCategory(bSCategoryRequest);
-			return new ResponseEntity<>(insertResult + " record inserted", HttpStatus.OK);
+			if (insertResult > 0) {
+				return new ResponseEntity<>(insertResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
+			}
 		} catch (Exception ex) {
 			log.error("Exception in createBSCategory: " + ex);
-			return new ResponseEntity<>(ex.toString(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 	}
 
 	@PostMapping(value = "/_searchbscategory")
 	public ResponseEntity<List<Map<String, Object>>> getBSCategoryByTenantId(@RequestParam String tenantId,
 			@RequestParam int catId) {
-		try {
-			List<Map<String, Object>> sqlResponseList = bpaService.getBSCategoryByTenantId(tenantId, catId);
-			return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
-		} catch (Exception ex) {
-			log.error("Exception in getBSCategoryByTenantId: " + ex);
-			List errorList = new ArrayList<Map<String, Object>>();
-			errorList.add(new HashMap<String, Object>().put("Error", ex.toString()));
-			return new ResponseEntity<>(errorList, HttpStatus.BAD_REQUEST);
-		}
+		List<Map<String, Object>> sqlResponseList = bpaService.getBSCategoryByTenantId(tenantId, catId);
+		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/_updatebscategory")
@@ -359,10 +392,14 @@ public class BPAController {
 		try {
 			BSCategoryRequest bSCategoryRequest = bSCategoryRequestWrapper.getBSCategoryRequest();
 			int updateResult = bpaService.updateBSCategory(bSCategoryRequest);
-			return new ResponseEntity<>(updateResult + " record updated", HttpStatus.OK);
+			if (updateResult > 0) {
+				return new ResponseEntity<>(updateResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(updateResult, HttpStatus.BAD_REQUEST);
+			}
 		} catch (Exception ex) {
 			log.error("Exception in updateBSCategory: " + ex);
-			return new ResponseEntity<>(ex.toString(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -371,10 +408,14 @@ public class BPAController {
 		try {
 			PayTpRateRequest payTpRateRequest = payTpRateRequestWrapper.getPayTpRateRequest();
 			int insertResult = bpaService.createPayTpRate(payTpRateRequest);
-			return new ResponseEntity<>(insertResult + " record inserted", HttpStatus.OK);
+			if (insertResult > 0) {
+				return new ResponseEntity<>(insertResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
+			}
 		} catch (Exception ex) {
 			log.error("Exception in createPayTpRate: " + ex);
-			return new ResponseEntity<>(ex.toString(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 //		return null;
 	}
@@ -382,27 +423,23 @@ public class BPAController {
 	@PostMapping(value = "/_searchpaytprate")
 	public ResponseEntity<List<Map<String, Object>>> getPayTpRateByTenantIdAndTypeId(@RequestParam String tenantId,
 			@RequestParam int typeId) {
-		try {
-			List<Map<String, Object>> sqlResponseList = bpaService.getPayTpRateByTenantIdAndTypeId(tenantId, typeId);
-			return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
-		} catch (Exception ex) {
-			log.error("Exception in getPayTpRateByTenantIdAndTypeId: " + ex);
-			List errorList = new ArrayList<Map<String, Object>>();
-			errorList.add(new HashMap<String, Object>().put("Error", ex.toString()));
-			return new ResponseEntity<>(errorList, HttpStatus.BAD_REQUEST);
-		}
+		List<Map<String, Object>> sqlResponseList = bpaService.getPayTpRateByTenantIdAndTypeId(tenantId, typeId);
+		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/_deletepaytprate")
 	public ResponseEntity<Object> deletePayTpRateById(@RequestParam int id) {
 		try {
 			int deleteResult = bpaService.deletePayTpRateById(id);
-			return new ResponseEntity<>(deleteResult + " record deleted", HttpStatus.OK);
+			if (deleteResult > 0) {
+				return new ResponseEntity<>(deleteResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(deleteResult, HttpStatus.BAD_REQUEST);
+			}
 		} catch (Exception ex) {
 			log.error("Exception in deletePayTpRateById: " + ex);
-			return new ResponseEntity<>(ex.toString(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
-//		return new ResponseEntity<>(deleteResult, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/_createslab")
@@ -410,10 +447,14 @@ public class BPAController {
 		try {
 			SlabMasterRequest slabMasterRequest = slabMasterRequestWrapper.getSlabMasterRequest();
 			int insertResult = bpaService.createSlabMaster(slabMasterRequest);
-			return new ResponseEntity<>(insertResult + " record inserted", HttpStatus.OK);
+			if (insertResult > 0) {
+				return new ResponseEntity<>(insertResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(insertResult, HttpStatus.BAD_REQUEST);
+			}
 		} catch (Exception ex) {
 			log.error("Exception in createSlabMaster: " + ex);
-			return new ResponseEntity<>(ex.toString(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 //		return null;
 	}
@@ -421,25 +462,22 @@ public class BPAController {
 	@PostMapping(value = "/_searchslab")
 	public ResponseEntity<List<Map<String, Object>>> getSlabMasterByTenantIdAndTypeId(@RequestParam String tenantId,
 			@RequestParam int typeId) {
-		try {
-			List<Map<String, Object>> sqlResponseList = bpaService.getSlabMasterByTenantIdAndTypeId(tenantId, typeId);
-			return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
-		} catch (Exception ex) {
-			log.error("Exception in getSlabMasterByTenantIdAndTypeId: " + ex);
-			List errorList = new ArrayList<Map<String, Object>>();
-			errorList.add(new HashMap<String, Object>().put("Error", ex.toString()));
-			return new ResponseEntity<>(errorList, HttpStatus.BAD_REQUEST);
-		}
+		List<Map<String, Object>> sqlResponseList = bpaService.getSlabMasterByTenantIdAndTypeId(tenantId, typeId);
+		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/_deleteslab")
 	public ResponseEntity<Object> deleteSlabMasterById(@RequestParam int id) {
 		try {
 			int deleteResult = bpaService.deleteSlabMasterById(id);
-			return new ResponseEntity<>(deleteResult + " record deleted", HttpStatus.OK);
+			if (deleteResult > 0) {
+				return new ResponseEntity<>(deleteResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(deleteResult, HttpStatus.BAD_REQUEST);
+			}
 		} catch (Exception ex) {
 			log.error("Exception in deleteSlabMasterById: " + ex);
-			return new ResponseEntity<>(ex.toString(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 	}
 }

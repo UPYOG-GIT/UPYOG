@@ -210,7 +210,7 @@ public class AdditionalFeature extends FeatureProcess {
 					Map<String, String> details = new HashMap<>();
 					details.put(DESCRIPTION, "Building is High Rise or Not");
 					details.put("High Rise", isHighRise ? "Yes" : "No");
-					details.put(STATUS,"");
+					details.put(STATUS, "");
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 				}
@@ -415,7 +415,9 @@ public class AdditionalFeature extends FeatureProcess {
 					"Block_" + block.getNumber() + "_" + "Height of Building");
 			String requiredBuildingHeight = StringUtils.EMPTY;
 
-			BigDecimal buildingHeight = block.getBuilding().getBuildingHeight();
+			BigDecimal buildingHeight = block.getBuilding().getBuildingHeight() != null
+					? block.getBuilding().getBuildingHeight()
+					: BigDecimal.ZERO;
 
 			OccupancyTypeHelper occupancyTypeHelper = block.getBuilding().getMostRestrictiveFarHelper();
 
@@ -530,36 +532,63 @@ public class AdditionalFeature extends FeatureProcess {
 			scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Height of Floor");
 
 			for (Floor floor : block.getBuilding().getFloors()) {
-				BigDecimal floorHeight = BigDecimal.ZERO;
-				floorHeight = floor.getFloorHeights().get(0);
+//				BigDecimal floorHeight = BigDecimal.ZERO;
+				BigDecimal floorHeight = floor.getFloorHeights() != null ? floor.getFloorHeights().get(0)
+						: BigDecimal.ZERO;
 				int floorNumber = floor.getNumber();
 //				String requiredFloorHeight = "<= 3.0";
 //				floor.getOccupancies().get(0).getTypeHelper().getSubtype().getName();
-				String minRequiredFloorHeight = "2.75";
-				String maxPermissibleFloorHeight = "4.40";
-				if (floorHeight.compareTo(BigDecimal.valueOf(2.75)) >= 0
-						&& floorHeight.compareTo(BigDecimal.valueOf(4.40)) <= 0) {
-//					addFloorHeightDetails(scrutinyDetail, String.valueOf(floorNumber), RULE_38, HEIGHT_OF_FLOORS,
-//							requiredFloorHeight, String.valueOf(floorHeight), Result.Accepted.getResultVal());
-					Map<String, String> details = new HashMap<>();
-					details.put(FLOOR_NO, String.valueOf(floorNumber));
-					details.put(RULE_NO, RULE_38);
-					details.put(MIN_REQUIRED, minRequiredFloorHeight + DcrConstants.IN_METER);
-					details.put(MAX_PERMISSIBLE, maxPermissibleFloorHeight + DcrConstants.IN_METER);
-					details.put(PROVIDED, floorHeight.toString() + DcrConstants.IN_METER);
-					details.put(STATUS, Result.Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+
+				if (floorNumber < 0) {
+					String minRequiredFloorHeight = "2.40";
+					String maxPermissibleFloorHeight = "4.20";
+					if (floorHeight.compareTo(BigDecimal.valueOf(2.40)) >= 0
+							&& floorHeight.compareTo(BigDecimal.valueOf(4.20)) <= 0) {
+						Map<String, String> details = new HashMap<>();
+						details.put(FLOOR_NO, String.valueOf(floorNumber));
+						details.put(RULE_NO, RULE_38);
+						details.put(MIN_REQUIRED, minRequiredFloorHeight + DcrConstants.IN_METER);
+						details.put(MAX_PERMISSIBLE, maxPermissibleFloorHeight + DcrConstants.IN_METER);
+						details.put(PROVIDED, floorHeight.toString() + DcrConstants.IN_METER);
+						details.put(STATUS, Result.Accepted.getResultVal());
+						scrutinyDetail.getDetail().add(details);
+						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+					} else {
+						Map<String, String> details = new HashMap<>();
+						details.put(FLOOR_NO, String.valueOf(floorNumber));
+						details.put(RULE_NO, RULE_38);
+						details.put(MIN_REQUIRED, minRequiredFloorHeight + DcrConstants.IN_METER);
+						details.put(MAX_PERMISSIBLE, maxPermissibleFloorHeight + DcrConstants.IN_METER);
+						details.put(PROVIDED, floorHeight.toString() + DcrConstants.IN_METER);
+						details.put(STATUS, Result.Not_Accepted.getResultVal());
+						scrutinyDetail.getDetail().add(details);
+						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+					}
 				} else {
-					Map<String, String> details = new HashMap<>();
-					details.put(FLOOR_NO, String.valueOf(floorNumber));
-					details.put(RULE_NO, RULE_38);
-					details.put(MIN_REQUIRED, minRequiredFloorHeight + DcrConstants.IN_METER);
-					details.put(MAX_PERMISSIBLE, maxPermissibleFloorHeight + DcrConstants.IN_METER);
-					details.put(PROVIDED, floorHeight.toString() + DcrConstants.IN_METER);
-					details.put(STATUS, Result.Not_Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+					String minRequiredFloorHeight = "2.75";
+					String maxPermissibleFloorHeight = "4.40";
+					if (floorHeight.compareTo(BigDecimal.valueOf(2.75)) >= 0
+							&& floorHeight.compareTo(BigDecimal.valueOf(4.40)) <= 0) {
+						Map<String, String> details = new HashMap<>();
+						details.put(FLOOR_NO, String.valueOf(floorNumber));
+						details.put(RULE_NO, RULE_38);
+						details.put(MIN_REQUIRED, minRequiredFloorHeight + DcrConstants.IN_METER);
+						details.put(MAX_PERMISSIBLE, maxPermissibleFloorHeight + DcrConstants.IN_METER);
+						details.put(PROVIDED, floorHeight.toString() + DcrConstants.IN_METER);
+						details.put(STATUS, Result.Accepted.getResultVal());
+						scrutinyDetail.getDetail().add(details);
+						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+					} else {
+						Map<String, String> details = new HashMap<>();
+						details.put(FLOOR_NO, String.valueOf(floorNumber));
+						details.put(RULE_NO, RULE_38);
+						details.put(MIN_REQUIRED, minRequiredFloorHeight + DcrConstants.IN_METER);
+						details.put(MAX_PERMISSIBLE, maxPermissibleFloorHeight + DcrConstants.IN_METER);
+						details.put(PROVIDED, floorHeight.toString() + DcrConstants.IN_METER);
+						details.put(STATUS, Result.Not_Accepted.getResultVal());
+						scrutinyDetail.getDetail().add(details);
+						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+					}
 				}
 			}
 

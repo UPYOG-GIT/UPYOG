@@ -1,7 +1,7 @@
 package org.egov.edcr.feature;
 
-import static org.egov.edcr.constants.DxfFileConstants.OPENING_ABOVE_2_1_ON_REAR_LESS_1M;
 import static org.egov.edcr.constants.DxfFileConstants.OPENING_ABOVE_2_1_ON_SIDE_LESS_1M;
+import static org.egov.edcr.utility.DcrConstants.BUILDING_HEIGHT_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
 import java.math.BigDecimal;
@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.PlanInformation;
@@ -155,11 +155,15 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 			String layerName = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + b.getNumber() + "_"
 					+ layerNames.getLayerName("LAYER_NAME_HEIGHT_OF_BUILDING");
 			BigDecimal height = Util.getSingleDimensionValueByLayer(pl.getDoc(), layerName, pl);
+			if(height.compareTo(BigDecimal.ZERO)>0) {
 			b.setHeight(height);
 			b.getBuilding().setBuildingHeight(height);
 			b.getBuilding().setDeclaredBuildingHeight(height);
 			if (height.compareTo(BigDecimal.valueOf(15)) > 0)
 				b.getBuilding().setIsHighRise(true);
+			}else {
+				pl.addError(BUILDING_HEIGHT_DESC, getLocaleMessage(OBJECTNOTDEFINED, BUILDING_HEIGHT_DESC));
+			}
 		}
 	}
 

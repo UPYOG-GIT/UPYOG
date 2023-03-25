@@ -1,110 +1,134 @@
 CREATE TABLE IF NOT EXISTS paytype_master
 (
     id SERIAL PRIMARY KEY,
-    ulb_tenantid character varying(56),
-    charges_type_name character varying(256),
-    payment_type character varying(10),
+    ulb_tenantid character varying(56) NOT NULL,
+    charges_type_name character varying(256) NOT NULL,
+    payment_type character varying(10) NOT NULL,
     defunt character varying(2),
     createdby character varying(128),
 	createddate timestamp without time zone,
 	updatedby character varying(128),
 	updateddate timestamp without time zone,
+	optflag character varying(2),
+	hrnh character varying(2),
+	depflag character varying(2),
+	fdrflg character varying(2),
+	zdaflg character varying(2),
 	UNIQUE (ulb_tenantid, charges_type_name)
 );
 
 
-CREATE TABLE IF NOT EXISTS pre_post_fee_details
+CREATE TABLE IF NOT EXISTS fee_details
 (
     id SERIAL PRIMARY KEY,
-	paytype_id bigint,
+    paytype_id integer,
+    feetype character varying(5),
+    srno integer,
     ulb_tenantid character varying(56),
-	bill_id character varying(64),
-	application_no character varying(64),
-	unit_id character varying(56),
-	pay_id character varying(56),
+    bill_id character varying(64),
+    application_no character varying(64),
+    unit character varying(56),
     charges_type_name character varying(256),
-	amount numeric(15,2),
-	status_type character varying(15),
-	propvalue character varying(56),
-	value character varying(56),
-	status character varying(20),
-	createdby character varying(128),
-	createddate timestamp without time zone,
-	payment_type character varying(10)
+    prop_plot_area numeric(15,2),
+    amount numeric(15,2),
+    rate numeric(15,2),
+    type character varying(56),
+    createdby character varying(128),
+    createddate timestamp without time zone,
+    updatedby character varying(128),
+    updateddate timestamp without time zone
 );
 
 CREATE TABLE IF NOT EXISTS proposal_type_master
 (
-    ID SERIAL PRIMARY KEY,
-	ULB_TENANTID character varying(56),
-	DESCRIPTION character varying(100),
-	DEFUNT character varying(2),
-	CREATEDBY character varying(128),
-	CREATEDDATE timestamp without time zone,
-	UPDATEDBY character varying(128),
-	UPDATEDDATE timestamp without time zone
+    id SERIAL PRIMARY KEY,
+	ulb_tenantid character varying(56) NOT NULL,
+	description character varying(100) NOT NULL,
+	defunt character varying(2) NOT NULL,
+	createdby character varying(128) NOT NULL,
+	createddate timestamp without time zone,
+	updatedby character varying(128),
+	updateddate timestamp without time zone
 );
 
 
 CREATE TABLE IF NOT EXISTS bcategory_master
 (
-    ID SERIAL PRIMARY KEY,
-	ULB_TENANTID character varying(56),
-	DESCRIPTION character varying(100),
-	DEFUNT character varying(2),
-	CREATEDBY character varying(128),
-	CREATEDDATE timestamp without time zone,
-	UPDATEDBY character varying(128),
-	UPDATEDDATE timestamp without time zone
+    id SERIAL PRIMARY KEY,
+	ulb_tenantid character varying(56) NOT NULL,
+	description character varying(100) NOT NULL,
+	defunt character varying(2) NOT NULL,
+	createdby character varying(128) NOT NULL,
+	createddate timestamp without time zone,
+	updatedby character varying(128),
+	updateddate timestamp without time zone
 );
 
 
 CREATE TABLE IF NOT EXISTS bscategory_master
 (
-    ID SERIAL PRIMARY KEY,
-	CATID bigint,
-	ULB_TENANTID character varying(56),
-	DESCRIPTION character varying(100),
-	DEFUNT character varying(2),
-	CREATEDBY character varying(128),
-	CREATEDDATE timestamp without time zone,
-	UPDATEDBY character varying(128),
-	UPDATEDDATE timestamp without time zone,
-	CONSTRAINT fk_bscategory_master_id FOREIGN KEY (CATID)
-        REFERENCES bcategory_master(ID) MATCH SIMPLE
+    id SERIAL PRIMARY KEY,
+	catid integer NOT NULL,
+	ulb_tenantid character varying(56) NOT NULL,
+	description character varying(100) NOT NULL,
+	defunt character varying(2) NOT NULL,
+	createdby character varying(128) NOT NULL,
+	createddate timestamp without time zone,
+	updatedby character varying(128),
+	updateddate timestamp without time zone,
+	CONSTRAINT fk_bscategory_master_id FOREIGN KEY (catid)
+        REFERENCES bcategory_master(id) MATCH SIMPLE
 );
 
 
 
 CREATE TABLE IF NOT EXISTS pay_tp_rate_master
 (
-    ID SERIAL PRIMARY KEY,
-    ULB_TENANTID character varying(56),
-	UNITID character varying(40),
-	TYPEID bigint,
-	SRNO bigint,
-	CALCON character varying(56),
-    CALCACT character varying(56),
-	P_CATEGORY bigint,
-	B_CATEGORY bigint,
-	S_CATEGORY bigint,
-	RATE_RES numeric(10,2),
-	RATE_COMM numeric(10,2),
-	RATE_IND numeric(10,2),
-	PERVAL numeric(10),
-	CREATEDBY character varying(128),
-	CREATEDDATE timestamp without time zone,
-	CONSTRAINT fk_pcategory_master_id FOREIGN KEY (P_CATEGORY)
-        REFERENCES proposal_type_master(ID) MATCH SIMPLE,
-	CONSTRAINT fk_bcategory_master_id FOREIGN KEY (B_CATEGORY)
-        REFERENCES bcategory_master(ID) MATCH SIMPLE,
-	CONSTRAINT fk_bscategory_master_id FOREIGN KEY (S_CATEGORY)
-        REFERENCES bscategory_master(ID) MATCH SIMPLE
-	
+    id SERIAL PRIMARY KEY,
+    ulb_tenantid character varying(56) NOT NULL,
+	unitid character varying(40) NOT NULL,
+	typeid integer NOT NULL,
+	srno bigint NOT NULL,
+	calcon character varying(56) NOT NULL,
+    calcact character varying(56) NOT NULL,
+	p_category integer,
+	b_category integer,
+	s_category integer,
+	rate_res numeric(10,2),
+	rate_comm numeric(10,2),
+	rate_ind numeric(10,2),
+	perval numeric(10),
+	createdby character varying(128) NOT NULL,
+	createddate timestamp without time zone
 );
 
+CREATE TABLE IF NOT EXISTS slab_master
+(
+	id SERIAL PRIMARY KEY,
+	ulb_tenantid character varying(56) NOT NULL,
+	paytype_id integer NOT NULL,
+	srno bigint NOT NULL,
+	from_val numeric(10,2) NOT NULL,
+	to_val numeric(10,2),
+	rate_res numeric(10,2),
+	rate_comm numeric(10,2),
+	rate_ind numeric(10,2),
+	operation character varying(32),
+	p_category integer,
+	b_category integer,
+	s_category integer,
+	createdby character varying(128) NOT NULL,
+	createddate timestamp without time zone NOT NULL,
+	multp_val numeric(10,2),
+	max_limit numeric(10,2)
+);
 
+ALTER TABLE fee_details
+ADD COLUMN verify character varying(2);
 
-ALTER TABLE paytype_master 
-ADD COLUMN optflag character varying(2),
-ADD COLUMN hrnh character varying(2);
+ALTER TABLE fee_details
+ADD COLUMN verifiedby character varying(128),
+ADD COLUMN verifieddate timestamp without time zone;
+
+ALTER TABLE proposal_type_master
+ADD COLUMN srno integer;
