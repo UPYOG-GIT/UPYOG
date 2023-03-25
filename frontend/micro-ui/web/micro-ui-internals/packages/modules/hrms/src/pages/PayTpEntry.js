@@ -5,8 +5,6 @@ import {
   Card, Header, Modal, Dropdown, CardLabel, TextInput, SubmitBar, Table, CloseSvg, Toast, DeleteIcon, LabelFieldPair, Loader, Row, StatusTable, BackButton, CheckBox
 } from "@egovernments/digit-ui-react-components";
 
-// import FloatingActionButton from "material-ui/FloatingActionButton";
-// import {Card} from "material-ui/Card";
 
 const getDatafromLS = (id) => {
   const data = localStorage.getItem('modalList' + id);
@@ -24,7 +22,7 @@ const PayTpEntry = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const PayTypeData = [{ code: "Post Approval", value: "Post" }, { code: "Pre Approval", value: "Pre" }];
-  const HeightData = [{ code: "NH NEW", value: "NEW" }, { code: "NH REVISED", value: "REVISED" }, { code: "HR-NEW", value: "HR-NEW" }];
+  const HeightData = [{ code: "NH NEW", value: "NN" }, { code: "NH REVISED", value: "NR" }, { code: "HR-NEW", value: "HN" }];
   const [refundable, setRefundable] = useState(false);
   const [optional, setOptional] = useState(false);
   const [defunct, setDefunct] = useState(false);
@@ -33,9 +31,9 @@ const PayTpEntry = () => {
   const [modalData, setModalData] = useState(false);
   const [modalId, setModalId] = useState(1);
   const [modalList, setModalList] = useState(getDatafromLS(id));
-  const [modalPyType, setModalPyType] = useState("select");
+  const [modalPyType, setModalPyType] = useState("");
 
-  const [heightCategory, setHeightCategory] = useState("select");
+  const [heightCategory, setHeightCategory] = useState("");
 
   const [showToast, setShowToast] = useState(null);
   const setPayRule = (value) => setModalPyType(value.value);
@@ -69,12 +67,30 @@ const PayTpEntry = () => {
 const addPayType =async (e)=>{
   e.preventDefault();
   
+  if(!modalDes){
+    alert("Description is required");
+    return;
+  }
+  else if(!modalPyType){
+    alert("Payment Type is required");
+    return;
+  }
+  else if(!heightCategory){
+    alert("Height Category is required");
+    return;
+  }
+
   const PayTypeRequest = {
-    tenantId:tenantId,
+    tenantId:tenantId, 
     chargesTypeName:modalDes,
     paymentType:modalPyType,
     createdBy:uuid,
-    defunt:defunct==true?"Y":"N"
+    defunt:defunct==true?"Y":"N",
+    optflag:optional==true?"Y":"N",
+    hrnh:heightCategory.value,
+    depflag:refundable==true?"Y":"N",
+    fdrflg:"N",
+    zdaflg:"N"
   };
 
   closeModal();  

@@ -11,34 +11,33 @@ const AddPayType = () => {
   const [showToast, setShowToast] = useState(null);
   const [modalData, setModalData] = useState(false);
   
-  const [modalId,setModalId] = useState(1);
   const [modalPyType,setModalPyType] = useState({code: "", value: "null"});
   const [modalDes,setModalDes] = useState("");
   const [modalUnit,setModalUnit] = useState("per Sq. Meter");
   const [modalRate,setModalRate] = useState(0);
   const [modalValue,setModalValue] = useState(0);
   const [dropDownData,setDropDownData] = useState([]);
+  const [VerifyDropdown,setVerifyDropdown] = useState({code:"Yes",value:"Y"});
   const { id } = useParams();
-  const [modalList,setModalList] = useState();
+  // const [verifyNote,setverifyNote] = useState();
  
   const setPayRule = (value) => setModalPyType(value);
 
-  const [postFee, setPostFee] = useState();
-  let amount=0;
+  const setVerifDropdown = (value) => setVerifyDropdown(value);
+
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
-  // const dropDownData1 = [{code:"c",value:"c"},{code:"a",value:"a"},{code:"b",value:"b"}];
+  const verifdDdata = [{code:"Yes",value:"Y"},{code:"No",value:"N"}];
   const [totalAmount,setTotalAmount] = useState(0);
-  const [selectRow, setSelectRow] = useState(false);
-  const [rowid, setRowid] = useState(0);
+
+  const [rowid, setRowid] = useState([]);
   const [feeDetailtblval,setfeeDetailtblval]= useState([]);
   let { uuid } = Digit.UserService.getUser()?.info || {};
 
- 
-  // console.log("selectRow------"+selectRow);
-  console.log("modalPyType ==== "+JSON.stringify(modalPyType.code)+"------"+JSON.stringify(modalPyType.value));
+  const selectedRows=[];
 
+  // this is for add new row in table
   const insertNewRow =async (e)=>{
     e.preventDefault();
 
@@ -64,42 +63,43 @@ const AddPayType = () => {
     setModalValue(0);
     
     const FeeDetailResp = await Digit.OBPSAdminService.createFeeDetail({PayTypeFeeDetailRequest});
-   
     if(FeeDetailResp>0){
       setShowToast({ key: false, label: "Successfully Added ", bgcolor: "#4BB543" });
     }
     else{
       setShowToast({ key: true, label: "Fail To Add", bgcolor: "red" });
-    }
-  
-    // console.log("demandCreateres-----"+JSON.stringify(PayTypeResp));
-  
+    }  
    }
+
+   //this is for getting table data and totalamount
    let sumofAmount =0;
   useEffect( async ()=>{
     let feeDetails = await Digit.OBPSAdminService.getFeeDetails(id);
     setfeeDetailtblval(feeDetails);
+    // console.log(feeDetails);
     feeDetails.map(item=>{
+      // if(item.verify == "Y"){
+      //   setverifyNote(true);
+      // }
+      // else{
+      //   setverifyNote(false);
+      // }
       if(item.feetype == "Post"){
         sumofAmount +=item.amount;
         setTotalAmount(sumofAmount);
-        console.log("feeDetailtblval ---"+totalAmount+"--- "+JSON.stringify(item.amount));
-      }
-         
+      }        
     })
- 
   },[modalData])
 
-console.log(selectRow);
+//this is for table
   const GetCell = (value) => <span className="cell-text">{t(value)}</span>;
-  const GetCell1 = (value) => <input type="checkbox" id="vehicle1" onChange={getRowId()}  name="vehicle1" value={value}/>;
+  const GetCell1 = (value) => <input type="checkbox" id="vehicle1" onChange={(e) => getRowId(e)}  name="vehicle1" value={value}/>;
   const columns = React.useMemo(() => {
     return [
       {
         Header: t("Select"),
         disableSortBy: true,
         Cell: ({row}) => {
-          console.log();
           return (
             GetCell1(`${row.original?.id}`)
           );
@@ -150,56 +150,64 @@ console.log(selectRow);
     ];
   }, []);
 
-  function getRowId() {
-    // console.log("here");
-    // const {value,checked} = e.target;
-    // console.log(`${value} is ${checked}`);
-    // setSelectRow(!selectRow);
-  }
-
-  const handleAddAmountSubmit =(e)=>{
-      e.preventDefault();
-      setModalId(modalId+1);
-      // console.log(modalId);
-    let list={
-      modalId,
-      modalDes,
-      modalUnit,
-      modalRate,
-      modalValue,
+ //this is for storing final data in array for delete
+  function getRowId(e) {   
+    const {value,checked} = e.target;   
+    if(checked){
+      selectedRows.push(value);
+      console.log("selectedRows value "+selectedRows);
     }
-    setModalList([...modalList,list]);
-    
-    setModalDes("");
-    setModalRate(0);
-    setModalValue(0);
+    else{
+      const index = selectedRows.indexOf(value);
+      if (index > -1) { 
+        selectedRows.splice(index, 1); 
+      }
+    }
+    if(selectedRows.length>0){
+      setRowid(selectedRows);
+    }
   }
+
+  //this is for delete rows selected in checkBox
+  const deleteItem = async ()=>{
+    const PayTypeFeeDetailRequest={
+      ids : rowid,
+      applicationNo:id,
+      feeType:"Post"
+    }
+
+    if(rowid.length>0){
+      const DeleterowResp = await Digit.OBPSAdminService.deleteFeeDetail(PayTypeFeeDetailRequest);
+      
+      if(DeleterowResp>0){
+        setShowToast({ key: false, label: "Successfully Deleted ", bgcolor: "#4BB543" });
+      }
+      else{
+        setShowToast({ key: true, label: "Fail To Delete", bgcolor: "red" });
+      }
+    
+    }
+  }
+
+//this is for submitting verify status
+  const verifySubmit =async (e)=>{
+    e.preventDefault();
+
+    const verifyFeeResp = await Digit.OBPSAdminService.verifyFeeDetail(id,VerifyDropdown.value,"Post",uuid);
+   
+    if(verifyFeeResp>0){
+      setShowToast({ key: false, label: "Successfully Verified ", bgcolor: "#4BB543" });
+    }
+    else{
+      setShowToast({ key: true, label: "Fail To Verify", bgcolor: "red" });
+    }
   
+   }
 
-
-  useEffect(()=>{
-    localStorage.setItem('modalList'+id,JSON.stringify(modalList));
-  },[modalList]);
-
-  
-
-  // let totalAmount = modalList.length>0?(modalList.map(item=>amount += parseInt(item.modalValue))).slice(-1):amount;
-  //  console.log(totalAmount.slice(-1));
-  
-
-  // if(modalList.length>0){
-  //       modalList.map(item=>(
-  //       amount +=item.modalValue));
-  // }
-
-
+   //this gives application  details
   const { data = {}, isLoading } = Digit.Hooks.obps.useBPADetailsPage(tenantId, { applicationNo: id });
-  // useEffect( async ()=>{
-  //   let paytypeRule = await Digit.OBPSAdminService.getPaytype(tenantId);
-  //   setDropDownData(paytypeRule);
-  //   console.log("drop--gh--"+JSON.stringify(paytypeRule)); 
-  // },[])
   
+  //this gives dropdown value for payType rule entry in modal form
   useEffect( async ()=>{
     let paytypeRule = await Digit.OBPSAdminService.getPaytype(tenantId);
     let PyTydrop=[];
@@ -214,13 +222,6 @@ console.log(selectRow);
     setDropDownData(PyTydrop);
   },[])
 
-
-
-
-
-  // console.log("details----"+JSON.stringify(data?.edcrDetails?.planDetail?.planInformation?.plotArea)); 
-  //  console.log("edcr-----"+JSON.stringify(data.edcrDetails?.planDetail?.virtualBuilding?.totalBuitUpArea));
-
   if (isLoading) {
     return <Loader />;
   }
@@ -228,29 +229,32 @@ console.log(selectRow);
   const plotarea = data?.edcrDetails?.planDetail?.planInformation?.plotArea;
   const totalBuitUpArea = data?.edcrDetails?.planDetail?.virtualBuilding?.totalBuitUpArea;
 
-// console.log("plotarea"+plotarea+"totalBuitUpArea"+totalBuitUpArea);
-
   const closeModal = () => {
     setModalData(false);
   };
 
-  function setPostFees(e) {
-    setPostFee(e.target.value);
+
+  const errorhandel =()=>{
+    // setShowToast({ key: true, label: "No Data in table", bgcolor: "red" });
+    alert("No Data in table");
+    // location.reload();
   }
 
-  const onSubmits = async (e) => {
-    e.preventDefault();
 
-  }
 
-  
-console.log(feeDetailtblval.length);
 
   return (
 
     <Card style={{ position: "relative" }} className={"employeeCard-override"}>
-
-      <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
+     
+      {/* {verifyNote?
+      <div className="flex-center" style={{width: "40%",height:"3rem",borderRadius:"4%",backgroundColor:"#14A731",margin: "auto"}}>
+				<p style={{textAlign: "center", paddingTop:"3%"}}>This Application Number is already verified by status   
+				</p>
+      </div>
+      :""} */}
+     
+      <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("Payment Verification")}</Header>
       {data?.applicationDetails?.map((detail, index) => (
 
         <React.Fragment key={index} >
@@ -262,7 +266,6 @@ console.log(feeDetailtblval.length);
                   <table style={{ marginLeft: "50px", justifyContent: "space-between", fontSize: "16px", lineHeight: "19px", color: "rgb(11, 12, 12)", }}>
                   <tr><td style={{ padding: "15px" }}>{t("Application No")}</td><td style={{ paddingLeft: "5rem" }}>{t(id)}</td></tr>
                     {detail?.values?.map((value, index) => (
-                      // console.log("value ----"+JSON.stringify(value))
                       <tr><td style={{ padding: "15px" }}>{t(value.title)}</td><td style={{ paddingLeft: "5rem" }}>{t(value.value)}</td></tr>
 
                     ))}
@@ -278,62 +281,8 @@ console.log(feeDetailtblval.length);
         </React.Fragment>
       ))}
 
-
-      <React.Fragment></React.Fragment>
-      {/* <div>
-      <table style={{ border: "1px solid #494442", textAlign: "left", borderCollapse: "collapse", width: "100%" }}>
-       <thead>
-        <tr>
-        <th style={{border: "1px solid #494442", textAlign: "left", padding: "15px", backgroundColor: "#04AA6D" }}>Sno.</th>
-          <th style={{border: "1px solid #494442", textAlign: "left", padding: "15px", backgroundColor: "#04AA6D" }}>Description</th>
-          <th style={{border: "1px solid #494442", textAlign: "left", padding: "15px", backgroundColor: "#04AA6D" }}>Proposed Area</th>
-          <th style={{border: "1px solid #494442", textAlign: "left", padding: "15px", backgroundColor: "#04AA6D" }}>Measurement Unit</th>
-          <th style={{border: "1px solid #494442", textAlign: "left", padding: "15px", backgroundColor: "#04AA6D" }}>Rate</th>
-          <th style={{border: "1px solid #494442", textAlign: "left", padding: "15px", backgroundColor: "#04AA6D" }}>Value</th>
-          <th style={{border: "1px solid #494442", textAlign: "left", padding: "15px", backgroundColor: "#04AA6D" }}>Action</th>
-        </tr>
-        </thead>
-                      
-        {feeDetailtblval.length>0?
-        feeDetailtblval.map(item=>{
-          <tr><td>{item.charges_type_name}</td></tr>
-          
-        })
-        :""} */}
-        {/* {feeDetailtblval.length>0 &&<React.Fragment> <tbody>
-                      {feeDetailtblval.map(item=>(
-                        <tr>
-                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} ><input type="checkbox" id="vehicle1" onChange={setSelectRow(!selectRow)}  name="vehicle1" /></td>
-                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >{item.id}</td>
-                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >{item.charges_type_name}</td>
-                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >{item.prop_plot_area}</td>
-                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >{item.unit}</td>
-                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >{item.rate}</td>
-                          <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >{item.amount}</td> */}
-                          {/* <td style={{border: "1px solid #494442",textAlign: "left",padding: "15px"}} >
-                                <EditPencilIcon className="icon" />
-                                <DeleteIcon className="icon" style={{ bottom: "5px" }} />
-                        </td> */}
-                          {/* </tr>
-                          
-                      ))}
-                      </tbody> 
-                           <tfoot>
-                           <tr>
-                               <td colSpan="4"></td>           
-                               <td>Net Amount</td>
-                               <td>{totalAmount}</td>
-                           </tr>
-                           </tfoot>
-                    
-                    </React.Fragment>
-        }
-        {feeDetailtblval.length<1 && <div>No rows are added yet</div>} */}
-       
-      {/* </table> */}
-      {/* <button type="button" className="button-sub-text" onClick={()=>setModalData(true)} style={{marginTop:"10px",backgroundColor: "#008CBA"}}>Add New Row</button> */}
-      {/* </div>                 */}
-
+      {/* <React.Fragment></React.Fragment> */}
+      
       <Table
         t={t}
         data={feeDetailtblval}
@@ -353,10 +302,40 @@ console.log(feeDetailtblval.length);
           };
         }}
       />
+      {feeDetailtblval.length<1?<div>No rows are added yet</div>:""}
       <h1 className="flex-right">Gross Amount :{totalAmount}</h1>
     <h1 className="flex-right">Net Amount :{totalAmount}</h1>
-      <button type="button" className="button-sub-text" onClick={()=>setModalData(true)} style={{margin:"10px",backgroundColor: "#008CBA"}}>Add New Row</button>
-      <button type="button" className="button-sub-text"  style={{margin:"10px",backgroundColor: "#008CBA"}}>Delete</button>
+        {feeDetailtblval.length<1?
+          <React.Fragment>
+            <button type="button" className="button-sub-text" onClick={errorhandel} style={{margin:"10px",backgroundColor: "#008CBA"}}>Add New Row</button>
+            <button type="button" className="button-sub-text" onClick={errorhandel} style={{margin:"10px",backgroundColor: "#008CBA"}}>Delete</button>
+          </React.Fragment>
+        :
+          <React.Fragment>
+            <button type="button" className="button-sub-text" onClick={()=>setModalData(true)} style={{margin:"10px",backgroundColor: "#008CBA"}}>Add New Row</button>
+            <button type="button" className="button-sub-text" onClick={deleteItem} style={{margin:"10px",backgroundColor: "#008CBA"}}>Delete</button>
+          </React.Fragment>
+        }
+
+      {/* <button type="button" className="button-sub-text" onClick={()=>setModalData(true)} style={{margin:"10px",backgroundColor: "#008CBA"}}>Add New Row</button>
+      <button type="button" className="button-sub-text" onClick={deleteItem} style={{margin:"10px",backgroundColor: "#008CBA"}}>Delete</button>
+      */}
+        <form>
+        <Dropdown
+                  style={{ width: "10%",margin: "auto"}}
+                  className="form-field"
+                  selected={VerifyDropdown}
+                  // disable={gender?.length === 1 || editScreen}
+                  option={verifdDdata}
+                  select={setVerifDropdown}
+                  value={VerifyDropdown}
+                  optionKey="code"
+                  // t={t}
+                  name="VerifyDropdown"
+                />
+                <button type="submit" style={{border: "3px solid green",backgroundColor:"green",fontWeight:"bold",margin: "auto",width: "10%"}} onClick={verifySubmit}>Submit</button>
+        </form>
+     
       {modalData ? (
         <Modal
           hideSubmit={true}
@@ -373,7 +352,7 @@ console.log(feeDetailtblval.length);
                 <CloseSvg />
               </span>
             </div>
-         <form onSubmit={handleAddAmountSubmit}>
+         <form >
             <div>
              <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("FORM")}</Header>
              
