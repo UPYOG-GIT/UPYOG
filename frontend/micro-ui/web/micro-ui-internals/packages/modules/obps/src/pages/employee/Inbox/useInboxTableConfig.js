@@ -8,6 +8,9 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
     const GetStatusCell = (value) => value === "Active" || value>0 ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span> 
     const { t } = useTranslation()
     
+    // console.log(Digit.UserService.getUser());
+
+
     const tableColumnConfig = useMemo(() => {
         return [
         {

@@ -155,4 +155,30 @@ export const OBPSAdminService = {
     .catch((err) => {
       return err;
     }),
+    verifyFeeDetail: (applicationNo,isVerified,feeType,verifiedBy) =>
+    ServiceRequest({
+      serviceName: "bpa-services",
+      url: Urls.obps.verifyFeedetail,
+      params: {applicationNo,isVerified,feeType,verifiedBy},
+      auth: false,
+    })
+    .then((d) => {
+      return d;
+    })
+    .catch((err) => {
+      return err;
+    }),
+    deleteFeeDetail: (PayTypeFeeDetailRequest) =>
+    ServiceRequest({
+      serviceName: "bpa-services",
+      url: Urls.obps.deleteFeedetail,
+      data: {PayTypeFeeDetailRequest},
+      auth: false,
+    })
+    .then((d) => {
+      return d;
+    })
+    .catch((err) => {
+      return err;
+    }),
 }

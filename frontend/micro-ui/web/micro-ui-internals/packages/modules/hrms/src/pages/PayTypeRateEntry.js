@@ -122,6 +122,23 @@ const PayTypeRate = () => {
   const addPaytyperate = async(e)=>{
     e.preventDefault();
 
+    if(!PyUnit){
+      alert("Unit is required");
+      return;
+    }
+    else if(!PyCalculatOn){
+      alert("Calculated On is required");
+      return;
+    }
+    else if(!PyOperation){
+      alert("Operation is required");
+      return;
+    }
+    else if(!PyPropCategory){
+      alert("Proposal Category is required");
+      return;
+    }
+
     const PayTpRateRequest = {
       tenantId:tenantId,
       typeId:PyType.value,
