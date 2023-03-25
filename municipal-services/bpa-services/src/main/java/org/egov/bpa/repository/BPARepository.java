@@ -443,11 +443,12 @@ public class BPARepository {
 	}
 
 	// delete from pay_tp_rate_master table
-	public int deletePayTpRateById(int id) {
-		String deleteQuery = "delete from pay_tp_rate_master where id=" + id;
+	public int deletePayTpRateById(List<Integer> ids) {
+		String id = ids.toString().replace("[", "").replace("]", "");
+		String deleteQuery = "DELETE FROM pay_tp_rate_master WHERE id IN (" + id + ")";
 		int deleteResult = jdbcTemplate.update(deleteQuery);
 		log.info("BPARepository.deletePayTpRateById: " + deleteResult
-				+ " data deleted from pay_tp_rate_master table of id : " + id);
+				+ " data deleted from pay_tp_rate_master table of id(s) : " + id);
 		return deleteResult;
 	}
 
@@ -501,10 +502,11 @@ public class BPARepository {
 		return jdbcTemplate.queryForList(query, new Object[] { tenantId, payTypeId });
 	}
 
-	public int deleteSlabMasterById(int id) {
-		String deleteQuery = "delete from slab_master where id=" + id;
+	public int deleteSlabMasterById(List<Integer> ids) {
+		String id = ids.toString().replace("[", "").replace("]", "");
+		String deleteQuery = "DELETE FROM slab_master WHERE id IN (" + id + ")";
 		int deleteResult = jdbcTemplate.update(deleteQuery);
-		log.info("BPARepository.deleteSlabMasterById: " + deleteResult + " data deleted from slab_master table of id : "
+		log.info("BPARepository.deleteSlabMasterById: " + deleteResult + " data deleted from slab_master table of id(s) : "
 				+ id);
 		return deleteResult;
 	}

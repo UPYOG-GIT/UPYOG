@@ -1,5 +1,7 @@
 package org.egov.bpa.web.model;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -15,6 +17,9 @@ import lombok.Setter;
 @Setter
 public class SlabMasterRequest {
 
+	@JsonProperty("ids")
+	private List<Integer> ids;
+	
 	@JsonProperty("tenantId")
 	private String tenantId = null;
 	
