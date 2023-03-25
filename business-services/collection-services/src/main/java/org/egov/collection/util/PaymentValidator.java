@@ -377,8 +377,8 @@ public class PaymentValidator {
 
 
         // If advance is not allowed bill total amount should be positive integer
-        if(!isAdvanceAllowed && !Utils.isPositiveInteger(paymentDetail.getBill().getTotalAmount()))
-            errorMap.put("INVALID_BILL_AMOUNT","The bill amount of bill: "+paymentDetail.getBill().getId()+" is fractional or less than zero");
+        if(!isAdvanceAllowed && !Utils.isPositive(paymentDetail.getBill().getTotalAmount()))
+            errorMap.put("INVALID_BILL_AMOUNT","The bill amount of bill: "+paymentDetail.getBill().getId()+" is zero or less than zero");
 
         // Amount to be paid should be greater than minimum collection amount
         if (bill.getMinimumAmountToBePaid() != null
