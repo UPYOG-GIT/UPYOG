@@ -65,6 +65,7 @@ const AddPayType = () => {
     const FeeDetailResp = await Digit.OBPSAdminService.createFeeDetail({PayTypeFeeDetailRequest});
     if(FeeDetailResp>0){
       setShowToast({ key: false, label: "Successfully Added ", bgcolor: "#4BB543" });
+      location.reload();
     }
     else{
       setShowToast({ key: true, label: "Fail To Add", bgcolor: "red" });
@@ -155,7 +156,7 @@ const AddPayType = () => {
     const {value,checked} = e.target;   
     if(checked){
       selectedRows.push(value);
-      console.log("selectedRows value "+selectedRows);
+      // console.log("selectedRows value "+selectedRows);
     }
     else{
       const index = selectedRows.indexOf(value);
@@ -181,6 +182,7 @@ const AddPayType = () => {
       
       if(DeleterowResp>0){
         setShowToast({ key: false, label: "Successfully Deleted ", bgcolor: "#4BB543" });
+        location.reload();
       }
       else{
         setShowToast({ key: true, label: "Fail To Delete", bgcolor: "red" });
@@ -197,6 +199,7 @@ const AddPayType = () => {
    
     if(verifyFeeResp>0){
       setShowToast({ key: false, label: "Successfully Verified ", bgcolor: "#4BB543" });
+      location.reload();
     }
     else{
       setShowToast({ key: true, label: "Fail To Verify", bgcolor: "red" });
@@ -303,8 +306,8 @@ const AddPayType = () => {
         }}
       />
       {feeDetailtblval.length<1?<div>No rows are added yet</div>:""}
-      <h1 className="flex-right">Gross Amount :{totalAmount}</h1>
-    <h1 className="flex-right">Net Amount :{totalAmount}</h1>
+      <h1 className="flex-right">Gross Amount :{totalAmount.toFixed(2)}</h1>
+    <h1 className="flex-right">Net Amount :{totalAmount.toFixed(2)}</h1>
         {feeDetailtblval.length<1?
           <React.Fragment>
             <button type="button" className="button-sub-text" onClick={errorhandel} style={{margin:"10px",backgroundColor: "#008CBA"}}>Add New Row</button>

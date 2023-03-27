@@ -33,6 +33,9 @@ const SlabEntry = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   let validation = {};
 
+  const selectedRows=[];
+  const [rowid, setRowid] = useState([]);
+
   const setSlabPaytype = (value) => setSlabPyType(value);
   const setPayPropCat = (value) => setPyPropCat(value);
   const setPayBuildCat = (value) => setPyBuildCat(value);
@@ -149,6 +152,7 @@ const SlabEntry = () => {
    
     if(SlabMasterResp>0){
       setShowToast({ key: false, label: "Successfully Added ", bgcolor: "#4BB543" });
+      location.reload();
     }
     else{
       setShowToast({ key: true, label: "Fail To Add", bgcolor: "red" });
@@ -162,13 +166,24 @@ const SlabEntry = () => {
     setModalData(false);
   };
 
+
+  const GetCell1 = (value) => <input type="checkbox" id="checkbox2" onChange={(e) => getRowId(e)}  name="checkbox2" value={value}/>;
   const columns = React.useMemo(() => {
     return [
       {
         Header: t("Select"),
         disableSortBy: true,
+        Cell: ({row}) => {
+          return (
+            GetCell1(`${row.original?.id}`)
+          );
+        },
+      },
+      {
+        Header: t("Srno"),
+        disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.srno}`);
+          return GetCell(`${row.original?.id}`);
         },
       },
       {
@@ -251,6 +266,48 @@ const SlabEntry = () => {
     ];
   }, []);
 
+ //this is for storing final data in array for delete
+ function getRowId(e) {   
+  const {value,checked} = e.target;   
+  if(checked){
+    selectedRows.push(value);
+    // console.log("selectedRows value "+selectedRows);
+  }
+  else{
+    const index = selectedRows.indexOf(value);
+    if (index > -1) { 
+      selectedRows.splice(index, 1); 
+    }
+  }
+  if(selectedRows.length>0){
+    setRowid(selectedRows);
+  }
+}
+
+
+  //this is for delete rows selected in checkBox
+  const deleteItem = async ()=>{
+    const SlabMasterRequest={
+      ids : rowid,
+    }
+    // console.log("rowid value "+rowid);
+    if(rowid.length>0){
+      const DeleterowResp = await Digit.OBPSAdminService.deleteSlabdata(SlabMasterRequest);
+      
+      if(DeleterowResp>0){
+        setShowToast({ key: false, label: "Successfully Deleted ", bgcolor: "#4BB543" });
+        location.reload();
+      }
+      else{
+        setShowToast({ key: true, label: "Fail To Delete", bgcolor: "red" });
+      }
+    
+    }
+  }
+
+
+
+
   return (
     <Card style={{ position: "relative" }} className={"employeeCard-override"}>
       <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("Slab Master")}</Header>
@@ -303,7 +360,7 @@ const SlabEntry = () => {
         {t("Add")}
       </button>
       <button
-        // onClick={updateProfile}
+        onClick={deleteItem}
         style={{
           margin: "24px",
           backgroundColor: "#F47738",
