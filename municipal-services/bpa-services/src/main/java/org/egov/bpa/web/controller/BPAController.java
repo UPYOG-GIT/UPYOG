@@ -428,9 +428,11 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_deletepaytprate")
-	public ResponseEntity<Object> deletePayTpRateById(@RequestParam int id) {
+	public ResponseEntity<Object> deletePayTpRateById(
+			@RequestBody @Valid PayTpRateRequestWrapper payTpRateRequestWrapper) {
 		try {
-			int deleteResult = bpaService.deletePayTpRateById(id);
+			PayTpRateRequest payTpRateRequest = payTpRateRequestWrapper.getPayTpRateRequest();
+			int deleteResult = bpaService.deletePayTpRateById(payTpRateRequest.getIds());
 			if (deleteResult > 0) {
 				return new ResponseEntity<>(deleteResult, HttpStatus.OK);
 			} else {
@@ -467,9 +469,10 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_deleteslab")
-	public ResponseEntity<Object> deleteSlabMasterById(@RequestParam int id) {
+	public ResponseEntity<Object> deleteSlabMasterById(@RequestBody SlabMasterRequestWrapper slabMasterRequestWrapper) {
 		try {
-			int deleteResult = bpaService.deleteSlabMasterById(id);
+			SlabMasterRequest slabMasterRequest = slabMasterRequestWrapper.getSlabMasterRequest();
+			int deleteResult = bpaService.deleteSlabMasterById(slabMasterRequest.getIds());
 			if (deleteResult > 0) {
 				return new ResponseEntity<>(deleteResult, HttpStatus.OK);
 			} else {

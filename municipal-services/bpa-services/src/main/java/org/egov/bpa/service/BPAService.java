@@ -913,8 +913,8 @@ public class BPAService {
 	}
 
 	// delete from pay_tp_rate_master table
-	public int deletePayTpRateById(int id) {
-		return repository.deletePayTpRateById(id);
+	public int deletePayTpRateById(List<Integer> ids) {
+		return repository.deletePayTpRateById(ids);
 	}
 
 	public int createSlabMaster(SlabMasterRequest slabMasterRequest) {
@@ -927,7 +927,7 @@ public class BPAService {
 		return resultList;
 	}
 
-	public int deleteSlabMasterById(int id) {
-		return repository.deleteSlabMasterById(id);
+	public int deleteSlabMasterById(List<Integer> ids) {
+		return repository.deleteSlabMasterById(ids);
 	}
 }
