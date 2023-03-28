@@ -181,4 +181,30 @@ export const OBPSAdminService = {
     .catch((err) => {
       return err;
     }),
+    deleteSlabdata: (SlabMasterRequest) =>
+    ServiceRequest({
+      serviceName: "bpa-services",
+      url: Urls.obps.deleteSlab,
+      data: {SlabMasterRequest},
+      auth: false,
+    })
+    .then((d) => {
+      return d;
+    })
+    .catch((err) => {
+      return err;
+    }),
+    deletePayTpRate: (PayTpRateRequest) =>
+    ServiceRequest({
+      serviceName: "bpa-services",
+      url: Urls.obps.deletePaytpRate,
+      data: {PayTpRateRequest},
+      auth: false,
+    })
+    .then((d) => {
+      return d;
+    })
+    .catch((err) => {
+      return err;
+    }),
 }

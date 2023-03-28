@@ -21,7 +21,9 @@ const PayTypeRate = () => {
   const [commrate,setcommrate] = useState(0);
   const [indrate,setindrate] = useState(0);
   const [percent,setpercent] = useState(0);
-  
+
+  const [rowid, setRowid] = useState([]);
+  const selectedRows=[];
 
   const [PyTypedropval,setPyTypedropval] = useState([]);
   const [PropCategorydropdown,setPropCategorydropdown] = useState([]);
@@ -171,6 +173,7 @@ const PayTypeRate = () => {
    
     if(PayTyrateResp>0){
       setShowToast({ key: false, label: "Successfully Added ", bgcolor: "#4BB543" });
+      location.reload();
     }
     else{
       setShowToast({ key: true, label: "Fail To Add", bgcolor: "red" });
@@ -183,10 +186,20 @@ const PayTypeRate = () => {
     setModalData(false);
   };
 
+  const GetCell1 = (value) => <input type="checkbox" id="checkbox3" onChange={(e) => getRowId(e)}  name="checkbox3" value={value}/>;
   const columns = React.useMemo(() => {
     return [
       {
         Header: t("Select"),
+        disableSortBy: true,
+        Cell: ({row}) => {
+          return (
+            GetCell1(`${row.original?.id}`)
+          );
+        },
+      },
+      {
+        Header: t("Sno."),
         disableSortBy: true,
         Cell: ({ row }) => {
           return GetCell(`${row.original?.id}`);
@@ -265,6 +278,48 @@ const PayTypeRate = () => {
     ];
   }, []);
 
+
+   //this is for storing final data in array for delete
+   function getRowId(e) {   
+    const {value,checked} = e.target;   
+    if(checked){
+      selectedRows.push(value);
+      // console.log("selectedRows value "+selectedRows);
+    }
+    else{
+      const index = selectedRows.indexOf(value);
+      if (index > -1) { 
+        selectedRows.splice(index, 1); 
+      }
+    }
+    if(selectedRows.length>0){
+      setRowid(selectedRows);
+    }
+  }
+
+    //this is for delete rows selected in checkBox
+    const deleteItem = async ()=>{
+      const PayTpRateRequest={
+        ids : rowid,
+      }
+  
+      if(rowid.length>0){
+        const DeleterowResp = await Digit.OBPSAdminService.deletePayTpRate(PayTpRateRequest);
+        
+        if(DeleterowResp>0){
+          setShowToast({ key: false, label: "Successfully Deleted ", bgcolor: "#4BB543" });
+          location.reload();
+        }
+        else{
+          setShowToast({ key: true, label: "Fail To Delete", bgcolor: "red" });
+        }
+      
+      }
+    }
+
+
+
+
   return (
     <Card style={{ position: "relative" }} className={"employeeCard-override"}>
       <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("Pay Type Rate Entry")}</Header>
@@ -317,7 +372,7 @@ const PayTypeRate = () => {
         {t("Add")}
       </button>
       <button
-        // onClick={updateProfile}
+        onClick={deleteItem}
         style={{
           margin: "24px",
           backgroundColor: "#F47738",

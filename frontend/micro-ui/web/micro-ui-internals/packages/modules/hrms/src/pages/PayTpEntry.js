@@ -144,7 +144,8 @@ const addPayType =async (e)=>{
     setModalData(false);
   };
 
-  const GetCell = (value) => <span className="cell-text">{t(value)}</span>;
+
+  const GetCell = (value) =><span  className="cell-text">{t(value)}</span>;
   const columns = React.useMemo(() => {
     return [
       {

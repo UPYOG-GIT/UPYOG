@@ -153,41 +153,54 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     // setParmas({ ...params, mobileNumber });
     const data = {
       mobileNumber,
-
       tenantId: stateCode,
       userType: getUserType(),
     };
-
-
+  
     Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", selectedCity);
-
+  
     if (isUserRegistered) {
-
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
-
+  
       if (!err) {
-
-        history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams), role: location.state?.role });
+        // Store the timestamp when OTP is sent
+        const sentTimestamp = Date.now();
+        history.replace(`${path}/otp`, {
+          from: getFromLocation(location.state, searchParams),
+          role: location.state?.role,
+          sentTimestamp: sentTimestamp,
+        });
+        console.log("DateTime" + Date.now())
         return;
       } else {
-
-        if (!(location.state && location.state.role === 'FSM_DSO')) {
-          history.push(`/digit-ui/citizen/register/name`, { from: getFromLocation(location.state, searchParams), data: data });
+        if (!(location.state && location.state.role === "FSM_DSO")) {
+          history.push(`/digit-ui/citizen/register/name`, {
+            from: getFromLocation(location.state, searchParams),
+            data: data,
+          });
         }
       }
       if (location.state?.role) {
-        setError(location.state?.role === "FSM_DSO" ? t("ES_ERROR_DSO_LOGIN") : "User not registered.");
+        setError(
+          location.state?.role === "FSM_DSO"
+            ? t("ES_ERROR_DSO_LOGIN")
+            : "User not registered."
+        );
       }
-
     } else {
-
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
       if (!err) {
-        history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
+        // Store the timestamp when OTP is sent
+        const sentTimestamp = Date.now();
+        history.replace(`${path}/otp`, {
+          from: getFromLocation(location.state, searchParams),
+          sentTimestamp: sentTimestamp,
+        });
         return;
       }
     }
   };
+  
 
 
 
@@ -218,6 +231,12 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
     try {
       setIsOtpValid(true);
+      const sentTimestamp = location.state?.sentTimestamp;
+
+      if (sentTimestamp && Date.now() - sentTimestamp > 5 * 60 * 1000) {
+        setIsOtpValid(false);
+        return;
+      }
 
       //const { mobileNumber, otp, name } = params;
 
