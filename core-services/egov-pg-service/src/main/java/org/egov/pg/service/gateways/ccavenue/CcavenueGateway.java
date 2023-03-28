@@ -490,7 +490,7 @@ public class CcavenueGateway implements Gateway {
 			}
 
 			System.out.println("url: " + vHttpUrlConnection.getURL().toURI());
-			System.out.println("vStringBuffer: " + vStringBuffer);
+//			System.out.println("vStringBuffer: " + vStringBuffer);
 			if (isNull(vHttpUrlConnection.getURL().toURI())) {
 				log.info("CCAVENUE_REDIRECT_URI_GEN_FAILED");
 				return currentStatus;

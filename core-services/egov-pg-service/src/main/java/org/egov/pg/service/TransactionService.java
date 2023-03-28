@@ -154,6 +154,13 @@ public class TransactionService {
 		TransactionDump dump = TransactionDump.builder().txnId(currentTxnStatus.getTxnId())
 				.txnResponse(newTxn.getResponseJson()).auditDetails(newTxn.getAuditDetails()).build();
 
+		log.info("newTxn : " + newTxn.toString());
+		log.info("newTxn.getGatewayStatusMsg() : " + newTxn.getGatewayStatusMsg());
+		log.info("newTxn.getConsumerCode() : " + newTxn.getConsumerCode());
+		log.info("newTxn.getTxnAmount() : " + newTxn.getTxnAmount());
+		log.info("newTxn.getTxnStatusMsg() : " + newTxn.getTxnStatusMsg());
+		log.info("newTxn.getTxnStatus() : " + newTxn.getTxnStatus());
+		log.info("dump.getTxnResponse() : " + dump.getTxnResponse());
 		producer.push(appProperties.getUpdateTxnTopic(),
 				new org.egov.pg.models.TransactionRequest(requestInfo, newTxn));
 		producer.push(appProperties.getUpdateTxnDumpTopic(), new TransactionDumpRequest(requestInfo, dump));
@@ -174,7 +181,7 @@ public class TransactionService {
 	public String getResponse(String txnId) {
 		return transactionRepository.fetchResponse(txnId);
 	}
-	
+
 	public String getTenantId(String txnId) {
 		return transactionRepository.getTenantId(txnId);
 	}
