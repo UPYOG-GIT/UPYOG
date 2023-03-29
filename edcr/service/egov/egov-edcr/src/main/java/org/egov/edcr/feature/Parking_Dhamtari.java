@@ -65,6 +65,7 @@ import static org.egov.edcr.constants.DxfFileConstants.H;
 import static org.egov.edcr.constants.DxfFileConstants.J;
 import static org.egov.edcr.constants.DxfFileConstants.PARKING_SLOT;
 import static org.egov.edcr.constants.DxfFileConstants.S_MCH;
+import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.SQMTRS;
 
 import java.math.BigDecimal;
@@ -341,6 +342,23 @@ public class Parking_Dhamtari extends FeatureProcess {
 			scrutinyDetail1.getDetail().add(details);
 			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
 		}
+		
+		ScrutinyDetail parkingScrutinyDetail = new ScrutinyDetail();
+		parkingScrutinyDetail.setKey("Common_Parking Details");
+		parkingScrutinyDetail.addColumnHeading(1, "Open Parking");
+		parkingScrutinyDetail.addColumnHeading(2, "Stilt Parking");
+		parkingScrutinyDetail.addColumnHeading(3, "Lower Ground Floor Parking");
+		parkingScrutinyDetail.addColumnHeading(4, "Basement Parking");
+		parkingScrutinyDetail.addColumnHeading(5, STATUS);
+
+		Map<String, String> parkingDetails = new HashMap<>();
+		parkingDetails.put("Open Parking", openParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
+		parkingDetails.put("Stilt Parking", stiltParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
+		parkingDetails.put("Lower Ground Floor Parking", lowerGroungFloorParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
+		parkingDetails.put("Basement Parking", basementParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
+		parkingDetails.put(STATUS, "");
+		parkingScrutinyDetail.getDetail().add(parkingDetails);
+		pl.getReportOutput().getScrutinyDetails().add(parkingScrutinyDetail);
 
 		BigDecimal totalProvidedCarParkArea = openParkingArea.add(coverParkingArea).add(basementParkingArea)
 				.add(stiltParkingArea).add(lowerGroungFloorParkingArea);

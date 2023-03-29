@@ -78,6 +78,7 @@ public class Plot extends Measurement {
     private BigDecimal plotBndryArea;
 
     private BigDecimal roadArea=BigDecimal.ZERO;
+    private BigDecimal roadWideningArea=BigDecimal.ZERO;
     
     private BigDecimal netPlotArea=BigDecimal.ZERO;
 
@@ -206,5 +207,14 @@ public class Plot extends Measurement {
 	public void setNetPlotArea(BigDecimal netPlotArea) {
 		this.netPlotArea = netPlotArea;
 	}
-    
+
+	public BigDecimal getRoadWideningArea() {
+		return roadWideningArea;
+	}
+
+	public void setRoadWideningArea(BigDecimal roadWideningArea) {
+		this.roadWideningArea = roadWideningArea;
+	}
+
+	
 }
