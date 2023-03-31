@@ -1,8 +1,8 @@
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.utility.DcrConstants.FLOOR_HEIGHT_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.PLOT_AREA;
-import static org.egov.edcr.utility.DcrConstants.FLOOR_HEIGHT_DESC;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.GeneralStair;
 import org.egov.common.entity.edcr.Lift;
 import org.egov.common.entity.edcr.Occupancy;
+import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Stair;
 import org.egov.common.entity.edcr.SubFeatureColorCode;
 import org.egov.common.entity.edcr.TypicalFloor;
@@ -144,7 +145,12 @@ public class FarExtract extends FeatureExtract {
 
 					BigDecimal occupancyArea = Util.getPolyLineArea(pline);
 					LOG.error(" occupancyArea *************** " + occupancyArea);
+//					OccupancyTypeHelper occupancyTypeHelper=Util.findOccupancyType(pline, pl);
 					OccupancyDetail occupancy = new OccupancyDetail();
+//					if(!occupancyTypeHelper.getType().getName().equals("Parking")) {
+//						
+//					}
+					
 					occupancy.setPolyLine(pline);
 					occupancy.setBuiltUpArea(occupancyArea == null ? BigDecimal.ZERO : occupancyArea);
 					occupancy.setExistingBuiltUpArea(BigDecimal.ZERO);

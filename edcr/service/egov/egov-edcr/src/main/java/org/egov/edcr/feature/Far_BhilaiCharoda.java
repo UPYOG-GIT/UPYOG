@@ -204,11 +204,11 @@ public class Far_BhilaiCharoda extends Far {
 				for (Occupancy occupancy : flr.getOccupancies()) {
 					validate2(pl, blk, flr, occupancy);
 					if (!occupancy.getRecreationalSpace().isEmpty()) {
-						for(Measurement recreationalSpaceMeasuremnt:occupancy.getRecreationalSpace()) {
-							recreationSpaceArea =recreationSpaceArea.add(recreationalSpaceMeasuremnt.getArea());
+						for (Measurement recreationalSpaceMeasuremnt : occupancy.getRecreationalSpace()) {
+							recreationSpaceArea = recreationSpaceArea.add(recreationalSpaceMeasuremnt.getArea());
 						}
 //						recreationSpaceArea = occupancy.getRecreationalSpace().get(0).getArea();
-						
+
 					}
 					recreationSpaceArea = occupancy.getRecreationalSpace().isEmpty() ? BigDecimal.valueOf(0)
 							: recreationSpaceArea.add(occupancy.getRecreationalSpace().get(0).getArea());
@@ -620,27 +620,29 @@ public class Far_BhilaiCharoda extends Far {
 //		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getArea().add(surrenderRoadArea) : BigDecimal.ZERO;
 		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getPlotBndryArea() : BigDecimal.ZERO;
 //		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getNetPlotArea() : BigDecimal.ZERO;
-		BigDecimal netPlotArea=pl.getPlot().getNetPlotArea().add(pl.getPlot().getRoadArea().multiply(BigDecimal.valueOf(2)));
+		BigDecimal netPlotArea = pl.getPlot().getNetPlotArea()
+				.add(pl.getPlot().getRoadArea().multiply(BigDecimal.valueOf(2)))
+				.add(pl.getPlot().getRoadWideningArea().multiply(BigDecimal.valueOf(2)));
 		if (plotArea.doubleValue() > 0)
 //			providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(plotArea, DECIMALDIGITS_MEASUREMENTS,
 //					ROUNDMODE_MEASUREMENTS);
-		providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(netPlotArea, DECIMALDIGITS_MEASUREMENTS,
-				ROUNDMODE_MEASUREMENTS);
-		
+			providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(netPlotArea, DECIMALDIGITS_MEASUREMENTS,
+					ROUNDMODE_MEASUREMENTS);
 
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.addColumnHeading(1, "Gross Plot Area");
 		scrutinyDetail.addColumnHeading(2, "Road Area");
-		scrutinyDetail.addColumnHeading(3, "Recreationsl Space");
-		scrutinyDetail.addColumnHeading(4, "Net Plot Area");
-		scrutinyDetail.addColumnHeading(5, STATUS);
+		scrutinyDetail.addColumnHeading(3, "Recreational Space");
+		scrutinyDetail.addColumnHeading(4, "Under Road Widening");
+		scrutinyDetail.addColumnHeading(5, "Net Plot Area");
+		scrutinyDetail.addColumnHeading(6, STATUS);
 		scrutinyDetail.setKey("Common_FAR Validating");
 
 		Map<String, String> details = new HashMap<>();
-		details.put("Gross Plot Area",  pl.getPlot().getPlotBndryArea().toString());
+		details.put("Gross Plot Area", pl.getPlot().getPlotBndryArea().toString());
 		details.put("Road Area", pl.getPlot().getRoadArea().toString());
-		details.put("Recreationsl Space", recreationSpaceArea.toString());
-//		details.put("Net Plot Area", pl.getPlot().getNetPlotArea().toString());
+		details.put("Recreational Space", recreationSpaceArea.toString());
+		details.put("Under Road Widening", pl.getPlot().getRoadWideningArea().toString());
 		details.put("Net Plot Area", netPlotArea.toString());
 		details.put(STATUS, "");
 
@@ -1051,7 +1053,7 @@ public class Far_BhilaiCharoda extends Far {
 			}
 
 		}
-		
+
 		BigDecimal plotArea = pl.getPlot().getArea();
 		String occupancyName = occupancyType.getType().getName();
 

@@ -3,6 +3,7 @@ package org.egov.edcr.feature;
 import static org.egov.edcr.constants.DxfFileConstants.OPENING_ABOVE_2_1_ON_SIDE_LESS_1M;
 import static org.egov.edcr.utility.DcrConstants.BUILDING_HEIGHT_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
+import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -39,7 +40,7 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 	private LayerNames layerNames;
 	@Autowired
 	private Util util;
-	
+
 //	private BigDecimal roadArea=BigDecimal.ZERO;
 
 	@Override
@@ -52,6 +53,7 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		pl.setVirtualBuilding(virtualBuilding);
 
 		extractRoadArea(pl);
+		extractRoadWindingArea(pl);
 
 		extractPlotDetails(pl);
 
@@ -75,28 +77,34 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 	private void extractRoadArea(PlanDetail pl) {
 		List<DXFLWPolyline> roadAreaLayerNames = Util.getPolyLinesByLayer(pl.getDoc(),
 				layerNames.getLayerName("LAYER_NAME_ROAD_AREA"));
-		BigDecimal roadArea=BigDecimal.ZERO;
-		for(DXFLWPolyline roadAreaLayerPolyLine : roadAreaLayerNames) {
-//			if (roadAreaLayer.) {
-//				DXFLWPolyline frontRoadAreaPolyLine = roadAreaLayer.get(0);
-				((PlotDetail) pl.getPlot()).setPolyLine(roadAreaLayerPolyLine);
-//				pl.getPlot().addRoadArea(Util.getPolyLineArea(frontRoadAreaPolyLine));
-				roadArea=roadArea.add(Util.getPolyLineArea(roadAreaLayerPolyLine));
-//			}
+		BigDecimal roadArea = BigDecimal.ZERO;
+		for (DXFLWPolyline roadAreaLayerPolyLine : roadAreaLayerNames) {
+			((PlotDetail) pl.getPlot()).setPolyLine(roadAreaLayerPolyLine);
+			roadArea = roadArea.add(Util.getPolyLineArea(roadAreaLayerPolyLine));
 		}
-		
 		pl.getPlot().setRoadArea(roadArea.setScale(2, RoundingMode.HALF_UP));
+	}
+	
+	private void extractRoadWindingArea(PlanDetail pl) {
+		List<DXFLWPolyline> roadWindingAreaLayerNames = Util.getPolyLinesByLayer(pl.getDoc(),
+				layerNames.getLayerName("LAYER_NAME_ROAD_WIDENING_AREA"));
+		BigDecimal roadWindingArea = BigDecimal.ZERO;
+		for (DXFLWPolyline roadWindingAreaLayerPolyLine : roadWindingAreaLayerNames) {
+			((PlotDetail) pl.getPlot()).setPolyLine(roadWindingAreaLayerPolyLine);
+			roadWindingArea = roadWindingArea.add(Util.getPolyLineArea(roadWindingAreaLayerPolyLine));
+		}
+		pl.getPlot().setRoadWideningArea(roadWindingArea.setScale(2, RoundingMode.HALF_UP));
 	}
 
 	private void extractPlotDetails(PlanDetail pl) {
-		
+
 		List<DXFLWPolyline> plotBoundaries = Util.getPolyLinesByLayer(pl.getDoc(),
 				layerNames.getLayerName("LAYER_NAME_PLOT_BOUNDARY"));
 		if (!plotBoundaries.isEmpty()) {
 			DXFLWPolyline plotBndryPolyLine = plotBoundaries.get(0);
 			((PlotDetail) pl.getPlot()).setPolyLine(plotBndryPolyLine);
-			pl.getPlot().setPlotBndryArea(Util.getPolyLineArea(plotBndryPolyLine));
-			pl.getPlot().setNetPlotArea(pl.getPlot().getPlotBndryArea().subtract(pl.getPlot().getRoadArea()));
+			pl.getPlot().setPlotBndryArea(Util.getPolyLineArea(plotBndryPolyLine).setScale(2, ROUNDMODE_MEASUREMENTS));
+			pl.getPlot().setNetPlotArea(pl.getPlot().getPlotBndryArea().subtract(pl.getPlot().getRoadArea()).subtract(pl.getPlot().getRoadWideningArea()));
 //			pl.getPlot().setNetPlotArea(pl.getPlot().getPlotBndryArea().subtract(pl.getRoadArea()));
 		} else
 			pl.addError(layerNames.getLayerName("LAYER_NAME_PLOT_BOUNDARY"),
@@ -155,13 +163,13 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 			String layerName = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + b.getNumber() + "_"
 					+ layerNames.getLayerName("LAYER_NAME_HEIGHT_OF_BUILDING");
 			BigDecimal height = Util.getSingleDimensionValueByLayer(pl.getDoc(), layerName, pl);
-			if(height.compareTo(BigDecimal.ZERO)>0) {
-			b.setHeight(height);
-			b.getBuilding().setBuildingHeight(height);
-			b.getBuilding().setDeclaredBuildingHeight(height);
-			if (height.compareTo(BigDecimal.valueOf(15)) > 0)
-				b.getBuilding().setIsHighRise(true);
-			}else {
+			if (height.compareTo(BigDecimal.ZERO) > 0) {
+				b.setHeight(height);
+				b.getBuilding().setBuildingHeight(height);
+				b.getBuilding().setDeclaredBuildingHeight(height);
+				if (height.compareTo(BigDecimal.valueOf(15)) > 0)
+					b.getBuilding().setIsHighRise(true);
+			} else {
 				pl.addError(BUILDING_HEIGHT_DESC, getLocaleMessage(OBJECTNOTDEFINED, BUILDING_HEIGHT_DESC));
 			}
 		}
@@ -566,8 +574,7 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 				pi.setNocCollectorGvtLand(DcrConstants.NA);
 		} else
 			pi.setNocCollectorGvtLand(DcrConstants.NA);
-		
-		
+
 		String multilevelParking = planInfoProperties.get(DxfFileConstants.MULTILEVEL_PARKING);
 		if (StringUtils.isNotBlank(multilevelParking)) {
 			if (multilevelParking.equalsIgnoreCase(DcrConstants.YES))
