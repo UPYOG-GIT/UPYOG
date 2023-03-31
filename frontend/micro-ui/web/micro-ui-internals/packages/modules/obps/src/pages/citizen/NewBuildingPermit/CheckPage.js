@@ -155,7 +155,7 @@ import {
       return <Loader />
     }
 
-
+   console.log("paymentDetails" +  JSON.stringify(paymentDetails))
     return (
     <React.Fragment>
     <Timeline currentStep={4} />
@@ -199,7 +199,7 @@ import {
       <CardSubHeader>{t("BPA_UPLOADED_PLAN_DIAGRAM")}</CardSubHeader>
       <LinkButton
         label={ <PDFSvg /> }
-          onClick={() => routeTo(datafromAPI?.updatedDxfFile)}
+          onClick={() => routeTo(datafromAPI?.dxfFile)}
        />
        <p style={{ marginTop: "8px", marginBottom: "20px", textAlign:"Left", fontSize: "16px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>{t(`BPA_UPLOADED_PLAN_DXF`)}</p>
       <CardSubHeader>{t("BPA_SCRUNTINY_REPORT_OUTPUT")}</CardSubHeader>

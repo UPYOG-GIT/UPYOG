@@ -82,7 +82,7 @@ const ApplicationDetails = () => {
       <div>
         <Card>
           <StatusTable>
-            <Row className="border-none" label={t(`BPA_APPLICATION_NUMBER_LABEL`)} text={License?.applicationNumber || "NA"} />
+            <Row className="border-none" label={t(`dsa`)} text={License?.applicationNumber || "NA"} />
           </StatusTable>
         </Card>
         <Card>
