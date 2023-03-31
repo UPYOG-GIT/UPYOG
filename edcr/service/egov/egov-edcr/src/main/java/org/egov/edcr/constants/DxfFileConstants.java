@@ -135,6 +135,7 @@ public class DxfFileConstants {
 
     public static String CRZ_ZONE = "CRZ";
     public static final String PLOT_AREA = "PLOT_AREA_M2";
+    public static final String DEVELOPMENT_ZONE = "DEVELOPMENT_ZONE";
     public static final Object ARCHITECT_NAME = "ARCHITECT_NAME";
     public static final String SHORTEST_DISTANCE_TO_ROAD = "SHORTEST_DIST_TO_ROAD";
     public static final String PLAN_INFO = "PLAN_INFO";
