@@ -37,7 +37,8 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList = [] }) => {
             {scrutinyDetails?.values?.map((value, index) => {
               console.log("s" + JSON.stringify(scrutinyDetails));
               if (value.title === "BPA_SANC_FEES_DETAILS") return (
-                <div style={{ background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", maxWidth: "950px", minWidth: "280px", fontFamily: "sans-serif", fontSize: "16px", lineHeight: "26px" }}>
+                <div style={{ fontFamily: "sans-serif", fontSize: "16px", lineHeight: "26px" }}>
+                  
                   <div>
                     {feeDetails.map(item => (
                       <div>
