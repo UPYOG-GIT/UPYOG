@@ -24,7 +24,7 @@ const BpaApplicationDetail = () => {
   const [error, setError] = useState(null);
   const stateId = Digit.ULBService.getStateId();
   const isMobile = window.Digit.Utils.browser.isMobile();
-  const { isLoading: bpaDocsLoading, data: bpaDocs } = Digit.Hooks.obps.useMDMS(stateId, "BPA", ["DocTypeMapping"]);
+  const { isLoading: bpaDocsLoading, data: bpaDocs } = Digit.Hooks.obps.useMDMS(stateId, "BPA", ["DocType Mapping"]);
 
   let { data: newConfig } = Digit.Hooks.obps.SearchMdmsTypes.getFormConfig(stateId, []);
 
@@ -47,6 +47,8 @@ const BpaApplicationDetail = () => {
   {
     businessService = ["BPA.NC_OC_APP_FEE","BPA.NC_OC_SAN_FEE"];
   }
+  console.log("--"+ JSON.stringify(data?.applicationData?.applicationNo))
+
 
   useEffect(() => {
     if(!bpaDocsLoading && !isLoading){
@@ -60,6 +62,7 @@ const BpaApplicationDetail = () => {
                 RealignedDocument.push(doc);
             })
         })
+        
         const newApplicationDetails = data.applicationDetails && data.applicationDetails.map((obj) => {
           if(obj.title === "BPA_DOCUMENT_DETAILS_LABEL")
           {
@@ -107,7 +110,18 @@ const BpaApplicationDetail = () => {
 
   const [showOptions, setShowOptions] = useState(false);
 
+  
+ 
 
+  const [feeDetails, setFeeDetails] = useState([]);
+
+  useEffect(async () => {
+    const feeDetails = await Digit.OBPSAdminService.getFeeDetails(data?.applicationData?.applicationNo);
+    setFeeDetails(feeDetails);
+  }, [data]);
+
+
+  
   const {
     isLoading: updatingApplication,
     isError: updateApplicationError,
@@ -308,6 +322,10 @@ const BpaApplicationDetail = () => {
   });
 
   data.applicationDetails = results;
+
+
+  
+
   return (
     <Fragment>
       <div className={"employee-main-application-details"}>
@@ -341,6 +359,8 @@ const BpaApplicationDetail = () => {
         breaklineStyle={{ border: "0px" }}
         className={"employeeCard-override"}
       />}
+ 
+  
       <ApplicationDetailsTemplate
         applicationDetails={data}
         isLoading={isLoading}
