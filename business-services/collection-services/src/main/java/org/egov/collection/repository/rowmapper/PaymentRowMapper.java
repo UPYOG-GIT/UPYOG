@@ -24,6 +24,7 @@ import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -41,7 +42,10 @@ public class PaymentRowMapper implements ResultSetExtractor<List<Payment>> {
 	private ObjectMapper mapper;
 
 	@Autowired
-	private PaymentRepository paymentRepository;
+	private JdbcTemplate jdbcTemplate;
+
+//	@Autowired
+//	private PaymentRepository paymentRepository;
 
 	@Override
 	public List<Payment> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -185,7 +189,10 @@ public class PaymentRowMapper implements ResultSetExtractor<List<Payment>> {
 			// PGobject billAdditionalObj = (PGobject)
 			// rs.getObject("bill_additionalDetails");
 
-			List<Map<String, Object>> feeDetailList = paymentRepository.getFeeDetail(billId);
+			String query = "SELECT srno, charges_type_name, amount FROM fee_details WHERE bill_id='" + billId
+					+ "' ORDER BY srno ASC";
+//			List<Map<String, Object>> feeDetailList = paymentRepository.getFeeDetail(billId);
+			List<Map<String, Object>> feeDetailList = jdbcTemplate.queryForList(query);
 			log.info("feeDetailList.size():" + feeDetailList.size());
 
 			for (Map<String, Object> feeMap : feeDetailList) {
