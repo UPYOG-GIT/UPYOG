@@ -66,6 +66,7 @@ import static org.egov.edcr.constants.DxfFileConstants.H;
 import static org.egov.edcr.constants.DxfFileConstants.J;
 import static org.egov.edcr.constants.DxfFileConstants.PARKING_SLOT;
 import static org.egov.edcr.constants.DxfFileConstants.S_MCH;
+import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.SQMTRS;
 
@@ -323,48 +324,50 @@ public class Parking extends FeatureProcess {
 			}
 		}
 
-		if (podiumParkingArea.compareTo(BigDecimal.ZERO) == 0) {
-			Map<String, String> details = new HashMap<>();
-			details.put(DESCRIPTION, "Podium Parking");
-			details.put(PROVIDED, "Podium Parking not Provided");
-			details.put(STATUS, "");
-			scrutinyDetail1.getDetail().add(details);
-			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
+		if (occupancyTypeHelper != null
+				|| (occupancyTypeHelper.getType() != null && occupancyTypeHelper.getSubtype() != null)) {
+			if (podiumParkingArea.compareTo(BigDecimal.ZERO) == 0) {
+				Map<String, String> details = new HashMap<>();
+				details.put(DESCRIPTION, "Podium Parking");
+				details.put(PROVIDED, "Podium Parking not Provided");
+				details.put(STATUS, "");
+				scrutinyDetail1.getDetail().add(details);
+				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
 
-		} else {
-			Map<String, String> details = new HashMap<>();
-			details.put(DESCRIPTION, "Podium Parking");
-			details.put(PROVIDED, podiumParkingArea.toString());
-			details.put(STATUS, "");
-			scrutinyDetail1.getDetail().add(details);
-			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
-		}
+			} else {
+				Map<String, String> details = new HashMap<>();
+				details.put(DESCRIPTION, "Podium Parking");
+				details.put(PROVIDED, podiumParkingArea.toString());
+				details.put(STATUS, "");
+				scrutinyDetail1.getDetail().add(details);
+				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
+			}
 
-		ScrutinyDetail parkingScrutinyDetail = new ScrutinyDetail();
-		parkingScrutinyDetail.setKey("Common_Parking Details");
-		parkingScrutinyDetail.addColumnHeading(1, "Open Parking");
-		parkingScrutinyDetail.addColumnHeading(2, "Stilt Parking");
-		parkingScrutinyDetail.addColumnHeading(3, "Lower Ground Floor Parking");
-		parkingScrutinyDetail.addColumnHeading(4, "Basement Parking");
-		parkingScrutinyDetail.addColumnHeading(5, STATUS);
+			ScrutinyDetail parkingScrutinyDetail = new ScrutinyDetail();
+			parkingScrutinyDetail.setKey("Common_Parking Details");
+			parkingScrutinyDetail.addColumnHeading(1, "Open Parking");
+			parkingScrutinyDetail.addColumnHeading(2, "Stilt Parking");
+			parkingScrutinyDetail.addColumnHeading(3, "Lower Ground Floor Parking");
+			parkingScrutinyDetail.addColumnHeading(4, "Basement Parking");
+			parkingScrutinyDetail.addColumnHeading(5, STATUS);
 
-		Map<String, String> parkingDetails = new HashMap<>();
-		parkingDetails.put("Open Parking", openParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
-		parkingDetails.put("Stilt Parking", stiltParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
-		parkingDetails.put("Lower Ground Floor Parking",
-				lowerGroungFloorParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
-		parkingDetails.put("Basement Parking", basementParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
-		parkingDetails.put(STATUS, "");
-		parkingScrutinyDetail.getDetail().add(parkingDetails);
-		pl.getReportOutput().getScrutinyDetails().add(parkingScrutinyDetail);
+			Map<String, String> parkingDetails = new HashMap<>();
+			parkingDetails.put("Open Parking", openParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
+			parkingDetails.put("Stilt Parking", stiltParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
+			parkingDetails.put("Lower Ground Floor Parking",
+					lowerGroungFloorParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
+			parkingDetails.put("Basement Parking", basementParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
+			parkingDetails.put(STATUS, "");
+			parkingScrutinyDetail.getDetail().add(parkingDetails);
+			pl.getReportOutput().getScrutinyDetails().add(parkingScrutinyDetail);
 
-		BigDecimal totalProvidedCarParkArea = openParkingArea.add(coverParkingArea).add(basementParkingArea)
-				.add(stiltParkingArea).add(lowerGroungFloorParkingArea);
+			BigDecimal totalProvidedCarParkArea = openParkingArea.add(coverParkingArea).add(basementParkingArea)
+					.add(stiltParkingArea).add(lowerGroungFloorParkingArea);
 //		helper.totalRequiredCarParking += openParkingArea.doubleValue() / OPEN_ECS;
 //		helper.totalRequiredCarParking += coverParkingArea.doubleValue() / COVER_ECS;
 //		helper.totalRequiredCarParking += basementParkingArea.doubleValue() / BSMNT_ECS;
 
-		BigDecimal providedVisitorParkArea = BigDecimal.ZERO;
+			BigDecimal providedVisitorParkArea = BigDecimal.ZERO;
 
 //		String subOcc = mostRestrictiveOccupancy.getSubtype().getCode();
 //		validateSpecialParking(pl, helper, totalBuiltupArea);
@@ -372,38 +375,42 @@ public class Parking extends FeatureProcess {
 //		requiredCarParkArea = getRequiredCarParkArea(totalBuiltupArea, mostRestrictiveOccupancy, coverParkingArea,
 //				basementParkingArea, openParkingArea, stiltParkingArea, lowerGroungFloorParkingArea);
 
-		// logics deleted from here
+			// logics deleted from here
 
-		BigDecimal requiredCarParkingArea = Util.roundOffTwoDecimal(BigDecimal.valueOf(requiredCarParkArea));
-		BigDecimal totalProvidedCarParkingArea = Util.roundOffTwoDecimal(totalProvidedCarParkArea);
-		BigDecimal requiredVisitorParkingArea = Util.roundOffTwoDecimal(BigDecimal.valueOf(requiredVisitorParkArea));
-		BigDecimal providedVisitorParkingArea = Util.roundOffTwoDecimal(providedVisitorParkArea);
+			BigDecimal requiredCarParkingArea = Util.roundOffTwoDecimal(BigDecimal.valueOf(requiredCarParkArea));
+			BigDecimal totalProvidedCarParkingArea = Util.roundOffTwoDecimal(totalProvidedCarParkArea);
+			BigDecimal requiredVisitorParkingArea = Util
+					.roundOffTwoDecimal(BigDecimal.valueOf(requiredVisitorParkArea));
+			BigDecimal providedVisitorParkingArea = Util.roundOffTwoDecimal(providedVisitorParkArea);
 
-		// checkDimensionForTwoWheelerParking(pl, helper);
-		// checkAreaForLoadUnloadSpaces(pl);
-		if (occupancyTypeHelper.getSubtype() != null && A_R.equals(occupancyTypeHelper.getSubtype().getCode())) {
-			totalProvidedCarParkArea = BigDecimal.valueOf(-1);
-		}
-		if (totalProvidedCarParkArea.doubleValue() == 0
+			// checkDimensionForTwoWheelerParking(pl, helper);
+			// checkAreaForLoadUnloadSpaces(pl);
+			if (occupancyTypeHelper.getSubtype() != null && A_R.equals(occupancyTypeHelper.getSubtype().getCode())) {
+				totalProvidedCarParkArea = BigDecimal.valueOf(-1);
+			}
+			if (totalProvidedCarParkArea.doubleValue() == 0
 //				&& 
 //				(mostRestrictiveOccupancy != null && 
 //				!A_R.equals(mostRestrictiveOccupancy.getSubtype().getCode())
 //				)
-		) {
-			pl.addError(RULE_81_DESCRIPTION, getLocaleMessage("msg.error.not.defined", RULE_81_DESCRIPTION));
-		} else if (requiredCarParkArea > 0 && totalProvidedCarParkingArea.compareTo(requiredCarParkingArea) < 0) {
-			setReportOutputDetails(pl, RULE_81, RULE_81_DESCRIPTION, requiredCarParkingArea + SQMTRS,
-					totalProvidedCarParkingArea + SQMTRS, Result.Not_Accepted.getResultVal());
+			) {
+				pl.addError(RULE_81_DESCRIPTION, getLocaleMessage("msg.error.not.defined", RULE_81_DESCRIPTION));
+			} else if (requiredCarParkArea > 0 && totalProvidedCarParkingArea.compareTo(requiredCarParkingArea) < 0) {
+				setReportOutputDetails(pl, RULE_81, RULE_81_DESCRIPTION, requiredCarParkingArea + SQMTRS,
+						totalProvidedCarParkingArea + SQMTRS, Result.Not_Accepted.getResultVal());
+			} else {
+				setReportOutputDetails(pl, RULE_81, RULE_81_DESCRIPTION, requiredCarParkingArea + SQMTRS,
+						totalProvidedCarParkingArea + SQMTRS, Result.Accepted.getResultVal());
+			}
+			if (requiredVisitorParkArea > 0 && providedVisitorParkArea.compareTo(requiredVisitorParkingArea) < 0) {
+				setReportOutputDetails(pl, RULE_81, RULE_81_DESCRIPTION, requiredVisitorParkingArea + SQMTRS,
+						providedVisitorParkArea + SQMTRS, Result.Not_Accepted.getResultVal());
+			} else if (requiredVisitorParkArea > 0) {
+				setReportOutputDetails(pl, RULE_81, RULE_81_DESCRIPTION, requiredVisitorParkingArea + SQMTRS,
+						providedVisitorParkingArea + SQMTRS, Result.Accepted.getResultVal());
+			}
 		} else {
-			setReportOutputDetails(pl, RULE_81, RULE_81_DESCRIPTION, requiredCarParkingArea + SQMTRS,
-					totalProvidedCarParkingArea + SQMTRS, Result.Accepted.getResultVal());
-		}
-		if (requiredVisitorParkArea > 0 && providedVisitorParkArea.compareTo(requiredVisitorParkingArea) < 0) {
-			setReportOutputDetails(pl, RULE_81, RULE_81_DESCRIPTION, requiredVisitorParkingArea + SQMTRS,
-					providedVisitorParkArea + SQMTRS, Result.Not_Accepted.getResultVal());
-		} else if (requiredVisitorParkArea > 0) {
-			setReportOutputDetails(pl, RULE_81, RULE_81_DESCRIPTION, requiredVisitorParkingArea + SQMTRS,
-					providedVisitorParkingArea + SQMTRS, Result.Accepted.getResultVal());
+			pl.addError(OCCUPANCY, getLocaleMessage(OBJECTNOTDEFINED, OCCUPANCY + " not properly defined"));
 		}
 
 		LOGGER.info("******************Require no of Car Parking***************" + helper.totalRequiredCarParking);

@@ -197,7 +197,7 @@ public class PaymentRowMapper implements ResultSetExtractor<List<Payment>> {
 
 			for (Map<String, Object> feeMap : feeDetailList) {
 				FeeDetail feeDetail = new FeeDetail();
-				feeDetail.setSrNo(Integer.parseInt(feeMap.get("srno").toString()));
+				feeDetail.setSrNo(Integer.valueOf(feeMap.get("srno").toString()));
 				feeDetail.setChargesTypeName(feeMap.get("charges_type_name").toString());
 				feeDetail.setAmount(BigDecimal.valueOf(Double.valueOf(feeMap.get("amount").toString())));
 				paymentDetail.addFeeDetailsItem(feeDetail);
