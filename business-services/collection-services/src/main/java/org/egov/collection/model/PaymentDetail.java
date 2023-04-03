@@ -1,14 +1,23 @@
 package org.egov.collection.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
-import lombok.*;
-import org.egov.collection.web.contract.Bill;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.math.BigDecimal;
+
+import org.egov.collection.web.contract.Bill;
+import org.hibernate.validator.constraints.SafeHtml;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 
 @Data
@@ -73,5 +82,15 @@ public class PaymentDetail {
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
+    
+    @JsonProperty("feeDetail")
+    private List<FeeDetail> feeDetail;
+    
+    public void addFeeDetailsItem(FeeDetail feeDetail) {
+        if (this.feeDetail == null) {
+            this.feeDetail = new ArrayList<>();
+        }
+        this.feeDetail.add(feeDetail);
+    }
 
 }

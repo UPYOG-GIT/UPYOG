@@ -53,6 +53,8 @@ package org.egov.edcr.feature;
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.constants.DxfFileConstants.G;
+import static org.egov.edcr.constants.DxfFileConstants.DEVELOPMENT_ZONE;
+import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -70,6 +72,7 @@ import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.stereotype.Service;
 
@@ -99,6 +102,7 @@ public class Coverage_Dhamtari extends Coverage {
 	 */
 
 	public static final String RULE_38 = "38";
+	public static final String RULE_7_C_1 = "Table 7-C-1";
 	private static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
 	private static final BigDecimal ROAD_WIDTH_THIRTY_POINTFIVE = BigDecimal.valueOf(30.5);
 
@@ -168,24 +172,27 @@ public class Coverage_Dhamtari extends Coverage {
 		BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
 //		String areaCategory = pl.getAreaCategory();
 		BigDecimal permissibleCoverageValue = BigDecimal.ZERO;
-		String developmentZone = pl.getPlanInformation().getDevelopmentZone(); //
-//		String occupancyType;
 
 		// get coverage permissible value from method and store in
 		// permissibleCoverageValue
-		if (area.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null && developmentZone != null) {
+		String ruleNo = "";
+		if (area.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null) {
 //			occupancyType = mostRestrictiveOccupancy.getType().getCode();
 			if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForResidential(area, developmentZone);
+				permissibleCoverageValue = getPermissibleCoverageForResidential(area);
+				ruleNo = "Table 7-C-1";
 			} else if (F.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForCommercial(area, developmentZone,isCenterArea);
+				permissibleCoverageValue = getPermissibleCoverageForCommercial(area, isCenterArea);
+				ruleNo = "Table 7-C-3";
 			} else if (G.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForIndustrial(area, developmentZone);
+				permissibleCoverageValue = getPermissibleCoverageForIndustrial(area);
+				ruleNo = "Table 7-C-13";
 			}
 		}
 
 		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0) {
-			processCoverage(pl, mostRestrictiveOccupancy.getType().getName(), totalCoverage, permissibleCoverageValue);
+			processCoverage(pl, mostRestrictiveOccupancy.getType().getName(), totalCoverage, permissibleCoverageValue,
+					isCenterArea, ruleNo);
 		}
 
 //		if (roadWidth != null && roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) >= 0
@@ -202,7 +209,7 @@ public class Coverage_Dhamtari extends Coverage {
 	/*
 	 * to get coverage permissible value for Residential
 	 */
-	private BigDecimal getPermissibleCoverageForResidential(BigDecimal area, String developmentZone) {
+	private BigDecimal getPermissibleCoverageForResidential(BigDecimal area) {
 		LOG.info("inside getPermissibleCoverageForResidential()");
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
 
@@ -238,7 +245,7 @@ public class Coverage_Dhamtari extends Coverage {
 	 * to get coverage permissible value for Commercial
 	 */
 
-	private BigDecimal getPermissibleCoverageForCommercial(BigDecimal area, String developmentZone, boolean isCenterArea) {
+	private BigDecimal getPermissibleCoverageForCommercial(BigDecimal area, boolean isCenterArea) {
 		LOG.info("inside getPermissibleCoverageForCommercial()");
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
 
@@ -260,7 +267,7 @@ public class Coverage_Dhamtari extends Coverage {
 		 */
 //			break;
 //		}
-		
+
 		if (isCenterArea) {
 			permissibleCoverage = BigDecimal.valueOf(80);
 		} else {
@@ -269,8 +276,8 @@ public class Coverage_Dhamtari extends Coverage {
 		LOG.info("return from getPermissibleCoverageForCommercial()");
 		return permissibleCoverage;
 	}
-	
-	private BigDecimal getPermissibleCoverageForIndustrial(BigDecimal area, String developmentZone) {
+
+	private BigDecimal getPermissibleCoverageForIndustrial(BigDecimal area) {
 		LOG.info("inside getPermissibleCoverageForCommercial()");
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
 
@@ -294,24 +301,27 @@ public class Coverage_Dhamtari extends Coverage {
 		return permissibleCoverage;
 	}
 
-	private void processCoverage(Plan pl, String occupancy, BigDecimal coverage, BigDecimal upperLimit) {
+	private void processCoverage(Plan pl, String occupancy, BigDecimal coverage, BigDecimal upperLimit,
+			boolean isCenterArea, String ruleNo) {
 		LOG.info("inside processCoverage()");
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.setKey("Common_Coverage");
 		scrutinyDetail.setHeading("Coverage in Percentage");
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, OCCUPANCY);
-		scrutinyDetail.addColumnHeading(4, PERMISSIBLE);
-		scrutinyDetail.addColumnHeading(5, PROVIDED);
-		scrutinyDetail.addColumnHeading(6, STATUS);
+		scrutinyDetail.addColumnHeading(2, CENTER_AREA);
+		scrutinyDetail.addColumnHeading(3, DESCRIPTION);
+		scrutinyDetail.addColumnHeading(4, OCCUPANCY);
+		scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
+		scrutinyDetail.addColumnHeading(6, PROVIDED);
+		scrutinyDetail.addColumnHeading(7, STATUS);
 
 		String desc = getLocaleMessage(RULE_DESCRIPTION_KEY, upperLimit.toString());
 		String actualResult = getLocaleMessage(RULE_ACTUAL_KEY, coverage.toString());
 		String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY, upperLimit.toString());
 		if (coverage.doubleValue() <= upperLimit.doubleValue()) {
 			Map<String, String> details = new HashMap<>();
-			details.put(RULE_NO, RULE_38);
+			details.put(RULE_NO, ruleNo);
+			details.put(CENTER_AREA, isCenterArea ? "Yes" : "No");
 			details.put(DESCRIPTION, desc);
 			details.put(OCCUPANCY, occupancy);
 			details.put(PERMISSIBLE, expectedResult);
@@ -322,7 +332,8 @@ public class Coverage_Dhamtari extends Coverage {
 
 		} else {
 			Map<String, String> details = new HashMap<>();
-			details.put(RULE_NO, RULE_38);
+			details.put(RULE_NO, ruleNo);
+			details.put(CENTER_AREA, isCenterArea ? "Yes" : "No");
 			details.put(DESCRIPTION, desc);
 			details.put(OCCUPANCY, occupancy);
 			details.put(PERMISSIBLE, expectedResult);

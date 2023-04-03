@@ -72,6 +72,7 @@ import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.F;
+import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
 @Service
 public class Coverage_Birgaon extends Coverage {
@@ -169,6 +170,10 @@ public class Coverage_Birgaon extends Coverage {
 //		String areaCategory = pl.getAreaCategory();
 		BigDecimal permissibleCoverageValue = BigDecimal.ZERO;
 		String developmentZone = pl.getPlanInformation().getDevelopmentZone(); //
+		if(developmentZone==null) {
+			pl.addError(DEVELOPMENT_ZONE,
+					getLocaleMessage(OBJECTNOTDEFINED, DEVELOPMENT_ZONE + " of PLAN_INFO layer"));
+		}
 //		String occupancyType;
 
 		// get coverage permissible value from method and store in

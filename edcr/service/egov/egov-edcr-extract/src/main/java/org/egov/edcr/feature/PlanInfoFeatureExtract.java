@@ -519,9 +519,9 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		String developmentZone = planInfoProperties.get(DxfFileConstants.DEVELOPMENT_ZONE);
 		if (StringUtils.isNotBlank(developmentZone))
 			pi.setDevelopmentZone(developmentZone);
-		else
-			pl.addError(DxfFileConstants.DEVELOPMENT_ZONE,
-					getLocaleMessage(OBJECTNOTDEFINED, DxfFileConstants.DEVELOPMENT_ZONE + " of PLAN_INFO layer"));
+//		else
+//			pl.addError(DxfFileConstants.DEVELOPMENT_ZONE,
+//					getLocaleMessage(OBJECTNOTDEFINED, DxfFileConstants.DEVELOPMENT_ZONE + " of PLAN_INFO layer"));
 
 		// fetch Center Area from Plan Info Layer for Dhamtari ULB
 		String isCenterArea = planInfoProperties.get(DxfFileConstants.CENTER_AREA);
