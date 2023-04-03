@@ -22,21 +22,41 @@ public class OtpRepository {
         this.otpCreateUrl = otpHost + otpCreateUrl;
     }
 
+//    public String fetchOtp(OtpRequest otpRequest) {
+//        final org.egov.persistence.contract.OtpRequest request =
+//                new org.egov.persistence.contract.OtpRequest(otpRequest);
+//        try {
+//            final OtpResponse otpResponse =
+//                    restTemplate.postForObject(otpCreateUrl, request, OtpResponse.class);
+//            if (isOtpNumberAbsent(otpResponse)) {
+//                throw new OtpNumberNotPresentException();
+//            }
+//            return otpResponse.getOtpNumber();
+//        } catch (Exception e) {
+//            log.error("Exception while fetching OTP: ", e);
+//            throw new OtpNumberNotPresentException();
+//        }
+//    }
+    
     public String fetchOtp(OtpRequest otpRequest) {
-        final org.egov.persistence.contract.OtpRequest request =
-                new org.egov.persistence.contract.OtpRequest(otpRequest);
+        String otpNumber = "";
+        final org.egov.persistence.contract.OtpRequest request = new org.egov.persistence.contract.OtpRequest(otpRequest);
         try {
-            final OtpResponse otpResponse =
-                    restTemplate.postForObject(otpCreateUrl, request, OtpResponse.class);
-            if (isOtpNumberAbsent(otpResponse)) {
-                throw new OtpNumberNotPresentException();
-            }
-            return otpResponse.getOtpNumber();
+        	
+          do { 
+                final OtpResponse otpResponse = restTemplate.postForObject(otpCreateUrl, request, OtpResponse.class);
+                if (isOtpNumberAbsent(otpResponse)) {
+                    throw new OtpNumberNotPresentException();
+                }
+                otpNumber = otpResponse.getOtpNumber();
+            }   while (otpNumber.startsWith("0")); // loop until OTP does not start with 0
+            return otpNumber;
         } catch (Exception e) {
             log.error("Exception while fetching OTP: ", e);
             throw new OtpNumberNotPresentException();
         }
     }
+
 
     private boolean isOtpNumberAbsent(OtpResponse otpResponse) {
         return otpResponse == null || otpResponse.isOtpNumberAbsent();
