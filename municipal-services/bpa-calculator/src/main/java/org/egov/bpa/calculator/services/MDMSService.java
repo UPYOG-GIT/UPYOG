@@ -612,10 +612,12 @@ public class MDMSService {
 					if (!calcact.equals("Slabwise")) // FOR NO SLAB !'S' like post-'Development Charges,SubTax',
 														// 'Pre-'Scrutiny Charges (HR-NEW)'
 					{
+						log.info("Inside Non-SlabWise Condition***************");
 						log.info("Area TPRate1: " + Area);
 						log.info("Rate TPRate1: " + Rate);
 						if (calcon.equals("Buildup Area")) {
 							if (calcact.equals("Multiple With Rate")) {
+								log.info("######Inside Buildup Area: Multiple With Rate Condition ");
 								Val = (Area * Rate);
 								if (pCategory.equals(4)) { // MIX
 									Val = (res_area * rate_res) + (com_area * rate_comm); // if parking='N'
@@ -635,10 +637,8 @@ public class MDMSService {
 
 									}
 								} // end mix
-
-							}
-
-							if (calcact.equals("Plot Area")) {
+							} else if (calcact.equals("Plot Area")) {
+								log.info("######Inside Buildup Area: Plot Area Condition ");
 								// calculated on BA and Multiple With Percent
 								Val = (Area * (Rate / 100));
 								if (pCategory.equals(4)) { // MIX
@@ -659,9 +659,8 @@ public class MDMSService {
 										Val = (Area * (Rate / 100));
 									}
 								} // end mix
-							}
-
-							if (calcact.equals("Multiple With Rate & Percent")) {
+							} else if (calcact.equals("Multiple With Rate & Percent")) {
+								log.info("######Inside Buildup Area: Multiple With Rate & Percent Condition ");
 								// calculated on BA and Multiple With Rate & Percent
 								Val = (Area * Rate * (perval / 100));
 								if (pCategory.equals(4)) { // MIX
@@ -682,9 +681,8 @@ public class MDMSService {
 										Val = (Area * Rate * (perval / 100));
 									}
 								} // end mix
-
-							}
-							if (calcact.equals("Fix")) {
+							} else if (calcact.equals("Fix")) {
+								log.info("######Inside Buildup Area: Fix Condition ");
 								// calculated on BA and Fix Pre-'Scrutiny Charges NH-REVISED'
 
 								Val = Rate;
@@ -706,70 +704,68 @@ public class MDMSService {
 									}
 								} // end mix
 							}
+							log.info("++++Amount =" + Val);
+						} else if (calcon.equals("Plot Area")) {
 
-						}
-
-						// calculated on PA
-						// Note: There is a Issues in calculation for MIX category and, No I/P from
-						// client that how calculation will be done.
-						if (calcon.equals("Plot Area")) {
+							// calculated on PA
+							// Note: There is a Issues in calculation for MIX category and, No I/P from
+							// client that how calculation will be done.
 							Area = plotares; // change above pcat area but rate will be same
 							// $lRate=$lres_rate+$lcom_rate+$lind_rate;
 							log.info("Area TPRate6: " + Area);
 							log.info("Rate TPRate6: " + Rate);
 							if (calcact.equals("Multiple With Rate")) {
+								log.info("######Inside Plot Area: Multiple With Rate Condition ");
 								// calculated on PA and Multiple With Rate
 								Val = (Area * Rate);
-							}
-							if (calcact.equals("Multiple With Percent")) {
+							} else if (calcact.equals("Multiple With Percent")) {
+								log.info("######Inside Plot Area: Multiple With Percent Condition ");
 								// calculated on PA and Multiple With Percent
 								Val = (Area * (Rate / 100));
-							}
-							if (calcact.equals("Multiple With Rate & Percent")) {
+							} else if (calcact.equals("Multiple With Rate & Percent")) {
+								log.info("######Inside Plot Area: Multiple With Rate & Percent Condition ");
 								// calculated on PA and Multiple With Rate & Percent
 								Val = (Area * Rate * (perval / 100));
-							}
-							if (calcact.equals("Fix")) {
+							} else if (calcact.equals("Fix")) {
+								log.info("######Inside Plot Area: Fix Condition ");
 								// calculated on PA and Fix
 								Val = Rate;
 							}
-						}
-
-						// calculated on BA&PA.
-						// Note: Yet No Such Fees based for non-slab(payrate master), but it is in
-						// slab-master for BPMS. //So here no calculation.
-						if (calcon.equals("Buildup Area and Plot Area")) {
+							log.info("++++Amount =" + Val);
+						} else if (calcon.equals("Buildup Area and Plot Area")) {
+							log.info("######Inside Buildup Area and Plot Area");
+							// calculated on BA&PA.
+							// Note: Yet No Such Fees based for non-slab(payrate master), but it is in
+							// slab-master for BPMS. //So here no calculation.
 							if (calcact.equals("Multiple With Rate")) {
 								// calculated on BA&PA and Multiple With Rate
-							}
-							if (calcon.equals("Buildup Area and Plot Area")
+							} else if (calcon.equals("Buildup Area and Plot Area")
 									&& calcact.equals("Multiple With Percent")) {
 								// calculated on BA&PA and Multiple With Percent
-							}
-							if (calcon.equals("Buildup Area and Plot Area")
+							} else if (calcon.equals("Buildup Area and Plot Area")
 									&& calcact.equals("Multiple With Rate & Percent")) {
 								// calculated on BA&PA and Multiple With Rate & Percent
-							}
-							if (calcon.equals("Buildup Area and Plot Area") && calcact.equals("Fix")) {
+							} else if (calcon.equals("Buildup Area and Plot Area") && calcact.equals("Fix")) {
 								// calculated on BA&PA and Fix
 							}
-						}
-
-						// calculated on PA & No.of Unit.
-						// Note: Yet No Such Fees based for non-slab(payrate master), but it is in
-						// slab-master for BPMS
-						// So here no calculation.
-						if (calcon.equals("Plot Area and No of Unit") && calcact.equals("Multiple With Rate")) {
+							log.info("++++Amount =" + Val);
+						} else if (calcon.equals("Plot Area and No of Unit") && calcact.equals("Multiple With Rate")) {
+							log.info("######Inside Plot Area and No of Unit");
 							// calculated on PA & No.of Unit and Multiple With Rate
-						}
-						if (calcon.equals("Plot Area and No of Unit") && calcact.equals("Multiple With Percent")) {
+						} else if (calcon.equals("Plot Area and No of Unit")
+								&& calcact.equals("Multiple With Percent")) {
+							log.info("######Inside Plot Area and No of Unit && Multiple With Percent");
+							// calculated on PA & No.of Unit.
+							// Note: Yet No Such Fees based for non-slab(payrate master), but it is in
+							// slab-master for BPMS
+							// So here no calculation.
 							// calculated on PA & No.of Unit and Multiple With Percent
-						}
-						if (calcon.equals("Plot Area and No of Unit")
+						} else if (calcon.equals("Plot Area and No of Unit")
 								&& calcact.equals("Multiple With Rate & Percent")) {
+							log.info("######Inside Plot Area and No of Unit && Multiple With Rate & Percent");
 							// calculated on PA & No.of Unit and Multiple With Rate & Percent
-						}
-						if (calcon.equals("Plot Area and No of Unit") && calcact.equals("Fix")) {
+						} else if (calcon.equals("Plot Area and No of Unit") && calcact.equals("Fix")) {
+							log.info("######Inside Plot Area and No of Unit && Fix");
 							// calculated on PA & No.of Unit and Fix
 						}
 
@@ -777,16 +773,13 @@ public class MDMSService {
 						// Note: Yet No Such Fees based for non-slab(payrate master), but it is in
 						// slab-master for BPMS
 						// So here no calculation.
-						if (calcon.equals("Net Plot Area") && calcact.equals("Multiple With Rate")) {
+						else if (calcon.equals("Net Plot Area") && calcact.equals("Multiple With Rate")) {
 							// calculated on Net Plot Area and Multiple With Rate
-						}
-						if (calcon.equals("Net Plot Area") && calcact.equals("Multiple With Percent")) {
+						} else if (calcon.equals("Net Plot Area") && calcact.equals("Multiple With Percent")) {
 							// calculated on Net Plot Area and Multiple With Percent
-						}
-						if (calcon.equals("Net Plot Area") && calcact.equals("Multiple With Rate & Percent")) {
+						} else if (calcon.equals("Net Plot Area") && calcact.equals("Multiple With Rate & Percent")) {
 							// calculated on Net Plot Area and Multiple With Rate & Percent
-						}
-						if (calcon.equals("Net Plot Area") && calcact.equals("Fix")) {
+						} else if (calcon.equals("Net Plot Area") && calcact.equals("Fix")) {
 							// calculated on Net Plot Area and Fix
 						}
 
@@ -794,6 +787,7 @@ public class MDMSService {
 						// FOR SLAB 'S'
 						// check for slab.
 //						Math.ceil(Area);
+						log.info("Inside SlabWise Condition***************");
 						log.info("b_category==" + b_category + "--s_category--" + s_category + "-- Math.ceil(Area)--"
 								+ Math.ceil(Area));
 
@@ -901,6 +895,7 @@ public class MDMSService {
 						// echo ceil($lArea).','.$lRate.'<br>';
 						if (calcon.equals("Buildup Area")) {
 							if (s_oper.equals("Multiple With Rate")) {
+								log.info("######Inside Buildup Area: Multiple With Rate Condition ");
 								// calculated on BA and Multiply
 								Val = (Area * Rate);
 								if (pCategory.equals(4)) { // MIX
@@ -920,9 +915,8 @@ public class MDMSService {
 										Val = (Area * Rate);
 									}
 								} // end mix
-							}
-
-							if (s_oper.equals("Fix")) {
+							} else if (s_oper.equals("Fix")) {
+								log.info("######Inside Buildup Area: Fix Condition ");
 								// calculated on BA and Fix
 								Val = Rate;
 
@@ -943,9 +937,8 @@ public class MDMSService {
 										Val = Rate;
 									}
 								} // end mix
-							}
-
-							if (s_oper.equals("Fix and Multiply")) { // TODO
+							} else if (s_oper.equals("Fix and Multiply")) { // TODO
+								log.info("######Inside Buildup Area: Fix and Multiply Condition ");
 								// calculated on BA and Fix & Multiply -- For all category
 								Double LowerRate = 0.0;
 								Val = Rate + (((double) Area - ((double) sFromVal - 1)) * (double) multpval);
@@ -981,9 +974,8 @@ public class MDMSService {
 										Val = ((double) Val * (50 / 100));
 									}
 								}
-							}
-
-							if (s_oper.equals("Multiply & Check Limit")) {// -----------have to add C value
+							} else if (s_oper.equals("Multiply & Check Limit")) {// -----------have to add C value
+								log.info("######Inside Buildup Area: Multiply & Check Limit Condition ");
 								// calculated on BA and Multiply & Check Limit
 								calcval = (Area * Rate);
 								if (calcval >= maxlimit)
@@ -991,91 +983,88 @@ public class MDMSService {
 								if (calcval <= maxlimit)
 									Val = calcval;
 							}
-
-						}
-
-						// slab calculated on PA
-						if (calcon.equals("Plot Area")) {
+							log.info("++++Amount =" + Val);
+						} else if (calcon.equals("Plot Area")) {
+							// slab calculated on PA
 							Area = plotares; // change above $lpcat area but rate will be same as slab rate
 							if (s_oper.equals("Multiple With Rate")) {
+								log.info("######Inside Plot Area: Multiple With Rate Condition ");
 								// calculated on PA and Multiply
 								Val = (Area * Rate);
-							}
-							if (s_oper.equals("Fix")) {
+							} else if (s_oper.equals("Fix")) {
+								log.info("######Inside Plot Area: Fix Condition ");
 								// calculated on PA and Fix
 								Val = Rate;
-							}
-							if (s_oper.equals("Fix and Multiply")) { // Yet No such type of Fees define so write default
-																		// formula
+							} else if (s_oper.equals("Fix and Multiply")) { // Yet No such type of Fees define so write
+																			// default
+																			// formula
 								// calculated on PA and Fix & Multiply -
+								log.info("######Inside Plot Area: Fix and Multiply Condition ");
 								Val = (double) Rate + (((double) Area - ((double) sFromVal - 1)) * (double) multpval);
-							}
-							if (s_oper.equals("Multiply & Check Limit")) {
+							} else if (s_oper.equals("Multiply & Check Limit")) {
 								// calculated on PA and Multiply & Check Limit,residential-single-unit-Rain
 								// Harvesting Charges.
+								log.info("######Inside Plot Area: Multiply & Check Limit Condition ");
 								calcval = (Area * Rate);
 								if (calcval >= maxlimit)
 									Val = maxlimit;
 								if (calcval <= maxlimit)
 									Val = calcval;
 							}
-						}
-
-						// slab calculated on BA&PA
-						if (calcon.equals("Buildup Area and Plot Area")) {
+							log.info("++++Amount =" + Val);
+						} else if (calcon.equals("Buildup Area and Plot Area")) {
+							// slab calculated on BA&PA
 							Double PlotArea = plotares; // $lArea - already have build up area. (res,com,ind,mix,edu )
 
 							if (s_oper.equals("Multiple With Rate")) {
+								log.info("######Inside Buildup Area and Plot Area: Multiple With Rate Condition ");
 								// calculated on BA&PA and Multiply
 								Val = (Area * Rate);
-							}
-							if (s_oper.equals("Fix")) {
+							} else if (s_oper.equals("Fix")) {
+								log.info("######Inside Buildup Area and Plot Area: Fix Condition ");
 								// calculated on BA&PA and Fix
 								Val = Rate;
-							}
-							if (s_oper.equals("Fix and Multiply")) {
+							} else if (s_oper.equals("Fix and Multiply")) {
 								// calculated on BA&PA and Fix & Multiply
-							}
-							if (s_oper.equals("Multiply & Check Limit")) { // RAI-rain harvesting MUltiply and Check
-																			// Limit
+							} else if (s_oper.equals("Multiply & Check Limit")) { // RAI-rain harvesting MUltiply and
+																					// Check
+								// Limit
 								// calculated on BA&PA and Multiply & Check Limit
 								// $lackshect=1Lacs/Hector=1000000/10000=10) - define on top-1Lacs value will be
 								// fetch from either location/paytype master
+								log.info("######Inside Buildup Area and Plot Area: Multiply & Check Limit Condition ");
 								calcval = (Area * Rate) + (PlotArea * lackshect);
 								if (calcval >= maxlimit)
 									Val = maxlimit;
 								if (calcval <= maxlimit)
 									Val = calcval;
 							}
-						}
-
-						// slab calculated on PA & No.of Unit
-						if (calcon.equals("Plot Area and No of Unit")) {
+							log.info("++++Amount =" + Val);
+						} else if (calcon.equals("Plot Area and No of Unit")) {
+							// slab calculated on PA & No.of Unit
 							Double PlotArea = plotares; // $lArea - already have build up area. (res,com,ind,mix,edu )
 							Area = res_unit;
 							if (s_oper.equals("Multiple With Rate")) {
 								// calculated on PA & No.of Unit and Multiply
 
-							}
-							if (s_oper.equals("Fix")) {
+							} else if (s_oper.equals("Fix")) {
 								// calculated on PA & No.of Unit and Fix
-							}
-							if (s_oper.equals("Fix and Multiply")) {
+							} else if (s_oper.equals("Fix and Multiply")) {
 								// calculated on PA & No.of Unit and Fix & Multiply
-							}
-							if (s_oper.equals("Multiply & Check Limit")) { // RAI-rain harvesting MUltiply and Check
-																			// Limit
+							} else if (s_oper.equals("Multiply & Check Limit")) { // RAI-rain harvesting MUltiply and
+																					// Check
+								// Limit
 								// calculated on PA & No.of Unit and Multiply & Check Limit
+								log.info("######Inside Plot Area and No of Unit: Multiply & Check Limit Condition ");
 								calcval = (PlotArea * Rate);
 								if (calcval >= (res_unit * maxlimit))
 									Val = (res_unit * maxlimit);
 								if (calcval <= (res_unit * maxlimit))
 									Val = calcval;
 							}
-						}
-
-						// slab calculated on Net Plot Area fee:development of colony
-						if (calcon.equals("Net Plot Area")) {
+							log.info("++++Amount =" + Val);
+						} else if (calcon.equals("Net Plot Area")) {
+							// slab calculated on Net Plot Area fee:development of colony
 							// Calcon='NetPlotArea' -(NPA) = PA-(Road Area+ActualSubPA+OpenSpaceArea)
 							// eg if PA=100,RoadArea=50,ActualSubPA=10,OpenSpaceArea=0 then
 							// 100-(50+10+0)=(100-60)=40 - this calculated value will be in XML-TAG
@@ -1084,17 +1073,17 @@ public class MDMSService {
 							Area = netplot_area; // Net Plot area New from XML
 
 							if (s_oper.equals("Multiple With Rate")) {
+								log.info("######Inside Net Plot Area: Multiple With Rate Condition ");
 								// calculated on Net Plot Area and Multiply
 								Val = (Area * Rate);
-							}
-							if (s_oper.equals("Fix")) {
+							} else if (s_oper.equals("Fix")) {
+								log.info("######Inside Net Plot Area: Fix Condition ");
 								// calculated on Net Plot Area and Fix
 								Val = Rate;
-							}
-							if (s_oper.equals("Fix and Multiply")) {
+							} else if (s_oper.equals("Fix and Multiply")) {
 								// calculated on Net Plot Area and Fix & Multiply
-							}
-							if (s_oper.equals("Multiply & Check Limit")) {
+							} else if (s_oper.equals("Multiply & Check Limit")) {
+								log.info("######Inside Net Plot Area: Multiply & Check Limit Condition ");
 								// calculated on Net Plot Area and Multiply & Check Limit
 								// 10=1Lacs/Hector=1000000/10000=10) - 1Lacs value will be fetch from either
 								// location/paytype master
@@ -1104,6 +1093,7 @@ public class MDMSService {
 								if (calcval <= maxlimit)
 									Val = calcval;
 							}
+							log.info("++++Amount =" + Val);
 						}
 
 					} // end of SLAB
@@ -1149,6 +1139,7 @@ public class MDMSService {
 
 				} // end of tpd_zdaflg='N'
 				else if (item.get("zdaflg").equals("Y")) {
+					log.info("Inside zdaflg is Y");
 					// have to verify this logic of calculation ----this calculation is not require
 					// for CG told by ved sir-------------------------
 					if (!zonedesc.equals(null) && plotares > 0) {
