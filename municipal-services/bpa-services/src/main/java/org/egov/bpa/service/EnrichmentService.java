@@ -314,6 +314,10 @@ public class EnrichmentService {
 			int vailidityInMonths = config.getValidityInMonths();
 			Calendar calendar = Calendar.getInstance();
 			bpa.setApprovalDate(Calendar.getInstance().getTimeInMillis());
+			log.debug("Approval number generated: " + bpa.getApprovalNo());
+			log.info("Approval number generated:----- " + bpa.getApprovalNo());
+
+
 
 			// Adding 3years (36 months) to Current Date
 			calendar.add(Calendar.MONTH, vailidityInMonths);
