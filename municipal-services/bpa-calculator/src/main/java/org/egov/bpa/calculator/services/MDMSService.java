@@ -574,8 +574,10 @@ public class MDMSService {
 					if (s_category.equals(null) || s_category.equals(0))
 						s_category = 0;
 
-					if (!calcon.equals("Buildup Area")) // Parking area is applicable only for calculation based on
-														// Build up Area
+//					if (!calcon.equals("Buildup Area")) 
+					if (!calcon.equals("Buildup Area") || s_category.equals(1))
+					// Parking area is applicable only for calculation based on
+					// Build up Area
 					{
 						ParkArea = 0.0;
 					}
@@ -585,16 +587,13 @@ public class MDMSService {
 					if (pCategory.equals(1)) { // RESIDENTIAL
 						Area = res_area + ParkArea;
 						Rate = rate_res;
-					}
-					if (pCategory.equals(2) || pCategory.equals(5)) { // COMMERCIAL/EDUCATIONAL
+					} else if (pCategory.equals(2) || pCategory.equals(5)) { // COMMERCIAL/EDUCATIONAL
 						Area = com_area + ParkArea;
 						Rate = rate_comm;
-					}
-					if (pCategory.equals(3)) { // INDUSTRIAL
+					} else if (pCategory.equals(3)) { // INDUSTRIAL
 						Area = ind_area + ParkArea;
 						Rate = rate_comm;
-					}
-					if (pCategory.equals(4)) { // MIX
+					} else if (pCategory.equals(4)) { // MIX
 						if (calcon.equals("Buildup Area")) {
 							Area = res_area + com_area;
 							Rate = rate_res + rate_comm;
@@ -895,7 +894,7 @@ public class MDMSService {
 						// slab calculated on BA -ToDO
 						// echo ceil($lArea).','.$lRate.'<br>';
 						if (calcon.equals("Buildup Area")) {
-							if (s_oper.equals("Multiple With Rate")) {
+							if (s_oper.equals("Multiply")) {
 								log.info("######Inside Buildup Area: Multiple With Rate Condition ");
 								// calculated on BA and Multiply
 								Val = (Area * Rate);
@@ -975,7 +974,8 @@ public class MDMSService {
 										Val = ((double) Val * (50 / 100));
 									}
 								}
-							} else if (s_oper.equals("Multiply & Check Limit")) {// -----------have to add C value
+							} else if (s_oper.equals("Multiply & Check Limit")
+									|| s_oper.equals("Multiply and Check Limit")) {// -----------have to add C value
 								log.info("######Inside Buildup Area: Multiply & Check Limit Condition ");
 								// calculated on BA and Multiply & Check Limit
 								calcval = (Area * Rate);
@@ -988,7 +988,7 @@ public class MDMSService {
 						} else if (calcon.equals("Plot Area")) {
 							// slab calculated on PA
 							Area = plotares; // change above $lpcat area but rate will be same as slab rate
-							if (s_oper.equals("Multiple With Rate")) {
+							if (s_oper.equals("Multiply")) {
 								log.info("######Inside Plot Area: Multiple With Rate Condition ");
 								// calculated on PA and Multiply
 								Val = (Area * Rate);
@@ -1002,7 +1002,8 @@ public class MDMSService {
 								// calculated on PA and Fix & Multiply -
 								log.info("######Inside Plot Area: Fix and Multiply Condition ");
 								Val = (double) Rate + (((double) Area - ((double) sFromVal - 1)) * (double) multpval);
-							} else if (s_oper.equals("Multiply & Check Limit")) {
+							} else if (s_oper.equals("Multiply & Check Limit")
+									|| s_oper.equals("Multiply and Check Limit")) {
 								// calculated on PA and Multiply & Check Limit,residential-single-unit-Rain
 								// Harvesting Charges.
 								log.info("######Inside Plot Area: Multiply & Check Limit Condition ");
@@ -1017,7 +1018,7 @@ public class MDMSService {
 							// slab calculated on BA&PA
 							Double PlotArea = plotares; // $lArea - already have build up area. (res,com,ind,mix,edu )
 
-							if (s_oper.equals("Multiple With Rate")) {
+							if (s_oper.equals("Multiply")) {
 								log.info("######Inside Buildup Area and Plot Area: Multiple With Rate Condition ");
 								// calculated on BA&PA and Multiply
 								Val = (Area * Rate);
@@ -1027,7 +1028,8 @@ public class MDMSService {
 								Val = Rate;
 							} else if (s_oper.equals("Fix and Multiply")) {
 								// calculated on BA&PA and Fix & Multiply
-							} else if (s_oper.equals("Multiply & Check Limit")) { // RAI-rain harvesting MUltiply and
+							} else if (s_oper.equals("Multiply & Check Limit")
+									|| s_oper.equals("Multiply and Check Limit")) { // RAI-rain harvesting MUltiply and
 																					// Check
 								// Limit
 								// calculated on BA&PA and Multiply & Check Limit
@@ -1045,14 +1047,15 @@ public class MDMSService {
 							// slab calculated on PA & No.of Unit
 							Double PlotArea = plotares; // $lArea - already have build up area. (res,com,ind,mix,edu )
 							Area = res_unit;
-							if (s_oper.equals("Multiple With Rate")) {
+							if (s_oper.equals("Multiply")) {
 								// calculated on PA & No.of Unit and Multiply
 
 							} else if (s_oper.equals("Fix")) {
 								// calculated on PA & No.of Unit and Fix
 							} else if (s_oper.equals("Fix and Multiply")) {
 								// calculated on PA & No.of Unit and Fix & Multiply
-							} else if (s_oper.equals("Multiply & Check Limit")) { // RAI-rain harvesting MUltiply and
+							} else if (s_oper.equals("Multiply & Check Limit")
+									|| s_oper.equals("Multiply and Check Limit")) { // RAI-rain harvesting MUltiply and
 																					// Check
 								// Limit
 								// calculated on PA & No.of Unit and Multiply & Check Limit
@@ -1073,7 +1076,7 @@ public class MDMSService {
 							// Rate
 							Area = netplot_area; // Net Plot area New from XML
 
-							if (s_oper.equals("Multiple With Rate")) {
+							if (s_oper.equals("Multiply")) {
 								log.info("######Inside Net Plot Area: Multiple With Rate Condition ");
 								// calculated on Net Plot Area and Multiply
 								Val = (Area * Rate);
@@ -1083,7 +1086,8 @@ public class MDMSService {
 								Val = Rate;
 							} else if (s_oper.equals("Fix and Multiply")) {
 								// calculated on Net Plot Area and Fix & Multiply
-							} else if (s_oper.equals("Multiply & Check Limit")) {
+							} else if (s_oper.equals("Multiply & Check Limit")
+									|| s_oper.equals("Multiply and Check Limit")) {
 								log.info("######Inside Net Plot Area: Multiply & Check Limit Condition ");
 								// calculated on Net Plot Area and Multiply & Check Limit
 								// 10=1Lacs/Hector=1000000/10000=10) - 1Lacs value will be fetch from either
