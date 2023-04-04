@@ -704,7 +704,8 @@ public class MDMSService {
 									}
 								} // end mix
 							}
-							log.info("++++Amount =" + Val);
+//							log.info("++++Amount =" + Val);
+							log.info("Charges Type : " + chargesTy + ", Amount: " + Val);
 						} else if (calcon.equals("Plot Area")) {
 
 							// calculated on PA
@@ -731,7 +732,7 @@ public class MDMSService {
 								// calculated on PA and Fix
 								Val = Rate;
 							}
-							log.info("++++Amount =" + Val);
+							log.info("Charges Type : " + chargesTy + ", Amount: " + Val);
 						} else if (calcon.equals("Buildup Area and Plot Area")) {
 							log.info("######Inside Buildup Area and Plot Area");
 							// calculated on BA&PA.
@@ -748,7 +749,7 @@ public class MDMSService {
 							} else if (calcon.equals("Buildup Area and Plot Area") && calcact.equals("Fix")) {
 								// calculated on BA&PA and Fix
 							}
-							log.info("++++Amount =" + Val);
+							log.info("Charges Type : " + chargesTy + ", Amount: " + Val);
 						} else if (calcon.equals("Plot Area and No of Unit") && calcact.equals("Multiple With Rate")) {
 							log.info("######Inside Plot Area and No of Unit");
 							// calculated on PA & No.of Unit and Multiple With Rate
@@ -983,7 +984,7 @@ public class MDMSService {
 								if (calcval <= maxlimit)
 									Val = calcval;
 							}
-							log.info("++++Amount =" + Val);
+							log.info("Charges Type : " + chargesTy + ", Amount: " + Val);
 						} else if (calcon.equals("Plot Area")) {
 							// slab calculated on PA
 							Area = plotares; // change above $lpcat area but rate will be same as slab rate
@@ -1011,7 +1012,7 @@ public class MDMSService {
 								if (calcval <= maxlimit)
 									Val = calcval;
 							}
-							log.info("++++Amount =" + Val);
+							log.info("Charges Type : " + chargesTy + ", Amount: " + Val);
 						} else if (calcon.equals("Buildup Area and Plot Area")) {
 							// slab calculated on BA&PA
 							Double PlotArea = plotares; // $lArea - already have build up area. (res,com,ind,mix,edu )
@@ -1039,7 +1040,7 @@ public class MDMSService {
 								if (calcval <= maxlimit)
 									Val = calcval;
 							}
-							log.info("++++Amount =" + Val);
+							log.info("Charges Type : " + chargesTy + ", Amount: " + Val);
 						} else if (calcon.equals("Plot Area and No of Unit")) {
 							// slab calculated on PA & No.of Unit
 							Double PlotArea = plotares; // $lArea - already have build up area. (res,com,ind,mix,edu )
@@ -1062,7 +1063,7 @@ public class MDMSService {
 								if (calcval <= (res_unit * maxlimit))
 									Val = calcval;
 							}
-							log.info("++++Amount =" + Val);
+							log.info("Charges Type : " + chargesTy + ", Amount: " + Val);
 						} else if (calcon.equals("Net Plot Area")) {
 							// slab calculated on Net Plot Area fee:development of colony
 							// Calcon='NetPlotArea' -(NPA) = PA-(Road Area+ActualSubPA+OpenSpaceArea)
@@ -1093,7 +1094,7 @@ public class MDMSService {
 								if (calcval <= maxlimit)
 									Val = calcval;
 							}
-							log.info("++++Amount =" + Val);
+							log.info("Charges Type : " + chargesTy + ", Amount: " + Val);
 						}
 
 					} // end of SLAB
@@ -1102,7 +1103,7 @@ public class MDMSService {
 					trate += (double) Rate; // each building total rate for the fee
 					ptarea += (double) Area; // each building total area for the fee
 
-					log.info("Charges Type : " + chargesTy + ", Amount: " + Val);
+//					log.info("Charges Type : " + chargesTy + ", Amount: " + Val);
 					log.info("End--Value--" + Value + "-----trate---" + trate + "----End--ptarea--" + ptarea
 							+ "---unitid--" + unitid + "--End----paytyid--" + paytyid + "----chargesTy--" + chargesTy
 							+ "----calcact--" + calcact + "----tenantid--" + tenantid + "----feety--" + feety
