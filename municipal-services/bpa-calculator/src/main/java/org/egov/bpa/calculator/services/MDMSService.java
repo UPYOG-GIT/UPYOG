@@ -186,8 +186,11 @@ public class MDMSService {
 //			log.info("totalparkarea:----- " +parkDetails.toString());
 			JSONArray parkDetails11 = context.read(
 					"edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking\")].detail[0].Provided");
+			JSONArray parkDetails12 = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking Details\")].detail[0].Provided");
 			log.info("parkDetails11====:----- " + parkDetails11.toString());
+			log.info("parkDetails12====:----- " + parkDetails11.toString());
 			String totalParkArea = parkDetails11.get(0).toString();
+			String totalParkArea1 = parkDetails12.get(0).toString();
 
 			String zonedesc = context.read("edcrDetail[0].planDetail.planInfoProperties.DEVELOPMENT_ZONE");
 
@@ -259,6 +262,7 @@ public class MDMSService {
 			additionalDetails.put("bcate", bcategory + "");
 			additionalDetails.put("subcate", scategory + "");
 			additionalDetails.put("totalParkArea", totalParkArea);
+			additionalDetails.put("totalParkArea1", totalParkArea);
 			additionalDetails.put("zonedesc", zonedesc.toString());
 			additionalDetails.put("ResArea", ResArea.toString());
 			additionalDetails.put("CommArea", CommArea.toString());
@@ -421,10 +425,14 @@ public class MDMSService {
 		Integer bcategory = Integer.parseInt(data.get("bcate").toString());
 		log.info("bcategory----" + bcategory);
 		String tolpark = (data.get("totalParkArea").toString()).replace("m2", "");
+		String openpark = (data.get("totalParkArea1").toString());
 		log.info("tolpark----" + tolpark);
+		log.info("tolpark1----" + openpark);
 //		().replace('m2','');
 		Double totalParkArea = Double.valueOf(tolpark);
+		Double openParkArea = Double.valueOf(openpark);
 		log.info("totalParkArea----" + totalParkArea);
+		log.info("openParkArea----" + openParkArea);
 		Integer subcate = Integer.parseInt(data.get("subcate").toString());
 		log.info("subcate----" + subcate);
 		String appDate = data.get("appDate").toString();
@@ -439,6 +447,8 @@ public class MDMSService {
 		log.info("ind_area----" + ind_area);
 		boolean isHighRise = Boolean.parseBoolean(data.get("isHighRisetf").toString());
 		log.info("isHighRise----" + isHighRise);
+		
+		
 
 		String heightcat = "";
 
@@ -487,6 +497,7 @@ public class MDMSService {
 
 		if (occupancyType.equals("Residential")) {
 			pCategory = 1; // this is srno. of proposal type master based on occupency
+			totalParkArea -= openParkArea;
 		} else if (occupancyType.equals("Mercantile / Commercial")) {
 			pCategory = 2; // this is srno. of proposal type master based on occupency
 		} else if (occupancyType.equals("INDUSTRIAL")) {
