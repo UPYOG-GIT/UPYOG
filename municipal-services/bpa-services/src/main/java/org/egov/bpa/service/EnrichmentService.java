@@ -309,15 +309,12 @@ public class EnrichmentService {
 				|| (!bpa.getBusinessService().equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE)
 						&& ((!bpa.getRiskType().toString().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)
 								&& state.equalsIgnoreCase(BPAConstants.APPROVED_STATE))
-								|| (state.equalsIgnoreCase(BPAConstants.DOCVERIFICATION_STATE) && bpa.getRiskType()
+								|| (state.equalsIgnoreCase(BPAConstants.APPROVED_STATE) && bpa.getRiskType()
 										.toString().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE))))) {
 			int vailidityInMonths = config.getValidityInMonths();
 			Calendar calendar = Calendar.getInstance();
 			bpa.setApprovalDate(Calendar.getInstance().getTimeInMillis());
 			
-
-
-
 			// Adding 3years (36 months) to Current Date
 			calendar.add(Calendar.MONTH, vailidityInMonths);
 			Map<String, Object> additionalDetail = null;
