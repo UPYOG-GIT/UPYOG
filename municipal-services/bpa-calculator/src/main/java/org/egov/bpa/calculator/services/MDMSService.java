@@ -186,9 +186,9 @@ public class MDMSService {
 //			log.info("totalparkarea:----- " +parkDetails.toString());
 			JSONArray parkDetails11 = context.read(
 					"edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking\")].detail[0].Provided");
-			JSONArray parkDetails12 = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking Details\")].detail[0].Open Paking");
+			JSONArray parkDetails12 = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking Details\")].detail[0].Open Parking");
 			log.info("parkDetails11====:----- " + parkDetails11.toString());
-			log.info("parkDetails12====:----- " + parkDetails11.toString());
+			log.info("parkDetails12====:----- " + parkDetails12.toString());
 			String totalParkArea = parkDetails11.get(0).toString();
 			String totalParkArea1 = parkDetails12.get(0).toString();
 
@@ -262,7 +262,7 @@ public class MDMSService {
 			additionalDetails.put("bcate", bcategory + "");
 			additionalDetails.put("subcate", scategory + "");
 			additionalDetails.put("totalParkArea", totalParkArea);
-			additionalDetails.put("totalParkArea1", totalParkArea1);
+			additionalDetails.put("openParkArea", totalParkArea1);
 			additionalDetails.put("zonedesc", zonedesc.toString());
 			additionalDetails.put("ResArea", ResArea.toString());
 			additionalDetails.put("CommArea", CommArea.toString());
@@ -425,7 +425,7 @@ public class MDMSService {
 		Integer bcategory = Integer.parseInt(data.get("bcate").toString());
 		log.info("bcategory----" + bcategory);
 		String tolpark = (data.get("totalParkArea").toString()).replace("m2", "");
-		String openpark = (data.get("totalParkArea1").toString());
+		String openpark = (data.get("openParkArea").toString());
 		log.info("tolpark----" + tolpark);
 		log.info("tolpark1----" + openpark);
 //		().replace('m2','');
