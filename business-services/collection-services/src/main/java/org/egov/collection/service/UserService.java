@@ -54,6 +54,7 @@ public class UserService {
 			}
 		}catch(Exception e) {
 			log.error("Exception while fetching user: ", e);
+			log.error("Exception while fetching user---: ", e);
 		}
 		
 		return response;
