@@ -186,7 +186,7 @@ public class MDMSService {
 //			log.info("totalparkarea:----- " +parkDetails.toString());
 			JSONArray parkDetails11 = context.read(
 					"edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking\")].detail[0].Provided");
-			JSONArray parkDetails12 = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking Details\")].detail[0].Open Parking");
+			JSONArray parkDetails12 = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking Details\")].detail[0].'Open Parking'");
 			log.info("parkDetails11====:----- " + parkDetails11.toString());
 			log.info("parkDetails12====:----- " + parkDetails12.toString());
 			String totalParkArea = parkDetails11.get(0).toString();
