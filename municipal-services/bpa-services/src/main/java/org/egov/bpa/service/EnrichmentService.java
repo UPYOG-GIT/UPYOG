@@ -314,8 +314,7 @@ public class EnrichmentService {
 			int vailidityInMonths = config.getValidityInMonths();
 			Calendar calendar = Calendar.getInstance();
 			bpa.setApprovalDate(Calendar.getInstance().getTimeInMillis());
-			log.debug("Approval number generated: " + bpa.getApprovalNo());
-			log.info("Approval number generated:----- " + bpa.getApprovalNo());
+			
 
 
 
@@ -333,6 +332,8 @@ public class EnrichmentService {
 			List<IdResponse> idResponses = idGenRepository.getId(bpaRequest.getRequestInfo(), bpa.getTenantId(),
 					config.getPermitNoIdgenName(), config.getPermitNoIdgenFormat(), 1).getIdResponses();
 			bpa.setApprovalNo(idResponses.get(0).getId());
+			log.debug("Approval number generated: " + bpa.getApprovalNo());
+			log.info("Approval number generated:----- " + bpa.getApprovalNo());
 			if (state.equalsIgnoreCase(BPAConstants.DOCVERIFICATION_STATE)
 					&& bpa.getRiskType().toString().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)) {
 
