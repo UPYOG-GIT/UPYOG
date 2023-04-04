@@ -206,6 +206,7 @@ public class EnrichmentService {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void postStatusEnrichment(BPARequest bpaRequest) {
+		log.info("hyyyyyyyyyyyyyyy");
 		BPA bpa = bpaRequest.getBPA();
 		String tenantId = bpaRequest.getBPA().getTenantId().split("\\.")[0];
 		Object mdmsData = util.mDMSCall(bpaRequest.getRequestInfo(), tenantId);
@@ -218,6 +219,7 @@ public class EnrichmentService {
 		if (state.equalsIgnoreCase(BPAConstants.DOCVERIFICATION_STATE)) {
 			bpa.setApplicationDate(Calendar.getInstance().getTimeInMillis());
 		}
+		log.info("state status is : " + state);
 
 		if (StringUtils.isEmpty(bpa.getRiskType())) {
 //			if (bpa.getBusinessService().equals(BPAConstants.BPA_LOW_MODULE_CODE)) {
@@ -303,6 +305,7 @@ public class EnrichmentService {
 	 * @param state
 	 */
 	private void generateApprovalNo(BPARequest bpaRequest, String state) {
+		log.info("hii");
 		BPA bpa = bpaRequest.getBPA();
 		if ((bpa.getBusinessService().equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE)
 				&& bpa.getStatus().equalsIgnoreCase(BPAConstants.APPROVED_STATE))
