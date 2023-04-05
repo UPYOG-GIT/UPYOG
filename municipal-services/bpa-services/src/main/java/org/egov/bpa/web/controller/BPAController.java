@@ -78,11 +78,13 @@ public class BPAController {
 	@PostMapping(value = "/_update")
 	public ResponseEntity<BPAResponse> update(@Valid @RequestBody BPARequest bpaRequest) {
 		BPA bpa = bpaService.update(bpaRequest);
+		log.info("bpa---" + bpa.getApprovalNo());
 		List<BPA> bpas = new ArrayList<BPA>();
 		bpas.add(bpa);
 		BPAResponse response = BPAResponse.builder().BPA(bpas)
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(bpaRequest.getRequestInfo(), true))
 				.build();
+		log.info("Response Approval number----" + response.getBPA().get(0).getApprovalNo());
 		return new ResponseEntity<>(response, HttpStatus.OK);
 
 	}
