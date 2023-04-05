@@ -265,58 +265,59 @@ public class SideYardService_Birgaon extends SideYardService {
 						if (buildingHeight != null && (minlength > 0 || max > 0)) {
 //							for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
 							final Occupancy occupancy = block.getBuilding().getTotalArea().get(0);
-								scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Side Setback");
+							scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Side Setback");
 
-								/*
-								 * if (setback.getLevel() < 0) { scrutinyDetail.setKey("Block_" +
-								 * block.getName() + "_" + "Basement Side Yard");
-								 * 
-								 * checkSideYardBasement(pl, block.getBuilding(), buildingHeight,
-								 * block.getName(), setback.getLevel(), plot, minlength, max, minMeanlength,
-								 * maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
-								 * 
-								 * }
-								 */
+							/*
+							 * if (setback.getLevel() < 0) { scrutinyDetail.setKey("Block_" +
+							 * block.getName() + "_" + "Basement Side Yard");
+							 * 
+							 * checkSideYardBasement(pl, block.getBuilding(), buildingHeight,
+							 * block.getName(), setback.getLevel(), plot, minlength, max, minMeanlength,
+							 * maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
+							 * 
+							 * }
+							 */
 
-								if (occupancy.getTypeHelper().getType() != null
-										&& (A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
-												|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
+							if (occupancy.getTypeHelper().getType() != null
+									&& (A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
+											|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
 
-									checkSideYard(pl, block.getBuilding(), buildingHeight, block.getName(),
-											setback.getLevel(), plot, minlength, max, minMeanlength, maxMeanLength,
-											occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
+								checkSideYard(pl, block.getBuilding(), buildingHeight, block.getName(),
+										setback.getLevel(), plot, minlength, max, minMeanlength, maxMeanLength,
+										occupancy.getTypeHelper(), sideYard1Result, sideYard2Result, block);
 
-								}
-								/*
-								 * else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
-								 * checkSideYardForIndustrial(pl, block.getBuilding(), buildingHeight,
-								 * block.getName(), setback.getLevel(), plot, minlength, max, minMeanlength,
-								 * maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
-								 * }
-								 */
-								else if (occupancy.getTypeHelper().getType() != null
-										&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
-									processSideYardForGovtOccupancies(pl, block.getBuilding(), buildingHeight,
-											block.getName(), setback.getLevel(), plot, minlength, max, minMeanlength,
-											maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
-								}
+							}
+							/*
+							 * else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+							 * checkSideYardForIndustrial(pl, block.getBuilding(), buildingHeight,
+							 * block.getName(), setback.getLevel(), plot, minlength, max, minMeanlength,
+							 * maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
+							 * }
+							 */
+							else if (occupancy.getTypeHelper().getType() != null
+									&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+								processSideYardForGovtOccupancies(pl, block, block.getBuilding(), buildingHeight,
+										block.getName(), setback.getLevel(), plot, minlength, max, minMeanlength,
+										maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
+							}
 
 //							} //for end
 
 							addSideYardResult(pl, errors, sideYard1Result, sideYard2Result);
 						}
 
-						if (pl.getPlanInformation() != null
-								&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(10)) <= 0) {
-							exemptSideYardForAAndF(pl, block, sideYard1Result, sideYard2Result);
-						}
-					} else {
-						if (pl.getPlanInformation() != null
-								&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(10)) <= 0) {
-							exemptSideYardForAAndF(pl, block, sideYard1Result, sideYard2Result);
-							addSideYardResult(pl, errors, sideYard1Result, sideYard2Result);
-						}
+//						if (pl.getPlanInformation() != null
+//								&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(10)) <= 0) {
+//							exemptSideYardForAAndF(pl, block, sideYard1Result, sideYard2Result);
+//						}
 					}
+//					else {
+//						if (pl.getPlanInformation() != null
+//								&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(10)) <= 0) {
+//							exemptSideYardForAAndF(pl, block, sideYard1Result, sideYard2Result);
+//							addSideYardResult(pl, errors, sideYard1Result, sideYard2Result);
+//						}
+//					}
 
 				}
 			}
@@ -372,16 +373,12 @@ public class SideYardService_Birgaon extends SideYardService {
 		}
 	}
 
-	private void exemptSideYardForAAndF(final Plan pl, Block block, SideYardResult sideYard1Result,
-			SideYardResult sideYard2Result) {
+	private void exemptSideYard1ForAAndF(final Plan pl, Block block, SideYardResult sideYard1Result) {
 		for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
 			scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Side Setback");
 			if (occupancy.getTypeHelper().getType() != null
 					&& A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
 					|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
-				if (pl.getErrors().containsKey(SIDE_YARD_2_NOTDEFINED)) {
-					pl.getErrors().remove(SIDE_YARD_2_NOTDEFINED);
-				}
 				if (pl.getErrors().containsKey(SIDE_YARD_1_NOTDEFINED)) {
 					pl.getErrors().remove(SIDE_YARD_1_NOTDEFINED);
 				}
@@ -393,6 +390,36 @@ public class SideYardService_Birgaon extends SideYardService {
 					pl.getErrors().remove("",
 							"BLK_" + block.getNumber() + "_LVL_0_SIDE_SETBACK1 not defined in the plan.");
 				}
+				if (pl.getErrors().containsValue(
+						"Side Setback 1 of block" + block.getNumber() + "at level zero  not defined in the plan.")) {
+					pl.getErrors().remove("",
+							"Side Setback 1 of block" + block.getNumber() + "at level zero  not defined in the plan.");
+				}
+
+			}
+
+			compareSideYard1Result(block.getName(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+					occupancy.getTypeHelper(), sideYard1Result, true, RULE_35, SIDE_YARD_DESC, 0);
+		}
+	}
+
+	private void exemptSideYard2ForAAndF(final Plan pl, Block block, SideYardResult sideYard2Result) {
+		for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
+			scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Side Setback");
+			if (occupancy.getTypeHelper().getType() != null
+					&& A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
+					|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+				if (pl.getErrors().containsKey(SIDE_YARD_1_NOTDEFINED)) {
+					pl.getErrors().remove(SIDE_YARD_1_NOTDEFINED);
+				}
+				if (pl.getErrors().containsKey(SIDE_YARD_DESC)) {
+					pl.getErrors().remove(SIDE_YARD_DESC);
+				}
+				if (pl.getErrors().containsValue(
+						"Side Setback 2 of block" + block.getNumber() + "at level zero  not defined in the plan.")) {
+					pl.getErrors().remove("",
+							"Side Setback 2 of block" + block.getNumber() + "at level zero  not defined in the plan.");
+				}
 				if (pl.getErrors()
 						.containsValue("BLK_" + block.getNumber() + "_LVL_0_SIDE_SETBACK2 not defined in the plan.")) {
 					pl.getErrors().remove("",
@@ -403,15 +430,13 @@ public class SideYardService_Birgaon extends SideYardService {
 
 			compareSideYard2Result(block.getName(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
 					occupancy.getTypeHelper(), sideYard2Result, true, RULE_35, SIDE_YARD_DESC, 0);
-			compareSideYard1Result(block.getName(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-					occupancy.getTypeHelper(), sideYard1Result, true, RULE_35, SIDE_YARD_DESC, 0);
 		}
 	}
 
 	private void checkSideYard(final Plan pl, Building building, BigDecimal buildingHeight, String blockName,
 			Integer level, final Plot plot, final double min, final double max, double minMeanlength,
 			double maxMeanLength, final OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard1Result,
-			SideYardResult sideYard2Result) {
+			SideYardResult sideYard2Result, Block block) {
 
 		String rule = SIDE_YARD_DESC;
 		String subRule = RULE_35;
@@ -428,24 +453,25 @@ public class SideYardService_Birgaon extends SideYardService {
 					&& DxfFileConstants.COMMERCIAL.equalsIgnoreCase(pl.getPlanInformation().getLandUseZone())
 //					&& pl.getPlanInformation().getRoadWidth().compareTo(ROAD_WIDTH_TWELVE_POINTTWO) < 0
 			) {
-				checkCommercial(blockName, level, min, max, minMeanlength, maxMeanLength, mostRestrictiveOccupancy,
+				checkCommercial(pl, blockName, level, min, max, minMeanlength, maxMeanLength, mostRestrictiveOccupancy,
 						sideYard1Result, sideYard2Result, rule, DxfFileConstants.RULE_28, valid2, valid1, side2val,
-						side1val, widthOfPlot);
+						side1val, widthOfPlot, block);
 			} else {
 				checkResidential(pl, blockName, level, min, max, minMeanlength, maxMeanLength, mostRestrictiveOccupancy,
 						sideYard1Result, sideYard2Result, rule, subRule, valid2, valid1, side2val, side1val,
-						widthOfPlot);
+						widthOfPlot, block);
 			}
 		} else if (F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
-			checkCommercial(blockName, level, min, max, minMeanlength, maxMeanLength, mostRestrictiveOccupancy,
-					sideYard1Result, sideYard2Result, rule, subRule, valid2, valid1, side2val, side1val, widthOfPlot);
+			checkCommercial(pl, blockName, level, min, max, minMeanlength, maxMeanLength, mostRestrictiveOccupancy,
+					sideYard1Result, sideYard2Result, rule, subRule, valid2, valid1, side2val, side1val, widthOfPlot,
+					block);
 		}
 	}
 
 	private void checkResidential(Plan pl, String blockName, Integer level, final double min, final double max,
 			double minMeanlength, double maxMeanLength, final OccupancyTypeHelper mostRestrictiveOccupancy,
 			SideYardResult sideYard1Result, SideYardResult sideYard2Result, String rule, String subRule, Boolean valid2,
-			Boolean valid1, BigDecimal side2val, BigDecimal side1val, BigDecimal widthOfPlot) {
+			Boolean valid1, BigDecimal side2val, BigDecimal side1val, BigDecimal widthOfPlot, Block block) {
 		if (widthOfPlot.compareTo(BigDecimal.valueOf(7.62)) <= 0) {
 			side2val = BigDecimal.ZERO;
 			side1val = BigDecimal.ZERO;
@@ -485,6 +511,12 @@ public class SideYardService_Birgaon extends SideYardService {
 		compareSideYard1Result(blockName, side1val, BigDecimal.valueOf(max), BigDecimal.ZERO,
 				BigDecimal.valueOf(maxMeanLength), mostRestrictiveOccupancy, sideYard1Result, valid1, subRule, rule,
 				level);
+
+		if (pl.getPlanInformation() != null
+				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(7.62)) <= 0) {
+			exemptSideYard1ForAAndF(pl, block, sideYard1Result);
+			exemptSideYard2ForAAndF(pl, block, sideYard2Result);
+		}
 	}
 
 	private void checkSideYardBasement(final Plan pl, Building building, BigDecimal buildingHeight, String blockName,
@@ -587,9 +619,10 @@ public class SideYardService_Birgaon extends SideYardService {
 
 	}
 
-	private void processSideYardForGovtOccupancies(final Plan pl, Building building, BigDecimal buildingHeight,
-			String blockName, Integer level, final Plot plot, final double min, final double max, double minMeanlength,
-			double maxMeanLength, final OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard1Result,
+	private void processSideYardForGovtOccupancies(final Plan pl, Block block, Building building,
+			BigDecimal buildingHeight, String blockName, Integer level, final Plot plot, final double min,
+			final double max, double minMeanlength, double maxMeanLength,
+			final OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard1Result,
 			SideYardResult sideYard2Result) {
 
 		String rule = SIDE_YARD_DESC;
@@ -640,12 +673,17 @@ public class SideYardService_Birgaon extends SideYardService {
 				BigDecimal.valueOf(maxMeanLength), mostRestrictiveOccupancy, sideYard1Result, valid1, subRule, rule,
 				level);
 
+		if (pl.getPlanInformation() != null
+				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(7.62)) <= 0) {
+			exemptSideYard2ForAAndF(pl, block, sideYard2Result);
+		}
+
 	}
 
-	private void checkCommercial(String blockName, Integer level, final double min, final double max,
+	private void checkCommercial(Plan pl, String blockName, Integer level, final double min, final double max,
 			double minMeanlength, double maxMeanLength, final OccupancyTypeHelper mostRestrictiveOccupancy,
 			SideYardResult sideYard1Result, SideYardResult sideYard2Result, String rule, String subRule, Boolean valid2,
-			Boolean valid1, BigDecimal side2val, BigDecimal side1val, BigDecimal widthOfPlot) {
+			Boolean valid1, BigDecimal side2val, BigDecimal side1val, BigDecimal widthOfPlot, Block block) {
 		if (widthOfPlot.compareTo(BigDecimal.valueOf(15.25)) <= 0) {
 			side2val = BigDecimal.ZERO;
 			side1val = BigDecimal.ZERO;
@@ -669,6 +707,12 @@ public class SideYardService_Birgaon extends SideYardService {
 		compareSideYard1Result(blockName, side1val, BigDecimal.valueOf(max), BigDecimal.ZERO,
 				BigDecimal.valueOf(maxMeanLength), mostRestrictiveOccupancy, sideYard1Result, valid1, subRule, rule,
 				level);
+
+		if (pl.getPlanInformation() != null
+				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(15.25)) <= 0) {
+			exemptSideYard1ForAAndF(pl, block, sideYard1Result);
+			exemptSideYard2ForAAndF(pl, block, sideYard2Result);
+		}
 	}
 
 	private void compareSideYard1Result(String blockName, BigDecimal exptDistance, BigDecimal actualDistance,
