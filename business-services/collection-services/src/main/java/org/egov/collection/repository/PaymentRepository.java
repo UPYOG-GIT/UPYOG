@@ -131,6 +131,15 @@ public class PaymentRepository {
 
 	public List<Payment> fetchPayments(PaymentSearchCriteria paymentSearchCriteria) {
 		Map<String, Object> preparedStatementValues = new HashMap<>();
+		log.info("paymentSearchCriteria.getBillIds() : " + paymentSearchCriteria.getBillIds());
+		log.info("paymentSearchCriteria.getBusinessServices() : " + paymentSearchCriteria.getBusinessServices());
+		log.info("paymentSearchCriteria.getConsumerCodes() : " + paymentSearchCriteria.getConsumerCodes());
+		log.info("paymentSearchCriteria.getPaymentModes() : " + paymentSearchCriteria.getPaymentModes());
+		log.info("paymentSearchCriteria.getMobileNumber() : " + paymentSearchCriteria.getMobileNumber());
+		log.info("paymentSearchCriteria.getReceiptNumbers() : " + paymentSearchCriteria.getReceiptNumbers());
+		log.info("paymentSearchCriteria.getTransactionNumber() : " + paymentSearchCriteria.getTransactionNumber());
+		log.info("paymentSearchCriteria.getStatus() : " + paymentSearchCriteria.getStatus());
+		log.info("paymentSearchCriteria.getIds() : " + paymentSearchCriteria.getIds());
 
 		List<String> ids = fetchPaymentIdsByCriteria(paymentSearchCriteria);
 
