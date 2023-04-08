@@ -511,13 +511,11 @@ public class SideYardService_Birgaon extends SideYardService {
 				BigDecimal.valueOf(maxMeanLength), mostRestrictiveOccupancy, sideYard1Result, valid1, subRule, rule,
 				level);
 
-//		if (pl.getPlanInformation() != null
-//				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(7.62)) <= 0) {
-//			if (!valid1)
-//				exemptSideYard1ForAAndF(pl, block, sideYard1Result);
-//			if (!valid2)
-//				exemptSideYard2ForAAndF(pl, block, sideYard2Result);
-//		}
+		if (pl.getPlanInformation() != null
+				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(7.62)) <= 0) {
+			exemptSideYard1ForAAndF(pl, block, sideYard1Result, BigDecimal.valueOf(max));
+			exemptSideYard2ForAAndF(pl, block, sideYard2Result, BigDecimal.valueOf(min));
+		}
 	}
 
 	private void checkSideYardBasement(final Plan pl, Building building, BigDecimal buildingHeight, String blockName,
@@ -674,6 +672,12 @@ public class SideYardService_Birgaon extends SideYardService {
 				BigDecimal.valueOf(maxMeanLength), mostRestrictiveOccupancy, sideYard1Result, valid1, subRule, rule,
 				level);
 
+		if (pl.getPlanInformation() != null
+				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(7.62)) <= 0) {
+			exemptSideYard1ForAAndF(pl, block, sideYard1Result, BigDecimal.valueOf(max));
+			exemptSideYard2ForAAndF(pl, block, sideYard2Result, BigDecimal.valueOf(min));
+		}
+
 //		if (pl.getPlanInformation() != null
 //				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(7.62)) <= 0) {
 //			if (!valid2)
@@ -712,7 +716,6 @@ public class SideYardService_Birgaon extends SideYardService {
 
 		if (pl.getPlanInformation() != null
 				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(15.25)) <= 0) {
-//			if (!valid1)
 			exemptSideYard1ForAAndF(pl, block, sideYard1Result, BigDecimal.valueOf(max));
 			exemptSideYard2ForAAndF(pl, block, sideYard2Result, BigDecimal.valueOf(min));
 		}

@@ -550,14 +550,14 @@ public class SideYardService_BhilaiCharoda extends SideYardService {
 				BigDecimal.valueOf(maxMeanLength), mostRestrictiveOccupancy, sideYard1Result, valid1, subRule, rule,
 				level);
 
-//		if (pl.getPlanInformation() != null
-//				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(12)) <= 0) {
-//			exemptSideYard1ForAAndF(pl, block, sideYard1Result);
-//		}
-//		if (pl.getPlanInformation() != null
-//				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(7.5)) <= 0) {
-//			exemptSideYard2ForAAndF(pl, block, sideYard2Result);
-//		}
+		if (pl.getPlanInformation() != null
+				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(12)) <= 0) {
+			exemptSideYard1ForAAndF(pl, block, sideYard1Result, BigDecimal.valueOf(min));
+		}
+		if (pl.getPlanInformation() != null
+				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(7.5)) <= 0) {
+			exemptSideYard2ForAAndF(pl, block, sideYard2Result, BigDecimal.valueOf(max));
+		}
 	}
 
 	private void checkSideYardBasement(final Plan pl, Building building, BigDecimal buildingHeight, String blockName,
