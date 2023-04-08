@@ -176,8 +176,10 @@ public class PlanInformation implements Serializable {
 	private transient String multilevelParking = NA;
 	// Extracted from Plan info.Plot number.
 	private String plotNo;
-	// Extracted from Plan info.Khata number.
+	// Extracted from Plan info.Khasra number.
 	private String khataNo;
+	// Extracted from Plan info.Patwari Halka number.
+	private String patwariHN;
 	// Extracted from Plan info.Mauza number.
 	private String mauza;
 	// Extracted from Plan info.District name.
@@ -705,5 +707,15 @@ public class PlanInformation implements Serializable {
 	public void setMultilevelParking(String multilevelParking) {
 		this.multilevelParking = multilevelParking;
 	}
+
+	public String getPatwariHN() {
+		return patwariHN;
+	}
+
+	public void setPatwariHN(String patwariHN) {
+		this.patwariHN = patwariHN;
+	}
+	
+	
 
 }

@@ -627,7 +627,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["KHATA NO"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["KHASRA NO"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="418" y="225" width="130" height="21" uuid="a3b7760f-a182-4336-91dc-39f9c990f235"/>
@@ -717,7 +717,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["MAUZA"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["PATWARI HALKA NUMBER"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="142" y="246" width="146" height="21" uuid="83458a69-6cf0-44af-b9f1-d27925ba674b"/>
@@ -732,7 +732,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getMauza()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getPatwariHN()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="142" y="165" width="406" height="21" uuid="eb3c9a40-3143-4f3c-b8a7-1bc769be2c4d"/>

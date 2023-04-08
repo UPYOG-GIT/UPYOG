@@ -84,7 +84,7 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		}
 		pl.getPlot().setRoadArea(roadArea.setScale(2, RoundingMode.HALF_UP));
 	}
-	
+
 	private void extractRoadWindingArea(PlanDetail pl) {
 		List<DXFLWPolyline> roadWindingAreaLayerNames = Util.getPolyLinesByLayer(pl.getDoc(),
 				layerNames.getLayerName("LAYER_NAME_ROAD_WIDENING_AREA"));
@@ -104,7 +104,8 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 			DXFLWPolyline plotBndryPolyLine = plotBoundaries.get(0);
 			((PlotDetail) pl.getPlot()).setPolyLine(plotBndryPolyLine);
 			pl.getPlot().setPlotBndryArea(Util.getPolyLineArea(plotBndryPolyLine).setScale(2, ROUNDMODE_MEASUREMENTS));
-			pl.getPlot().setNetPlotArea(pl.getPlot().getPlotBndryArea().subtract(pl.getPlot().getRoadArea()).subtract(pl.getPlot().getRoadWideningArea()));
+			pl.getPlot().setNetPlotArea(pl.getPlot().getPlotBndryArea().subtract(pl.getPlot().getRoadArea())
+					.subtract(pl.getPlot().getRoadWideningArea()));
 //			pl.getPlot().setNetPlotArea(pl.getPlot().getPlotBndryArea().subtract(pl.getRoadArea()));
 		} else
 			pl.addError(layerNames.getLayerName("LAYER_NAME_PLOT_BOUNDARY"),
@@ -727,6 +728,10 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		String khataNo = planInfoProperties.get(DxfFileConstants.KHATA_NO);
 		if (StringUtils.isNotBlank(khataNo))
 			pi.setKhataNo(khataNo);
+
+		String patwariHN = planInfoProperties.get(DxfFileConstants.PATWARI_HN);
+		if (StringUtils.isNotBlank(patwariHN))
+			pi.setPatwariHN(patwariHN);
 
 		String district = planInfoProperties.get(DxfFileConstants.DISTRICT);
 		if (StringUtils.isNotBlank(district))

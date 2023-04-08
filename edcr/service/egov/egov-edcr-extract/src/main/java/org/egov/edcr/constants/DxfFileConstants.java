@@ -163,9 +163,10 @@ public class DxfFileConstants {
     public static final String NOC_IRRIGATION_DEPT = "NOC_IRRIGATION_DEPT";
     public static final String NOC_FIRE_DEPT = "NOC_FIRE_DEPT";
     public static final String PLOT_NO = "PLOT_NO";
-    public static final String KHATA_NO = "KHATA_NO";
+    public static final String KHATA_NO = "KHASRA_NO";
     public static final String DISTRICT = "DISTRICT";
-    public static final String MAUZA = "MAUZA";
+    public static final String MAUZA = "CITY";
+    public static final String PATWARI_HN = "PATWARI_HN";
     public static final String RWH_DECLARED = "RWH_DECLARED";
     public static final String TENEMENT_FOR_RESIDENTIAL = "TENEMENT_FOR_RESIDENTIAL";
     public static final String TENEMENT_FOR_COMMERCIAL = "TENEMENT_FOR_COMMERCIAL";

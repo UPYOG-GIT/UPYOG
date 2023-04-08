@@ -640,9 +640,15 @@ public class Far_BhilaiCharoda extends Far {
 
 		Map<String, String> details = new HashMap<>();
 		details.put("Gross Plot Area", pl.getPlot().getPlotBndryArea().toString());
-		details.put("Road Area", pl.getPlot().getRoadArea().toString());
-		details.put("Recreational Space", recreationSpaceArea.toString());
-		details.put("Under Road Widening", pl.getPlot().getRoadWideningArea().toString());
+		details.put("Road Area",
+				pl.getPlot().getRoadArea().compareTo(BigDecimal.ZERO) != 0 ? pl.getPlot().getRoadArea().toString()
+						: "-");
+		details.put("Recreational Space",
+				recreationSpaceArea.compareTo(BigDecimal.ZERO) != 0 ? recreationSpaceArea.toString() : "-");
+		details.put("Under Road Widening",
+				pl.getPlot().getRoadWideningArea().compareTo(BigDecimal.ZERO) != 0
+						? pl.getPlot().getRoadWideningArea().toString()
+						: "-");
 		details.put("Net Plot Area", netPlotArea.toString());
 		details.put(STATUS, "");
 

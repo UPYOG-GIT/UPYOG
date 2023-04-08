@@ -456,12 +456,12 @@ public class CcavenueGateway implements Gateway {
 		URL url = null;
 		HttpURLConnection vHttpUrlConnection = null;
 		DataInputStream vInput = null;
-//		String urlStr = "https://login.ccavenue.com/apis/servlet/DoWebTrans?enc_request=" + encryptedJsonData
-//				+ "&access_code=" + ACCESS_CODE
-//				+ "&request_type=JSON&response_type=JSON&command=orderStatusTracker&version=1.2";
-		String urlStr = "https://logintest.ccavenue.com/apis/servlet/DoWebTrans?enc_request=" + encryptedJsonData
+		String urlStr = "https://login.ccavenue.com/apis/servlet/DoWebTrans?enc_request=" + encryptedJsonData
 				+ "&access_code=" + ACCESS_CODE
 				+ "&request_type=JSON&response_type=JSON&command=orderStatusTracker&version=1.2";
+//		String urlStr = "https://logintest.ccavenue.com/apis/servlet/DoWebTrans?enc_request=" + encryptedJsonData
+//				+ "&access_code=" + ACCESS_CODE
+//				+ "&request_type=JSON&response_type=JSON&command=orderStatusTracker&version=1.2";
 		StringBuffer vStringBuffer = null;
 		try {
 			url = new URL(urlStr);
@@ -708,19 +708,19 @@ public class CcavenueGateway implements Gateway {
 
 	private void setGatewayDetails(String tenantId) {
 		log.info("inside setGatewayDetails..... tenantId: " + tenantId);
-//		if (tenantId.equals("cg.birgaon")) {
-//			this.MERCHANT_ID = "2136858";
-//			this.ACCESS_CODE = "AVWN26KC60AF20NWFA";
-//			this.WORKING_KEY = "B27E5242E8FC395A07F65AB900F021FA";
-//		} else if (tenantId.equals("cg.dhamtari")) {
+		if (tenantId.equals("cg.birgaon")) {
+			this.MERCHANT_ID = "2136858";
+			this.ACCESS_CODE = "AVWN26KC60AF20NWFA";
+			this.WORKING_KEY = "B27E5242E8FC395A07F65AB900F021FA";
+		} else if (tenantId.equals("cg.dhamtari")) {
 			this.MERCHANT_ID = "1941257";
 			this.ACCESS_CODE = "AVII96KA89BB16IIBB";
 			this.WORKING_KEY = "D682025F99E01FA0F0FAA079B1B3F793";
-//		} else if (tenantId.equals("cg.bhilaicharoda")) {
-//			this.MERCHANT_ID = "2160767";
-//			this.ACCESS_CODE = "AVII29KC44BF31IIFB";
-//			this.WORKING_KEY = "7B3E3FF7D56888F44E1A7D46DF24CF52";
-//		}
+		} else if (tenantId.equals("cg.bhilaicharoda")) {
+			this.MERCHANT_ID = "2160767";
+			this.ACCESS_CODE = "AVII29KC44BF31IIFB";
+			this.WORKING_KEY = "7B3E3FF7D56888F44E1A7D46DF24CF52";
+		}
 	}
 
 }

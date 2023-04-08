@@ -259,15 +259,17 @@ public class HeightOfRoomExtract extends FeatureExtract {
 
 //                            	List<DXFLWPolyline> doorPolyLines = Util.getPolyLinesByLayer(pl.getDoc(),
 //                            			doorLayer);
-								Door door = new Door();
-								BigDecimal doorHeight1 = doorHeight != null
-										? BigDecimal.valueOf(Double.valueOf(doorHeight.replaceAll("DOOR_HT_M=", "")))
-										: BigDecimal.ZERO;
-								door.setDoorHeight(doorHeight1);
+
 //                            	BigDecimal doorWidth=BigDecimal.ZERO;
 
 								List<DXFDimension> dimensionList = Util.getDimensionsByLayer(pl.getDoc(), doorLayer);
 								if (dimensionList != null && !dimensionList.isEmpty()) {
+									Door door = new Door();
+									BigDecimal doorHeight1 = doorHeight != null
+											? BigDecimal
+													.valueOf(Double.valueOf(doorHeight.replaceAll("DOOR_HT_M=", "")))
+											: BigDecimal.ZERO;
+									door.setDoorHeight(doorHeight1);
 									for (Object dxfEntity : dimensionList) {
 										DXFDimension dimension = (DXFDimension) dxfEntity;
 										List<BigDecimal> values = new ArrayList<>();
@@ -282,11 +284,12 @@ public class HeightOfRoomExtract extends FeatureExtract {
 											door.setDoorWidth(BigDecimal.ZERO);
 										}
 									}
-								} else {
-									door.setDoorWidth(BigDecimal.ZERO);
+									floor.addDoor(door);
 								}
+//								else {
+//									door.setDoorWidth(BigDecimal.ZERO);
+//								}
 
-								floor.addDoor(door);
 							}
 						}
 
@@ -304,16 +307,17 @@ public class HeightOfRoomExtract extends FeatureExtract {
 
 //                            	List<DXFLWPolyline> doorPolyLines = Util.getPolyLinesByLayer(pl.getDoc(),
 //                            			doorLayer);
-								Window window = new Window();
-								BigDecimal windowHeight1 = windowHeight != null
-										? BigDecimal
-												.valueOf(Double.valueOf(windowHeight.replaceAll("WINDOW_HT_M=", "")))
-										: BigDecimal.ZERO;
-								window.setWindowHeight(windowHeight1);
+
 //                            	BigDecimal doorWidth=BigDecimal.ZERO;
 
 								List<DXFDimension> dimensionList = Util.getDimensionsByLayer(pl.getDoc(), windowLayer);
 								if (dimensionList != null && !dimensionList.isEmpty()) {
+									Window window = new Window();
+									BigDecimal windowHeight1 = windowHeight != null
+											? BigDecimal.valueOf(
+													Double.valueOf(windowHeight.replaceAll("WINDOW_HT_M=", "")))
+											: BigDecimal.ZERO;
+									window.setWindowHeight(windowHeight1);
 									for (Object dxfEntity : dimensionList) {
 										DXFDimension dimension = (DXFDimension) dxfEntity;
 										List<BigDecimal> values = new ArrayList<>();
@@ -328,11 +332,12 @@ public class HeightOfRoomExtract extends FeatureExtract {
 											window.setWindowWidth(BigDecimal.ZERO);
 										}
 									}
-								} else {
-									window.setWindowWidth(BigDecimal.ZERO);
+									floor.addWindow(window);
 								}
+//								else {
+//									window.setWindowWidth(BigDecimal.ZERO);
+//								}
 
-								floor.addWindow(window);
 							}
 						}
 					}
