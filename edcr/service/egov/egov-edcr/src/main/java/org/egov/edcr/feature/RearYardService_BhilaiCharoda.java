@@ -159,113 +159,118 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 				RearYardResult rearYardResult = new RearYardResult();
 
 				for (SetBack setback : block.getSetBacks()) {
-					final Occupancy occupancy = block.getBuilding().getTotalArea().get(0);
-					BigDecimal min;
-					BigDecimal mean;
+					if (setback.getLevel() == 0) {
+						final Occupancy occupancy = block.getBuilding().getTotalArea().get(0);
+						BigDecimal min;
+						BigDecimal mean;
 
-					if (setback.getRearYard() != null
-							&& setback.getRearYard().getMean().compareTo(BigDecimal.ZERO) > 0) {
-						min = setback.getRearYard().getMinimumDistance();
-						mean = setback.getRearYard().getMean();
+						if (setback.getRearYard() != null
+								&& setback.getRearYard().getMean().compareTo(BigDecimal.ZERO) > 0) {
+							min = setback.getRearYard().getMinimumDistance();
+							mean = setback.getRearYard().getMean();
 
-						// added for rear road reserve deduction from rear setback
-						List<Road> roadReserve = pl.getRoadReserves();
-						BigDecimal rearRoadReserve = BigDecimal.ZERO;
-						boolean roadReservePresent = false;
-						int rearRoadReserveIndex = -1;
+							// added for rear road reserve deduction from rear setback
+							List<Road> roadReserve = pl.getRoadReserves();
+							BigDecimal rearRoadReserve = BigDecimal.ZERO;
+							boolean roadReservePresent = false;
+							int rearRoadReserveIndex = -1;
 
-						for (Road road : roadReserve) {
-							rearRoadReserveIndex++;
-							if (road.getName().equals("ROAD_RESERVE_REAR")) {
-								roadReservePresent = true;
-								break;
+							for (Road road : roadReserve) {
+								rearRoadReserveIndex++;
+								if (road.getName().equals("ROAD_RESERVE_REAR")) {
+									roadReservePresent = true;
+									break;
+								}
 							}
-						}
 
-						if (roadReservePresent) {
-							rearRoadReserve = roadReserve.get(rearRoadReserveIndex).getShortestDistanceToRoad().get(0);
-						}
+							if (roadReservePresent) {
+								rearRoadReserve = roadReserve.get(rearRoadReserveIndex).getShortestDistanceToRoad()
+										.get(0);
+							}
 
-						if (rearRoadReserve.compareTo(BigDecimal.ZERO) >= 0) {
-							min = min.subtract(rearRoadReserve);
-						}
-						// road reserve calculation end
+							if (rearRoadReserve.compareTo(BigDecimal.ZERO) >= 0) {
+								min = min.subtract(rearRoadReserve);
+							}
+							// road reserve calculation end
 
-						// if height defined at rear yard level, then use elase use buidling height.
-						BigDecimal buildingHeight = setback.getRearYard().getHeight() != null
-								&& setback.getRearYard().getHeight().compareTo(BigDecimal.ZERO) > 0
-										? setback.getRearYard().getHeight()
-										: block.getBuilding().getBuildingHeight();
+							// if height defined at rear yard level, then use elase use buidling height.
+							BigDecimal buildingHeight = setback.getRearYard().getHeight() != null
+									&& setback.getRearYard().getHeight().compareTo(BigDecimal.ZERO) > 0
+											? setback.getRearYard().getHeight()
+											: block.getBuilding().getBuildingHeight();
 
-						if (buildingHeight != null && (min.doubleValue() > 0 || mean.doubleValue() > 0)) {
+							if (buildingHeight != null && (min.doubleValue() > 0 || mean.doubleValue() > 0)) {
 //							for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
 //							scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Rear Setback");
 
-							if (setback.getLevel() < 0) {
-								scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Basement Rear Setback");
-								checkRearYardBasement(pl, block.getBuilding(), block.getName(), setback.getLevel(),
-										plot, BSMT_REAR_YARD_DESC, min, mean, occupancy.getTypeHelper(),
-										rearYardResult);
+								/*
+								 * if (setback.getLevel() < 0) { scrutinyDetail.setKey("Block_" +
+								 * block.getName() + "_" + "Basement Rear Setback"); checkRearYardBasement(pl,
+								 * block.getBuilding(), block.getName(), setback.getLevel(), plot,
+								 * BSMT_REAR_YARD_DESC, min, mean, occupancy.getTypeHelper(), rearYardResult);
+								 * 
+								 * }
+								 */
+								if (occupancy.getTypeHelper().getType() != null
+										&& (A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
+												|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
+									checkRearYard(pl, block.getBuilding(), block, setback.getLevel(), plot,
+											REAR_YARD_DESC, min, mean, occupancy.getTypeHelper(), rearYardResult,
+											buildingHeight);
 
-							}
-							if (occupancy.getTypeHelper().getType() != null
-									&& (A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
-											|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
-								checkRearYard(pl, block.getBuilding(), block, setback.getLevel(), plot, REAR_YARD_DESC,
-										min, mean, occupancy.getTypeHelper(), rearYardResult, buildingHeight);
-
-							}
-							/*
-							 * else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
-							 * checkRearYardForIndustrial(setback, block.getBuilding(), pl, block,
-							 * setback.getLevel(), plot, REAR_YARD_DESC, min, mean,
-							 * occupancy.getTypeHelper(), rearYardResult); }
-							 */
-							else if (occupancy.getTypeHelper().getType() != null
-									&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
-								processRearYardGovtOccupancies(setback, block.getBuilding(), pl, block,
-										setback.getLevel(), plot, REAR_YARD_DESC, min, mean, occupancy.getTypeHelper(),
-										rearYardResult, buildingHeight);
-							}
+								}
+								/*
+								 * else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+								 * checkRearYardForIndustrial(setback, block.getBuilding(), pl, block,
+								 * setback.getLevel(), plot, REAR_YARD_DESC, min, mean,
+								 * occupancy.getTypeHelper(), rearYardResult); }
+								 */
+								else if (occupancy.getTypeHelper().getType() != null
+										&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+									processRearYardGovtOccupancies(setback, block.getBuilding(), pl, block,
+											setback.getLevel(), plot, REAR_YARD_DESC, min, mean,
+											occupancy.getTypeHelper(), rearYardResult, buildingHeight);
+								}
 
 //							}
 
-							addRearYardResult(pl, errors, rearYardResult);
+								addRearYardResult(pl, errors, rearYardResult);
 
-							/*
-							 * Map<String, String> details = new HashMap<>(); details.put(RULE_NO,
-							 * rearYardResult.subRule); details.put(LEVEL, rearYardResult.level != null ?
-							 * rearYardResult.level.toString() : ""); details.put(OCCUPANCY,
-							 * rearYardResult.occupancy); if (rearYardResult.expectedmeanDistance != null &&
-							 * rearYardResult.expectedmeanDistance.compareTo(BigDecimal.valueOf(0)) == 0) {
-							 * details.put(FIELDVERIFIED, MINIMUMLABEL); details.put(PERMISSIBLE,
-							 * rearYardResult.expectedminimumDistance.toString()); details.put(PROVIDED,
-							 * rearYardResult.actualMinDistance.toString());
-							 * 
-							 * } else { details.put(FIELDVERIFIED, MINIMUMLABEL); details.put(PERMISSIBLE,
-							 * rearYardResult.expectedminimumDistance.toString()); details.put(PROVIDED,
-							 * rearYardResult.actualMinDistance.toString()); } if (rearYardResult.status) {
-							 * details.put(STATUS, Result.Accepted.getResultVal());
-							 * 
-							 * } else { details.put(STATUS, Result.Not_Accepted.getResultVal()); }
-							 * scrutinyDetail.getDetail().add(details);
-							 * pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-							 */
+								/*
+								 * Map<String, String> details = new HashMap<>(); details.put(RULE_NO,
+								 * rearYardResult.subRule); details.put(LEVEL, rearYardResult.level != null ?
+								 * rearYardResult.level.toString() : ""); details.put(OCCUPANCY,
+								 * rearYardResult.occupancy); if (rearYardResult.expectedmeanDistance != null &&
+								 * rearYardResult.expectedmeanDistance.compareTo(BigDecimal.valueOf(0)) == 0) {
+								 * details.put(FIELDVERIFIED, MINIMUMLABEL); details.put(PERMISSIBLE,
+								 * rearYardResult.expectedminimumDistance.toString()); details.put(PROVIDED,
+								 * rearYardResult.actualMinDistance.toString());
+								 * 
+								 * } else { details.put(FIELDVERIFIED, MINIMUMLABEL); details.put(PERMISSIBLE,
+								 * rearYardResult.expectedminimumDistance.toString()); details.put(PROVIDED,
+								 * rearYardResult.actualMinDistance.toString()); } if (rearYardResult.status) {
+								 * details.put(STATUS, Result.Accepted.getResultVal());
+								 * 
+								 * } else { details.put(STATUS, Result.Not_Accepted.getResultVal()); }
+								 * scrutinyDetail.getDetail().add(details);
+								 * pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+								 */
 
-						}
-					} else {
-						if (pl.getPlanInformation() != null && occupancy.getTypeHelper().getType() != null) {
-							if ((A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
-									|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))
-									&& pl.getPlanInformation().getDepthOfPlot()
-											.compareTo(BigDecimal.valueOf(12)) <= 0) {
-								exemptRearYard(pl, block, rearYardResult);
-							} else if (J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()) && pl
-									.getPlanInformation().getDepthOfPlot().compareTo(BigDecimal.valueOf(6)) <= 0) {
-								exemptRearYard(pl, block, rearYardResult);
 							}
+						} else {
+							if (pl.getPlanInformation() != null && occupancy.getTypeHelper().getType() != null) {
+								if ((A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
+										|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))
+										&& pl.getPlanInformation().getDepthOfPlot()
+												.compareTo(BigDecimal.valueOf(12)) <= 0) {
+									exemptRearYard(pl, block, rearYardResult);
+								} else if (J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()) && pl
+										.getPlanInformation().getDepthOfPlot().compareTo(BigDecimal.valueOf(6)) <= 0) {
+									exemptRearYard(pl, block, rearYardResult);
+								}
+							}
+							addRearYardResult(pl, errors, rearYardResult);
 						}
-						addRearYardResult(pl, errors, rearYardResult);
 					}
 				}
 			}
