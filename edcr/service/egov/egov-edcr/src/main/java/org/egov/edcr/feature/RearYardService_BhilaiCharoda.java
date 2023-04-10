@@ -279,35 +279,32 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 	}
 
 	private void exemptRearYard(final Plan pl, Block block, RearYardResult rearYardResult) {
-		for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
-
-			if (occupancy.getTypeHelper().getType() != null
+//		for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
+		final Occupancy occupancy = block.getBuilding().getTotalArea().get(0);
+		if (occupancy.getTypeHelper().getType() != null
 //					&& A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
 //					|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
-			) {
-				if (pl.getErrors().containsKey(REAR_YARD_NOTDEFINED)) {
-					pl.getErrors().remove(REAR_YARD_NOTDEFINED);
-				}
-				if (pl.getErrors().containsKey(REAR_YARD_DESC)) {
-					pl.getErrors().remove(REAR_YARD_DESC);
-				}
-				if (pl.getErrors()
-						.containsValue("BLK_" + block.getNumber() + "_LVL_0_REAR_SETBACK not defined in the plan.")) {
-					pl.getErrors().remove("",
-							"BLK_" + block.getNumber() + "_LVL_0_SIDE_SETBACK1 not defined in the plan.");
-				}
-				if (pl.getErrors().containsValue(
-						"Rear Setback 1 of " + block.getNumber() + "at level zero  not defined in the plan.")) {
-					pl.getErrors().remove("",
-							"Rear Setback 1 of " + block.getNumber() + "at level zero  not defined in the plan.");
-				}
-
+		) {
+			if (pl.getErrors().containsKey(REAR_YARD_NOTDEFINED)) {
+				pl.getErrors().remove(REAR_YARD_NOTDEFINED);
 			}
-
+			if (pl.getErrors().containsKey(REAR_YARD_DESC)) {
+				pl.getErrors().remove(REAR_YARD_DESC);
+			}
+			if (pl.getErrors()
+					.containsValue("BLK_" + block.getNumber() + "_LVL_0_REAR_SETBACK not defined in the plan.")) {
+				pl.getErrors().remove("", "BLK_" + block.getNumber() + "_LVL_0_SIDE_SETBACK1 not defined in the plan.");
+			}
+			if (pl.getErrors().containsValue(
+					"Rear Setback 1 of " + block.getNumber() + "at level zero  not defined in the plan.")) {
+				pl.getErrors().remove("",
+						"Rear Setback 1 of " + block.getNumber() + "at level zero  not defined in the plan.");
+			}
 			compareRearYardResult(block.getName(), BigDecimal.ZERO, BigDecimal.ZERO, occupancy.getTypeHelper(),
 					rearYardResult, true, RULE_35, REAR_YARD_DESC, BigDecimal.ZERO, BigDecimal.ZERO, 0);
-
 		}
+
+//		}
 	}
 
 	private Boolean checkRearYard(final Plan pl, Building building, Block block, Integer level, final Plot plot,
