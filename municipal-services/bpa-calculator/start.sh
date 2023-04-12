@@ -6,5 +6,7 @@ fi
 
 java_debug_args="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
 
+-Ddebug=true
+
 
 exec java ${java_debug_args} ${JAVA_OPTS} ${JAVA_ARGS}  -jar /opt/egov/*.jar
