@@ -186,7 +186,8 @@ public class MDMSService {
 //			log.info("totalparkarea:----- " +parkDetails.toString());
 			JSONArray parkDetails11 = context.read(
 					"edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking\")].detail[0].Provided");
-			JSONArray parkDetails12 = context.read("edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking Details\")].detail[0].['Open Parking']");
+			JSONArray parkDetails12 = context.read(
+					"edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking Details\")].detail[0].['Open Parking']");
 			log.info("parkDetails11====:----- " + parkDetails11.toString());
 			log.info("parkDetails12====:----- " + parkDetails12.toString());
 			String totalParkArea = parkDetails11.get(0).toString();
@@ -201,7 +202,7 @@ public class MDMSService {
 			Double CommArea = 0d;
 			Double IndArea = 0d;
 			boolean isHighRisetf = false;
-			String totalFloors= "";
+			String totalFloors = "";
 
 			for (LinkedHashMap blockMap : block) {
 				HashMap building = (HashMap) blockMap.get("building");
@@ -452,8 +453,6 @@ public class MDMSService {
 		log.info("isHighRise----" + isHighRise);
 		Integer totalFloors = Integer.parseInt(data.get("totalFloors").toString());
 		log.info("totalFloors----" + totalFloors);
-		
-		
 
 		String heightcat = "";
 
@@ -1185,7 +1184,9 @@ public class MDMSService {
 			} // end of if $lbrkflg
 				// insert data in data base-------------
 //			feeDetailMap.add(feeMap);
-			feeDetailList.add(payTypeFeeDetailRequest);
+			if (payTypeFeeDetailRequest.getAmount() > 0) {
+				feeDetailList.add(payTypeFeeDetailRequest);
+			}
 			log.info("feeDetailMap-List-------" + feeDetailList.toString());
 //			log.info("feeDetailMap-List-------"+feeDetailMap);
 //			bpaRepository.createFeeDetail(feeDetailMap);
