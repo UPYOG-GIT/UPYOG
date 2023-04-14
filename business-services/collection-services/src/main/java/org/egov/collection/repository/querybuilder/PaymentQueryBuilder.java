@@ -39,8 +39,9 @@ public class PaymentQueryBuilder {
 			+ "py.id as py_id,py.tenantId as py_tenantId,py.totalAmountPaid as py_totalAmountPaid,py.createdBy as py_createdBy,py.createdtime as py_createdtime,"
 			+ "py.lastModifiedBy as py_lastModifiedBy,py.lastmodifiedtime as py_lastmodifiedtime,py.additionalDetails as py_additionalDetails,"
 			+ "pyd.id as pyd_id, pyd.tenantId as pyd_tenantId, pyd.manualreceiptnumber as manualreceiptnumber,pyd.manualreceiptdate as manualreceiptdate, pyd.createdBy as pyd_createdBy,pyd.createdtime as pyd_createdtime,pyd.lastModifiedBy as pyd_lastModifiedBy,"
-			+ "pyd.lastmodifiedtime as pyd_lastmodifiedtime,pyd.additionalDetails as pyd_additionalDetails"
-			+ " FROM egcl_payment py  " + " INNER JOIN egcl_paymentdetail pyd ON pyd.paymentid = py.id ";
+			+ "pyd.lastmodifiedtime as pyd_lastmodifiedtime,pyd.additionalDetails as pyd_additionalDetails,logo.ulb_name as ulb_name, logo.logo_url as logo_url"
+			+ " FROM egcl_payment py  "
+			+ " INNER JOIN egcl_paymentdetail pyd ON pyd.paymentid = py.id INNER JOIN logo_master logo ON logo.tenantId = py.tenantId";
 
 	public static final String SELECT_COUNT_PAYMENT_SQL = "SELECT count(distinct(py.id)) FROM egcl_payment py "
 			+ "INNER JOIN egcl_paymentdetail pyd ON pyd.paymentid = py.id where pyd.businessservice= :businessservice and pyd.tenantid= :tenantid ";

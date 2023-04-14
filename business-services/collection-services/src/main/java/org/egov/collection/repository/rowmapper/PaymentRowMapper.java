@@ -86,6 +86,8 @@ public class PaymentRowMapper implements ResultSetExtractor<List<Payment>> {
 				String paymentStatus = rs.getString("paymentStatus");
 				String filesoreId = rs.getString("filestoreid");
 				String createdBy = rs.getString("py_createdBy");
+				String ulbName = rs.getString("ulb_name");
+				String logoUrl = rs.getString("logo_url");
 
 				Long createdDate = rs.getLong("py_createdTime");
 				if (rs.wasNull()) {
@@ -102,8 +104,8 @@ public class PaymentRowMapper implements ResultSetExtractor<List<Payment>> {
 				AuditDetails auditDetails = AuditDetails.builder().createdBy(createdBy).createdTime(createdDate)
 						.lastModifiedBy(lastModifiedBy).lastModifiedTime(lastModifiedTime).build();
 
-				currentPayment = Payment.builder().id(id).tenantId(tenantId).totalDue(totalDue)
-						.totalAmountPaid(totalAmountPaid).transactionNumber(transactionNumber)
+				currentPayment = Payment.builder().id(id).tenantId(tenantId).ulbName(ulbName).logoUrl(logoUrl)
+						.totalDue(totalDue).totalAmountPaid(totalAmountPaid).transactionNumber(transactionNumber)
 						.transactionDate(transactionDate).paymentMode(PaymentModeEnum.fromValue(paymentMode))
 						.instrumentDate(instrumentDate).instrumentNumber(instrumentNumber)
 						.instrumentStatus(InstrumentStatusEnum.fromValue(instrumentStatus)).ifscCode(ifscCode)

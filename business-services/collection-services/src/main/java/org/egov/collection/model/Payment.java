@@ -119,6 +119,14 @@ public class Payment {
     @SafeHtml
     @JsonProperty("fileStoreId")
     private String fileStoreId;
+    
+    @SafeHtml
+    @JsonProperty("ulbName")
+    private String ulbName;
+    
+    @SafeHtml
+    @JsonProperty("logoUrl")
+    private String logoUrl;
 
 
     public Payment addpaymentDetailsItem(PaymentDetail paymentDetail) {
