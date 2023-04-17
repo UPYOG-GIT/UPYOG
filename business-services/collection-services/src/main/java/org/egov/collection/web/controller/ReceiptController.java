@@ -42,6 +42,7 @@ package org.egov.collection.web.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.collection.model.Payment;
@@ -87,9 +88,10 @@ public class ReceiptController {
 	@RequestMapping(value = "/v2/_getReceipt", method = RequestMethod.POST, produces = MediaType.APPLICATION_PDF_VALUE)
 	@ResponseBody
 	public ResponseEntity<InputStreamResource> getReceiptV2(
-			@RequestBody final List<Payment> payments) throws FileNotFoundException {
-		
-		ByteArrayInputStream bis = paymentReceiptV2.getPaymentReceipt(payments);
+			@RequestBody final Payment payments) throws FileNotFoundException {
+		List<Payment> paymentList=new ArrayList<Payment>();
+		paymentList.add(payments);
+		ByteArrayInputStream bis = paymentReceiptV2.getPaymentReceipt(paymentList);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Disposition", "inline; filename=paymentReceipt.pdf");
 		return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).body(new InputStreamResource(bis));
