@@ -42,9 +42,12 @@ package org.egov.collection.web.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
+import java.util.List;
 
+import org.egov.collection.model.Payment;
 import org.egov.collection.model.PaymentSearchCriteriaWrapper;
 import org.egov.collection.service.PaymentReceipt;
+import org.egov.collection.service.PaymentReceiptV2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -65,10 +68,13 @@ public class ReceiptController {
 
 	@Autowired
 	private PaymentReceipt paymentReceipt;
+	
+	@Autowired
+	private PaymentReceiptV2 paymentReceiptV2;
 
 	@RequestMapping(value = "/_getReceipt", method = RequestMethod.POST, produces = MediaType.APPLICATION_PDF_VALUE)
 	@ResponseBody
-	public ResponseEntity<InputStreamResource> _getReceipt(
+	public ResponseEntity<InputStreamResource> getReceipt(
 			@RequestBody final PaymentSearchCriteriaWrapper paymentSearchCriteriaWrapper) throws FileNotFoundException {
 
 		ByteArrayInputStream bis = paymentReceipt.getPaymentReceipt(paymentSearchCriteriaWrapper);
@@ -76,6 +82,18 @@ public class ReceiptController {
 		headers.add("Content-Disposition", "inline; filename=paymentReceipt.pdf");
 		return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).body(new InputStreamResource(bis));
 
+	}
+	
+	@RequestMapping(value = "/v2/_getReceipt", method = RequestMethod.POST, produces = MediaType.APPLICATION_PDF_VALUE)
+	@ResponseBody
+	public ResponseEntity<InputStreamResource> getReceiptV2(
+			@RequestBody final List<Payment> payments) throws FileNotFoundException {
+		
+		ByteArrayInputStream bis = paymentReceiptV2.getPaymentReceipt(payments);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-Disposition", "inline; filename=paymentReceipt.pdf");
+		return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).body(new InputStreamResource(bis));
+		
 	}
 
 }

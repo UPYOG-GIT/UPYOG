@@ -44,12 +44,10 @@ import com.itextpdf.layout.property.TextAlignment;
 
 
 @Component
-public class PaymentReceipt {
+public class PaymentReceiptV2 {
 
-	public ByteArrayInputStream getPaymentReceipt(PaymentSearchCriteriaWrapper paymentSearchCriteriaWrapper)
+	public ByteArrayInputStream getPaymentReceipt(List<Payment> paymentList)
 			throws FileNotFoundException {
-		RequestInfo requestInfo = paymentSearchCriteriaWrapper.getRequestInfo();
-		PaymentSearchCriteria paymentSearchCriteria = paymentSearchCriteriaWrapper.getPaymentSearchCriteria();
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		Document document;
@@ -71,28 +69,28 @@ public class PaymentReceipt {
 			pdfDocument.setDefaultPageSize(PageSize.A4);
 			document = new Document(pdfDocument);
 
-			ObjectMapper mapper = new ObjectMapper();
-//	        String json = mapper.writeValueAsString(requestInfo);
-			String body = mapper.writeValueAsString(requestInfo);
-			body = "{\"RequestInfo\":" + body + "}";
-
-//			String body = "{\r\n" + "    \"RequestInfo\": {\r\n"
-//					+ "        \"authToken\": \"ad6bac16-a925-40fa-8a24-32d37e8d0d53\"\r\n" + "    }\r\n" + "}";
-//			System.out.println(body);
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);
-			RestTemplate restTemplate = new RestTemplate();
-			URI uri = new URI("https://www.niwaspass.com/collection-services/payments/_search?tenantId="
-					+ paymentSearchCriteria.getTenantId() + "&consumerCodes=" + paymentSearchCriteria.getConsumerCode()
-					+ "&businessServices=" + paymentSearchCriteria.getBusinessService());
-//			URI uri = new URI(
-//					"https://www.niwaspass.com/collection-services/payments/_search?tenantId=cg.bhilaicharoda&consumerCodes=CG-BP-2023-04-12-000726&businessServices=BPA.NC_SAN_FEE");
-//			System.out.println(uri.toString());
-			HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
-			ResponseEntity<PaymentResponse> result = restTemplate.postForEntity(uri, requestEntity,
-					PaymentResponse.class);
-
-			List<Payment> paymentList = result.getBody().getPayments();
+//			ObjectMapper mapper = new ObjectMapper();
+////	        String json = mapper.writeValueAsString(requestInfo);
+//			String body = mapper.writeValueAsString(requestInfo);
+//			body = "{\"RequestInfo\":" + body + "}";
+//
+////			String body = "{\r\n" + "    \"RequestInfo\": {\r\n"
+////					+ "        \"authToken\": \"ad6bac16-a925-40fa-8a24-32d37e8d0d53\"\r\n" + "    }\r\n" + "}";
+////			System.out.println(body);
+//			HttpHeaders headers = new HttpHeaders();
+//			headers.setContentType(MediaType.APPLICATION_JSON);
+//			RestTemplate restTemplate = new RestTemplate();
+//			URI uri = new URI("https://www.niwaspass.com/collection-services/payments/_search?tenantId="
+//					+ paymentSearchCriteria.getTenantId() + "&consumerCodes=" + paymentSearchCriteria.getConsumerCode()
+//					+ "&businessServices=" + paymentSearchCriteria.getBusinessService());
+////			URI uri = new URI(
+////					"https://www.niwaspass.com/collection-services/payments/_search?tenantId=cg.bhilaicharoda&consumerCodes=CG-BP-2023-04-12-000726&businessServices=BPA.NC_SAN_FEE");
+////			System.out.println(uri.toString());
+//			HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
+//			ResponseEntity<PaymentResponse> result = restTemplate.postForEntity(uri, requestEntity,
+//					PaymentResponse.class);
+//
+//			List<Payment> paymentList = result.getBody().getPayments();
 			Payment responsePayment;
 			BigDecimal totalAmount = BigDecimal.ZERO;
 			BigDecimal grossAmount = BigDecimal.ZERO;
