@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-
 import org.egov.collection.model.FeeDetail;
 import org.egov.collection.model.Payment;
 import org.egov.collection.model.PaymentDetail;
@@ -17,11 +16,12 @@ import org.egov.collection.model.PaymentResponse;
 import org.egov.collection.model.PaymentSearchCriteria;
 import org.egov.collection.model.PaymentSearchCriteriaWrapper;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,8 +42,10 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.TextAlignment;
 
+import lombok.extern.slf4j.Slf4j;
 
-@Component
+@Slf4j
+@Service
 public class PaymentReceipt {
 
 	public ByteArrayInputStream getPaymentReceipt(PaymentSearchCriteriaWrapper paymentSearchCriteriaWrapper)
@@ -114,8 +116,8 @@ public class PaymentReceipt {
 				document.add(table);
 
 				Table full = new Table(fullwidth);
-				full.addCell(new Cell().add("Payment Receipt").setTextAlignment(TextAlignment.CENTER).setBold().setFontSize(16)
-                        .setBorder(Border.NO_BORDER));
+				full.addCell(new Cell().add("Payment Receipt").setTextAlignment(TextAlignment.CENTER).setBold()
+						.setFontSize(16).setBorder(Border.NO_BORDER));
 				document.add(full);
 
 				document.add(divider);
@@ -153,8 +155,10 @@ public class PaymentReceipt {
 //				String amountInwordString = inWords(num);
 //				int fractionalAmount = (int) ((totalAmountDouble - num) * 100);
 //				amountInwordString += paiseInWords((int) ((totalAmountDouble - num) * 100)) + "only";
-				String amountInwordString = inWords(Integer.parseInt(String.valueOf(totalAmountDouble).split("\\.")[0]));
-                amountInwordString += paiseInWords(Integer.parseInt(String.valueOf(totalAmountDouble).split("\\.")[1])) + "only";
+				String amountInwordString = inWords(
+						Integer.parseInt(String.valueOf(totalAmountDouble).split("\\.")[0]));
+				amountInwordString += paiseInWords(Integer.parseInt(String.valueOf(totalAmountDouble).split("\\.")[1]))
+						+ "only";
 
 //				System.out.println("amountInwordString:" + amountInwordString);
 				Table threeColTable1 = new Table(threeColumnWidth);
@@ -206,10 +210,13 @@ public class PaymentReceipt {
 				document.close();
 
 			} else {
-
+				log.info("Payment Details Not Found....");
+				throw new CustomException("PAYMENT_DETAIL_ERROR", "Payment Detail Not Found");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
+			log.error("PDF Generation Error: " + e);
+			throw new CustomException("PDF_GENERATION_ERROR", "Error in PDF Generation");
 		}
 		return new ByteArrayInputStream(out.toByteArray());
 	}
@@ -247,7 +254,6 @@ public class PaymentReceipt {
 		if (Integer.toString(num).length() > 9) {
 			return "overflow";
 		}
-		num = 250855;
 		String numStr = String.format("%09d", num);
 		String[] n = { numStr.substring(0, 2), numStr.substring(2, 4), numStr.substring(4, 6), numStr.substring(6, 7),
 				numStr.substring(7) };
@@ -305,7 +311,7 @@ public class PaymentReceipt {
 				"Ten ", "Eleven ", "Twelve ", "Thirteen ", "Fourteen ", "Fifteen ", "Sixteen ", "Seventeen ",
 				"Eighteen ", "Nineteen " };
 		final String[] b = { "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
-		if (Integer.toString(num).length() > 9) {
+		if (Integer.toString(num).length() > 2) {
 			return "overflow";
 		}
 		String numStr = String.format("%02d", num);
