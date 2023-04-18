@@ -15,6 +15,7 @@ import org.egov.collection.model.PaymentDetail;
 import org.egov.collection.model.PaymentResponse;
 import org.egov.collection.model.PaymentSearchCriteria;
 import org.egov.collection.model.PaymentSearchCriteriaWrapper;
+import org.egov.collection.web.controller.payments;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.http.HttpEntity;
@@ -97,6 +98,8 @@ public class PaymentReceiptV2 {
 			BigDecimal totalAmount = BigDecimal.ZERO;
 			BigDecimal grossAmount = BigDecimal.ZERO;
 			if (paymentList.size() > 0) {
+				log.info("payments.getPaidBy() : " + paymentList.get(0).getPaidBy());
+				log.info("payments.getUlbName() : " + paymentList.get(0).getUlbName());
 //				log.info(paymentList.get(0));
 				String ulbName = paymentList.get(0).getUlbName();
 				String imgPath = paymentList.get(0).getLogoUrl();// "C:\\Users\\Entit\\Downloads\\unnamed.png";

@@ -88,11 +88,11 @@ public class ReceiptController {
 
 	@RequestMapping(value = "/v2/_getReceipt", method = RequestMethod.POST, produces = MediaType.APPLICATION_PDF_VALUE)
 	@ResponseBody
-	public ResponseEntity<InputStreamResource> getReceiptV2(@RequestBody final List<Payment> paymentList)
+	public ResponseEntity<InputStreamResource> getReceiptV2(@RequestBody final Payment payments)
 			throws FileNotFoundException {
-//		List<Payment> paymentList = new ArrayList<Payment>();
-//		paymentList.add(payments);
-		log.info("paymentList.size(): " + paymentList.size());
+		List<Payment> paymentList = new ArrayList<Payment>();
+		paymentList.add(payments);
+		
 		ByteArrayInputStream bis = paymentReceiptV2.getPaymentReceipt(paymentList);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Disposition", "inline; filename=paymentReceipt.pdf");
