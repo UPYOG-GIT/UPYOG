@@ -88,8 +88,10 @@ public class ReceiptController {
 
 	@RequestMapping(value = "/v2/_getReceipt", method = RequestMethod.POST, produces = MediaType.APPLICATION_PDF_VALUE)
 	@ResponseBody
-	public ResponseEntity<InputStreamResource> getReceiptV2(@RequestBody final Payment payments)
+	public ResponseEntity<InputStreamResource> getReceiptV2(@RequestBody Payment payments)
 			throws FileNotFoundException {
+		log.info("Inside ReceiptController.getReceiptV2()");
+		log.info(payments.getLogoUrl());
 		List<Payment> paymentList = new ArrayList<Payment>();
 		paymentList.add(payments);
 		

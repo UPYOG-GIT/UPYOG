@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PaymentReceiptV2 {
 
 	public ByteArrayInputStream getPaymentReceipt(List<Payment> paymentList) throws FileNotFoundException {
-
+		log.info("Inside PaymentReceiptV2.getPaymentReceipt().....");
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		Document document;
 		try {
