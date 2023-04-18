@@ -97,11 +97,13 @@ public class PaymentReceiptV2 {
 			BigDecimal totalAmount = BigDecimal.ZERO;
 			BigDecimal grossAmount = BigDecimal.ZERO;
 			if (paymentList.size() > 0) {
-
+//				log.info(paymentList.get(0));
 				String ulbName = paymentList.get(0).getUlbName();
 				String imgPath = paymentList.get(0).getLogoUrl();// "C:\\Users\\Entit\\Downloads\\unnamed.png";
+				log.info(imgPath);
 				ImageData imageData = ImageDataFactory.create(imgPath);
 				Image image = new Image(imageData);
+				log.info(image.toString());
 				image.scaleAbsolute(70, 70);
 
 				Table table = new Table(twocolumnWidth1);
