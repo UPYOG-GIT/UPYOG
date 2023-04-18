@@ -201,11 +201,11 @@ public class MDMSService {
 			Double CommArea = 0d;
 			Double IndArea = 0d;
 			boolean isHighRisetf = false;
-			String totalFloors= "";
+		
 
 			for (LinkedHashMap blockMap : block) {
 				HashMap building = (HashMap) blockMap.get("building");
-				totalFloors = building.get("totalFloors").toString();
+			
 //				 log.info("blockMap======"+building);
 				ArrayList<LinkedHashMap> floor = (ArrayList<LinkedHashMap>) building.get("floors");
 //				 log.info("floor======"+floor);
@@ -270,7 +270,7 @@ public class MDMSService {
 			additionalDetails.put("CommArea", CommArea.toString());
 			additionalDetails.put("IndArea", IndArea.toString());
 			additionalDetails.put("isHighRisetf", isHighRisetf + "");
-			additionalDetails.put("totalFloors", totalFloors);
+			
 
 			log.info("additionalDetails---------" + additionalDetails);
 			Double responseMap1 = feeCalculation(additionalDetails);
@@ -450,10 +450,7 @@ public class MDMSService {
 		log.info("ind_area----" + ind_area);
 		boolean isHighRise = Boolean.parseBoolean(data.get("isHighRisetf").toString());
 		log.info("isHighRise----" + isHighRise);
-		Integer totalFloors = Integer.parseInt(data.get("totalFloors").toString());
-		log.info("totalFloors----" + totalFloors);
-		
-		
+	
 
 		String heightcat = "";
 
@@ -652,7 +649,7 @@ public class MDMSService {
 
 									}
 								} // end mix
-							} else if (calcact.equals("Plot Area")) {
+							} else if (calcact.equals("Multiple With Percent")) {
 								log.info("######Inside Buildup Area: Plot Area Condition ");
 								// calculated on BA and Multiple With Percent
 								Val = (Area * (Rate / 100));
@@ -1029,6 +1026,9 @@ public class MDMSService {
 								if (calcval <= maxlimit)
 									Val = calcval;
 							}
+							
+						
+							
 							log.info("Charges Type : " + chargesTy + ", Amount: " + Val);
 						} else if (calcon.equals("Buildup Area and Plot Area")) {
 							// slab calculated on BA&PA
