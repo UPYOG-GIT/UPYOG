@@ -60,6 +60,19 @@ export const PaymentService = {
       params: { tenantId, key },
       data: data,
     }),
+    
+    downloadReceipt: (data = {}) =>  
+    Request({
+      url: Urls.payment.get_receipt,
+      useCache: false,
+      method: "POST",
+      auth: false,
+      userService: true,
+      locale: true,
+      // params: { tenantId, key },
+      data: data
+    }),
+
 
   printReciept: (tenantId, filters = {}) =>
     Request({

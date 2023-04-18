@@ -90,6 +90,9 @@ const BpaApplicationDetail = () => {
     }
   },[bpaDocs,data])
 
+  
+  
+
 
   useEffect(() => {
     if (data?.applicationData?.status == "CITIZEN_APPROVAL_INPROCESS" || data?.applicationData?.status == "INPROGRESS") setCheckBoxVisible(true);
@@ -106,11 +109,20 @@ const BpaApplicationDetail = () => {
 
 
   async function getRecieptSearch({tenantId, payments, ...params}) {
+   
     let response = { filestoreIds: [payments?.fileStoreId] };
-    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, "consolidatedreceipt");
+   
+  
+    response = await Digit.PaymentService.downloadReceipt({ Payments: [{...payments}] });
+   
+   
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
+  
   }
+
+
+
 
   async function getPermitOccupancyOrderSearch({tenantId}, order, mode="download") {
     let currentDate = new Date();
@@ -305,7 +317,7 @@ const BpaApplicationDetail = () => {
       if (pay?.paymentDetails[0]?.businessService === "BPA.NC_APP_FEE") {
         dowloadOptions.push({
           order: 1,
-          label: t("BPA_APP_FEE_RECEIPT"),
+          label: t("Pre Payment Receipt"),
           onClick: () => getRecieptSearch({ tenantId: data?.applicationData?.tenantId, payments: pay, consumerCodes: data?.applicationData?.applicationNo }),
         });
       }
@@ -313,8 +325,8 @@ const BpaApplicationDetail = () => {
       if (pay?.paymentDetails[0]?.businessService === "BPA.NC_SAN_FEE") {
         dowloadOptions.push({
           order: 2,
-          label: t("BPA_SAN_FEE_RECEIPT"),
-          onClick: () => getRecieptSearch({ tenantId: data?.applicationData?.tenantId, payments: pay, consumerCodes: data?.applicationData?.applicationNo }),
+          label: t("Post Payment Receipt"),
+          onClick: () => getRecieptSearch({ tenantId: data?.applicationData?.tenantId, consumerCodes: data?.applicationData?.applicationNo }),
         });
       }
     })
