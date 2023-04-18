@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.collection.model.Payment;
+import org.egov.collection.model.PaymentReceiptWrapper;
 import org.egov.collection.model.PaymentSearchCriteriaWrapper;
 import org.egov.collection.service.PaymentReceipt;
 import org.egov.collection.service.PaymentReceiptV2;
@@ -88,13 +89,14 @@ public class ReceiptController {
 
 	@RequestMapping(value = "/v2/_getReceipt", method = RequestMethod.POST, produces = MediaType.APPLICATION_PDF_VALUE)
 	@ResponseBody
-	public ResponseEntity<InputStreamResource> getReceiptV2(@RequestBody Payment payments)
+	public ResponseEntity<InputStreamResource> getReceiptV2(@RequestBody PaymentReceiptWrapper paymentReceiptWrapper)
 			throws FileNotFoundException {
+
 		log.info("Inside ReceiptController.getReceiptV2()");
-		log.info(payments.getLogoUrl());
+		log.info(paymentReceiptWrapper.getPayments().getLogoUrl());
 		List<Payment> paymentList = new ArrayList<Payment>();
-		paymentList.add(payments);
-		
+		paymentList.add(paymentReceiptWrapper.getPayments());
+
 		ByteArrayInputStream bis = paymentReceiptV2.getPaymentReceipt(paymentList);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Disposition", "inline; filename=paymentReceipt.pdf");
