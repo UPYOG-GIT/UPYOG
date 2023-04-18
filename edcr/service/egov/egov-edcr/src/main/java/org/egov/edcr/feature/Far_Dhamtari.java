@@ -628,7 +628,6 @@ public class Far_Dhamtari extends Far {
 
 		Map<String, String> details = new HashMap<>();
 		details.put("Gross Plot Area", pl.getPlot().getPlotBndryArea().toString());
-		details.put("Road Area", pl.getPlot().getRoadArea().toString());
 		details.put("Road Area",
 				pl.getPlot().getRoadArea().compareTo(BigDecimal.ZERO) != 0 ? pl.getPlot().getRoadArea().toString()
 						: "-");
@@ -638,6 +637,7 @@ public class Far_Dhamtari extends Far {
 				pl.getPlot().getRoadWideningArea().compareTo(BigDecimal.ZERO) != 0
 						? pl.getPlot().getRoadWideningArea().toString()
 						: "-");
+		details.put("Net Plot Area", netPlotArea.toString());
 		details.put(STATUS, "");
 
 		scrutinyDetail.getDetail().add(details);
