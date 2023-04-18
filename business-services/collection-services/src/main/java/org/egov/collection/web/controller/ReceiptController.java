@@ -81,7 +81,7 @@ public class ReceiptController {
 		ByteArrayInputStream bis = paymentReceipt.getPaymentReceipt(paymentSearchCriteriaWrapper);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Disposition", "inline; filename=paymentReceipt.pdf");
-		return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).body(new InputStreamResource(bis));
+		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(new InputStreamResource(bis));
 
 	}
 	
@@ -94,7 +94,7 @@ public class ReceiptController {
 		ByteArrayInputStream bis = paymentReceiptV2.getPaymentReceipt(paymentList);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Disposition", "inline; filename=paymentReceipt.pdf");
-		return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).body(new InputStreamResource(bis));
+		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(new InputStreamResource(bis));
 		
 	}
 
