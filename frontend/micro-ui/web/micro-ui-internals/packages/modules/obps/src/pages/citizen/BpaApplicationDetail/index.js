@@ -14,6 +14,7 @@ import cloneDeep from "lodash/cloneDeep";
 import DocumentsPreview from "../../../../../templates/ApplicationDetails/components/DocumentsPreview";
 import ScruntinyDetails from "../../../../../templates/ApplicationDetails/components/ScruntinyDetails";
 import { Link } from "react-router-dom";
+import Urls from "../../../../../../libraries/src/services/atoms/urls";
 
 const BpaApplicationDetail = () => {
   const { id } = useParams();
@@ -109,20 +110,32 @@ const BpaApplicationDetail = () => {
 
 
   async function getRecieptSearch({tenantId, payments, ...params}) {
-   
-    let response = { filestoreIds: [payments?.fileStoreId] };
-   
+    console.log("Payments------" + JSON.stringify(payments));
   
-    response = await Digit.PaymentService.downloadReceipt({ Payments: [{...payments}] });
-   
-   
-    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-    window.open(fileStore[response?.filestoreIds[0]], "_blank");
+    const response = await fetch(Urls.payment.get_receipt, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ Payments: [{...payments}]})
+    });
   
+    if (!response.ok) {
+      console.log('Error: Failed to download PDF file');
+      return;
+    }
+  
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'paymentReceipt.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   }
-
-
-
+  
 
   async function getPermitOccupancyOrderSearch({tenantId}, order, mode="download") {
     let currentDate = new Date();
@@ -320,13 +333,15 @@ const BpaApplicationDetail = () => {
           label: t("Pre Payment Receipt"),
           onClick: () => getRecieptSearch({ tenantId: data?.applicationData?.tenantId, payments: pay, consumerCodes: data?.applicationData?.applicationNo }),
         });
+      
+      // });
       }
 
       if (pay?.paymentDetails[0]?.businessService === "BPA.NC_SAN_FEE") {
         dowloadOptions.push({
           order: 2,
           label: t("Post Payment Receipt"),
-          onClick: () => getRecieptSearch({ tenantId: data?.applicationData?.tenantId, consumerCodes: data?.applicationData?.applicationNo }),
+          onClick: () => getRecieptSearch({ tenantId: data?.applicationData?.tenantId, payments: pay, consumerCodes: data?.applicationData?.applicationNo }),
         });
       }
     })
