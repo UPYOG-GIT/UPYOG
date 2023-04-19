@@ -320,5 +320,9 @@ public class PaymentReceiptV2 {
 
 		return str;
 	}
+	
+	public void storeFile(ByteArrayInputStream byteArrayInputStream) {
+		
+	}
 
 }

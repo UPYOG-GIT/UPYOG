@@ -40,6 +40,8 @@
 
 package org.egov.collection.model;
 
+import java.util.List;
+
 import org.egov.common.contract.request.RequestInfo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -65,5 +67,5 @@ public class PaymentReceiptWrapper {
 	private RequestInfo requestInfo;
 
 	@JsonProperty("Payments")
-	private Payment payments;
+	private List<Payment> payments;
 }

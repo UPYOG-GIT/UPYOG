@@ -1027,7 +1027,7 @@ public class MDMSService {
 								if (calcval <= maxlimit)
 									amount = calcval;
 							}
-							log.info("Charges Type : " + chargesTy + ", Amount: " + Val);
+							log.info("Charges Type : " + chargesTy + ", Amount: " + amount);
 						} else if (calcon.equals("Buildup Area and Plot Area")) {
 							// slab calculated on BA&PA
 							Double PlotArea = plotArea; // $lArea - already have build up area. (res,com,ind,mix,edu )

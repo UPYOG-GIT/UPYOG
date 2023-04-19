@@ -93,15 +93,18 @@ public class ReceiptController {
 			throws FileNotFoundException {
 
 		log.info("Inside ReceiptController.getReceiptV2()");
-		log.info(paymentReceiptWrapper.getPayments().getLogoUrl());
-		List<Payment> paymentList = new ArrayList<Payment>();
-		paymentList.add(paymentReceiptWrapper.getPayments());
+//		log.info(paymentReceiptWrapper.getPayments().getLogoUrl());
+//		List<Payment> paymentList = new ArrayList<Payment>();
+//		paymentList.add(paymentReceiptWrapper.getPayments());
 
-		ByteArrayInputStream bis = paymentReceiptV2.getPaymentReceipt(paymentList);
+		ByteArrayInputStream bis = paymentReceiptV2.getPaymentReceipt(paymentReceiptWrapper.getPayments());
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Disposition", "inline; filename=paymentReceipt.pdf");
-		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF)
+		String contentType = "application/pdf";
+		return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType(contentType))
 				.body(new InputStreamResource(bis));
+//		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF)
+//				.body(new InputStreamResource(bis));
 
 	}
 
