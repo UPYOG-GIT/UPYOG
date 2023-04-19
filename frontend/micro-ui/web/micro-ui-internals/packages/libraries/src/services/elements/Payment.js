@@ -61,17 +61,25 @@ export const PaymentService = {
       data: data,
     }),
     
-    downloadReceipt: (data = {}) =>  
-    Request({
-      url: Urls.payment.get_receipt,
-      useCache: false,
-      method: "POST",
-      auth: false,
-      userService: true,
-      locale: true,
-      // params: { tenantId, key },
-      data: data
-    }),
+    downloadReceipt: (data) => {
+      // console.log("hhh"+JSON.stringify(data)); // Log the data parameter to the console
+      return Request({
+        
+        url: Urls.payment.get_receipt,
+        useCache: false,
+        method: "POST",
+        auth: false,
+        userService: true,
+        locale: true,
+        // params: { tenantId, key },
+        data: data
+        
+        
+      });
+      
+    },
+    
+    
 
 
   printReciept: (tenantId, filters = {}) =>
