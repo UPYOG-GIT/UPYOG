@@ -100,11 +100,11 @@ public class ReceiptController {
 		ByteArrayInputStream bis = paymentReceiptV2.getPaymentReceipt(paymentReceiptWrapper.getPayments());
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Disposition", "inline; filename=paymentReceipt.pdf");
-		String contentType = "application/pdf";
-		return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType(contentType))
-				.body(new InputStreamResource(bis));
-//		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF)
+//		String contentType = "application/pdf";
+//		return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType(contentType))
 //				.body(new InputStreamResource(bis));
+		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF)
+				.body(new InputStreamResource(bis));
 
 	}
 
