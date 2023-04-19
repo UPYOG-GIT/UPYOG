@@ -107,6 +107,8 @@ public class SideYardService_Birgaon extends SideYardService {
 	private static final String MINIMUMLABEL = "Minimum distance ";
 
 	private static final String RULE_35 = "35 Table-9";
+	private static final String RULE_7_C_1 = "Table 7-C-1";
+	private static final String RULE_7_C_13 = "Table 7-C-13";
 	private static final String RULE_36 = "36";
 	private static final String RULE_37_TWO_A = "37-2-A";
 	private static final String RULE_37_TWO_B = "37-2-B";
@@ -390,7 +392,7 @@ public class SideYardService_Birgaon extends SideYardService {
 						"Side Setback 1 of block" + block.getNumber() + "at level zero  not defined in the plan.");
 			}
 			compareSideYard1Result(block.getName(), BigDecimal.ZERO, actualDist, BigDecimal.ZERO, BigDecimal.ZERO,
-					occupancy.getTypeHelper(), sideYard1Result, true, RULE_35, SIDE_YARD_DESC, 0);
+					occupancy.getTypeHelper(), sideYard1Result, true, RULE_7_C_1, SIDE_YARD_DESC, 0);
 
 		}
 
@@ -423,7 +425,7 @@ public class SideYardService_Birgaon extends SideYardService {
 				pl.getErrors().remove("", "BLK_" + block.getNumber() + "_LVL_0_SIDE_SETBACK2 not defined in the plan.");
 			}
 			compareSideYard2Result(block.getName(), BigDecimal.ZERO, actualDist, BigDecimal.ZERO, BigDecimal.ZERO,
-					occupancy.getTypeHelper(), sideYard2Result, true, RULE_35, SIDE_YARD_DESC, 0);
+					occupancy.getTypeHelper(), sideYard2Result, true, RULE_7_C_1, SIDE_YARD_DESC, 0);
 
 		}
 
@@ -438,7 +440,7 @@ public class SideYardService_Birgaon extends SideYardService {
 			SideYardResult sideYard2Result, Block block) {
 
 		String rule = SIDE_YARD_DESC;
-		String subRule = RULE_35;
+		String subRule = RULE_7_C_1;
 		Boolean valid2 = false;
 		Boolean valid1 = false;
 		BigDecimal side2val = BigDecimal.ZERO;
@@ -453,7 +455,7 @@ public class SideYardService_Birgaon extends SideYardService {
 //					&& pl.getPlanInformation().getRoadWidth().compareTo(ROAD_WIDTH_TWELVE_POINTTWO) < 0
 			) {
 				checkCommercial(pl, blockName, level, min, max, minMeanlength, maxMeanLength, mostRestrictiveOccupancy,
-						sideYard1Result, sideYard2Result, rule, DxfFileConstants.RULE_28, valid2, valid1, side2val,
+						sideYard1Result, sideYard2Result, rule, subRule, valid2, valid1, side2val,
 						side1val, widthOfPlot, block);
 			} else {
 				checkResidential(pl, blockName, level, min, max, minMeanlength, maxMeanLength, mostRestrictiveOccupancy,
@@ -625,7 +627,7 @@ public class SideYardService_Birgaon extends SideYardService {
 			SideYardResult sideYard2Result) {
 
 		String rule = SIDE_YARD_DESC;
-		String subRule = RULE_35;
+		String subRule = RULE_7_C_1;
 		Boolean valid2 = false;
 		Boolean valid1 = false;
 		BigDecimal side2val = BigDecimal.ZERO;

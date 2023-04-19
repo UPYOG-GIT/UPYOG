@@ -305,7 +305,7 @@ public class RearYardService_Dhamtari extends RearYardService {
 						"Rear Setback 1 of " + block.getNumber() + "at level zero  not defined in the plan.");
 			}
 			compareRearYardResult(block.getName(), BigDecimal.ZERO, BigDecimal.ZERO, occupancy.getTypeHelper(),
-					rearYardResult, true, RULE_35, REAR_YARD_DESC, BigDecimal.ZERO, BigDecimal.ZERO, 0);
+					rearYardResult, true, RULE_7_C_1, REAR_YARD_DESC, BigDecimal.ZERO, BigDecimal.ZERO, 0);
 
 		}
 
@@ -331,7 +331,7 @@ public class RearYardService_Dhamtari extends RearYardService {
 //					&& pl.getPlanInformation().getRoadWidth().compareTo(ROAD_WIDTH_TWELVE_POINTTWO) < 0
 			) {
 				valid = commercial(block, level, min, mean, mostRestrictiveOccupancy, rearYardResult,
-						DxfFileConstants.RULE_28, rule, minVal, meanVal, depthOfPlot, valid);
+						subRule, rule, minVal, meanVal, depthOfPlot, valid);
 			} else {
 				valid = residential(block, level, min, mean, mostRestrictiveOccupancy, rearYardResult, subRule, rule,
 						minVal, meanVal, depthOfPlot, widthOfPlot, valid);

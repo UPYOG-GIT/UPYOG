@@ -64,6 +64,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class RainWaterHarvesting_Birgaon extends FeatureProcess {
     private static final String RULE_51 = "51";
+    private static final String RULE_78 = "78";
     /*
      * private static final String RULE_51_DESCRIPTION = "RainWater Storage Arrangement "; private static final String
      * RAINWATER_HARVESTING_TANK_CAPACITY = "Minimum capacity of Rain Water Harvesting Tank";
@@ -91,7 +92,7 @@ public class RainWaterHarvesting_Birgaon extends FeatureProcess {
         scrutinyDetail.addColumnHeading(4, PROVIDED);
         scrutinyDetail.addColumnHeading(5, STATUS);
         scrutinyDetail.setKey("Common_Rain Water Harvesting");
-        String subRule = RULE_51;
+        String subRule = RULE_78;
         String subRuleDesc = RULE_51_DESCRIPTION;
         // BigDecimal expectedTankCapacity = BigDecimal.ZERO;
         BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getPlotBndryArea() : BigDecimal.ZERO;

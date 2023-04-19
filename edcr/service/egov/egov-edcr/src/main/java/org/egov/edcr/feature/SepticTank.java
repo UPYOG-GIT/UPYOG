@@ -68,6 +68,7 @@ public class SepticTank extends FeatureProcess {
 
 	private static final Logger LOG = LogManager.getLogger(SepticTank.class);
 	private static final String RULE_45_E = "45-e";
+	private static final String RULE_76 = "76";
 //	public static final String DISTANCE_FROM_WATERSOURCE = "Distance from watersource";
 //	public static final String DISTANCE_FROM_BUILDING = "Distance from Building";
 //	public static final String MIN_DISTANCE_FROM_GOVTBUILDING_DESC = "Minimum distance fcrom government building";
@@ -154,7 +155,7 @@ public class SepticTank extends FeatureProcess {
 	private void buildResult(Plan pl, ScrutinyDetail scrutinyDetail, boolean valid, String description, String required,
 			String provided) {
 		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_45_E);
+		details.put(RULE_NO, RULE_76);
 		details.put(DESCRIPTION, description);
 		details.put(REQUIRED, required);
 		details.put(PROVIDED, provided);
