@@ -402,17 +402,17 @@ public class Parking_Dhamtari extends FeatureProcess {
 			) {
 				pl.addError(RULE_DESCRIPTION, getLocaleMessage("msg.error.not.defined", RULE_DESCRIPTION));
 			} else if (requiredCarParkArea > 0 && totalProvidedCarParkingArea.compareTo(requiredCarParkingArea) < 0) {
-				setReportOutputDetails(pl, RULE_7_C_19, RULE_DESCRIPTION, requiredCarParkingArea + SQMTRS,
+				setReportOutputDetails(pl, RULE_81, RULE_DESCRIPTION, requiredCarParkingArea + SQMTRS,
 						totalProvidedCarParkingArea + SQMTRS, Result.Not_Accepted.getResultVal());
 			} else {
-				setReportOutputDetails(pl, RULE_7_C_19, RULE_DESCRIPTION, requiredCarParkingArea + SQMTRS,
+				setReportOutputDetails(pl, RULE_81, RULE_DESCRIPTION, requiredCarParkingArea + SQMTRS,
 						totalProvidedCarParkingArea + SQMTRS, Result.Accepted.getResultVal());
 			}
 			if (requiredVisitorParkArea > 0 && providedVisitorParkArea.compareTo(requiredVisitorParkingArea) < 0) {
-				setReportOutputDetails(pl, RULE_7_C_19, RULE_DESCRIPTION, requiredVisitorParkingArea + SQMTRS,
+				setReportOutputDetails(pl, RULE_81, RULE_DESCRIPTION, requiredVisitorParkingArea + SQMTRS,
 						providedVisitorParkArea + SQMTRS, Result.Not_Accepted.getResultVal());
 			} else if (requiredVisitorParkArea > 0) {
-				setReportOutputDetails(pl, RULE_7_C_19, RULE_DESCRIPTION, requiredVisitorParkingArea + SQMTRS,
+				setReportOutputDetails(pl, RULE_81, RULE_DESCRIPTION, requiredVisitorParkingArea + SQMTRS,
 						providedVisitorParkingArea + SQMTRS, Result.Accepted.getResultVal());
 			}
 		} else {

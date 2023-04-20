@@ -403,7 +403,7 @@ public class SideYardService_Dhamtari extends SideYardService {
 						"Side Setback 1 of block" + block.getNumber() + "at level zero  not defined in the plan.");
 			}
 			compareSideYard1Result(block.getName(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-					occupancy.getTypeHelper(), sideYard1Result, true, RULE_35, SIDE_YARD_DESC, 0);
+					occupancy.getTypeHelper(), sideYard1Result, true, RULE_7_C_1, SIDE_YARD_DESC, 0);
 
 		}
 
@@ -435,7 +435,7 @@ public class SideYardService_Dhamtari extends SideYardService {
 				pl.getErrors().remove("", "BLK_" + block.getNumber() + "_LVL_0_SIDE_SETBACK2 not defined in the plan.");
 			}
 			compareSideYard2Result(block.getName(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-					occupancy.getTypeHelper(), sideYard2Result, true, RULE_35, SIDE_YARD_DESC, 0);
+					occupancy.getTypeHelper(), sideYard2Result, true, RULE_7_C_1, SIDE_YARD_DESC, 0);
 		}
 
 //			compareSideYard2Result(block.getName(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
@@ -465,7 +465,7 @@ public class SideYardService_Dhamtari extends SideYardService {
 //					&& pl.getPlanInformation().getRoadWidth().compareTo(ROAD_WIDTH_TWELVE_POINTTWO) < 0
 			) {
 				checkCommercial(pl, blockName, level, min, max, minMeanlength, maxMeanLength, mostRestrictiveOccupancy,
-						sideYard1Result, sideYard2Result, rule, DxfFileConstants.RULE_28, valid2, valid1, side2val,
+						sideYard1Result, sideYard2Result, rule, subRule, valid2, valid1, side2val,
 						side1val, widthOfPlot, block);
 			} else {
 				checkResidential(pl, blockName, level, min, max, minMeanlength, maxMeanLength, mostRestrictiveOccupancy,

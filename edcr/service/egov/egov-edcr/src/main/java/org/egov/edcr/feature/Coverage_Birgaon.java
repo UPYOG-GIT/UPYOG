@@ -100,6 +100,7 @@ public class Coverage_Birgaon extends Coverage {
 	 */
 
 	public static final String RULE_38 = "38";
+	public static final String RULE_7_C_1 = "Table 7-C-1";
 	private static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
 	private static final BigDecimal ROAD_WIDTH_THIRTY_POINTFIVE = BigDecimal.valueOf(30.5);
 
@@ -352,7 +353,7 @@ public class Coverage_Birgaon extends Coverage {
 		String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY, upperLimit.toString());
 		if (coverage.doubleValue() <= upperLimit.doubleValue()) {
 			Map<String, String> details = new HashMap<>();
-			details.put(RULE_NO, RULE_38);
+			details.put(RULE_NO, RULE_7_C_1);
 			details.put(DEVELOPMENT_ZONE, developmentZone);
 			details.put(DESCRIPTION, desc);
 			details.put(OCCUPANCY, occupancy);
@@ -364,7 +365,7 @@ public class Coverage_Birgaon extends Coverage {
 
 		} else {
 			Map<String, String> details = new HashMap<>();
-			details.put(RULE_NO, RULE_38);
+			details.put(RULE_NO, RULE_7_C_1);
 			details.put(DEVELOPMENT_ZONE, developmentZone);
 			details.put(DESCRIPTION, desc);
 			details.put(OCCUPANCY, occupancy);

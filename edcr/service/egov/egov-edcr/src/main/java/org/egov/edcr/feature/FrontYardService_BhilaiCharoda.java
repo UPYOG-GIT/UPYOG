@@ -84,6 +84,8 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 	private static final Logger LOG = LogManager.getLogger(FrontYardService_BhilaiCharoda.class);
 
 	private static final String RULE_35 = "35 Table-8";
+	private static final String RULE_7_C_1 = "Table 7-C-1";
+	private static final String RULE_7_C_13 = "Table 7-C-13";
 //	private static final String RULE_36 = "36";
 	private static final String RULE_37_TWO_A = "37-2-A";
 //	private static final String RULE_37_TWO_B = "37-2-B";
@@ -339,7 +341,7 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 			String frontYardFieldName, BigDecimal min, BigDecimal mean, OccupancyTypeHelper mostRestrictiveOccupancy,
 			FrontYardResult frontYardResult, HashMap<String, String> errors) {
 		Boolean valid = false;
-		String subRule = RULE_35;
+		String subRule = RULE_7_C_1;
 		String rule = FRONT_YARD_DESC;
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;
@@ -414,7 +416,7 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 			Plot plot, String frontYardFieldName, BigDecimal min, BigDecimal mean,
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult) {
 		Boolean valid = false;
-		String subRule = RULE_37_TWO_A;
+		String subRule = RULE_7_C_1;
 		String rule = FRONT_YARD_DESC;
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;

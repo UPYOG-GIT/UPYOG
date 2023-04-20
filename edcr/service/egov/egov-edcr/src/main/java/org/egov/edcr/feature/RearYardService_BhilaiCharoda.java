@@ -90,6 +90,8 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 	private static final Logger LOG = LogManager.getLogger(RearYardService_BhilaiCharoda.class);
 
 	private static final String RULE_35 = "35 Table-8";
+	private static final String RULE_7_C_1 = "Table 7-C-1";
+	private static final String RULE_7_C_13 = "Table 7-C-13";
 	private static final String RULE_36 = "36";
 	private static final String RULE_37_TWO_A = "37-2-A";
 	private static final String RULE_37_TWO_B = "37-2-B";
@@ -301,7 +303,7 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 						"Rear Setback 1 of " + block.getNumber() + "at level zero  not defined in the plan.");
 			}
 			compareRearYardResult(block.getName(), BigDecimal.ZERO, BigDecimal.ZERO, occupancy.getTypeHelper(),
-					rearYardResult, true, RULE_35, REAR_YARD_DESC, BigDecimal.ZERO, BigDecimal.ZERO, 0);
+					rearYardResult, true, RULE_7_C_1, REAR_YARD_DESC, BigDecimal.ZERO, BigDecimal.ZERO, 0);
 		}
 
 //		}
@@ -311,7 +313,7 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 			final String rearYardFieldName, final BigDecimal min, final BigDecimal mean,
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult,
 			BigDecimal buildingHeight) {
-		String subRule = RULE_35;
+		String subRule = RULE_7_C_1;
 		String rule = REAR_YARD_DESC;
 		Boolean valid = false;
 		BigDecimal minVal = BigDecimal.valueOf(0);
@@ -326,7 +328,7 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 //					&& pl.getPlanInformation().getRoadWidth().compareTo(ROAD_WIDTH_TWELVE_POINTTWO) < 0
 			) {
 				valid = commercial(block, level, min, mean, mostRestrictiveOccupancy, rearYardResult,
-						DxfFileConstants.RULE_28, rule, minVal, meanVal, depthOfPlot, valid, buildingHeight, roadWidth);
+						subRule, rule, minVal, meanVal, depthOfPlot, valid, buildingHeight, roadWidth);
 			} else {
 				valid = residential(block, level, min, mean, mostRestrictiveOccupancy, rearYardResult, subRule, rule,
 						minVal, meanVal, depthOfPlot, valid, buildingHeight, roadWidth);
