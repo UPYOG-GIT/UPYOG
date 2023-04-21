@@ -202,11 +202,10 @@ public class MDMSService {
 			Double CommArea = 0d;
 			Double IndArea = 0d;
 			boolean isHighRisetf = false;
-		
 
 			for (LinkedHashMap blockMap : block) {
 				HashMap building = (HashMap) blockMap.get("building");
-			
+
 //				 log.info("blockMap======"+building);
 				ArrayList<LinkedHashMap> floor = (ArrayList<LinkedHashMap>) building.get("floors");
 //				 log.info("floor======"+floor);
@@ -271,7 +270,6 @@ public class MDMSService {
 			additionalDetails.put("CommArea", CommArea.toString());
 			additionalDetails.put("IndArea", IndArea.toString());
 			additionalDetails.put("isHighRisetf", isHighRisetf + "");
-			
 
 			log.info("additionalDetails---------" + additionalDetails);
 			Double responseMap1 = feeCalculation(additionalDetails);
@@ -451,7 +449,6 @@ public class MDMSService {
 		log.info("ind_area----" + ind_area);
 		boolean isHighRise = Boolean.parseBoolean(data.get("isHighRisetf").toString());
 		log.info("isHighRise----" + isHighRise);
-	
 
 		String heightcat = "";
 
@@ -656,7 +653,7 @@ public class MDMSService {
 								amount = (calculationArea * (calculationRate / 100));
 								if (pCategory.equals(4)) { // MIX
 									amount = (res_area * (rate_res / 100)) + (com_area * (rate_comm / 100)); // if
-																											// parking='N'
+																												// parking='N'
 									if (parkArea > 0) { // means parking=Y
 										// for Mix if res_area>com_area then add parking area in res_area else in
 										// com_area which one is greater.
@@ -955,13 +952,49 @@ public class MDMSService {
 								log.info("######Inside Buildup Area: Fix and Multiply Condition ");
 								// calculated on BA and Fix & Multiply -- For all category
 								Double LowerRate = 0.0;
-								amount = calculationRate + (((double) calculationArea - ((double) sFromVal - 1)) * (double) multpval);
+								amount = calculationRate
+										+ (((double) calculationArea - ((double) sFromVal - 1)) * (double) multpval);
+
+								if (paytyid == 2) {
+									if (parkArea > 0) { // means parking=Y
+										// for Mix if res_area>com_area then add parking area in res_area else in
+										// com_area which one is greater.
+										if (res_area > com_area) {
+											calculationArea = res_area + parkArea; // Resi greater
+											calculationRate = sres_rate;
+										} else {
+											calculationArea = com_area + parkArea; // comm greater
+											calculationRate = scom_rate;
+										}
+//										int mul = (int) Math.ceil((calculationArea - sFromVal) / 500);
+
+//										if (pCategory.equals(2) || pCategory.equals(3)) {
+//											
+//										} else {
+//
+//										}
+										log.info("Area33: " + calculationArea);
+										log.info("Rate33: " + calculationRate);
+										amount = calculationRate
+												+ (((int) Math.ceil((calculationArea - sFromVal) / 46.45)) * multpval);
+									} else {
+//										int mul = (int) Math.ceil((calculationArea - sFromVal) / 500);
+										log.info("Area333: " + calculationArea);
+										log.info("Rate333: " + calculationRate);
+										amount = calculationRate
+												+ (((int) Math.ceil((calculationArea - sFromVal) / 46.45)) * multpval);
+									}
+									continue;
+								}
+
 								if (pCategory.equals(4) || pCategory.equals(5)) { // Mix
-									calculationArea = res_area + com_area; // default if parking='N' && $l_feetype!='P' ie.Not
-																// Scrutiny
+									calculationArea = res_area + com_area; // default if parking='N' && $l_feetype!='P'
+																			// ie.Not
+									// Scrutiny
 									calculationRate = sres_rate + scom_rate;
 									amount = (double) calculationRate
-											+ (((double) calculationArea - ((double) sFromVal - 1)) * (double) multpval);
+											+ (((double) calculationArea - ((double) sFromVal - 1))
+													* (double) multpval);
 
 									if (parkArea > 0 && feety.equalsIgnoreCase("Pre")) { // means parking=Y & Scrutiny
 										// for Mix if res_area>com_area then add parking area in res_area else in
@@ -979,7 +1012,8 @@ public class MDMSService {
 										log.info("Area4: " + calculationArea);
 										log.info("Rate4: " + calculationRate);
 										amount = (double) calculationRate
-												+ (((double) calculationArea - ((double) sFromVal - 1)) * (double) multpval)
+												+ (((double) calculationArea - ((double) sFromVal - 1))
+														* (double) multpval)
 												+ LowerRate;
 									}
 									if (pCategory.equals(5)) { // Educational
@@ -1015,7 +1049,8 @@ public class MDMSService {
 																			// formula
 								// calculated on PA and Fix & Multiply -
 								log.info("######Inside Plot Area: Fix and Multiply Condition ");
-								amount = (double) calculationRate + (((double) calculationArea - ((double) sFromVal - 1)) * (double) multpval);
+								amount = (double) calculationRate
+										+ (((double) calculationArea - ((double) sFromVal - 1)) * (double) multpval);
 							} else if (s_oper.equals("Multiply & Check Limit")
 									|| s_oper.equals("Multiply and Check Limit")) {
 								// calculated on PA and Multiply & Check Limit,residential-single-unit-Rain
