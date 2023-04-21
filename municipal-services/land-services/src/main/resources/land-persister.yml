@@ -39,7 +39,7 @@ serviceMaps:
           - jsonPath: $.LandInfo.auditDetails.lastModifiedTime
 
 
-       - query: INSERT INTO eg_land_Address( id, tenantid, doorno, plotno,landmark, city, district, region, state, country, pincode, additiondetails, buildingname, street, locality, landInfoId, createdby, lastmodifiedby, createdtime, lastmodifiedtime, khataNo, mauza, plotArea, occupancy) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+       - query: INSERT INTO eg_land_Address( id, tenantid, doorno, plotno,landmark, city, district, region, state, country, pincode, additiondetails, buildingname, street, locality, landInfoId, createdby, lastmodifiedby, createdtime, lastmodifiedtime, khataNo, mauza, plotArea, occupancy, patwariHN) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
          basePath: LandInfo.address
          jsonMaps:
           - jsonPath: $.LandInfo.address.id
@@ -89,6 +89,8 @@ serviceMaps:
           - jsonPath: $.LandInfo.address.plotArea
           
           - jsonPath: $.LandInfo.address.occupancy
+          
+          - jsonPath: $.LandInfo.address.patwariHN
 
 
        - query: INSERT INTO eg_land_ownerInfo( id, uuid, isprimaryowner, ownershippercentage, institutionId, additionalDetails, landInfoId, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);

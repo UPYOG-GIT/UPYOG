@@ -95,6 +95,10 @@ public class Address {
 	@SafeHtml
 	@JsonProperty("occupancy")
 	private String occupancy = null;
+	
+	@SafeHtml
+	@JsonProperty("patwariHN")
+	private String patwariHN = null;
 
 	@SafeHtml
 	@JsonProperty("plotArea")
