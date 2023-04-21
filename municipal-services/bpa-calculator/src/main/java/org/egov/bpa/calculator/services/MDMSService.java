@@ -984,42 +984,44 @@ public class MDMSService {
 										amount = calculationRate
 												+ (((int) Math.ceil((calculationArea - sFromVal) / 46.45)) * multpval);
 									}
-									continue;
-								}
+								} else {
 
-								if (pCategory.equals(4) || pCategory.equals(5)) { // Mix
-									calculationArea = res_area + com_area; // default if parking='N' && $l_feetype!='P'
-																			// ie.Not
-									// Scrutiny
-									calculationRate = sres_rate + scom_rate;
-									amount = (double) calculationRate
-											+ (((double) calculationArea - ((double) sFromVal - 1))
-													* (double) multpval);
-
-									if (parkArea > 0 && feety.equalsIgnoreCase("Pre")) { // means parking=Y & Scrutiny
-										// for Mix if res_area>com_area then add parking area in res_area else in
-										// com_area which one is greater.
-										if ((double) res_area > (double) com_area) {
-											calculationArea = (double) res_area + parkArea; // Resi greater
-											calculationRate = sres_rate;
-											LowerRate = scom_rate;
-
-										} else {
-											calculationArea = (double) com_area + parkArea; // comm greater
-											calculationRate = scom_rate;
-											LowerRate = sres_rate;
-										}
-										log.info("Area4: " + calculationArea);
-										log.info("Rate4: " + calculationRate);
+									if (pCategory.equals(4) || pCategory.equals(5)) { // Mix
+										calculationArea = res_area + com_area; // default if parking='N' &&
+																				// $l_feetype!='P'
+																				// ie.Not
+										// Scrutiny
+										calculationRate = sres_rate + scom_rate;
 										amount = (double) calculationRate
 												+ (((double) calculationArea - ((double) sFromVal - 1))
-														* (double) multpval)
-												+ LowerRate;
-									}
-									if (pCategory.equals(5)) { // Educational
-										log.info("Area4: " + calculationArea);
-										log.info("Rate4: " + calculationRate);
-										amount = ((double) amount * (50 / 100));
+														* (double) multpval);
+
+										if (parkArea > 0 && feety.equalsIgnoreCase("Pre")) { // means parking=Y &
+																								// Scrutiny
+											// for Mix if res_area>com_area then add parking area in res_area else in
+											// com_area which one is greater.
+											if ((double) res_area > (double) com_area) {
+												calculationArea = (double) res_area + parkArea; // Resi greater
+												calculationRate = sres_rate;
+												LowerRate = scom_rate;
+
+											} else {
+												calculationArea = (double) com_area + parkArea; // comm greater
+												calculationRate = scom_rate;
+												LowerRate = sres_rate;
+											}
+											log.info("Area4: " + calculationArea);
+											log.info("Rate4: " + calculationRate);
+											amount = (double) calculationRate
+													+ (((double) calculationArea - ((double) sFromVal - 1))
+															* (double) multpval)
+													+ LowerRate;
+										}
+										if (pCategory.equals(5)) { // Educational
+											log.info("Area4: " + calculationArea);
+											log.info("Rate4: " + calculationRate);
+											amount = ((double) amount * (50 / 100));
+										}
 									}
 								}
 							} else if (s_oper.equals("Multiply & Check Limit")
