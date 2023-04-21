@@ -951,10 +951,7 @@ public class MDMSService {
 							} else if (s_oper.equals("Fix and Multiply")) { // TODO
 								log.info("######Inside Buildup Area: Fix and Multiply Condition ");
 								// calculated on BA and Fix & Multiply -- For all category
-								Double LowerRate = 0.0;
-								amount = calculationRate
-										+ (((double) calculationArea - ((double) sFromVal - 1)) * (double) multpval);
-
+								
 								if (paytyid == 2) {
 									if (parkArea > 0) { // means parking=Y
 										// for Mix if res_area>com_area then add parking area in res_area else in
@@ -976,15 +973,18 @@ public class MDMSService {
 										log.info("Area33: " + calculationArea);
 										log.info("Rate33: " + calculationRate);
 										amount = calculationRate
-												+ (((int) Math.ceil((calculationArea - sFromVal) / 46.45)) * multpval);
+												+ (((int) Math.ceil((calculationArea - sToVal) / 46.45)) * multpval);
 									} else {
 //										int mul = (int) Math.ceil((calculationArea - sFromVal) / 500);
 										log.info("Area333: " + calculationArea);
 										log.info("Rate333: " + calculationRate);
 										amount = calculationRate
-												+ (((int) Math.ceil((calculationArea - sFromVal) / 46.45)) * multpval);
+												+ (((int) Math.ceil((calculationArea - sToVal) / 46.45)) * multpval);
 									}
 								} else {
+									Double LowerRate = 0.0;
+									amount = calculationRate
+											+ (((double) calculationArea - ((double) sFromVal - 1)) * (double) multpval);
 
 									if (pCategory.equals(4) || pCategory.equals(5)) { // Mix
 										calculationArea = res_area + com_area; // default if parking='N' &&
