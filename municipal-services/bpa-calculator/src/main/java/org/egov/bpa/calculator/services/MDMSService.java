@@ -854,8 +854,10 @@ public class MDMSService {
 								if (!sResulte.get("from_val").equals(0)) { // but TOVAL=0/null
 									log.info("elas of not equal to 0");
 									s_oper = sResulte.get("operation").toString();
-									sFromVal = Double.valueOf(sResulte.get("to_val").toString());
-									sToVal = Double.valueOf(sResulte.get("from_val").toString());
+									sFromVal = Double.valueOf(sResulte.get("from_val").toString());
+									sToVal = Double.valueOf(sResulte.get("to_val").toString());
+//									sFromVal = Double.valueOf(sResulte.get("to_val").toString());
+//									sToVal = Double.valueOf(sResulte.get("from_val").toString());
 									sres_rate = Double.valueOf(sResulte.get("rate_res").toString());
 									scom_rate = Double.valueOf(sResulte.get("rate_comm").toString());
 									sind_rate = Double.valueOf(sResulte.get("rate_ind").toString());
@@ -973,13 +975,13 @@ public class MDMSService {
 										log.info("Area33: " + calculationArea);
 										log.info("Rate33: " + calculationRate);
 										amount = calculationRate
-												+ (((int) Math.ceil((calculationArea - sToVal) / 46.45)) * multpval);
+												+ (((int) Math.ceil((calculationArea - sFromVal) / 46.45)) * multpval);
 									} else {
 //										int mul = (int) Math.ceil((calculationArea - sFromVal) / 500);
 										log.info("Area333: " + calculationArea);
 										log.info("Rate333: " + calculationRate);
 										amount = calculationRate
-												+ (((int) Math.ceil((calculationArea - sToVal) / 46.45)) * multpval);
+												+ (((int) Math.ceil((calculationArea - sFromVal) / 46.45)) * multpval);
 									}
 								} else {
 									Double LowerRate = 0.0;
