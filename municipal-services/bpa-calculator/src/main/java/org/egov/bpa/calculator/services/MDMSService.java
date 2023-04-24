@@ -522,7 +522,7 @@ public class MDMSService {
 			Double trate = 0.0;
 			Double ptarea = 0.0;
 			Double parkArea = 0.0;
-			HashMap<String, Object> feeMap = new HashMap<String, Object>();
+//			HashMap<String, Object> feeMap = new HashMap<String, Object>();
 			PayTypeFeeDetailRequest payTypeFeeDetailRequest = new PayTypeFeeDetailRequest();
 
 //			String pId = item.get("id").toString();
@@ -951,7 +951,7 @@ public class MDMSService {
 							} else if (s_oper.equals("Fix and Multiply")) { // TODO
 								log.info("######Inside Buildup Area: Fix and Multiply Condition ");
 								// calculated on BA and Fix & Multiply -- For all category
-								
+
 								if (paytyid == 2) {
 									if (parkArea > 0) { // means parking=Y
 										// for Mix if res_area>com_area then add parking area in res_area else in
@@ -983,8 +983,8 @@ public class MDMSService {
 									}
 								} else {
 									Double LowerRate = 0.0;
-									amount = calculationRate
-											+ (((double) calculationArea - ((double) sFromVal - 1)) * (double) multpval);
+									amount = calculationRate + (((double) calculationArea - ((double) sFromVal - 1))
+											* (double) multpval);
 
 									if (pCategory.equals(4) || pCategory.equals(5)) { // Mix
 										calculationArea = res_area + com_area; // default if parking='N' &&
@@ -1155,8 +1155,10 @@ public class MDMSService {
 					} // end of SLAB
 
 					totalAmount += (double) amount; // each building total calulation/charges for the fee
-					trate += (double) calculationRate; // each building total rate for the fee
-					ptarea += (double) calculationArea; // each building total area for the fee
+//					trate += (double) calculationRate; // each building total rate for the fee
+					trate = (double) calculationRate; // each building total rate for the fee
+//					ptarea += (double) calculationArea; // each building total area for the fee
+					ptarea = (double) calculationArea; // each building total area for the fee
 
 //					log.info("Charges Type : " + chargesTy + ", Amount: " + Val);
 					log.info("End--Value--" + totalAmount + "-----trate---" + trate + "----End--ptarea--" + ptarea
@@ -1177,20 +1179,15 @@ public class MDMSService {
 					payTypeFeeDetailRequest.setBillId("");
 					payTypeFeeDetailRequest.setSrNo(count);
 
-					feeMap.put("ApplicationNo", applicationNo);
-					feeMap.put("FeeType", feety);
-					feeMap.put("Tenantid", tenantid);
-					feeMap.put("Operation", calcact);
-					feeMap.put("ChargesType", chargesTy);
-					feeMap.put("PayTypeId", paytyid);
-					feeMap.put("UnitId", unitid);
-					feeMap.put("PropValue", calculationArea);
-					feeMap.put("Rate", trate);
-					feeMap.put("Amount", amount);
-					feeMap.put("bill_id", "");
-					feeMap.put("createdby", "");
-					feeMap.put("updatedby", "");
-					feeMap.put("updateddate", "");
+					/*
+					 * feeMap.put("ApplicationNo", applicationNo); feeMap.put("FeeType", feety);
+					 * feeMap.put("Tenantid", tenantid); feeMap.put("Operation", calcact);
+					 * feeMap.put("ChargesType", chargesTy); feeMap.put("PayTypeId", paytyid);
+					 * feeMap.put("UnitId", unitid); feeMap.put("PropValue", calculationArea);
+					 * feeMap.put("Rate", trate); feeMap.put("Amount", amount);
+					 * feeMap.put("bill_id", ""); feeMap.put("createdby", "");
+					 * feeMap.put("updatedby", ""); feeMap.put("updateddate", "");
+					 */
 					// }//end of for each building loop
 
 				} // end of tpd_zdaflg='N'
@@ -1218,7 +1215,7 @@ public class MDMSService {
 				}
 
 			} // end of if $lbrkflg
-				// insert data in data base-------------
+
 //			feeDetailMap.add(feeMap);
 			if (payTypeFeeDetailRequest.getAmount() > 0) {
 				feeDetailList.add(payTypeFeeDetailRequest);
@@ -1229,9 +1226,10 @@ public class MDMSService {
 //			bpaRepository.createFeeDetail(feeDetailList);
 			count += 1;
 		} // End of for each fee type
+			// insert data in data base-------------
 		bpaRepository.createFeeDetail(feeDetailList);
 
-		log.info("feeDetailMap-List-------" + feeDetailMap);
+//		log.info("feeDetailMap-List-------" + feeDetailMap);
 //		Map<String, String> list = new HashMap<String, String>();
 //		list.put("Value",Value.toString());
 //		list.put("trate",trate.toString());

@@ -65,8 +65,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class WaterTankCapacity extends FeatureProcess {
-	private static final String RULE_59_10_vii = "59-10-vii";
-    private static final String RULE_59_10_vii_DESCRIPTION = "Water tank capacity";
+//	private static final String RULE_59_10_vii = "59-10-vii";
+	private static final String RULE_76 = "76";
+//    private static final String RULE_59_10_vii_DESCRIPTION = "Water tank capacity";
+    private static final String RULE_76_DESCRIPTION = "Water tank capacity";
     private static final String WATER_TANK_CAPACITY = "Minimum capacity of Water tank";
     private static final BigDecimal TWELVE_POINTFIVE = BigDecimal.valueOf(12.5);
 //    private static final BigDecimal ONEHUNDRED_THIRTYFIVE = BigDecimal.valueOf(135);
@@ -89,8 +91,8 @@ public class WaterTankCapacity extends FeatureProcess {
         scrutinyDetail.addColumnHeading(4, PROVIDED);
         scrutinyDetail.addColumnHeading(5, STATUS);
         scrutinyDetail.setKey("Common_Water tank capacity");
-        String subRule = RULE_59_10_vii;
-        String subRuleDesc = RULE_59_10_vii_DESCRIPTION;
+        String subRule = RULE_76;
+        String subRuleDesc = RULE_76_DESCRIPTION;
         BigDecimal expectedWaterTankCapacityR = BigDecimal.ZERO;
         BigDecimal expectedWaterTankCapacityC = BigDecimal.ZERO;
         BigDecimal expectedWaterTankCapacity = BigDecimal.ZERO;
