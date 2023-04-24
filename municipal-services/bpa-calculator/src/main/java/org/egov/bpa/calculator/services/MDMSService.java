@@ -836,8 +836,10 @@ public class MDMSService {
 									// slab found
 									// get value
 									s_oper = sResulte.get("operation").toString();
-									sFromVal = Double.valueOf(sResulte.get("to_val").toString());
-									sToVal = Double.valueOf(sResulte.get("from_val").toString());
+									sFromVal = Double.valueOf(sResulte.get("from_val").toString());
+									sToVal = Double.valueOf(sResulte.get("to_val").toString());
+//									sFromVal = Double.valueOf(sResulte.get("to_val").toString());
+//									sToVal = Double.valueOf(sResulte.get("from_val").toString());
 									sres_rate = Double.valueOf(sResulte.get("rate_res").toString());
 									scom_rate = Double.valueOf(sResulte.get("rate_comm").toString());
 									sind_rate = Double.valueOf(sResulte.get("rate_ind").toString());
