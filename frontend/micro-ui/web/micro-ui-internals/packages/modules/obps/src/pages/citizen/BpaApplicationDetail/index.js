@@ -137,22 +137,35 @@ const BpaApplicationDetail = () => {
   }
   
 
-  async function getPermitOccupancyOrderSearch({tenantId}, order, mode="download") {
+  // async function getPermitOccupancyOrderSearch({tenantId}, order, mode="download") {
+  //   console.log("down--")
+  //   let currentDate = new Date();
+  //   data.applicationData.additionalDetails.runDate = convertDateToEpoch(currentDate.getFullYear() + '-' + (currentDate.getMonth() + 1) + '-' + currentDate.getDate());
+  //   let requestData = {...data?.applicationData, edcrDetail:[{...data?.edcrDetails}]}
+  //   let response = await Digit.PaymentService.generatePdf(tenantId, { Bpa: [requestData] }, order);
+  //   console.log("response...." + response)
+  //   const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+  //   window.open(fileStore[response?.filestoreIds[0]], "_blank");
+  //   requestData["applicationType"] = data?.applicationData?.additionalDetails?.applicationType;
+  //   let edcrResponse = await Digit.OBPSService.edcr_report_download({BPA: {...requestData}});
+  //   const responseStatus = parseInt(edcrResponse.status, 10);
+  //   if (responseStatus === 201 || responseStatus === 200) {
+  //     mode == "print"
+  //       ? printPdf(new Blob([edcrResponse.data], { type: "application/pdf" }))
+  //       : downloadPdf(new Blob([edcrResponse.data], { type: "application/pdf" }), `edcrReport.pdf`);
+  //   }
+  // }
+
+  async function getPermitOccupancyOrderSearch({tenantId}, order) {
     let currentDate = new Date();
     data.applicationData.additionalDetails.runDate = convertDateToEpoch(currentDate.getFullYear() + '-' + (currentDate.getMonth() + 1) + '-' + currentDate.getDate());
     let requestData = {...data?.applicationData, edcrDetail:[{...data?.edcrDetails}]}
     let response = await Digit.PaymentService.generatePdf(tenantId, { Bpa: [requestData] }, order);
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
-    requestData["applicationType"] = data?.applicationData?.additionalDetails?.applicationType;
-    let edcrResponse = await Digit.OBPSService.edcr_report_download({BPA: {...requestData}});
-    const responseStatus = parseInt(edcrResponse.status, 10);
-    if (responseStatus === 201 || responseStatus === 200) {
-      mode == "print"
-        ? printPdf(new Blob([edcrResponse.data], { type: "application/pdf" }))
-        : downloadPdf(new Blob([edcrResponse.data], { type: "application/pdf" }), `edcrReport.pdf`);
-    }
+    printPdf(new Blob([fileStore], { type: "application/pdf" }), `permitOrder.pdf`);
   }
+  
 
   async function getRevocationPDFSearch({tenantId, ...params}) {
     let requestData = {...data?.applicationData}
