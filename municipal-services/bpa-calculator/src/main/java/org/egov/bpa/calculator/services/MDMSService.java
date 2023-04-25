@@ -522,7 +522,7 @@ public class MDMSService {
 			Double trate = 0.0;
 			Double ptarea = 0.0;
 			Double parkArea = 0.0;
-			HashMap<String, Object> feeMap = new HashMap<String, Object>();
+//			HashMap<String, Object> feeMap = new HashMap<String, Object>();
 			PayTypeFeeDetailRequest payTypeFeeDetailRequest = new PayTypeFeeDetailRequest();
 
 //			String pId = item.get("id").toString();
@@ -836,8 +836,10 @@ public class MDMSService {
 									// slab found
 									// get value
 									s_oper = sResulte.get("operation").toString();
-									sFromVal = Double.valueOf(sResulte.get("to_val").toString());
-									sToVal = Double.valueOf(sResulte.get("from_val").toString());
+									sFromVal = Double.valueOf(sResulte.get("from_val").toString());
+									sToVal = Double.valueOf(sResulte.get("to_val").toString());
+//									sFromVal = Double.valueOf(sResulte.get("to_val").toString());
+//									sToVal = Double.valueOf(sResulte.get("from_val").toString());
 									sres_rate = Double.valueOf(sResulte.get("rate_res").toString());
 									scom_rate = Double.valueOf(sResulte.get("rate_comm").toString());
 									sind_rate = Double.valueOf(sResulte.get("rate_ind").toString());
@@ -854,8 +856,10 @@ public class MDMSService {
 								if (!sResulte.get("from_val").equals(0)) { // but TOVAL=0/null
 									log.info("elas of not equal to 0");
 									s_oper = sResulte.get("operation").toString();
-									sFromVal = Double.valueOf(sResulte.get("to_val").toString());
-									sToVal = Double.valueOf(sResulte.get("from_val").toString());
+									sFromVal = Double.valueOf(sResulte.get("from_val").toString());
+									sToVal = Double.valueOf(sResulte.get("to_val").toString());
+//									sFromVal = Double.valueOf(sResulte.get("to_val").toString());
+//									sToVal = Double.valueOf(sResulte.get("from_val").toString());
 									sres_rate = Double.valueOf(sResulte.get("rate_res").toString());
 									scom_rate = Double.valueOf(sResulte.get("rate_comm").toString());
 									sind_rate = Double.valueOf(sResulte.get("rate_ind").toString());
@@ -951,9 +955,6 @@ public class MDMSService {
 							} else if (s_oper.equals("Fix and Multiply")) { // TODO
 								log.info("######Inside Buildup Area: Fix and Multiply Condition ");
 								// calculated on BA and Fix & Multiply -- For all category
-								Double LowerRate = 0.0;
-								amount = calculationRate
-										+ (((double) calculationArea - ((double) sFromVal - 1)) * (double) multpval);
 
 								if (paytyid == 2) {
 									if (parkArea > 0) { // means parking=Y
@@ -984,42 +985,47 @@ public class MDMSService {
 										amount = calculationRate
 												+ (((int) Math.ceil((calculationArea - sFromVal) / 46.45)) * multpval);
 									}
-									continue;
-								}
+								} else {
+									Double LowerRate = 0.0;
+									amount = calculationRate + (((double) calculationArea - ((double) sFromVal - 1))
+											* (double) multpval);
 
-								if (pCategory.equals(4) || pCategory.equals(5)) { // Mix
-									calculationArea = res_area + com_area; // default if parking='N' && $l_feetype!='P'
-																			// ie.Not
-									// Scrutiny
-									calculationRate = sres_rate + scom_rate;
-									amount = (double) calculationRate
-											+ (((double) calculationArea - ((double) sFromVal - 1))
-													* (double) multpval);
-
-									if (parkArea > 0 && feety.equalsIgnoreCase("Pre")) { // means parking=Y & Scrutiny
-										// for Mix if res_area>com_area then add parking area in res_area else in
-										// com_area which one is greater.
-										if ((double) res_area > (double) com_area) {
-											calculationArea = (double) res_area + parkArea; // Resi greater
-											calculationRate = sres_rate;
-											LowerRate = scom_rate;
-
-										} else {
-											calculationArea = (double) com_area + parkArea; // comm greater
-											calculationRate = scom_rate;
-											LowerRate = sres_rate;
-										}
-										log.info("Area4: " + calculationArea);
-										log.info("Rate4: " + calculationRate);
+									if (pCategory.equals(4) || pCategory.equals(5)) { // Mix
+										calculationArea = res_area + com_area; // default if parking='N' &&
+																				// $l_feetype!='P'
+																				// ie.Not
+										// Scrutiny
+										calculationRate = sres_rate + scom_rate;
 										amount = (double) calculationRate
 												+ (((double) calculationArea - ((double) sFromVal - 1))
-														* (double) multpval)
-												+ LowerRate;
-									}
-									if (pCategory.equals(5)) { // Educational
-										log.info("Area4: " + calculationArea);
-										log.info("Rate4: " + calculationRate);
-										amount = ((double) amount * (50 / 100));
+														* (double) multpval);
+
+										if (parkArea > 0 && feety.equalsIgnoreCase("Pre")) { // means parking=Y &
+																								// Scrutiny
+											// for Mix if res_area>com_area then add parking area in res_area else in
+											// com_area which one is greater.
+											if ((double) res_area > (double) com_area) {
+												calculationArea = (double) res_area + parkArea; // Resi greater
+												calculationRate = sres_rate;
+												LowerRate = scom_rate;
+
+											} else {
+												calculationArea = (double) com_area + parkArea; // comm greater
+												calculationRate = scom_rate;
+												LowerRate = sres_rate;
+											}
+											log.info("Area4: " + calculationArea);
+											log.info("Rate4: " + calculationRate);
+											amount = (double) calculationRate
+													+ (((double) calculationArea - ((double) sFromVal - 1))
+															* (double) multpval)
+													+ LowerRate;
+										}
+										if (pCategory.equals(5)) { // Educational
+											log.info("Area4: " + calculationArea);
+											log.info("Rate4: " + calculationRate);
+											amount = ((double) amount * (50 / 100));
+										}
 									}
 								}
 							} else if (s_oper.equals("Multiply & Check Limit")
@@ -1153,8 +1159,10 @@ public class MDMSService {
 					} // end of SLAB
 
 					totalAmount += (double) amount; // each building total calulation/charges for the fee
-					trate += (double) calculationRate; // each building total rate for the fee
-					ptarea += (double) calculationArea; // each building total area for the fee
+//					trate += (double) calculationRate; // each building total rate for the fee
+					trate = (double) calculationRate; // each building total rate for the fee
+//					ptarea += (double) calculationArea; // each building total area for the fee
+					ptarea = (double) calculationArea; // each building total area for the fee
 
 //					log.info("Charges Type : " + chargesTy + ", Amount: " + Val);
 					log.info("End--Value--" + totalAmount + "-----trate---" + trate + "----End--ptarea--" + ptarea
@@ -1175,20 +1183,15 @@ public class MDMSService {
 					payTypeFeeDetailRequest.setBillId("");
 					payTypeFeeDetailRequest.setSrNo(count);
 
-					feeMap.put("ApplicationNo", applicationNo);
-					feeMap.put("FeeType", feety);
-					feeMap.put("Tenantid", tenantid);
-					feeMap.put("Operation", calcact);
-					feeMap.put("ChargesType", chargesTy);
-					feeMap.put("PayTypeId", paytyid);
-					feeMap.put("UnitId", unitid);
-					feeMap.put("PropValue", calculationArea);
-					feeMap.put("Rate", trate);
-					feeMap.put("Amount", amount);
-					feeMap.put("bill_id", "");
-					feeMap.put("createdby", "");
-					feeMap.put("updatedby", "");
-					feeMap.put("updateddate", "");
+					/*
+					 * feeMap.put("ApplicationNo", applicationNo); feeMap.put("FeeType", feety);
+					 * feeMap.put("Tenantid", tenantid); feeMap.put("Operation", calcact);
+					 * feeMap.put("ChargesType", chargesTy); feeMap.put("PayTypeId", paytyid);
+					 * feeMap.put("UnitId", unitid); feeMap.put("PropValue", calculationArea);
+					 * feeMap.put("Rate", trate); feeMap.put("Amount", amount);
+					 * feeMap.put("bill_id", ""); feeMap.put("createdby", "");
+					 * feeMap.put("updatedby", ""); feeMap.put("updateddate", "");
+					 */
 					// }//end of for each building loop
 
 				} // end of tpd_zdaflg='N'
@@ -1216,7 +1219,7 @@ public class MDMSService {
 				}
 
 			} // end of if $lbrkflg
-				// insert data in data base-------------
+
 //			feeDetailMap.add(feeMap);
 			if (payTypeFeeDetailRequest.getAmount() > 0) {
 				feeDetailList.add(payTypeFeeDetailRequest);
@@ -1227,9 +1230,10 @@ public class MDMSService {
 //			bpaRepository.createFeeDetail(feeDetailList);
 			count += 1;
 		} // End of for each fee type
+			// insert data in data base-------------
 		bpaRepository.createFeeDetail(feeDetailList);
 
-		log.info("feeDetailMap-List-------" + feeDetailMap);
+//		log.info("feeDetailMap-List-------" + feeDetailMap);
 //		Map<String, String> list = new HashMap<String, String>();
 //		list.put("Value",Value.toString());
 //		list.put("trate",trate.toString());

@@ -115,6 +115,7 @@ public class Parking_Birgaon extends FeatureProcess {
 	private static final String SP_PARKING = "Special parking";
 	private static final String SUB_RULE_34_1_DESCRIPTION = "Parking Slots Area";
 	private static final String RULE_81 = "81";
+	private static final String RULE_PODIUM = "72-a";
 	private static final String SUB_RULE_34_2 = "34-2";
 	private static final String SUB_RULE_40_8 = "40-8";
 	private static final String SUB_RULE_40_11 = "40-11";
@@ -261,9 +262,10 @@ public class Parking_Birgaon extends FeatureProcess {
 
 		ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
 		scrutinyDetail1.setKey("Common_Podium Parking");
-		scrutinyDetail1.addColumnHeading(1, DESCRIPTION);
-		scrutinyDetail1.addColumnHeading(2, PROVIDED);
-		scrutinyDetail1.addColumnHeading(3, STATUS);
+		scrutinyDetail1.addColumnHeading(1, RULE_NO);
+		scrutinyDetail1.addColumnHeading(2, DESCRIPTION);
+		scrutinyDetail1.addColumnHeading(3, PROVIDED);
+		scrutinyDetail1.addColumnHeading(4, STATUS);
 
 		ParkingHelper helper = new ParkingHelper();
 		// checkDimensionForCarParking(pl, helper);
@@ -328,6 +330,7 @@ public class Parking_Birgaon extends FeatureProcess {
 
 			if (podiumParkingArea.compareTo(BigDecimal.ZERO) == 0) {
 				Map<String, String> details = new HashMap<>();
+				details.put(RULE_NO, RULE_PODIUM);
 				details.put(DESCRIPTION, "Podium Parking");
 				details.put(PROVIDED, "Podium Parking not Provided");
 				details.put(STATUS, "");
@@ -336,6 +339,7 @@ public class Parking_Birgaon extends FeatureProcess {
 
 			} else {
 				Map<String, String> details = new HashMap<>();
+				details.put(RULE_NO, RULE_PODIUM);
 				details.put(DESCRIPTION, "Podium Parking");
 				details.put(PROVIDED, podiumParkingArea.toString());
 				details.put(STATUS, "");

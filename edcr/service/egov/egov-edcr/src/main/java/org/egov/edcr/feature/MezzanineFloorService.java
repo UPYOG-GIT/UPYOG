@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MezzanineFloorService extends FeatureProcess {
     private static final String SUBRULE_46 = "46";
+    private static final String RULE_70 = "70";
     private static final String RULE46_MAXAREA_DESC = "Maximum allowed area of mezzanine floor";
     private static final String RULE46_MINAREA_DESC = "Minimum area of mezzanine floor";
     private static final String RULE46_DIM_DESC = "Minimum height of mezzanine floor";
@@ -44,7 +45,8 @@ public class MezzanineFloorService extends FeatureProcess {
     @Override
     public Plan process(Plan pl) {
         validate(pl);
-        String subRule = SUBRULE_46;
+//        String subRule = SUBRULE_46;
+        String subRule = RULE_NO;
         if (pl != null && !pl.getBlocks().isEmpty()) {
             for (Block block : pl.getBlocks()) {
                 scrutinyDetail = new ScrutinyDetail();
@@ -136,11 +138,13 @@ public class MezzanineFloorService extends FeatureProcess {
                     }
                     if(!isReport) {
                     	ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
-        				scrutinyDetail1.addColumnHeading(1, DESCRIPTION);
-        				scrutinyDetail1.addColumnHeading(2, PROVIDED);
-        				scrutinyDetail1.addColumnHeading(3, STATUS);
+                    	scrutinyDetail1.addColumnHeading(1, RULE_NO);
+        				scrutinyDetail1.addColumnHeading(2, DESCRIPTION);
+        				scrutinyDetail1.addColumnHeading(3, PROVIDED);
+        				scrutinyDetail1.addColumnHeading(4, STATUS);
         				scrutinyDetail1.setKey("Block_" + block.getNumber() + "_" + "Mezzanine Floor");
         				Map<String, String> details = new HashMap<>();
+        				details.put(RULE_NO, RULE_70);
         				details.put(DESCRIPTION, "Mezzanine Floor");
         				details.put(PROVIDED, "Mezzanine Floor Not Provided");
         				details.put(STATUS, "");

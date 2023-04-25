@@ -559,4 +559,14 @@ public class Address {
 	public void setPlotArea(String plotArea) {
 		this.plotArea = plotArea;
 	}
+
+	public String getPatwariHN() {
+		return patwariHN;
+	}
+
+	public void setPatwariHN(String patwariHN) {
+		this.patwariHN = patwariHN;
+	}
+	
+	
 }

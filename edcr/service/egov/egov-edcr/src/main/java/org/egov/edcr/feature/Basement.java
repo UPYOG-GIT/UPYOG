@@ -57,6 +57,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
@@ -68,6 +69,7 @@ public class Basement extends FeatureProcess {
 	private static final Logger LOG = LogManager.getLogger(Basement.class);
 	private static final String RULE_46_6A = "46-6a";
 	private static final String RULE_46_6C = "46-6c";
+	private static final String RULE_73 = "73";
 	public static final String BASEMENT_DESCRIPTION_ONE = "Height from the floor to the soffit of the roof slab or ceiling";
 	public static final String BASEMENT_DESCRIPTION = "Basement Present";
 	public static final String BASEMENT_DESCRIPTION_TWO = "Minimum height of the ceiling of upper basement above ground level";
@@ -83,11 +85,11 @@ public class Basement extends FeatureProcess {
 
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 //		scrutinyDetail.setKey("Common_Basement");
-//        scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(1, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(2, PRESENTED);
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+		scrutinyDetail.addColumnHeading(3, PRESENTED);
 //        scrutinyDetail.addColumnHeading(4, PROVIDED);
-		scrutinyDetail.addColumnHeading(3, STATUS);
+		scrutinyDetail.addColumnHeading(4, STATUS);
 
 		Map<String, String> details = new HashMap<>();
 
@@ -100,7 +102,7 @@ public class Basement extends FeatureProcess {
 						&& !b.getBuilding().getFloors().isEmpty()) {
 					boolean isPresent = false;
 					for (Floor f : b.getBuilding().getFloors()) {
-						
+
 						if (f.getNumber() == -1) {
 							isPresent = true;
 
@@ -147,7 +149,13 @@ public class Basement extends FeatureProcess {
 //                        	details.put(PRESENTED, "No");
 //                        }
 					}
+					BigDecimal basementParkingArea = pl.getParkingDetails().getBasementCars().stream()
+							.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
+					if (basementParkingArea.compareTo(BigDecimal.ZERO) > 0) {
+						isPresent=true;
+					}
 					scrutinyDetail.getDetail().add(details);
+					details.put(RULE_NO, RULE_73);
 					details.put(DESCRIPTION, BASEMENT_DESCRIPTION);
 					details.put(STATUS, "");
 					details.put(PRESENTED, isPresent ? "Yes" : "No");

@@ -253,8 +253,8 @@ public class PlanFeatureRepository {
 //        pf = new PlanFeature(ExitWidth.class);
 //        features.add(pf);
 
-        pf = new PlanFeature(SegregatedToilet.class);
-        features.add(pf);
+//        pf = new PlanFeature(SegregatedToilet.class);
+//        features.add(pf);
 
         pf = new PlanFeature(Sanitation.class);
         features.add(pf);
