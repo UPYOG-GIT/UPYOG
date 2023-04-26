@@ -107,7 +107,7 @@ public class BillRepositoryV2 {
 			List<BillDetailV2> tempBillDetails = bill.getBillDetails();
 			billDetails.addAll(tempBillDetails);
 			billId = bill.getId();
-			feeType = bill.getBusinessService().equals("BPA.NC_APP_FEE") ? "Pre" : "Post";
+			feeType = bill.getBusinessService().equals("BPA.NC_APP_FEE") || bill.getBusinessService().equals("BPA.NC_OC_APP_FEE") ? "Pre" : "Post";
 			for (BillDetailV2 billDetail : tempBillDetails) {
 //				billId = billDetail.getBillId();
 
