@@ -109,13 +109,34 @@ public class OCService {
 					"$.edcrDetail.*.planDetail.blocks.*.building.buildingHeight")).get(0);
 			Double plotArea = (Double) ((List) JsonPath.read(edcrDetail, "$.edcrDetail.*.planDetail.plot.area")).get(0);
 
-			String filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
-					+ ") && ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
-					+ buildingHeight + "  ))].riskType";
+//			String filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
+//					+ ") && ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
+//					+ buildingHeight + "  ))].riskType";
+//
+//			log.info("filterExp: " + filterExp);
+//			
+//			
+//
+//			List<String> riskTypes = JsonPath.read(OcData.get(0), filterExp);
+			
+			String filterExp = "";
+			List<String> riskTypes = new ArrayList<String>();
+			if (plotArea > 1000 || buildingHeight >= 15) {
+//				filterExp = "$.[?((@.fromPlotArea < " + plotArea + " ) || ( @.fromBuildingHeight < " + buildingHeight
+//						+ "  ))].riskType";
+//				log.info("filterExp: " + filterExp);
+//
+//				riskTypes = JsonPath.read(jsonOutput, filterExp);
+				riskTypes.add("HIGH");
+			} else {
+				filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
+						+ ") && ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
+						+ buildingHeight + "  ))].riskType";
+				log.info("filterExp: " + filterExp);
 
-			log.info("filterExp: " + filterExp);
-
-			List<String> riskTypes = JsonPath.read(OcData.get(0), filterExp);
+				riskTypes = JsonPath.read(OcData.get(0), filterExp);
+			}
+			
 			riskType.add(riskTypes.get(0));
 			
 			log.info("riskType: "+riskType);
