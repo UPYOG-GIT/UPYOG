@@ -39,6 +39,10 @@ public class Address {
 	@SafeHtml
 	@JsonProperty("plotNo")
 	private String plotNo = null;
+	
+	@SafeHtml
+	@JsonProperty("wardNo")
+	private String wardNo = null;
 
 	@SafeHtml
 	@JsonProperty("id")
@@ -566,6 +570,14 @@ public class Address {
 
 	public void setPatwariHN(String patwariHN) {
 		this.patwariHN = patwariHN;
+	}
+
+	public String getWardNo() {
+		return wardNo;
+	}
+
+	public void setWardNo(String wardNo) {
+		this.wardNo = wardNo;
 	}
 	
 	

@@ -176,6 +176,8 @@ public class PlanInformation implements Serializable {
 	private transient String multilevelParking = NA;
 	// Extracted from Plan info.Plot number.
 	private String plotNo;
+	// Extracted from Plan info.Plot number.
+	private String wardNo;
 	// Extracted from Plan info.Khasra number.
 	private String khataNo;
 	// Extracted from Plan info.Patwari Halka number.
@@ -610,6 +612,14 @@ public class PlanInformation implements Serializable {
 
 	public void setPlotNo(String plotNo) {
 		this.plotNo = plotNo;
+	}
+	
+	public String getWardNo() {
+		return wardNo;
+	}
+
+	public void setWardNo(String wardNo) {
+		this.wardNo = wardNo;
 	}
 
 	public String getKhataNo() {

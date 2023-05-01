@@ -725,6 +725,10 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		if (StringUtils.isNotBlank(plotNo))
 			pi.setPlotNo(plotNo);
 
+		String wardNo = planInfoProperties.get(DxfFileConstants.WARD_NO);
+		if (StringUtils.isNotBlank(wardNo))
+			pi.setWardNo(wardNo);
+
 		String khataNo = planInfoProperties.get(DxfFileConstants.KHATA_NO);
 		if (StringUtils.isNotBlank(khataNo))
 			pi.setKhataNo(khataNo);

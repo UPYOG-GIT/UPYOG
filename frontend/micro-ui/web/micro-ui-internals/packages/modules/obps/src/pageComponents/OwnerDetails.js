@@ -297,6 +297,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.landInfo.address.occupancy = formData?.data?.edcrDetails?.planDetail?.planInformation?.occupancy;
                 payload.landInfo.address.plotArea = formData?.data?.edcrDetails?.planDetail?.planInformation?.plotArea;
                 payload.landInfo.address.patwariHN = formData?.data?.edcrDetails?.planDetail?.planInformation?.patwariHN
+                payload.landInfo.address.wardNo = formData?.data?.edcrDetails?.planDetail?.planInformation?.wardNo
 
 
                 payload.landInfo.owners = conversionOwners;
