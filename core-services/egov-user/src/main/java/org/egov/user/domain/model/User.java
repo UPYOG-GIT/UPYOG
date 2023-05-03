@@ -77,6 +77,7 @@ public class User {
     private Long accountLockedDate;
     private Date lastModifiedDate;
     private Date createdDate;
+    private Date validityDate;
     private String otpReference;
     private Long createdBy;
     private Long lastModifiedBy;
