@@ -95,6 +95,7 @@ public class UserSearchResponseContent {
         this.identificationMark = user.getIdentificationMark();
         this.createdBy = user.getCreatedBy();
         this.createdDate = user.getCreatedDate();
+        this.validityDate = user.getValidityDate();
         this.lastModifiedBy = user.getLastModifiedBy();
         this.lastModifiedDate = user.getLastModifiedDate();
         this.tenantId = user.getTenantId();
