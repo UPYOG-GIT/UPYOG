@@ -299,6 +299,8 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.landInfo.address.patwariHN = formData?.data?.edcrDetails?.planDetail?.planInformation?.patwariHN
                 payload.landInfo.address.wardNo = formData?.data?.edcrDetails?.planDetail?.planInformation?.wardNo
 
+                //console.log(formData?.data?.edcrDetails?.planDetail?.planInformation?.wardNo);
+
 
                 payload.landInfo.owners = conversionOwners;
                 payload.landInfo.ownershipCategory = ownershipCategory.code;
