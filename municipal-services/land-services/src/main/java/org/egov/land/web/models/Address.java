@@ -261,6 +261,16 @@ public class Address {
 		this.region = region;
 		return this;
 	}
+	
+	public Address wardNo(String wardNo) {
+		this.wardNo=wardNo;
+		return this;
+	}
+	
+	public Address patwariHN(String patwariHN) {
+		this.patwariHN=patwariHN;
+		return this;
+	}
 
 	/**
 	 * The Region in which the property is located
