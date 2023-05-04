@@ -60,9 +60,7 @@ public class LandRowMapper implements ResultSetExtractor<List<LandInfo>> {
 
 				Boundary locality = Boundary.builder().code(rs.getString("locality")).build();
 
-				GeoLocation geoLocation = GeoLocation.builder()
-						.id(rs.getString("landInfo_geo_loc"))
-						.latitude(latitude)
+				GeoLocation geoLocation = GeoLocation.builder().id(rs.getString("landInfo_geo_loc")).latitude(latitude)
 						.longitude(longitude).build();
 
 				Address address = Address.builder().buildingName(rs.getString("buildingName"))
@@ -70,12 +68,13 @@ public class LandRowMapper implements ResultSetExtractor<List<LandInfo>> {
 						.region(rs.getString("region")).state(rs.getString("state")).country(rs.getString("country"))
 						.id(rs.getString("landInfo_ad_id")).landmark(rs.getString("landmark")).geoLocation(geoLocation)
 						.pincode(rs.getString("pincode")).doorNo(rs.getString("doorno")).street(rs.getString("street"))
-						.tenantId(tenantId).locality(locality).build();
+						.wardNo(rs.getString("wardNo")).patwariHN(rs.getString("patwariHN")).tenantId(tenantId)
+						.locality(locality).build();
 
 				currentLandInfo = LandInfo.builder().id(id).landUId(rs.getString("landuid"))
 						.landUniqueRegNo(rs.getString("land_regno")).tenantId(tenantId)
-						.status(rs.getString("status") != null ? Status.fromValue(rs.getString("status")) : null).address(address)
-						.ownershipCategory(rs.getString("ownershipcategory"))
+						.status(rs.getString("status") != null ? Status.fromValue(rs.getString("status")) : null)
+						.address(address).ownershipCategory(rs.getString("ownershipcategory"))
 						.source(rs.getString("source") != null ? Source.fromValue(rs.getString("source")) : null)
 						.channel(rs.getString("channel") != null ? Channel.fromValue(rs.getString("channel")) : null)
 						.auditDetails(auditdetails).additionalDetails(additionalDetails).build();
@@ -100,36 +99,31 @@ public class LandRowMapper implements ResultSetExtractor<List<LandInfo>> {
 		if (unitId != null) {
 			Unit unit = Unit.builder().id(rs.getString("landInfo_un_id")).floorNo(rs.getString("floorno"))
 					.unitType(rs.getString("unittype")).usageCategory(rs.getString("usageCategory"))
-					.occupancyType(rs.getString("occupancytype") != null
-							? rs.getString("occupancytype") : null)
-					.occupancyDate(rs.getLong("occupancydate"))
-					.auditDetails(auditdetails)
-					.tenantId(tenantId).build();
+					.occupancyType(rs.getString("occupancytype") != null ? rs.getString("occupancytype") : null)
+					.occupancyDate(rs.getLong("occupancydate")).auditDetails(auditdetails).tenantId(tenantId).build();
 			landInfo.addUnitsItem(unit);
 		}
-		
+
 		String ownerId = rs.getString("landInfoowner_id");
 		if (ownerId != null) {
 			Boolean isPrimaryOwner = (Boolean) rs.getObject("isprimaryowner");
 			Boolean status = (Boolean) rs.getObject("ownerstatus");
-			Double val =  (Double) rs.getObject("ownershippercentage");
+			Double val = (Double) rs.getObject("ownershippercentage");
 			BigDecimal ownerShipPercentage = val != null ? new BigDecimal(val) : null;
 
 			OwnerInfo owner = OwnerInfo.builder().tenantId(tenantId).ownerId(ownerId)
 					.uuid(rs.getString("landInfoowner_uuid"))
 //					.mobileNumber(rs.getString("mobilenumber"))
-					.isPrimaryOwner(isPrimaryOwner)
-					.ownerShipPercentage(ownerShipPercentage)
-					.institutionId(rs.getString("institutionid"))
-					.auditDetails(auditdetails)
-					.status(status)
-					.relationship(rs.getString("relationship") != null
-							? Relationship.fromValue(rs.getString("relationship")) : null)
+					.isPrimaryOwner(isPrimaryOwner).ownerShipPercentage(ownerShipPercentage)
+					.institutionId(rs.getString("institutionid")).auditDetails(auditdetails).status(status)
+					.relationship(
+							rs.getString("relationship") != null ? Relationship.fromValue(rs.getString("relationship"))
+									: null)
 					.build();
 			landInfo.addOwnersItem(owner);
 		}
 
-		if(rs.getString("land_inst_id") != null) {
+		if (rs.getString("land_inst_id") != null) {
 			Institution institution = Institution.builder().id(rs.getString("land_inst_id"))
 					.type(rs.getString("land_inst_type")).tenantId(tenantId).designation(rs.getString("designation"))
 					.nameOfAuthorizedPerson(rs.getString("nameOfAuthorizedPerson")).build();
@@ -140,8 +134,7 @@ public class LandRowMapper implements ResultSetExtractor<List<LandInfo>> {
 		if (documentId != null) {
 			Document document = Document.builder().documentType(rs.getString("landInfo_doc_documenttype"))
 					.fileStoreId(rs.getString("landInfo_doc_filestore")).id(documentId)
-					.documentUid(rs.getString("documentUid"))
-					.auditDetails(auditdetails).build();
+					.documentUid(rs.getString("documentUid")).auditDetails(auditdetails).build();
 			landInfo.addDocumentsItem(document);
 		}
 	}

@@ -481,14 +481,14 @@ public class Address {
 				&& Objects.equals(this.additionDetails, address.additionDetails)
 				&& Objects.equals(this.buildingName, address.buildingName)
 				&& Objects.equals(this.street, address.street) && Objects.equals(this.locality, address.locality)
-				&& Objects.equals(this.geoLocation, address.geoLocation)
-				&& Objects.equals(this.auditDetails, address.auditDetails);
+				&& Objects.equals(this.geoLocation, address.geoLocation) && Objects.equals(this.wardNo, address.wardNo)
+				&& Objects.equals(this.patwariHN, address.patwariHN) && Objects.equals(this.auditDetails, address.auditDetails);
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(tenantId, doorNo, plotNo, id, landmark, city, district, region, state, country, pincode,
-				additionDetails, buildingName, street, locality, geoLocation, auditDetails);
+				additionDetails, buildingName, street, locality, geoLocation, auditDetails, wardNo, patwariHN);
 	}
 
 	@Override
@@ -517,6 +517,8 @@ public class Address {
 		sb.append("    mauza: ").append(toIndentedString(mauza)).append("\n");
 		sb.append("    occupancy: ").append(toIndentedString(occupancy)).append("\n");
 		sb.append("    plotArea: ").append(toIndentedString(plotArea)).append("\n");
+		sb.append("    wardNo: ").append(toIndentedString(wardNo)).append("\n");
+		sb.append("    patwariHN: ").append(toIndentedString(patwariHN)).append("\n");
 		sb.append("}");
 		return sb.toString();
 	}
