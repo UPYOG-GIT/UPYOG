@@ -85,7 +85,8 @@ public class RedirectController {
 		String ss1 = s2[0];
 //		String param = "eg_pg_txnid=" + s2[1];
 		String txnId = s2[1];
-		String returnURL = ss1.substring(0, 4 + 1) + ":/" + ss1.substring(4 + 1);
+		String returnURL = ss1.replace("https/", "https://").replace("http/", "http://").replace("localhost3000", "localhost:3000");
+//		String returnURL = ss1.substring(0, 4 + 1) + ":/" + ss1.substring(4 + 1);
 		log.info("returnURL: " + returnURL);
 
 		String gatewayString[] = plainText.split("&merchant_param2=");
@@ -214,12 +215,12 @@ public class RedirectController {
 
 	private void getWorkingKey(String tenantId) {
 		log.info("inside getWorkingKey..... tenantId: " + tenantId);
-		if (tenantId.equals("cg.birgaon")) {
-			this.workingKey = "B27E5242E8FC395A07F65AB900F021FA";
-		} else if (tenantId.equals("cg.dhamtari")) {
+//		if (tenantId.equals("cg.birgaon")) {
+//			this.workingKey = "B27E5242E8FC395A07F65AB900F021FA";
+//		} else if (tenantId.equals("cg.dhamtari")) {
 			this.workingKey = "D682025F99E01FA0F0FAA079B1B3F793";
-		} else if (tenantId.equals("cg.bhilaicharoda")) {
-			this.workingKey = "7B3E3FF7D56888F44E1A7D46DF24CF52";
-		}
+//		} else if (tenantId.equals("cg.bhilaicharoda")) {
+//			this.workingKey = "7B3E3FF7D56888F44E1A7D46DF24CF52";
+//		}
 	}
 }
