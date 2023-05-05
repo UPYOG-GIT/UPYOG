@@ -215,12 +215,12 @@ public class RedirectController {
 
 	private void getWorkingKey(String tenantId) {
 		log.info("inside getWorkingKey..... tenantId: " + tenantId);
-//		if (tenantId.equals("cg.birgaon")) {
-//			this.workingKey = "B27E5242E8FC395A07F65AB900F021FA";
-//		} else if (tenantId.equals("cg.dhamtari")) {
+		if (tenantId.equals("cg.birgaon")) {
+			this.workingKey = "B27E5242E8FC395A07F65AB900F021FA";
+		} else if (tenantId.equals("cg.dhamtari")) {
 			this.workingKey = "D682025F99E01FA0F0FAA079B1B3F793";
-//		} else if (tenantId.equals("cg.bhilaicharoda")) {
-//			this.workingKey = "7B3E3FF7D56888F44E1A7D46DF24CF52";
-//		}
+		} else if (tenantId.equals("cg.bhilaicharoda")) {
+			this.workingKey = "7B3E3FF7D56888F44E1A7D46DF24CF52";
+		}
 	}
 }
