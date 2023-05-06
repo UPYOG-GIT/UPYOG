@@ -728,14 +728,24 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		String wardNo = planInfoProperties.get(DxfFileConstants.WARD_NO);
 		if (StringUtils.isNotBlank(wardNo))
 			pi.setWardNo(wardNo);
+		else
+			pl.addError(DxfFileConstants.WARD_NO,
+					getLocaleMessage(OBJECTNOTDEFINED, DxfFileConstants.WARD_NO + " of PLAN_INFO layer"));
 
 		String khataNo = planInfoProperties.get(DxfFileConstants.KHATA_NO);
 		if (StringUtils.isNotBlank(khataNo))
 			pi.setKhataNo(khataNo);
+		else
+			pl.addError(DxfFileConstants.KHATA_NO,
+					getLocaleMessage(OBJECTNOTDEFINED, DxfFileConstants.KHATA_NO + " of PLAN_INFO layer"));
 
 		String patwariHN = planInfoProperties.get(DxfFileConstants.PATWARI_HN);
 		if (StringUtils.isNotBlank(patwariHN))
 			pi.setPatwariHN(patwariHN);
+		else
+			pl.addError(DxfFileConstants.PATWARI_HN,
+					getLocaleMessage(OBJECTNOTDEFINED, DxfFileConstants.PATWARI_HN + " of PLAN_INFO layer"));
+
 
 		String district = planInfoProperties.get(DxfFileConstants.DISTRICT);
 		if (StringUtils.isNotBlank(district))
@@ -744,6 +754,10 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		String mauza = planInfoProperties.get(DxfFileConstants.MAUZA);
 		if (StringUtils.isNotBlank(mauza))
 			pi.setMauza(mauza);
+		else
+			pl.addError(DxfFileConstants.MAUZA,
+					getLocaleMessage(OBJECTNOTDEFINED, DxfFileConstants.MAUZA + " of PLAN_INFO layer"));
+
 
 		String leaseHoldLand = planInfoProperties.get(DxfFileConstants.LEASEHOLD_LAND);
 		if (StringUtils.isNotBlank(leaseHoldLand)) {
