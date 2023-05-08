@@ -154,7 +154,7 @@ public class MSDGSMSServiceImpl extends BaseSMSService {
                 	configMap.put(SMSConstants.TEMPLATE_ID, key);
             }
         }
-//        configMap.put("smsservicetype", "singlemsg");
+        configMap.put("smsservicetype", "singlemsg");
         return configMap;
     }
 

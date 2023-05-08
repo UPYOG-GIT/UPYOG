@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MGovSMSServicesImpl extends BaseSMSService {
 
 	private static final String SMS_RESPONSE_NOT_SUCCESSFUL = "Sms response not successful";
-	
+
 	@Autowired
 	private SMSProperties smsProperties;
 
@@ -49,6 +49,14 @@ public class MGovSMSServicesImpl extends BaseSMSService {
 		String encryptedPassword;
 		String responseString = "";
 		try {
+			String msgTemplate[] = sms.getMessage().split("##");
+			if (msgTemplate.length == 2) {
+				sms.setMessage(msgTemplate[0]);
+				sms.setTemplateId(msgTemplate[1]);
+			} else {
+				sms.setMessage(msgTemplate[0]);
+				sms.setTemplateId("1307168310322682954");
+			}
 			// context=SSLContext.getInstance("TLSv1.1"); // Use this line for Java version
 			// 6
 			context = SSLContext.getInstance("TLSv1.2"); // Use this line for Java version 7 and above
@@ -57,7 +65,7 @@ public class MGovSMSServicesImpl extends BaseSMSService {
 			Scheme scheme = new Scheme("https", 443, sf);
 			HttpClient client = new DefaultHttpClient();
 			client.getConnectionManager().getSchemeRegistry().register(scheme);
-			String url=smsProperties.getUrl();
+			String url = smsProperties.getUrl();
 			HttpPost post = new HttpPost(url);
 //			HttpPost post = new HttpPost("https://msdgweb.mgov.gov.in/esms/sendsmsrequestDLT");
 			encryptedPassword = MD5(smsProperties.getPassword());
@@ -82,7 +90,7 @@ public class MGovSMSServicesImpl extends BaseSMSService {
 				responseString = responseString + line;
 			}
 			log.info("responseString: " + responseString);
-			
+
 //			ResponseEntity res = response;
 //			if (!isResponseValidated(res)) { log.error("Response from API - " +
 //					  responseString); throw new RuntimeException(SMS_RESPONSE_NOT_SUCCESSFUL); }
@@ -94,8 +102,7 @@ public class MGovSMSServicesImpl extends BaseSMSService {
 //					  if (smsProperties.getSmsSuccessCodes().size() > 0 &&
 //					  !isResponseCodeInKnownSuccessCodeList(res)) { throw new
 //					  RuntimeException(SMS_RESPONSE_NOT_SUCCESSFUL); }
-			
-			
+
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		} catch (KeyManagementException e) {
@@ -148,8 +155,7 @@ public class MGovSMSServicesImpl extends BaseSMSService {
 			do {
 				if ((0 <= halfOfByte) && (halfOfByte <= 9)) {
 					buf.append((char) ('0' + halfOfByte));
-				}
-				else {
+				} else {
 					buf.append((char) ('a' + (halfOfByte - 10)));
 				}
 				halfOfByte = data[i] & 0x0F;
