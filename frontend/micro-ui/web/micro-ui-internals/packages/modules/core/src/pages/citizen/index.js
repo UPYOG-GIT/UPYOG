@@ -231,7 +231,7 @@ const Home = ({
      <div style={{ width: '100%', bottom: 0}}>
   <div style={{ display: 'flex', justifyContent: 'center', color: "#22394d", height: 'auto' }}>
     <img style={{ cursor: "pointer", display: "inline-flex", height: '1.4em' }} alt={"Powered by UPYOG"} src={`${sourceUrl}/digit-footer+copy.png`} onError={"this.src='./../digit-footer+copy.png'"} onClick={() => {
-      window.open('https://www.digit.org/', '_blank').focus();
+      window.open('https://upyog.niua.org/', '_blank').focus();
     }}></img>
     <span style={{ margin: "0 10px" }}>|</span>
     <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400" }} onClick={() => { window.open('https://niua.in/', '_blank').focus(); }} >Copyright © 2022 National Institute of Urban Affairs</span>
