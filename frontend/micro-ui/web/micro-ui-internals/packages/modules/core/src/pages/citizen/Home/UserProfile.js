@@ -15,6 +15,8 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import UploadDrawer from "./ImageUpload/UploadDrawer";
+import StakeholderAcknowledgement from "../../../../../obps/src/pages/citizen/StakeholderRegistration/StakeholderAcknowledgement";
+import StakeholderDocuments from "../../../../../obps/src/pageComponents/StakeholderDocuments";
 
 const defaultImage =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAADUCAMAAACs0e/bAAAAM1BMVEXK0eL" +
@@ -39,7 +41,7 @@ const defaultImage =
   "XZOvia7VujatUwVTrIt+Q/Csc7Tuhe+BOakT10b4TuoiiJjvgU9emTO42PwEfBa+cuodKkuf42DXr1D3JpXz73Hnn0j10evHKe+nufgfUm+7B84sX9FfdEzXux2DBpWuKokkCqN/5pa/8pmvn" +
   "L+RGKCddCGmatiPyPB/+ekO/M/q/7uvbt22kTt3zEnXPzCV13T3Gel4/6NduDu66xRvlPNkM1RjjxUdv+4WhGx6TftD19Q/dfzpwcHO+rE3fAAAAAElFTkSuQmCC";
 
-const UserProfile = ({ stateCode, userType, cityDetails }) => {
+const UserProfile = ({ stateCode, userType, cityDetails, config, onSelect, formData, setError: setFormError, clearErrors, clearFormErrors, formState }) => {
   const history = useHistory();
   const { t } = useTranslation();
   const url = window.location.href;
@@ -48,9 +50,11 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   const userInfo = Digit.UserService.getUser()?.info || {};
   const [userDetails, setUserDetails] = useState(null);
   const [name, setName] = useState(userInfo?.name ? userInfo.name : "");
+  const [error, setError] = useState(null);
   const [email, setEmail] = useState(userInfo?.emailId ? userInfo.emailId : "");
   const [gender, setGender] = useState(userDetails?.gender);
-  const [city, setCity] = useState(userInfo?.permanentCity ? userInfo.permanentCity : cityDetails.name);
+  // const [city, setCity] = useState(userInfo?.permanentCity ? userInfo.permanentCity : cityDetails.name);
+  const [city, setCity] = useState(userInfo?.permanentCity ? userInfo.permanentCity : "");
   const [mobileNumber, setMobileNo] = useState(userInfo?.mobileNumber ? userInfo.mobileNumber : "");
   const [profilePic, setProfilePic] = useState(null);
   const [profileImg, setProfileImg] = useState("");
@@ -391,6 +395,12 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
         >
           {userType === "citizen" ? (
             <React.Fragment>
+              <StakeholderDocuments t={t}
+              config ={config}
+              onSelect = {onSelect}
+             userType ={userType} formData={formData} setError={setError} setFormError={setFormError} clearErrors={clearErrors} clearFormErrors={clearFormErrors} formState={formState} 
+
+               />
               <LabelFieldPair>
                 <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("CORE_COMMON_PROFILE_NAME")}`}*</CardLabel>
                 <div style={{ width: "100%" }}>
