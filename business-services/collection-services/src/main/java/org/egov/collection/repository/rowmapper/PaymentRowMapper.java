@@ -205,7 +205,7 @@ public class PaymentRowMapper implements ResultSetExtractor<List<Payment>> {
 				paymentDetail.addFeeDetailsItem(feeDetail);
 			}
 
-			log.info("feeDetail: " + paymentDetail.getFeeDetail().toString());
+//			log.info("feeDetail: " + paymentDetail.getFeeDetail().toString());
 			payment.addpaymentDetailsItem(paymentDetail);
 		}
 
