@@ -395,12 +395,7 @@ const UserProfile = ({ stateCode, userType, cityDetails, config, onSelect, formD
         >
           {userType === "citizen" ? (
             <React.Fragment>
-              <StakeholderDocuments t={t}
-              config ={config}
-              onSelect = {onSelect}
-             userType ={userType} formData={formData} setError={setError} setFormError={setFormError} clearErrors={clearErrors} clearFormErrors={clearFormErrors} formState={formState} 
-
-               />
+            
               <LabelFieldPair>
                 <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("CORE_COMMON_PROFILE_NAME")}`}*</CardLabel>
                 <div style={{ width: "100%" }}>
