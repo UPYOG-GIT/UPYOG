@@ -327,7 +327,7 @@ public class Parking extends FeatureProcess {
 		}
 
 		if (occupancyTypeHelper != null
-				|| (occupancyTypeHelper.getType() != null && occupancyTypeHelper.getSubtype() != null)) {
+				&& (occupancyTypeHelper.getType() != null && occupancyTypeHelper.getSubtype() != null)) {
 			if (podiumParkingArea.compareTo(BigDecimal.ZERO) == 0) {
 				Map<String, String> details = new HashMap<>();
 				details.put(RULE_NO, RULE_PODIUM);

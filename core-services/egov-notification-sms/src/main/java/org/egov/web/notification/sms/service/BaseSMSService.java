@@ -187,7 +187,8 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
 					map.add(key, smsProperties.getSecureKey());
 					break;
 				case "$templateid":
-					map.add(key, smsProperties.getSmsDefaultTmplid());
+//					map.add(key, smsProperties.getSmsDefaultTmplid());
+					map.add(key, sms.getTemplateId());
 					break;
 				default:
 					if (env.containsProperty(value.substring(1))) {

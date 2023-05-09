@@ -326,7 +326,7 @@ public class Parking_Birgaon extends FeatureProcess {
 		}
 
 		if (occupancyTypeHelper != null
-				|| (occupancyTypeHelper.getType() != null && occupancyTypeHelper.getSubtype() != null)) {
+				&& (occupancyTypeHelper.getType() != null && occupancyTypeHelper.getSubtype() != null)) {
 
 			if (podiumParkingArea.compareTo(BigDecimal.ZERO) == 0) {
 				Map<String, String> details = new HashMap<>();
