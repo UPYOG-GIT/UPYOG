@@ -74,14 +74,25 @@ public class MSDGSMSServiceImpl extends BaseSMSService {
     }
 
     protected void submitToExternalSmsService(Sms sms) {
-        String finalmessage = "";
-        for (int i = 0; i < sms.getMessage().length(); i++) {
-            char ch = sms.getMessage().charAt(i);
-            int j = (int) ch;
-            String sss = "&#" + j + ";";
-            finalmessage = finalmessage + sss;
-        }
-        sms.setMessage(finalmessage);
+//        String finalmessage = "";
+    	String[] msgTemplate=sms.getMessage().split("##");
+//        String finalmessage = sms.getMessage();
+    	if(msgTemplate.length==2) {
+//    		finalmessage=msgTemplate[0];
+    		sms.setMessage(msgTemplate[0].trim());
+    		sms.setTemplateId(msgTemplate[1].trim());
+    	}else {
+//    		finalmessage=msgTemplate[0];
+    		sms.setMessage(msgTemplate[0].trim());
+    		sms.setTemplateId(smsProperties.getSmsDefaultTmplid());
+    	}
+//        for (int i = 0; i < sms.getMessage().length(); i++) {
+//            char ch = sms.getMessage().charAt(i);
+//            int j = (int) ch;
+//            String sss = "&#" + j + ";";
+//            finalmessage = finalmessage + sss;
+//        }
+//        sms.setMessage(finalmessage);
         String url = smsProperties.getUrl();
         final MultiValueMap<String, String> requestBody = bodyBuilder.getSmsRequestBody(sms);
         postProcessor(requestBody);
