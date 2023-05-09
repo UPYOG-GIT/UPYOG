@@ -1,0 +1,1 @@
+update egbpa_sub_occupancy set colorcode='11' where name='Storage';
