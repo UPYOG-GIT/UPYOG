@@ -102,11 +102,13 @@ public class BillRepositoryV2 {
 		String billId = "";
 		String applicationNo = "";
 		String feeType = "";
+		String businessService="";
 		for (BillV2 bill : bills) {
 			applicationNo = bill.getConsumerCode();
 			List<BillDetailV2> tempBillDetails = bill.getBillDetails();
 			billDetails.addAll(tempBillDetails);
 			billId = bill.getId();
+			businessService=bill.getBusinessService();
 			feeType = bill.getBusinessService().equals("BPA.NC_APP_FEE") || bill.getBusinessService().equals("BPA.NC_OC_APP_FEE") ? "Pre" : "Post";
 			for (BillDetailV2 billDetail : tempBillDetails) {
 //				billId = billDetail.getBillId();
@@ -115,13 +117,16 @@ public class BillRepositoryV2 {
 				billAccountDetails.addAll(billDetail.getBillAccountDetails());
 			}
 		}
+		
+		if(!businessService.equals("BPAREG")) {
+			String updateBillIdQuery = "UPDATE fee_details SET bill_id='" + billId + "' WHERE application_no='"
+					+ applicationNo + "' AND feetype='" + feeType + "'";
 
-		String updateBillIdQuery = "UPDATE fee_details SET bill_id='" + billId + "' WHERE application_no='"
-				+ applicationNo + "' AND feetype='" + feeType + "'";
-
-		log.info("updateBillIdQuery: " + updateBillIdQuery);
-		int updateResult = jdbcTemplate.update(updateBillIdQuery);
-		log.info("updateResult: " + updateResult);
+			log.info("updateBillIdQuery: " + updateBillIdQuery);
+			int updateResult = jdbcTemplate.update(updateBillIdQuery);
+			log.info("updateResult: " + updateResult);
+		}
+		
 
 		jdbcTemplate.batchUpdate(BillQueryBuilder.INSERT_BILLDETAILS_QUERY, new BatchPreparedStatementSetter() {
 
