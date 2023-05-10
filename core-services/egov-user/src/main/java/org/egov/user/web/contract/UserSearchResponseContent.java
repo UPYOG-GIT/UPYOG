@@ -44,6 +44,7 @@ public class UserSearchResponseContent {
 
     private Boolean active;
     private String locale;
+    private String userTenantid;
     private UserType type;
     private Boolean accountLocked;
     private Long accountLockedDate;
@@ -76,6 +77,7 @@ public class UserSearchResponseContent {
         this.userName = user.getUsername();
         this.salutation = user.getSalutation();
         this.name = user.getName();
+        this.userTenantid = user.getUserTenantid();
         this.gender = user.getGender() != null ? user.getGender().toString() : null;
         this.mobileNumber = user.getMobileNumber();
         this.emailId = user.getEmailId();

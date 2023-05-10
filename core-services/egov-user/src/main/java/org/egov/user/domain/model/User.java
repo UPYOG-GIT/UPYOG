@@ -59,6 +59,7 @@ public class User {
     private String emailId;
     private String altContactNumber;
     private String pan;
+    private String userTenantid;
     private String aadhaarNumber;
     private Address permanentAddress;
     private Address correspondenceAddress;
@@ -85,6 +86,7 @@ public class User {
     private boolean otpValidationMandatory;
     private boolean mobileValidationMandatory = true;
     private String alternateMobileNumber;
+    
 
     public User addAddressItem(Address addressItem) {
         if (this.addresses == null) {
