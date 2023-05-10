@@ -891,10 +891,10 @@ public class PlanReportService {
             finalReportStatus = finalReportStatus && (dcrApplication.getDeviationStatus().equalsIgnoreCase("Accepted"));
         }
         
-        reportBuilder.append("Report Status : " + (finalReportStatus ? "Accepted" : "Not Accepted")).append("\\n")
+        reportBuilder.append("Report Status : " + (finalReportStatus ? "ACCEPTED" : "NOT ACCEPTED")).append("\\n")
                 .append("\\n");
         reportBuilder.append("Rules Verified : ").append("\\n");
-        valuesMap.put("reportStatus", (finalReportStatus ? "Accepted" : "Not Accepted"));
+        valuesMap.put("reportStatus", (finalReportStatus ? "ACCEPTED" : "NOT ACCEPTED"));
         drb.setTemplateFile("/reports/templates/edcr_report.jrxml");
         drb.setMargins(5, 0, 33, 20);
         if (ApplicationType.OCCUPANCY_CERTIFICATE.equals(dcrApplication.getApplicationType())) {
