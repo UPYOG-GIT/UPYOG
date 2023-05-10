@@ -238,14 +238,29 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
 
 			SSLContext ctx = null;
 			try {
+				
+				ctx = SSLContext.getInstance("TLSv1.2");
+				
+				KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+                //File file = new File(System.getenv("JAVA_HOME")+"/lib/security/cacerts");
+                File file = new File(getClass().getClassLoader().getResource("msdgweb-mgov-gov-in.crt").getFile());
+                InputStream is = new FileInputStream(file);
+                trustStore.load(is, "changeit".toCharArray());
+                TrustManagerFactory trustFactory = TrustManagerFactory
+                        .getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                trustFactory.init(trustStore);
 
-				ctx = SSLContext.getInstance("SSL");
-				ctx.init(null, null, SecureRandom.getInstance("SHA1PRNG"));
+                TrustManager[] trustManagers = trustFactory.getTrustManagers();
+                ctx.init(null, trustManagers, null);
+                
+//				ctx.init(null, null, SecureRandom.getInstance("SHA1PRNG"));
 
 			} catch (NoSuchAlgorithmException e) {
 				e.printStackTrace();
 			} catch (KeyManagementException e) {
 				e.printStackTrace();
+			}catch(Exception ex) {
+				ex.printStackTrace();
 			}
 			SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(ctx, new NoopHostnameVerifier());
 			CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();

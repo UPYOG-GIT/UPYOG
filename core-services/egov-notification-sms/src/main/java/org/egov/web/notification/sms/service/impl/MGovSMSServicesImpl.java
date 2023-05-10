@@ -1,16 +1,23 @@
 package org.egov.web.notification.sms.service.impl;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyManagementException;
+import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+
 import org.egov.web.notification.sms.config.SMSProperties;
 import org.egov.web.notification.sms.models.Sms;
 import org.egov.web.notification.sms.service.BaseSMSService;
@@ -60,7 +67,19 @@ public class MGovSMSServicesImpl extends BaseSMSService {
 			// context=SSLContext.getInstance("TLSv1.1"); // Use this line for Java version
 			// 6
 			context = SSLContext.getInstance("TLSv1.2"); // Use this line for Java version 7 and above
-			context.init(null, null, null);
+			KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            //File file = new File(System.getenv("JAVA_HOME")+"/lib/security/cacerts");
+            File file = new File(getClass().getClassLoader().getResource("msdgweb-mgov-gov-in.crt").getFile());
+            InputStream is = new FileInputStream(file);
+            trustStore.load(is, "changeit".toCharArray());
+            TrustManagerFactory trustFactory = TrustManagerFactory
+                    .getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            trustFactory.init(trustStore);
+
+            TrustManager[] trustManagers = trustFactory.getTrustManagers();
+            context.init(null, trustManagers, null);
+			
+//			context.init(null, null, null);
 			sf = new SSLSocketFactory(context, SSLSocketFactory.STRICT_HOSTNAME_VERIFIER);
 			Scheme scheme = new Scheme("https", 443, sf);
 			HttpClient client = new DefaultHttpClient();
@@ -113,6 +132,8 @@ public class MGovSMSServicesImpl extends BaseSMSService {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch(Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 
