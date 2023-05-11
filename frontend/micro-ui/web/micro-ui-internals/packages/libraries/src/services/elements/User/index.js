@@ -119,13 +119,14 @@ export const UserService = {
     });
   },
   userSearch: async (tenantId, data, filters) => {
+    const userTenantid = Digit.ULBService.getCitizenCurrentTenant(true);
     return Request({
       url: Urls.UserSearch,
       params: { ...filters },
       method: "POST",
       auth: true,
       userService: true,
-      data: data.pageSize ? { tenantId, ...data } : { tenantId, ...data, pageSize: "100" },
+      data: data.pageSize ? { tenantId, userTenantid, ...data } : { tenantId, ...data, pageSize: "100" },
     });
   },
 };
