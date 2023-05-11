@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
@@ -265,12 +267,22 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
 //                File file = new File("E:\\msdgweb-mgov-gov-in.crt");
 //                File file = new File("https:\\try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb-mgov-gov-in.crt");
 				ClassPathResource resource = new ClassPathResource("msdgweb-mgov-gov-in11.cer");
-				File file = resource.getFile();
+//				File file = resource.getFile();
+				
+//				File file =new File("https:\\\\try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb-mgov-gov-in.crt");
 //				File file = new ClassPathResource("msdgweb-mgov-gov-in11.cer").getFile();
 //                byte[] keystoreData = Files.readAllBytes(Paths.get("E:\\msdgweb-mgov-gov-in.crt"));
 //				File file = new File(getClass().getClassLoader().getResource("msdgweb-mgov-gov-in.crt").getFile());
 //                File file = new ClassPathResource("https:\\try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb-mgov-gov-in.crt").getFile();
-                InputStream is = new FileInputStream(file);
+                
+				String fileUrl = "https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb-mgov-gov-in11.cer";
+//		        String destinationFilePath = "C:/example/folder/msdgweb-mgov-gov-in.crt";
+
+		        URL url = new URL(fileUrl);
+		        URLConnection connection = url.openConnection();
+		        InputStream is = connection.getInputStream();
+		        
+//				InputStream is = new FileInputStream(file);
                 
                 CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
                 X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(is);
