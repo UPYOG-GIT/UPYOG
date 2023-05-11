@@ -236,10 +236,10 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
 	protected void setupSSL() {
 		if (!smsProperties.isVerifySSL()) {
 
-			SSLContext ctx = null;
+//			SSLContext ctx = null;
 			try {
 				
-				ctx = SSLContext.getInstance("TLSv1.2");
+				SSLContext ctx = SSLContext.getInstance("TLSv1.2");
 				
 				KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
                 //File file = new File(System.getenv("JAVA_HOME")+"/lib/security/cacerts");
@@ -252,6 +252,11 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
 
                 TrustManager[] trustManagers = trustFactory.getTrustManagers();
                 ctx.init(null, trustManagers, null);
+                SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(ctx, new NoopHostnameVerifier());
+    			CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
+    			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+    			requestFactory.setHttpClient(httpClient);
+    			restTemplate.setRequestFactory(requestFactory);
                 
 //				ctx.init(null, null, SecureRandom.getInstance("SHA1PRNG"));
 
@@ -262,11 +267,11 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
 			}catch(Exception ex) {
 				ex.printStackTrace();
 			}
-			SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(ctx, new NoopHostnameVerifier());
-			CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
-			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-			requestFactory.setHttpClient(httpClient);
-			restTemplate.setRequestFactory(requestFactory);
+//			SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(ctx, new NoopHostnameVerifier());
+//			CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
+//			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+//			requestFactory.setHttpClient(httpClient);
+//			restTemplate.setRequestFactory(requestFactory);
 		}
 	}
 
