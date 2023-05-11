@@ -18,10 +18,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.egov.web.notification.sms.config.SMSProperties;
-import org.egov.web.notification.sms.models.Sms;
-import org.egov.web.notification.sms.service.BaseSMSService;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -31,9 +27,12 @@ import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.egov.web.notification.sms.config.SMSProperties;
+import org.egov.web.notification.sms.models.Sms;
+import org.egov.web.notification.sms.service.BaseSMSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -69,7 +68,9 @@ public class MGovSMSServicesImpl extends BaseSMSService {
 			context = SSLContext.getInstance("TLSv1.2"); // Use this line for Java version 7 and above
 			KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
             //File file = new File(System.getenv("JAVA_HOME")+"/lib/security/cacerts");
-            File file = new File(getClass().getClassLoader().getResource("msdgweb-mgov-gov-in.crt").getFile());
+//            File file = new File(getClass().getResource("msdgweb-mgov-gov-in.crt").getFile());
+//            File file = new File("E:\\msdgweb-mgov-gov-in.crt");
+            File file = new ClassPathResource("msdgweb-mgov-gov-in.cer").getFile();
             InputStream is = new FileInputStream(file);
             trustStore.load(is, "changeit".toCharArray());
             TrustManagerFactory trustFactory = TrustManagerFactory
