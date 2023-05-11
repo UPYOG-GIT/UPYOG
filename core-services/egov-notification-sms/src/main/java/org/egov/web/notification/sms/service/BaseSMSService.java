@@ -11,6 +11,7 @@ import org.springframework.asm.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.core.*;
 import org.springframework.core.env.*;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.*;
 import org.springframework.http.client.*;
 import org.springframework.http.converter.*;
@@ -243,7 +244,9 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
 				
 				KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
                 //File file = new File(System.getenv("JAVA_HOME")+"/lib/security/cacerts");
-                File file = new File(getClass().getClassLoader().getResource("msdgweb-mgov-gov-in.crt").getFile());
+//                File file = new File("E:\\msdgweb-mgov-gov-in.crt");
+//                File file = new ClassPathResource("msdgweb-mgov-gov-in.crt").getFile();
+                File file = new ClassPathResource("msdgweb-mgov-gov-in.crt").getFile();
                 InputStream is = new FileInputStream(file);
                 trustStore.load(is, "changeit".toCharArray());
                 TrustManagerFactory trustFactory = TrustManagerFactory
