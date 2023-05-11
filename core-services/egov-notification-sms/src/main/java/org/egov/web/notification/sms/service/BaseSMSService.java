@@ -245,8 +245,9 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
 				KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
                 //File file = new File(System.getenv("JAVA_HOME")+"/lib/security/cacerts");
 //                File file = new File("E:\\msdgweb-mgov-gov-in.crt");
+                File file = new File("https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb-mgov-gov-in.crt");
 //                File file = new ClassPathResource("msdgweb-mgov-gov-in.crt").getFile();
-                File file = new ClassPathResource("msdgweb-mgov-gov-in.crt").getFile();
+//                File file = new ClassPathResource("msdgweb-mgov-gov-in.crt").getFile();
                 InputStream is = new FileInputStream(file);
                 trustStore.load(is, "changeit".toCharArray());
                 TrustManagerFactory trustFactory = TrustManagerFactory
