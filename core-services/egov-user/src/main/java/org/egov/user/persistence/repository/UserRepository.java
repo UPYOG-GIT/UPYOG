@@ -1,5 +1,6 @@
 package org.egov.user.persistence.repository;
 
+import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -34,6 +35,7 @@ import static org.springframework.util.StringUtils.isEmpty;
 
 @Repository
 @Slf4j
+@Log4j
 public class UserRepository {
 
     private AddressRepository addressRepository;
@@ -539,9 +541,11 @@ public class UserRepository {
         userInputs.put("lastmodifiedby", entityUser.getLoggedInUserId());
         userInputs.put("alternatemobilenumber", entityUser.getAlternateMobileNumber());
         userInputs.put("usertenantid", entityUser.getUserTenantid());
+        log.info("usertenantid----------" + entityUser.getUserTenantid());
 
         namedParameterJdbcTemplate.update(userTypeQueryBuilder.getInsertUserQuery(), userInputs);
         return entityUser;
+        
     }
 
     /**
