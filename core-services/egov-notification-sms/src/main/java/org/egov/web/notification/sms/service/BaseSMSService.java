@@ -1,32 +1,50 @@
 package org.egov.web.notification.sms.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.jayway.jsonpath.*;
-import lombok.extern.slf4j.*;
-import org.apache.http.conn.ssl.*;
-import org.apache.http.impl.client.*;
-import org.egov.web.notification.sms.config.*;
-import org.egov.web.notification.sms.models.*;
-import org.springframework.asm.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.core.*;
-import org.springframework.core.env.*;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.*;
-import org.springframework.http.client.*;
-import org.springframework.http.converter.*;
-import org.springframework.http.converter.json.*;
-import org.springframework.util.*;
-import org.springframework.web.client.*;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import javax.annotation.*;
-import javax.net.ssl.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
-import java.net.*;
-import java.security.*;
-import java.util.*;
+import java.net.URI;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import javax.annotation.PostConstruct;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.egov.web.notification.sms.config.SMSProperties;
+import org.egov.web.notification.sms.models.Sms;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpOutputMessage;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
@@ -245,13 +263,28 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
 				KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
                 //File file = new File(System.getenv("JAVA_HOME")+"/lib/security/cacerts");
 //                File file = new File("E:\\msdgweb-mgov-gov-in.crt");
-                File file = new File("https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb-mgov-gov-in.crt");
-//                File file = new ClassPathResource("msdgweb-mgov-gov-in.crt").getFile();
-//                File file = new ClassPathResource("msdgweb-mgov-gov-in.crt").getFile();
+//                File file = new File("https:\\try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb-mgov-gov-in.crt");
+				ClassPathResource resource = new ClassPathResource("msdgweb-mgov-gov-in11.cer");
+				File file = resource.getFile();
+//				File file = new ClassPathResource("msdgweb-mgov-gov-in11.cer").getFile();
+//                byte[] keystoreData = Files.readAllBytes(Paths.get("E:\\msdgweb-mgov-gov-in.crt"));
+//				File file = new File(getClass().getClassLoader().getResource("msdgweb-mgov-gov-in.crt").getFile());
+//                File file = new ClassPathResource("https:\\try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb-mgov-gov-in.crt").getFile();
                 InputStream is = new FileInputStream(file);
-                trustStore.load(is, "changeit".toCharArray());
-                TrustManagerFactory trustFactory = TrustManagerFactory
-                        .getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                
+                CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+                X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(is);
+
+                trustStore.load(null, null); // Initialize an empty keystore
+                trustStore.setCertificateEntry("alias", certificate);
+                
+//                ByteArrayInputStream is = new ByteArrayInputStream(keystoreData);
+//                trustStore.load(is, "changeit".toCharArray());
+                
+                TrustManagerFactory trustFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                
+//                TrustManagerFactory trustFactory = TrustManagerFactory
+//                        .getInstance(TrustManagerFactory.getDefaultAlgorithm());
                 trustFactory.init(trustStore);
 
                 TrustManager[] trustManagers = trustFactory.getTrustManagers();
