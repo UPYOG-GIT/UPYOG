@@ -73,10 +73,10 @@ const useInboxTableConfig = ({ onPageSizeChange, formState, totalCount, table, d
           return (
             <Download
               dowloadOptions={[
-                {
+               /* {
                   label: t("BPA_UPLOADED_PLAN_DXF"),
                   onClick: () => window.open(`${row.original["dxfFileurl"]}`),
-                },
+                },*/
                 {
                   label: t("EDCR_SCUTINY_REPORT"),
                   onClick: () => window.open(`${row.original["planReportUrl"]}`),
