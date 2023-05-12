@@ -7,10 +7,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,11 +74,31 @@ public class MGovSMSServicesImpl extends BaseSMSService {
             //File file = new File(System.getenv("JAVA_HOME")+"/lib/security/cacerts");
 //            File file = new File(getClass().getResource("msdgweb-mgov-gov-in.crt").getFile());
 //            File file = new File("E:\\msdgweb-mgov-gov-in.crt");
-            File file = new ClassPathResource("msdgweb-mgov-gov-in.cer").getFile();
-            InputStream is = new FileInputStream(file);
-            trustStore.load(is, "changeit".toCharArray());
-            TrustManagerFactory trustFactory = TrustManagerFactory
-                    .getInstance(TrustManagerFactory.getDefaultAlgorithm());
+//            File file = new ClassPathResource("msdgweb-mgov-gov-in.cer").getFile();
+//            InputStream is = new FileInputStream(file);
+//            trustStore.load(is, "changeit".toCharArray());
+//            TrustManagerFactory trustFactory = TrustManagerFactory
+//                    .getInstance(TrustManagerFactory.getDefaultAlgorithm());
+			String fileUrl = "https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb-mgov-gov-in11.cer";
+//	        String destinationFilePath = "C:/example/folder/msdgweb-mgov-gov-in.crt";
+
+	        URL url1 = new URL(fileUrl);
+	        URLConnection connection = url1.openConnection();
+	        InputStream is = connection.getInputStream();
+	        
+//			InputStream is = new FileInputStream(file);
+            
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+            X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(is);
+
+            trustStore.load(null, null); // Initialize an empty keystore
+            trustStore.setCertificateEntry("alias", certificate);
+            
+//            ByteArrayInputStream is = new ByteArrayInputStream(keystoreData);
+//            trustStore.load(is, "changeit".toCharArray());
+            
+            TrustManagerFactory trustFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            
             trustFactory.init(trustStore);
 
             TrustManager[] trustManagers = trustFactory.getTrustManagers();
