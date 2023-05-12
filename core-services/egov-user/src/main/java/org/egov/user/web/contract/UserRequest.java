@@ -140,6 +140,11 @@ public class UserRequest {
     @Size(max = 36)
     private String uuid;
 
+    
+    @SafeHtml
+    @Size(max = 50)
+    private String userTenantid;
+
 
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private Date createdDate;
@@ -183,6 +188,7 @@ public class UserRequest {
         this.relationship = user.getGuardianRelation();
         this.uuid = user.getUuid();
         this.alternatemobilenumber=user.getAlternateMobileNumber();
+        this.userTenantid = user.getUserTenantid();
         mapPermanentAddress(user);
         mapCorrespondenceAddress(user);
     }
@@ -250,7 +256,7 @@ public class UserRequest {
                 .permanentAddress(toDomainPermanentAddress())
                 .correspondenceAddress(toDomainCorrespondenceAddress())
                 .guardian(fatherOrHusbandName)
-                .guardianRelation(relationship).alternateMobileNumber(this.alternatemobilenumber)
+                .guardianRelation(relationship).alternateMobileNumber(this.alternatemobilenumber).userTenantid(this.userTenantid)
                 .build();
     }
 
