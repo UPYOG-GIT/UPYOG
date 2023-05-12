@@ -155,10 +155,13 @@ public class UserRepository {
         user.setLastModifiedDate(new Date());
         user.setCreatedBy(user.getLoggedInUserId());
         user.setLastModifiedBy(user.getLoggedInUserId());
+        user.setUserTenantid(user.getUserTenantid());
+        log.info("user.getUserTenantid()-------" + user.getUserTenantid());
+        log.info("user.getUsertenantid()-------" + user.getUsertenantid());
         final User savedUser = save(user);
         if (user.getRoles().size() > 0) {
             saveUserRoles(user);
-        }
+        } 
         final Address savedCorrespondenceAddress = saveAddress(user.getCorrespondenceAddress(), savedUser.getId(),
                 savedUser.getTenantId());
         final Address savedPermanentAddress = saveAddress(user.getPermanentAddress(), savedUser.getId(),
