@@ -15,11 +15,11 @@ const useInboxMobileCardsData = ({  table }) => {
       [t("EDCR_COMMON_TABLE_APPL_NAME")]: owner,
       [t("EDCR_COMMON_TABLE_SCRUTINY_NO")]: edcrNumber,
       [t("EDCR_COMMON_TABLE_COL_STATUS")]: (status === "Accepted" ? <span className="sla-cell-success " style={{background:"none",padding:"0px"}}>{status}</span> : <span className="sla-cell-error" style={{background:"none",padding:"0px"}}>{status}</span>),
-      /*[t("BPA_UPLOADED_PLAN_DXF")]: (
+      [t("BPA_UPLOADED_PLAN_PDF")]: (
         <a href={`${dxfFileurl}`}>
           <span className="link">{t("BPA_DOWNLOAD")}</span>
         </a>
-      ),*/
+      ),
       [t("EDCR_SCUTINY_REPORT")]: (
         <a href={`${planReportUrl}`}>
           <span className="link">{t("BPA_DOWNLOAD")}</span>

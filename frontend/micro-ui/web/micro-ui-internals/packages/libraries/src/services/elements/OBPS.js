@@ -542,7 +542,7 @@ export const OBPSService = {
           { title: BPA?.businessService !== "BPA_OC" ? "BPA_EDCR_NO_LABEL" : "BPA_OC_EDCR_NO_LABEL", value: BPA?.edcrNumber || "NA" },
         ],
         scruntinyDetails: [
-         // { title: "BPA_UPLOADED_PLAN_DIAGRAM", value: edcr?.dxfFile, text: "BPA_UPLOADED_PLAN_DXF" },
+          { title: "BPA_UPLOADED_PLAN_DIAGRAM", value: edcr?.dxfFile, text: "BPA_UPLOADED_PLAN_PDF" },
           { title: "BPA_SCRUNTINY_REPORT_OUTPUT", value: edcr?.planReport, text: "BPA_SCRUTINY_REPORT_PDF" },
         ]
       }
