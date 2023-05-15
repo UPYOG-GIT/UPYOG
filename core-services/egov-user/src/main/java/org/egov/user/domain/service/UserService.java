@@ -128,8 +128,11 @@ public class UserService {
 	 */
 	public User getUniqueUser(String userName, String tenantId, UserType userType) {
 
-		UserSearchCriteria userSearchCriteria = UserSearchCriteria.builder().userName(userName)
-				.tenantId(getStateLevelTenantForCitizen(tenantId, userType)).type(userType).build();
+//		UserSearchCriteria userSearchCriteria = UserSearchCriteria.builder().userName(userName)
+//				.tenantId(getStateLevelTenantForCitizen(tenantId, userType)).type(userType).build();
+
+		UserSearchCriteria userSearchCriteria = UserSearchCriteria.builder().userName(userName).tenantId(tenantId)
+				.type(userType).build();
 
 		if (isEmpty(userName) || isEmpty(tenantId) || isNull(userType)) {
 			log.error("Invalid lookup, mandatory fields are absent");
@@ -178,8 +181,10 @@ public class UserService {
 			boolean isInterServiceCall, RequestInfo requestInfo) {
 
 		searchCriteria.validate(isInterServiceCall);
+		log.info("searchCriteria.getTenantId(): " + searchCriteria.getTenantId());
 
-//        searchCriteria.setTenantId(getStateLevelTenantForCitizen(searchCriteria.getTenantId(), searchCriteria.getType()));
+		// searchCriteria.setTenantId(getStateLevelTenantForCitizen(searchCriteria.getTenantId(),
+		// searchCriteria.getType()));
 		searchCriteria.setTenantId(searchCriteria.getTenantId());
 		/* encrypt here / encrypted searchcriteria will be used for search */
 
@@ -216,6 +221,7 @@ public class UserService {
 		user.setUuid(UUID.randomUUID().toString());
 		user.validateNewUser(createUserValidateName);
 		conditionallyValidateOtp(user);
+		log.info("user.getTenantId(): " + user.getTenantId());
 		/* encrypt here */
 		user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
 		validateUserUniqueness(user);
