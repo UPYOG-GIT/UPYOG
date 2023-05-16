@@ -151,7 +151,8 @@ public class UserService {
 	private UserSearchRequest getUserSearchRequest(BPASearchCriteria criteria, RequestInfo requestInfo) {
 		UserSearchRequest userSearchRequest = new UserSearchRequest();
 		userSearchRequest.setRequestInfo(requestInfo);
-		userSearchRequest.setTenantId(criteria.getTenantId().split("\\.")[0]);
+//		userSearchRequest.setTenantId(criteria.getTenantId().split("\\.")[0]);
+		userSearchRequest.setTenantId(criteria.getTenantId());
 		userSearchRequest.setMobileNumber(criteria.getMobileNumber());
 		userSearchRequest.setActive(true);
 		userSearchRequest.setUserType(BPAConstants.CITIZEN);
@@ -198,7 +199,8 @@ public class UserService {
 
         // For every unique mobilenumber search the use with mobilenumber as username and get uuid
         mobileNumbers.forEach(mobileNumber -> {
-            UserDetailResponse userDetailResponse = searchByUserName(mobileNumber, getStateLevelTenant(tenantId));
+//            UserDetailResponse userDetailResponse = searchByUserName(mobileNumber, getStateLevelTenant(tenantId));
+            UserDetailResponse userDetailResponse = searchByUserName(mobileNumber, tenantId);
             if(!CollectionUtils.isEmpty(userDetailResponse.getUser())){
 					mobilenumberToUUIDs.put(mobileNumber,userDetailResponse.getUser().get(0).getUuid());
             }
