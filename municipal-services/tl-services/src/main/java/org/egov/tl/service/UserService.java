@@ -74,7 +74,8 @@ public class UserService{
                     businessService = businessService_TL;
                 switch (businessService) {
                     case businessService_BPA:
-                        UserDetailResponse userDetailResponse = searchByUserName(owner.getMobileNumber(), getStateLevelTenant(tradeLicense.getTenantId()));
+//                        UserDetailResponse userDetailResponse = searchByUserName(owner.getMobileNumber(), getStateLevelTenant(tradeLicense.getTenantId()));
+                        UserDetailResponse userDetailResponse = searchByUserName(owner.getMobileNumber(), tradeLicense.getTenantId());
                         if (!userDetailResponse.getUser().isEmpty()) {
                             User user = userDetailResponse.getUser().get(0);
                             owner = addNotNullFieldsFromOwner(user, owner);
@@ -264,14 +265,16 @@ public class UserService{
      */
     private void addUserDefaultFields(String tenantId, Role role, OwnerInfo owner, String businessService){
         owner.setActive(true);
-        owner.setTenantId(tenantId.split("\\.")[0]);
+//        owner.setTenantId(tenantId.split("\\.")[0]);
+        owner.setTenantId(tenantId);
         owner.setRoles(Collections.singletonList(role));
         owner.setType("CITIZEN");
         switch (businessService)
         {
             // for mseva notifications
             case businessService_BPA:
-                owner.setPermanentCity(tenantId.split("\\.")[0]);
+//                owner.setPermanentCity(tenantId.split("\\.")[0]);
+                owner.setPermanentCity(tenantId);
                 break;
         }
     }
@@ -285,7 +288,8 @@ public class UserService{
         Role role = new Role();
         role.setCode("CITIZEN");
         role.setName("Citizen");
-        role.setTenantId(getStateLevelTenant(tenantId));
+//        role.setTenantId(getStateLevelTenant(tenantId));
+        role.setTenantId(tenantId);
         return role;
     }
 
@@ -469,7 +473,8 @@ public class UserService{
 
         // For every unique mobilenumber search the use with mobilenumber as username and get uuid
         mobileNumbers.forEach(mobileNumber -> {
-            UserDetailResponse userDetailResponse = searchByUserName(mobileNumber, getStateLevelTenant(tenantId));
+//            UserDetailResponse userDetailResponse = searchByUserName(mobileNumber, getStateLevelTenant(tenantId));
+            UserDetailResponse userDetailResponse = searchByUserName(mobileNumber, tenantId);
             if(!CollectionUtils.isEmpty(userDetailResponse.getUser())){
                 uuids.add(userDetailResponse.getUser().get(0).getUuid());
             }
