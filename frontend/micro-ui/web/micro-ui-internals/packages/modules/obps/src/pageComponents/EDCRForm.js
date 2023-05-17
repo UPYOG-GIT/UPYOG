@@ -5,9 +5,14 @@ import { getPattern, stringReplaceAll, sortDropdownNames } from "../utils";
 
 const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, addNewOwner, isShowToast, isSubmitBtnDisable, setIsShowToast }) => {
     const { pathname: url } = useLocation();
-    const tenantId = Digit.ULBService.getCurrentTenantId();
+    // const tenantId = Digit.ULBService.getCurrentTenantId();
+    const tenantId = Digit.ULBService.getCitizenCurrentTenant();
     const stateId = Digit.ULBService.getStateId();
-    const [citymoduleList, setCitymoduleList] = useState([]);
+    // const [citymoduleList, setCitymoduleList] = useState();
+    const [citymoduleList, setCitymoduleList] = useState([{
+        code: tenantId,
+        i18nKey: `TENANT_TENANTS_${stringReplaceAll(tenantId.toUpperCase(), ".", "_")}`
+    }]);
     const [name, setName] = useState(formData?.Scrutiny?.[0]?.applicantName);
     const [tenantIdData, setTenantIdData] = useState(formData?.Scrutiny?.[0]?.tenantIdData);
     const [uploadedFile, setUploadedFile] = useState(() => formData?.Scrutiny?.[0]?.proofIdentity?.fileStoreId || null);
@@ -16,6 +21,7 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
     const [uploadMessage, setUploadMessage] = useState("");
     const [showToast, setShowToast] = useState(null);
     const history = useHistory();
+
 
 
     let validation = {};
@@ -52,20 +58,21 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
     const onSkip = () => {
         setUploadMessage("NEED TO DELETE");
     };
+    // console.log(JSON.stringify(citymoduleList))
+    // const { isLoading, data: citymodules } = Digit.Hooks.obps.useMDMS(stateId, "tenant", ["citymodule"]);
+    // useEffect(() => {
+    //     if (citymodules?.tenant?.citymodule?.length > 0) {
+    //         const list = citymodules?.tenant?.citymodule?.filter(data => data.code == "BPAAPPLY");
+    //         list?.[0]?.tenants?.forEach(data => {
+    //             data.i18nKey = `TENANT_TENANTS_${stringReplaceAll(data?.code?.toUpperCase(), ".", "_")}`;
+    //         })
+    //         if (Array.isArray(list?.[0]?.tenants)) list?.[0]?.tenants.reverse();
+    //         let sortTenants = sortDropdownNames(list?.[0]?.tenants, "code", t)
+    //         setCitymoduleList(sortTenants);
+    //     }
+    // }, [citymodules]);
 
-    const { isLoading, data: citymodules } = Digit.Hooks.obps.useMDMS(stateId, "tenant", ["citymodule"]);
 
-    useEffect(() => {
-        if (citymodules?.tenant?.citymodule?.length > 0) {
-            const list = citymodules?.tenant?.citymodule?.filter(data => data.code == "BPAAPPLY");
-            list?.[0]?.tenants?.forEach(data => {
-                data.i18nKey = `TENANT_TENANTS_${stringReplaceAll(data?.code?.toUpperCase(), ".", "_")}`;
-            })
-            if (Array.isArray(list?.[0]?.tenants)) list?.[0]?.tenants.reverse();
-            let sortTenants = sortDropdownNames(list?.[0]?.tenants, "code", t)
-            setCitymoduleList(sortTenants);
-        }
-    }, [citymodules]);
 
     useEffect(() => {
         if (uploadMessage || isShowToast) {
@@ -95,10 +102,14 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
         onSelect(config.key, data);
     };
 
-    if (isLoading || isSubmitBtnDisable) {
+    // if (isLoading || isSubmitBtnDisable) {
+    //     return <Loader />;
+    // }
+    if (isSubmitBtnDisable) {
         return <Loader />;
     }
-
+    // console.log(tenantId);
+    // console.log(JSON.stringify(citymoduleList))
     return (
         <FormStep
             t={t}
@@ -118,6 +129,8 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
                 optionKey="i18nKey"
                 select={setTypeOfTenantID}
                 uploadMessage={uploadMessage}
+                // disabled={true} // Disable dropdown if there is only one item
+                // defaultValue={citymoduleList[0]} // Set default value if there is only one item
             />
             <CardLabel>{`${t("EDCR_SCRUTINY_NAME_LABEL")} *`}</CardLabel>
             <TextInput

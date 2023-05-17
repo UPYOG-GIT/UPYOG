@@ -10,7 +10,10 @@ const Inbox = ({ parentRoute }) => {
   window.scroll(0, 0);
   const { t } = useTranslation();
 
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  // const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant();
+
+  //console.log("tenanrId: " + tenantId)
 
   const searchFormDefaultValues = {};
 
@@ -160,13 +163,13 @@ const Inbox = ({ parentRoute }) => {
   );
 
   const onSearchFormSubmit = (data) => {
-    data.hasOwnProperty("") && delete data?.[""] ;
+    data.hasOwnProperty("") && delete data?.[""];
     dispatch({ action: "mutateTableForm", data: { ...tableOrderFormDefaultValues } });
     dispatch({ action: "mutateSearchForm", data });
   };
 
   const onFilterFormSubmit = (data) => {
-    data.hasOwnProperty("") && delete data?.[""] ;
+    data.hasOwnProperty("") && delete data?.[""];
     dispatch({ action: "mutateTableForm", data: { ...tableOrderFormDefaultValues } });
     dispatch({ action: "mutateFilterForm", data });
   };

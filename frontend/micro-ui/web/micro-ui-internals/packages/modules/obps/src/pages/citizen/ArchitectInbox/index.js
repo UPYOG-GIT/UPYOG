@@ -23,14 +23,15 @@ const Inbox = ({ tenants, parentRoute }) => {
   let isMobile = window.Digit.Utils.browser.isMobile();
   const userInfo = Digit.UserService.getUser();
   const [pageOffset, setPageOffset] = useState(0);
-  const [pageSize, setPageSize] = useState(window.Digit.Utils.browser.isMobile()?50:10);
+  const [pageSize, setPageSize] = useState(window.Digit.Utils.browser.isMobile() ? 50 : 10);
   const [sortParams, setSortParams] = useState([{ id: "createdTime", sortOrder: "DESC" }]);
   const paginationParams = isMobile ? { limit: 10, offset: 0, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.sortOrder } :
     { limit: pageSize, offset: pageOffset, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.sortOrder }
   const inboxSearchParams = { limit: 10, offset: 0, mobileNumber: userInfo?.info?.mobileNumber }
-
+  //console.log("tenantid++++++" + tenantId);
+  //console.log("tenant====" + userInfo?.info?.tenantId)
   const { isLoading: bpaLoading, data: bpaInboxData } = Digit.Hooks.obps.useArchitectInbox({
-    tenantId: stateCode,
+    tenantId: userInfo?.info?.tenantId,
     moduleName: "bpa-services",
     businessService: ["BPA_LOW", "BPA", "BPA_OC"],
     filters: {
@@ -53,15 +54,15 @@ const Inbox = ({ tenants, parentRoute }) => {
       }
     },
     config: {},
-    withEDCRData:false
+    withEDCRData: false
   });
 
-    const fetchLastPage = () => {
-      setPageOffset(bpaInboxData?.totalCount && (Math.ceil(bpaInboxData?.totalCount / 10) * 10 - pageSize));
+  const fetchLastPage = () => {
+    setPageOffset(bpaInboxData?.totalCount && (Math.ceil(bpaInboxData?.totalCount / 10) * 10 - pageSize));
   };
 
   const fetchFirstPage = () => {
-      setPageOffset(0);
+    setPageOffset(0);
   };
 
   const handleSort = (args) => {
@@ -132,36 +133,36 @@ const Inbox = ({ tenants, parentRoute }) => {
 
   return (
     <div>
-    <Header>
-      {t("ES_COMMON_INBOX")}
-      {Number(bpaInboxData?.totalCount) ? <p className="inbox-count">{Number(bpaInboxData?.totalCount)}</p> : null}
-    </Header>
-    <DesktopInbox
-      // bparegData={table}
-      bparegData={[]}
-      edcrData={[]}
-      data={bpaInboxData}
-      isLoading={bpaLoading}
-      statusMap={bpaInboxData?.statuses}
-      onFilterChange={handleFilterChange}
-      searchFields={getSearchFields()}
-      onSearch={onSearch}
-      onSort={handleSort}
-      onNextPage={fetchNextPage}
-      onPrevPage={fetchPrevPage}
-      onLastPage={fetchLastPage}
-      onFirstPage={fetchFirstPage}
-      currentPage={Math.floor(pageOffset / pageSize)}
-      pageSizeLimit={pageSize}
-      disableSort={false}
-      searchParams={searchParams}
-      onPageSizeChange={handlePageSizeChange}
-      parentRoute={parentRoute}
-      paginationParms={paginationParams}
-      sortParams={sortParams}
-      totalRecords={bpaInboxData?.totalCount}
-    // totalRecords={isInbox ? Number(applications?.totalCount) : totalCount}
-    />
+      <Header>
+        {t("ES_COMMON_INBOX")}
+        {Number(bpaInboxData?.totalCount) ? <p className="inbox-count">{Number(bpaInboxData?.totalCount)}</p> : null}
+      </Header>
+      <DesktopInbox
+        // bparegData={table}
+        bparegData={[]}
+        edcrData={[]}
+        data={bpaInboxData}
+        isLoading={bpaLoading}
+        statusMap={bpaInboxData?.statuses}
+        onFilterChange={handleFilterChange}
+        searchFields={getSearchFields()}
+        onSearch={onSearch}
+        onSort={handleSort}
+        onNextPage={fetchNextPage}
+        onPrevPage={fetchPrevPage}
+        onLastPage={fetchLastPage}
+        onFirstPage={fetchFirstPage}
+        currentPage={Math.floor(pageOffset / pageSize)}
+        pageSizeLimit={pageSize}
+        disableSort={false}
+        searchParams={searchParams}
+        onPageSizeChange={handlePageSizeChange}
+        parentRoute={parentRoute}
+        paginationParms={paginationParams}
+        sortParams={sortParams}
+        totalRecords={bpaInboxData?.totalCount}
+      // totalRecords={isInbox ? Number(applications?.totalCount) : totalCount}
+      />
     </div>
   );
 }

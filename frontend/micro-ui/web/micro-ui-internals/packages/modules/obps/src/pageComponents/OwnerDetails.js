@@ -9,7 +9,8 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     sessionStorage.removeItem("currentPincode");
     let isedittrade = window.location.href.includes("edit-application");
     let isrenewtrade = window.location.href.includes("renew-trade");
-    const tenantId = Digit.ULBService.getCurrentTenantId();
+    // const tenantId = Digit.ULBService.getCurrentTenantId();
+    const tenantId = Digit.ULBService.getCitizenCurrentTenant();
     const stateId = Digit.ULBService.getStateId();
     const [canmovenext, setCanmovenext] = useState(isedittrade || isrenewtrade ? false : true);
     const [ownershipCategoryList, setOwnershipCategoryList] = useState([]);
@@ -213,7 +214,9 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             setShowToast({ key: "true", error: true, message: "ERR_OWNER_ALREADY_ADDED" });
             return;
         } else {
-            const usersResponse = await Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: fields?.[indexValue]?.mobileNumber }, {});
+            // const usersResponse = await Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: fields?.[indexValue]?.mobileNumber }, {});
+            const usersResponse = await Digit.UserService.userSearch(Digit.ULBService.getCitizenCurrentTenant(), { userName: fields?.[indexValue]?.mobileNumber }, {});
+            console.log(JSON.stringify(usersResponse));
             if (usersResponse?.user?.length === 0) {
                 setShowToast({ key: "true", warning: true, message: "ERR_MOBILE_NUMBER_NOT_REGISTERED" });
                 return;

@@ -94,7 +94,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     }
     Digit.SessionStorage.set("citizen.userRequestObject", user);
     Digit.UserService.setUser(user);
-    setCitizenDetail(user?.info, user?.access_token, stateCode)
+    setCitizenDetail(user?.info, user?.access_token, selectedCity?.code)
     const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
     history.replace(redirectPath);
   }, [user]);
@@ -153,7 +153,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     // setParmas({ ...params, mobileNumber });
     const data = {
       mobileNumber,
-      tenantId: stateCode,
+      //tenantId: stateCode,
+      tenantId: selectedCity?.code,
       userType: getUserType(),
     };
   
@@ -210,7 +211,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     setParmas({ ...par, name });
     const data = {
       ...par,
-      tenantId: stateCode,
+      //tenantId: stateCode,
+      tenantId: selectedCity?.code,
       userType: getUserType(),
       name
     };
@@ -245,7 +247,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         const requestData = {
           username: mobileNumber,
           password: otp,
-          tenantId: stateCode,
+          //tenantId: stateCode,
+      tenantId: selectedCity?.code,
           userType: getUserType(),
         };
 
@@ -265,7 +268,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
           }
         }
         if (window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")) {
-          info.tenantId = Digit.ULBService.getStateId();
+          //info.tenantId = Digit.ULBService.getStateId();
+          info.tenantId = selectedCity?.code;
         }
 
         setUser({ info, ...tokens });
@@ -275,13 +279,15 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
           name,
           username: mobileNumber,
           otpReference: otp,
-          tenantId: stateCode,
+          //tenantId: stateCode,
+      tenantId: selectedCity?.code,
         };
 
         const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.UserService.registerUser(requestData, stateCode);
 
         if (window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")) {
-          info.tenantId = Digit.ULBService.getStateId();
+          //info.tenantId = Digit.ULBService.getStateId();
+          info.tenantId = selectedCity?.code;
         }
 
         setUser({ info, ...tokens });
@@ -295,7 +301,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     // const { mobileNumber } = params;
     const data = {
       mobileNumber,
-      tenantId: stateCode,
+      //tenantId: stateCode,
+      tenantId: selectedCity?.code,
       userType: getUserType(),
 
     };

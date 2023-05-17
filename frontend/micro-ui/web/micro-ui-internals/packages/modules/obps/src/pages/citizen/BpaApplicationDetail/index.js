@@ -19,7 +19,8 @@ import Urls from "../../../../../../libraries/src/services/atoms/urls";
 const BpaApplicationDetail = () => {
   const { id } = useParams();
   const { t } = useTranslation();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  // const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const stateCode = Digit.ULBService.getStateId();
   const queryClient = useQueryClient();
   const [showToast, setShowToast] = useState(null);

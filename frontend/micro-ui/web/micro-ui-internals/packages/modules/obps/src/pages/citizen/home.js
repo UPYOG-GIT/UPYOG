@@ -21,185 +21,220 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
   const { data: homePageUrlLinks, isLoading: homePageUrlLinksLoading } = Digit.Hooks.obps.useMDMS(state, "BPA", ["homePageUrlLinks"]);
   const [showToast, setShowToast] = useState(null);
   const [totalCount, setTotalCount] = useState("-");
+  let validityDate = null;
+  let roleCode = null;
 
-  const closeToast = () => {
-    window.location.replace("/digit-ui/citizen/all-services");
-    setShowToast(null);
-  };
+  useEffect(async () => {
+    //if (uuid) {
+    const usersResponse1 = await Digit.UserService.userSearch(Digit.ULBService.getCurrentTenantId(), { uuid: [userInfo?.info?.uuid] }, {});
 
-  const [searchParams, setSearchParams] = useState({
-    applicationStatus: [],
-  });
-  let isMobile = window.Digit.Utils.browser.isMobile();
-  const [pageOffset, setPageOffset] = useState(0);
-  const [pageSize, setPageSize] = useState(window.Digit.Utils.browser.isMobile() ? 50 : 10);
-  const [sortParams, setSortParams] = useState([{ id: "createdTime", sortOrder: "DESC" }]);
-  const paginationParams = isMobile
-    ? { limit: 10, offset: 0, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.sortOrder }
-    : { limit: pageSize, offset: pageOffset, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.sortOrder };
-  const inboxSearchParams = { limit: 10, offset: 0, mobileNumber: userInfo?.info?.mobileNumber };
-
-  const { isLoading: bpaLoading, data: bpaInboxData } = Digit.Hooks.obps.useArchitectInbox({
-    tenantId: stateCode,
-    moduleName: "bpa-services",
-    businessService: ["BPA_LOW", "BPA", "BPA_OC"],
-    filters: {
-      searchForm: {
-        ...searchParams,
-      },
-      tableForm: {
-        sortBy: sortParams?.[0]?.id,
-        limit: pageSize,
-        offset: pageOffset,
-        sortOrder: sortParams?.[0]?.sortOrder,
-      },
-      filterForm: {
-        moduleName: "bpa-services",
-        businessService: [],
-        applicationStatus: searchParams?.applicationStatus,
-        locality: [],
-        assignee: "ASSIGNED_TO_ALL",
-      },
-    },
-    config: {},
-    withEDCRData: false,
-  });
-  const { isLoading: isEDCRInboxLoading, data: { totalCount: edcrCount } = {} } = Digit.Hooks.obps.useEDCRInbox({
-    tenantId: stateCode,
-    filters: { filterForm: {}, searchForm: {}, tableForm: { limit: 10, offset: 0 } },
-  });
-
-  useEffect(()=>{
-    if (location.pathname === "/digit-ui/citizen/obps/home"){
-      Digit.SessionStorage.del("OBPS.INBOX")
-      Digit.SessionStorage.del("STAKEHOLDER.INBOX")
+    if (usersResponse1 && usersResponse1.user && usersResponse1.user.length) {
+      //console.log("usersResponse11: " + JSON.stringify(usersResponse1));
+      roleCode = usersResponse1?.user[0]?.roles[0]?.code;
+      console.log("roleCode:" + roleCode);
+      validityDate = usersResponse1?.user[0]?.validityDate;
+      console.log("validityDate: " + validityDate);
     }
-  },[location.pathname])
-
-  useEffect(() => {
-    if (!bpaLoading) {
-      const totalCountofBoth = bpaInboxData?.totalCount || 0;
-      setTotalCount(totalCountofBoth);
-    }
-  }, [bpaInboxData]);
-
-  useEffect(() => {
-    if (!stakeHolderDetailsLoading) {
-      let roles = [];
-      stakeHolderDetails?.StakeholderRegistraition?.TradeTypetoRoleMapping?.map((type) => {
-        type?.role?.map((role) => {
-          roles.push(role);
-        });
-      });
-      const uniqueRoles = roles?.filter((item, i, ar) => ar.indexOf(item) === i);
-      let isRoute = false;
-      uniqueRoles?.map((unRole) => {
-        if (userRoles?.includes(unRole) && !isRoute) {
-          isRoute = true;
-        }
-      });
-      if (!isRoute) {
-        setStakeholderRoles(false);
-        setShowToast({ key: "true", message: t("BPA_LOGIN_HOME_VALIDATION_MESSAGE_LABEL") });
-      } else {
-        setStakeholderRoles(true);
-      }
-    }
-  }, [stakeHolderDetailsLoading]);
-
-  useEffect(() => {
-    if (!homePageUrlLinksLoading && homePageUrlLinks?.BPA?.homePageUrlLinks?.length > 0) {
-      let uniqueLinks = [];
-      homePageUrlLinks?.BPA?.homePageUrlLinks?.map((linkData) => {
-        uniqueLinks.push({
-          link: `${linkData?.flow?.toLowerCase()}/${linkData?.applicationType?.toLowerCase()}/${linkData?.serviceType?.toLowerCase()}/docs-required`,
-          i18nKey: t(`BPA_HOME_${linkData?.applicationType}_${linkData?.serviceType}_LABEL`),
-          state: { linkData },
-          linkState: true,
-        });
-      });
-      setBpaLinks(uniqueLinks);
-    }
-  }, [!homePageUrlLinksLoading]);
-
-  useEffect(() => {
-    clearParams();
+    //}
   }, []);
 
-  Digit.SessionStorage.set("EDCR_BACK", "IS_EDCR_BACK");
+  //console.log("date: "+new Date().toLocaleString());
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
+  const day = ("0" + currentDate.getDate()).slice(-2);
+  const hours = ("0" + currentDate.getHours()).slice(-2);
+  const minutes = ("0" + currentDate.getMinutes()).slice(-2);
+  const seconds = ("0" + currentDate.getSeconds()).slice(-2);
 
-  if (showToast) return <Toast error={true} label={t(showToast?.message)} isDleteBtn={true} onClose={closeToast} />;
+  const dateTime = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+  //console.log("date: " + dateTime);
+  if (roleCode === 'BPA_ARCHITECT' && new Date(validityDate).getTime() > new Date(dateTime).getTime()) {
+    // console.log("Hiiiiii");
+    // console.log("validityDate: " + validityDate);
+  } else {
+    //console.log("Hiiiiii2222");
 
-  if (stakeHolderDetailsLoading || !stakeHolderRoles || bpaLoading) {
-    return <Loader />;
-  } // || bparegLoading
+    const closeToast = () => {
+      window.location.replace("/digit-ui/citizen/all-services");
+      setShowToast(null);
+    };
 
-  const homeDetails = [
-    {
-      Icon: <BPAHomeIcon />,
-      moduleName: t("ACTION_TEST_BPA_STAKE_HOLDER_HOME"),
-      name: "employeeCard",
-      isCitizen: true,
-      kpis: [
-        {
-          count: !(bpaLoading || isEDCRInboxLoading) && totalCount && edcrCount ? totalCount + edcrCount : "-",
-          label: t("BPA_PDF_TOTAL"),
-          link: `/digit-ui/citizen/obps/bpa/inbox`,
+    const [searchParams, setSearchParams] = useState({
+      applicationStatus: [],
+    });
+    let isMobile = window.Digit.Utils.browser.isMobile();
+    const [pageOffset, setPageOffset] = useState(0);
+    const [pageSize, setPageSize] = useState(window.Digit.Utils.browser.isMobile() ? 50 : 10);
+    const [sortParams, setSortParams] = useState([{ id: "createdTime", sortOrder: "DESC" }]);
+    const paginationParams = isMobile
+      ? { limit: 10, offset: 0, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.sortOrder }
+      : { limit: pageSize, offset: pageOffset, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.sortOrder };
+    const inboxSearchParams = { limit: 10, offset: 0, mobileNumber: userInfo?.info?.mobileNumber };
+    //console.log("tenantId"+userInfo?.info?.tenantId);
+    const { isLoading: bpaLoading, data: bpaInboxData } = Digit.Hooks.obps.useArchitectInbox({
+      //tenantId: stateCode,
+      tenantId: userInfo?.info?.tenantId,
+      moduleName: "bpa-services",
+      businessService: ["BPA_LOW", "BPA", "BPA_OC"],
+      filters: {
+        searchForm: {
+          ...searchParams,
         },
-      ],
-      links: [
-        {
-          count: !bpaLoading ? totalCount : "-",
-          label: t("ES_COMMON_OBPS_INBOX_LABEL"),
-          link: `/digit-ui/citizen/obps/bpa/inbox`,
+        tableForm: {
+          sortBy: sortParams?.[0]?.id,
+          limit: pageSize,
+          offset: pageOffset,
+          sortOrder: sortParams?.[0]?.sortOrder,
         },
-        {
-          count: !isEDCRInboxLoading ? edcrCount : "-",
-          label: t("ES_COMMON_EDCR_INBOX_LABEL"),
-          link: `/digit-ui/citizen/obps/edcr/inbox`,
+        filterForm: {
+          moduleName: "bpa-services",
+          businessService: [],
+          applicationStatus: searchParams?.applicationStatus,
+          locality: [],
+          assignee: "ASSIGNED_TO_ALL",
         },
-      ],
-      className: "CitizenHomeCard",
-      styles: {padding: "0px", minWidth: "90%", minHeight: "90%"}
-    },
-    {
-      title: t("ACTION_TEST_EDCR_SCRUTINY"),
-      Icon: <EDCRIcon className="fill-path-primary-main" />,
-      links: [
-        {
-          link: `edcrscrutiny/apply`,
-          i18nKey: t("BPA_PLAN_SCRUTINY_FOR_NEW_CONSTRUCTION_LABEL"),
-        },
-        {
-          link: `edcrscrutiny/oc-apply`,
-          i18nKey: t("BPA_OC_PLAN_SCRUTINY_FOR_NEW_CONSTRUCTION_LABEL"),
-        },
-      ],
-      styles: {minWidth: "90%", minHeight: "90%"}
-    },
-    {
-      title: t("ACTION_TEST_BPA_STAKE_HOLDER_HOME"),
-      Icon: <BPAIcon className="fill-path-primary-main" />,
-      links: bpaLinks,
-      styles: {minWidth: "90%", minHeight: "90%"}
-    },
-  ];
+      },
+      config: {},
+      withEDCRData: false,
+    });
+    const { isLoading: isEDCRInboxLoading, data: { totalCount: edcrCount } = {} } = Digit.Hooks.obps.useEDCRInbox({
+      tenantId: stateCode,
+      filters: { filterForm: {}, searchForm: {}, tableForm: { limit: 10, offset: 0 } },
+    });
 
-  const homeScreen = (
-    <div className="mainContent citizenAllServiceGrid">
-      {homeDetails.map((data) => {
-        return (
-          <div>
-            {data.name === "employeeCard" ? <EmployeeModuleCard {...data} /> :
-              <CitizenHomeCard header={data.title} links={data.links} Icon={() => data.Icon} styles={data?.styles} />}
-          </div>
-        )
-      })}
-    </div>
-  )
-  sessionStorage.setItem("isPermitApplication", true);
-  sessionStorage.setItem("isEDCRDisable", JSON.stringify(false));
-  return homeScreen;
+    useEffect(() => {
+      if (location.pathname === "/digit-ui/citizen/obps/home") {
+        Digit.SessionStorage.del("OBPS.INBOX")
+        Digit.SessionStorage.del("STAKEHOLDER.INBOX")
+      }
+    }, [location.pathname])
+
+    useEffect(() => {
+      if (!bpaLoading) {
+        const totalCountofBoth = bpaInboxData?.totalCount || 0;
+        setTotalCount(totalCountofBoth);
+      }
+    }, [bpaInboxData]);
+
+    useEffect(() => {
+      if (!stakeHolderDetailsLoading) {
+        let roles = [];
+        stakeHolderDetails?.StakeholderRegistraition?.TradeTypetoRoleMapping?.map((type) => {
+          type?.role?.map((role) => {
+            roles.push(role);
+          });
+        });
+        const uniqueRoles = roles?.filter((item, i, ar) => ar.indexOf(item) === i);
+        let isRoute = false;
+        uniqueRoles?.map((unRole) => {
+          if (userRoles?.includes(unRole) && !isRoute) {
+            isRoute = true;
+          }
+        });
+        if (!isRoute) {
+          setStakeholderRoles(false);
+          setShowToast({ key: "true", message: t("BPA_LOGIN_HOME_VALIDATION_MESSAGE_LABEL") });
+        } else {
+          setStakeholderRoles(true);
+        }
+      }
+    }, [stakeHolderDetailsLoading]);
+
+    useEffect(() => {
+      if (!homePageUrlLinksLoading && homePageUrlLinks?.BPA?.homePageUrlLinks?.length > 0) {
+        let uniqueLinks = [];
+        homePageUrlLinks?.BPA?.homePageUrlLinks?.map((linkData) => {
+          uniqueLinks.push({
+            link: `${linkData?.flow?.toLowerCase()}/${linkData?.applicationType?.toLowerCase()}/${linkData?.serviceType?.toLowerCase()}/docs-required`,
+            i18nKey: t(`BPA_HOME_${linkData?.applicationType}_${linkData?.serviceType}_LABEL`),
+            state: { linkData },
+            linkState: true,
+          });
+        });
+        setBpaLinks(uniqueLinks);
+      }
+    }, [!homePageUrlLinksLoading]);
+
+    useEffect(() => {
+      clearParams();
+    }, []);
+
+    Digit.SessionStorage.set("EDCR_BACK", "IS_EDCR_BACK");
+
+    if (showToast) return <Toast error={true} label={t(showToast?.message)} isDleteBtn={true} onClose={closeToast} />;
+
+    if (stakeHolderDetailsLoading || !stakeHolderRoles || bpaLoading) {
+      return <Loader />;
+    } // || bparegLoading
+
+    const homeDetails = [
+      {
+        Icon: <BPAHomeIcon />,
+        moduleName: t("ACTION_TEST_BPA_STAKE_HOLDER_HOME"),
+        name: "employeeCard",
+        isCitizen: true,
+        kpis: [
+          {
+            count: !(bpaLoading || isEDCRInboxLoading) && totalCount && edcrCount ? totalCount + edcrCount : "-",
+            label: t("BPA_PDF_TOTAL"),
+            link: `/digit-ui/citizen/obps/bpa/inbox`,
+          },
+        ],
+        links: [
+          {
+            count: !bpaLoading ? totalCount : "-",
+            label: t("ES_COMMON_OBPS_INBOX_LABEL"),
+            link: `/digit-ui/citizen/obps/bpa/inbox`,
+          },
+          {
+            count: !isEDCRInboxLoading ? edcrCount : "-",
+            label: t("ES_COMMON_EDCR_INBOX_LABEL"),
+            link: `/digit-ui/citizen/obps/edcr/inbox`,
+          },
+        ],
+        className: "CitizenHomeCard",
+        styles: { padding: "0px", minWidth: "90%", minHeight: "90%" }
+      },
+      {
+        title: t("ACTION_TEST_EDCR_SCRUTINY"),
+        Icon: <EDCRIcon className="fill-path-primary-main" />,
+        links: [
+          {
+            link: `edcrscrutiny/apply`,
+            i18nKey: t("BPA_PLAN_SCRUTINY_FOR_NEW_CONSTRUCTION_LABEL"),
+          },
+          {
+            link: `edcrscrutiny/oc-apply`,
+            i18nKey: t("BPA_OC_PLAN_SCRUTINY_FOR_NEW_CONSTRUCTION_LABEL"),
+          },
+        ],
+        styles: { minWidth: "90%", minHeight: "90%" }
+      },
+      {
+        title: t("ACTION_TEST_BPA_STAKE_HOLDER_HOME"),
+        Icon: <BPAIcon className="fill-path-primary-main" />,
+        links: bpaLinks,
+        styles: { minWidth: "90%", minHeight: "90%" }
+      },
+    ];
+
+    const homeScreen = (
+      <div className="mainContent citizenAllServiceGrid">
+        {homeDetails.map((data) => {
+          return (
+            <div>
+              {data.name === "employeeCard" ? <EmployeeModuleCard {...data} /> :
+                <CitizenHomeCard header={data.title} links={data.links} Icon={() => data.Icon} styles={data?.styles} />}
+            </div>
+          )
+        })}
+      </div>
+    )
+    sessionStorage.setItem("isPermitApplication", true);
+    sessionStorage.setItem("isEDCRDisable", JSON.stringify(false));
+    return homeScreen;
+  }
 };
 
 export default BPACitizenHomeScreen;
