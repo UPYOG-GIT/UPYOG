@@ -20,7 +20,10 @@ import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class UserService {
 
 	@Autowired
@@ -133,6 +136,7 @@ public class UserService {
 	 * @return Search response from user service based on ownerIds
 	 */
 	public UserDetailResponse getUser(BPASearchCriteria criteria, RequestInfo requestInfo) {
+		log.info("criteria.getTenantId()+++++++ "+criteria.getTenantId());
 		UserSearchRequest userSearchRequest = getUserSearchRequest(criteria, requestInfo);
 		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
 		UserDetailResponse userDetailResponse = userCall(userSearchRequest, uri);

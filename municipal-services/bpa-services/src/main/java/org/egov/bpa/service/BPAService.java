@@ -218,6 +218,7 @@ public class BPAService {
 	 */
 	public List<BPA> search(BPASearchCriteria criteria, RequestInfo requestInfo) {
 		List<BPA> bpas = new LinkedList<>();
+		log.info("criteria.getTenantId():______===="+criteria.getTenantId());
 		bpaValidator.validateSearch(requestInfo, criteria);
 		LandSearchCriteria landcriteria = new LandSearchCriteria();
 		landcriteria.setTenantId(criteria.getTenantId());
