@@ -57,7 +57,8 @@ public class LandUserService {
 			if (owner.getMobileNumber() != null) {
 				
 				if (owner.getTenantId() == null) {
-					owner.setTenantId(landInfo.getTenantId().split("\\.")[0]);
+//					owner.setTenantId(landInfo.getTenantId().split("\\.")[0]);
+					owner.setTenantId(landInfo.getTenantId());
 				}
 
 				userDetailResponse = userExists(owner, requestInfo);
@@ -283,7 +284,8 @@ public class LandUserService {
 	private UserSearchRequest getUserSearchRequest(LandSearchCriteria criteria, RequestInfo requestInfo) {
 		UserSearchRequest userSearchRequest = new UserSearchRequest();
 		userSearchRequest.setRequestInfo(requestInfo);
-		userSearchRequest.setTenantId(criteria.getTenantId().split("\\.")[0]);
+//		userSearchRequest.setTenantId(criteria.getTenantId().split("\\.")[0]);
+		userSearchRequest.setTenantId(criteria.getTenantId());
 		userSearchRequest.setMobileNumber(criteria.getMobileNumber());
 		userSearchRequest.setActive(true);
 		userSearchRequest.setUserType(LandConstants.CITIZEN);
