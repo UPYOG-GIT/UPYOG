@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
+import java.sql.Types;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
@@ -113,14 +114,15 @@ public class TLRepository {
 	                targetDateTime = targetDateTime.plusYears(1);
 	            }
 	            
-	            if (license.getBusinessService().equals("BPAREG")) {
+	            if (license.getBusinessService().equals("BPAREG") && license.getStatus().equals("PENDINGAPPROVAL")) {
 	                String uuid = requestInfo.getUserInfo().getUuid();
 	                String updateQuery = "UPDATE eg_user SET validitydate = ? WHERE uuid = ?";
 	                Object[] queryParams = { targetDateTime, uuid };
+	                int[] queryParamTypes = { Types.TIMESTAMP, Types.VARCHAR };
 
-	                int updateResult = jdbcTemplate.update(updateQuery, queryParams);
-	                log.info("Validity date updated for UUID:------ " + uuid);
-	                log.info("Validity date:----- " + targetDateTime);
+	                int updateResult = jdbcTemplate.update(updateQuery, queryParams, queryParamTypes);
+	                log.info("Validity date updated for UUID: " + uuid);
+	                log.info("Validity date: " + targetDateTime);
 	            }
 	        }
 	    }
