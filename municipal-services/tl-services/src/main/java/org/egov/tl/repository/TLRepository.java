@@ -1,6 +1,8 @@
 package org.egov.tl.repository;
 
 import lombok.extern.slf4j.Slf4j;
+
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.producer.Producer;
@@ -14,6 +16,9 @@ import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
+import java.sql.Types;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.*;
 
 import static org.egov.tl.util.TLConstants.ACTION_ADHOC;
@@ -91,16 +96,36 @@ public class TLRepository {
 		List<TradeLicense> licesnsesForStatusUpdate = new LinkedList<>();
 		List<TradeLicense> licensesForUpdate = new LinkedList<>();
 		List<TradeLicense> licensesForAdhocChargeUpdate = new LinkedList<>();
-
+		
+		
 		for (TradeLicense license : licenses) {
-			if (idToIsStateUpdatableMap.get(license.getId())) {
-				licensesForUpdate.add(license);
-			} else if (license.getAction().equalsIgnoreCase(ACTION_ADHOC))
-				licensesForAdhocChargeUpdate.add(license);
-			else {
-				licesnsesForStatusUpdate.add(license);
-			}
-		}
+	        if (idToIsStateUpdatableMap.get(license.getId())) {
+	            licensesForUpdate.add(license);
+	        } else if (license.getAction().equalsIgnoreCase(ACTION_ADHOC)) {
+	            licensesForAdhocChargeUpdate.add(license);
+	        } else {
+	        	licesnsesForStatusUpdate.add(license);
+
+	            LocalDateTime currentDateTime = LocalDateTime.now();
+	            int currentYear = currentDateTime.getYear();
+	            LocalDateTime targetDateTime = LocalDateTime.of(currentYear, Month.MARCH, 31, 0, 0, 0);
+
+	            if (targetDateTime.isBefore(currentDateTime)) {
+	                targetDateTime = targetDateTime.plusYears(1);
+	            }
+	            
+	            if (license.getBusinessService().equals("BPAREG") && license.getStatus().equals("PENDINGAPPROVAL")) {
+	                String uuid = requestInfo.getUserInfo().getUuid();
+	                String updateQuery = "UPDATE eg_user SET validitydate ='" + targetDateTime 
+	                		+ "' where uuid ='" + uuid + "'";
+
+	                int updateResult = jdbcTemplate.update(updateQuery);
+	                log.info("Validity date updated for UUID: " + uuid);
+	                log.info("Validity date: " + targetDateTime);
+	            }
+	        }
+	    }
+
 
 		if (!CollectionUtils.isEmpty(licensesForUpdate))
 			producer.push(config.getUpdateTopic(), new TradeLicenseRequest(requestInfo, licensesForUpdate));
