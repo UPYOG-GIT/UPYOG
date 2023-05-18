@@ -116,21 +116,15 @@ public class TLRepository {
 	            
 	            if (license.getBusinessService().equals("BPAREG") && license.getStatus().equals("PENDINGAPPROVAL")) {
 	                String uuid = requestInfo.getUserInfo().getUuid();
-	                String updateQuery = "UPDATE eg_user SET validitydate = ? WHERE uuid = ?";
-	                Object[] queryParams = { targetDateTime, uuid };
-	                int[] queryParamTypes = { Types.TIMESTAMP, Types.VARCHAR };
+	                String updateQuery = "UPDATE eg_user SET validitydate ='" + targetDateTime 
+	                		+ " where uuid ='" + uuid + "'";
 
-	                int updateResult = jdbcTemplate.update(updateQuery, queryParams, queryParamTypes);
+	                int updateResult = jdbcTemplate.update(updateQuery);
 	                log.info("Validity date updated for UUID: " + uuid);
 	                log.info("Validity date: " + targetDateTime);
 	            }
 	        }
 	    }
-
-		
-		
-		
-			
 
 
 		if (!CollectionUtils.isEmpty(licensesForUpdate))
