@@ -117,7 +117,7 @@ public class TLRepository {
 	            if (license.getBusinessService().equals("BPAREG") && license.getStatus().equals("PENDINGAPPROVAL")) {
 	                String uuid = requestInfo.getUserInfo().getUuid();
 	                String updateQuery = "UPDATE eg_user SET validitydate ='" + targetDateTime 
-	                		+ " where uuid ='" + uuid + "'";
+	                		+ "' where uuid ='" + uuid + "'";
 
 	                int updateResult = jdbcTemplate.update(updateQuery);
 	                log.info("Validity date updated for UUID: " + uuid);
