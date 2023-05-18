@@ -68,7 +68,8 @@ public class BPACalculationService {
      */
     public List<Calculation> calculate(CalculationReq calculationReq) {
     	log.info("CalculationReq: "+calculationReq.getCalulationCriteria().toString());
-        String tenantId = calculationReq.getCalulationCriteria().get(0).getTenantId();
+//        String tenantId = calculationReq.getCalulationCriteria().get(0).getTenantId();
+        String tenantId = calculationReq.getCalulationCriteria().get(0).getTenantId().split("\\.")[0];
         Object mdmsData = mdmsService.mDMSCall(calculationReq.getRequestInfo(), tenantId);
         log.info("mdmsData:" +mdmsData.toString());
         List<Calculation> calculations = getCalculation(calculationReq.getRequestInfo(),
