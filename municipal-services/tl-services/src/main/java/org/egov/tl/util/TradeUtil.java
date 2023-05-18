@@ -282,7 +282,8 @@ public class TradeUtil {
         List<String> endstates = new ArrayList<>();
         for (TradeLicense tradeLicense : tradeLicenseRequest.getLicenses()) {
             String tradetype = tradeLicense.getTradeLicenseDetail().getTradeUnits().get(0).getTradeType();
-            Object mdmsData = mDMSCallForBPA(tradeLicenseRequest.getRequestInfo(), tradeLicense.getTenantId(), tradetype);
+//            Object mdmsData = mDMSCallForBPA(tradeLicenseRequest.getRequestInfo(), tradeLicense.getTenantId(), tradetype);
+            Object mdmsData = mDMSCallForBPA(tradeLicenseRequest.getRequestInfo(), tradeLicense.getTenantId().split("\\.")[0], tradetype);
             List<String> res = JsonPath.read(mdmsData, BPAConstants.MDMS_ENDSTATEPATH);
             endstates.add(res.get(0));
         }
