@@ -22,33 +22,42 @@ import java.util.Map;
 @Service
 public class BPABillingSlabService {
 
-    @Autowired
-    BillingslabUtils billingslabUtils;
+	@Autowired
+	BillingslabUtils billingslabUtils;
 
-    @Autowired
-    private RestTemplate restTemplate;
+	@Autowired
+	private RestTemplate restTemplate;
 
-    @Autowired
-    private ResponseInfoFactory factory;
+	@Autowired
+	private ResponseInfoFactory factory;
 
-    public BillingSlab search(BillingSlabSearchCriteria billingSlabSearchCriteria, RequestInfo requestInfo) {
-        StringBuilder uri = new StringBuilder();
-        MdmsCriteriaReq request = billingslabUtils.prepareMDMSSearchReq(uri, billingSlabSearchCriteria.getTenantId(), BillingslabConstants.BPA_MDMS_MODULE_NAME, BillingslabConstants.BPA_MDMS_TRADETYPETOROLEMAPPING, "[?(@.tradeType=='" + billingSlabSearchCriteria.getTradeType() + "')]", requestInfo);
-        try {
-            Object response = restTemplate.postForObject(uri.toString(), request, Map.class);
-            if (null != response) {
-                String jsonPath = BillingslabConstants.BPA_MDMS_JSONPATH_FOR_MAPPING;
+	public BillingSlab search(BillingSlabSearchCriteria billingSlabSearchCriteria, RequestInfo requestInfo) {
+		StringBuilder uri = new StringBuilder();
+//        billingSlabSearchCriteria.setTenantId(billingSlabSearchCriteria.getTenantId().split("\\.")[0]);
+		MdmsCriteriaReq request = billingslabUtils.prepareMDMSSearchReq(uri,
+				billingSlabSearchCriteria.getTenantId().split("\\.")[0], BillingslabConstants.BPA_MDMS_MODULE_NAME,
+				BillingslabConstants.BPA_MDMS_TRADETYPETOROLEMAPPING,
+				"[?(@.tradeType=='" + billingSlabSearchCriteria.getTradeType() + "')]", requestInfo);
+		try {
+			Object response = restTemplate.postForObject(uri.toString(), request, Map.class);
 
-                List<Map<String, Object>> jsonOutput = JsonPath.read(response, jsonPath);
-                Map<String, Object> billingProperties = jsonOutput.get(0);
-                return BillingSlab.builder().id(String.valueOf(billingProperties.get("id"))).tradeType((String) billingProperties.get("tradeType")).rate(BigDecimal.valueOf((Integer) billingProperties.get("applicationFee"))).build();
-            } else {
-                throw new CustomException("BILLINGSEARCH_NULLRESPONSE", " Found empty response on billingslab search for BPA");
-            }
-        } catch (Exception e) {
-            log.error("Couldn't fetch master: " + BillingslabConstants.BPA_MDMS_TRADETYPETOROLEMAPPING);
-            log.error("Exception: " + e);
-            throw new CustomException("BILLINGSEARCH_ERROR", " Error occured while searching billing slab for BPA");
-        }
-    }
+			if (null != response) {
+				log.info("response111: " + response.toString());
+				String jsonPath = BillingslabConstants.BPA_MDMS_JSONPATH_FOR_MAPPING;
+
+				List<Map<String, Object>> jsonOutput = JsonPath.read(response, jsonPath);
+				Map<String, Object> billingProperties = jsonOutput.get(0);
+				return BillingSlab.builder().id(String.valueOf(billingProperties.get("id")))
+						.tradeType((String) billingProperties.get("tradeType"))
+						.rate(BigDecimal.valueOf((Integer) billingProperties.get("applicationFee"))).build();
+			} else {
+				throw new CustomException("BILLINGSEARCH_NULLRESPONSE",
+						" Found empty response on billingslab search for BPA");
+			}
+		} catch (Exception e) {
+			log.error("Couldn't fetch master: " + BillingslabConstants.BPA_MDMS_TRADETYPETOROLEMAPPING);
+			log.error("Exception: " + e);
+			throw new CustomException("BILLINGSEARCH_ERROR", " Error occured while searching billing slab for BPA");
+		}
+	}
 }
