@@ -64,7 +64,8 @@ public class UserService {
         request.put("name", name);
         request.put("mobileNumber", phoneNo);
         request.put("type", "CITIZEN");
-        request.put("tenantid", tenantId.split("\\.")[0]);
+//        request.put("tenantid", tenantId.split("\\.")[0]);
+        request.put("tenantid", tenantId);
         StringBuilder url = new StringBuilder();
         url.append(appProperties.getUserServiceHost()).append(appProperties.getUserServiceSearchPath());
         try {
@@ -101,7 +102,8 @@ public class UserService {
         user.put("userName", transaction.getUser().getName());
         user.put("active", true);
         user.put("type", "CITIZEN");
-        user.put("tenantId", transaction.getTenantId().split("\\.")[0]);
+//        user.put("tenantId", transaction.getTenantId().split("\\.")[0]);
+        user.put("tenantId", transaction.getTenantId());
         user.put("roles", roles);
 
         request.put("RequestInfo", requestInfo);
