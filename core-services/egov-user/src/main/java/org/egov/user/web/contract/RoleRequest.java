@@ -19,13 +19,13 @@ public class RoleRequest {
 	public RoleRequest(Role domainRole) {
 		this.code = domainRole.getCode();
 		this.name = domainRole.getName();
-		this.tenantId = (domainRole.getCode().equals("CITIZEN") || domainRole.getCode().equals("BPA_ARCHITECT")
+		/*this.tenantId = !(domainRole.getCode().equals("CITIZEN") || domainRole.getCode().equals("BPA_ARCHITECT")
 				|| domainRole.getCode().equals("BPA_BUILDER") || domainRole.getCode().equals("BPA_ENGINEER")
 				|| domainRole.getCode().equals("BPA_STRUCTURALENGINEER")
 				|| domainRole.getCode().equals("BPA_SUPERVISOR") || domainRole.getCode().equals("BPA_TOWNPLANNER"))
-						? domainRole.getTenantId().split("\\.")[0]
-						: domainRole.getTenantId();
-//		this.tenantId = domainRole.getTenantId();
+						? domainRole.getTenantId()
+						: domainRole.getTenantId().split("\\.")[0];*/
+		this.tenantId = domainRole.getTenantId();
 
 	}
 
