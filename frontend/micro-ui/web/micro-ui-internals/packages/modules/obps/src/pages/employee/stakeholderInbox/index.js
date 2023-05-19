@@ -10,7 +10,11 @@ const Inbox = ({ parentRoute }) => {
 
   const { t } = useTranslation()
 
-  const tenantId = Digit.ULBService.getStateId();
+  // const tenantId = Digit.ULBService.getStateId();
+  // const tenantId = Digit.ULBService.getCitizenCurrentTenant();
+  const tenantId = Digit.ULBService.getCurrentUlb()?.code;
+
+  // console.log("Hii");
 
   const searchFormDefaultValues = {}
 

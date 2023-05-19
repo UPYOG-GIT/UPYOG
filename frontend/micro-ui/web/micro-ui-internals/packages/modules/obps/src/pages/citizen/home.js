@@ -22,22 +22,34 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
   const [showToast, setShowToast] = useState(null);
   const [totalCount, setTotalCount] = useState("-");
   let validityDate = null;
-  let roleCode = null;
+  // let roleCode = null;
+  const [roleCode, setRoleCode] = useState([]);
+  // const [userRoles, setUserRoles] = useState([]);
 
+  
   useEffect(async () => {
     //if (uuid) {
-    const usersResponse1 = await Digit.UserService.userSearch(Digit.ULBService.getCurrentTenantId(), { uuid: [userInfo?.info?.uuid] }, {});
-
+    const usersResponse1 = await Digit.UserService.userSearch(Digit.ULBService.getCitizenCurrentTenant(), { uuid: [userInfo?.info?.uuid] }, {});
+    //  console.log("usersResponse1 "+JSON.stringify(usersResponse1))
+    const roles = usersResponse1?.user[0]?.roles?.map((roleData) => roleData.code);
+    // setUserRoles(roles);
+    //  console.log(JSON.stringify(userRoles));
     if (usersResponse1 && usersResponse1.user && usersResponse1.user.length) {
       //console.log("usersResponse11: " + JSON.stringify(usersResponse1));
-      roleCode = usersResponse1?.user[0]?.roles[0]?.code;
-      console.log("roleCode:" + roleCode);
+      const code = usersResponse1?.user[0]?.roles[1]?.code;
+      setRoleCode(code);
+      //  console.log("roleCode:" + roleCode);
       validityDate = usersResponse1?.user[0]?.validityDate;
-      console.log("validityDate: " + validityDate);
+      // console.log("validityDate: " + validityDate);
     }
     //}
   }, []);
+  // const userRoles1 = usersResponse1?.user[0]?.roles?.map((roleData) => roleData.code);
+    //  console.log(JSON.stringify(userRoles));
+    //  console.log("roleCode:" + roleCode);
 
+  // console.log("userInfo" +JSON.stringify(userInfo));
+  // console.log("Tenant "+Digit.ULBService.getCitizenCurrentTenant());
   //console.log("date: "+new Date().toLocaleString());
   const currentDate = new Date();
   const year = currentDate.getFullYear();
@@ -126,6 +138,8 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
           });
         });
         const uniqueRoles = roles?.filter((item, i, ar) => ar.indexOf(item) === i);
+        // console.log("roles "+roles);
+        // console.log("uniqueRoles "+uniqueRoles);
         let isRoute = false;
         uniqueRoles?.map((unRole) => {
           if (userRoles?.includes(unRole) && !isRoute) {

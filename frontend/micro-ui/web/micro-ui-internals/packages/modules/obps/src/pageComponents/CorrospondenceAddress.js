@@ -10,7 +10,8 @@ const CorrospondenceAddress = ({ t, config, onSelect, value, userType, formData 
   const [error, setError] = useState(null);
   const [showToast, setShowToast] = useState(null);
   const [isDisableForNext, setIsDisableForNext] = useState(false);
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  // const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const stateId = Digit.ULBService.getStateId();
   let isopenlink = window.location.href.includes("/openlink/");
   const isCitizenUrl = Digit.Utils.browser.isMobile() ? true : false;
@@ -75,7 +76,7 @@ const CorrospondenceAddress = ({ t, config, onSelect, value, userType, formData 
             },
             "licenseType": "PERMANENT",
             "businessService": "BPAREG",
-            "tenantId": stateId,
+            "tenantId": tenantId,
             "action": "NOWORKFLOW"
           }
         ]

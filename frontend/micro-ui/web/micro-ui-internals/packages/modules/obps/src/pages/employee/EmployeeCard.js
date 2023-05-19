@@ -11,8 +11,15 @@ const OBPSEmployeeHomeCard = () => {
     const location = useLocation()
   
     const tenantId = Digit.ULBService.getCurrentTenantId();
+    // const tenantId1=Digit.ULBService.getCitizenCurrentTenant();
+    const tenantId1=Digit.ULBService.getCurrentUlb()?.code;
     const stateCode = Digit.ULBService.getStateId();
-  
+  //   const userType = window.sessionStorage.getItem("userType");
+  // console.log("userType: "+userType);
+    // console.log("Hello");
+    // console.log(tenantId1)
+    // console.log(tenantId)
+    // console.log(Digit.ULBService.getCurrentUlb()?.code)
     const stakeholderEmployeeRoles = [ { code: "BPAREG_DOC_VERIFIER", tenantId: stateCode }, { code: "BPAREG_APPROVER", tenantId: stateCode }];
     const bpaEmployeeRoles = [ "BPA_FIELD_INSPECTOR", "BPA_NOC_VERIFIER", "BPA_APPROVER", "BPA_VERIFIER", "CEMP"];
 
@@ -65,12 +72,14 @@ const OBPSEmployeeHomeCard = () => {
   
     const { isLoading: isInboxLoadingOfStakeholder, data: dataOfStakeholder } = Digit.Hooks.obps.useBPAInbox({
       tenantId,
+      // tenantId1,
       filters: { ...formInitValueOfStakeholder },
       config:{ enabled: !!checkingForStakeholderRoles }
     });
 
     const { isLoading: isInboxLoading, data : dataOfBPA } = Digit.Hooks.obps.useBPAInbox({
       tenantId,
+      // tenantId1,
       filters: { ...formInitValue },
       config:{ enabled: !!checkingForBPARoles }
     });

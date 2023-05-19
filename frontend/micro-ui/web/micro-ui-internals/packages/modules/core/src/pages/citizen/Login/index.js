@@ -171,7 +171,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
           role: location.state?.role,
           sentTimestamp: sentTimestamp,
         });
-        console.log("DateTime" + Date.now())
+        // console.log("DateTime" + Date.now())
         return;
       } else {
         if (!(location.state && location.state.role === "FSM_DSO")) {

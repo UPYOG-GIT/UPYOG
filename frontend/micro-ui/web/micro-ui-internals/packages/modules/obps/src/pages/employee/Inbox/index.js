@@ -10,10 +10,24 @@ const Inbox = ({ parentRoute }) => {
   window.scroll(0, 0);
   const { t } = useTranslation();
 
+  const userInfo = Digit.UserService.getUser();
+  // console.log("userInfo: " + JSON.stringify(userInfo))
   // const tenantId = Digit.ULBService.getCurrentTenantId();
-  const tenantId = Digit.ULBService.getCitizenCurrentTenant();
+  // const tenantIdCitizen = Digit.ULBService.getCitizenCurrentTenant();  // for citizen
+  // const tenantIdEmployee = Digit.ULBService.getCurrentUlb()?.code;  //for employee
+  const tenantId = userInfo?.info?.type === 'EMPLOYEE' ? Digit.ULBService.getCurrentUlb()?.code : Digit.ULBService.getCitizenCurrentTenant();  //for employee
+  // const tenantId = userInfo?.info?.type === 'EMPLOYEE' ? tenantIdEmployee: tenantIdCitizen;  //for employee
+  // const tenantId = userInfo?.info?.tenantId;  //for employee
+  const userType = window.sessionStorage.getItem("userType");
+  // console.log(userInfo?.info?.type);
+  // console.log(userInfo?.info?.tenantId);
+  // console.log("userType: "+userType);
 
-  //console.log("tenanrId: " + tenantId)
+  // 
+
+  // console.log("tenanrId: " + tenantId)
+  // console.log(Digit.ULBService.getCitizenCurrentTenant())
+  // console.log(Digit.ULBService.getCurrentUlb()?.code)
 
   const searchFormDefaultValues = {};
 

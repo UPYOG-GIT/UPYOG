@@ -8,13 +8,16 @@ import { downloadAndPrintReciept } from "../../../utils";
 const ApplicationDetail = () => {
   const { id } = useParams();
   const { t } = useTranslation();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const state = tenantId?.split('.')[0]
+  // const tenantId = Digit.ULBService.getCurrentTenantId();
+  // const tenantId = Digit.ULBService.getCitizenCurrentTenant();
+  const tenantId = Digit.ULBService.getCurrentUlb()?.code;
+  // const state = tenantId?.split('.')[0]
+  const state = tenantId
   const [showToast, setShowToast] = useState(null);
   const [showOptions, setShowOptions] = useState(false);
   const { isLoading, data: applicationDetails } = Digit.Hooks.obps.useLicenseDetails(state, { applicationNumber: id, tenantId: state }, {});
   const isMobile = window.Digit.Utils.browser.isMobile();
-
+  // console.log("hellloooo")
   const {
     isLoading: updatingApplication,
     isError: updateApplicationError,
@@ -24,7 +27,8 @@ const ApplicationDetail = () => {
   } = Digit.Hooks.obps.useBPAREGApplicationActions(tenantId);
 
   const workflowDetails = Digit.Hooks.useWorkflowDetails({
-    tenantId: tenantId?.split('.')[0],
+    // tenantId: tenantId?.split('.')[0],
+    tenantId: tenantId,
     id: id,
     moduleCode: "BPAREG",
   });

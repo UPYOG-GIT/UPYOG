@@ -10,7 +10,7 @@ const useBPAInbox = ({ tenantId, filters, config={} }) => {
     if (window.location.href.includes("stakeholder-inbox")) moduleName = "BPAREG";
     if (moduleName == "BPAREG") {
       applicationNumber = applicationNo;
-      tenantId = Digit.ULBService.getStateId();
+      tenantId = Digit.ULBService.getCurrentUlb()?.code;
     }
     if(applicationType === "BUILDING_OC_PLAN_SCRUTINY" && (window.location.href.includes("obps/inbox") || window.location.href.includes("obps/bpa/inbox")) &&  businessService) {
       businessService = "BPA_OC"
