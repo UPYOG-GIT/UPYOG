@@ -240,7 +240,20 @@ public class UserTypeQueryBuilder {
 		if (userSearchCriteria.getTenantId() != null) {
 			isAppendAndClause = addAndClauseIfRequired(false, selectQuery);
 			selectQuery.append(" ur.role_tenantid = ?");
-			preparedStatementValues.add(userSearchCriteria.getTenantId().trim());
+			String processedRoleTenantId;
+			if (!isEmpty(userSearchCriteria.getRoleCodes()) && (userSearchCriteria.getRoleCodes().contains("CITIZEN")
+					|| userSearchCriteria.getRoleCodes().contains("BPA_ARCHITECT")
+					|| userSearchCriteria.getRoleCodes().contains("BPA_BUILDER")
+					|| userSearchCriteria.getRoleCodes().contains("BPA_ENGINEER")
+					|| userSearchCriteria.getRoleCodes().contains("BPA_STRUCTURALENGINEER")
+					|| userSearchCriteria.getRoleCodes().contains("BPA_SUPERVISOR")
+					|| userSearchCriteria.getRoleCodes().contains("BPA_TOWNPLANNER"))) {
+				processedRoleTenantId = userSearchCriteria.getTenantId().split("\\.")[0].trim();
+			}else {
+				processedRoleTenantId = userSearchCriteria.getTenantId().trim();
+			}
+//			preparedStatementValues.add(userSearchCriteria.getTenantId().trim());
+			preparedStatementValues.add(processedRoleTenantId);
 		}
 
 		if (!isEmpty(userSearchCriteria.getRoleCodes())) {
