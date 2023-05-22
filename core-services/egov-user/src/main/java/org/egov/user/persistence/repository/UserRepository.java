@@ -444,13 +444,30 @@ public class UserRepository {
         List<Map<String, Object>> batchValues = new ArrayList<>(entityUser.getRoles().size());
 
         for (Role role : entityUser.getRoles()) {
+        	String processedRoleTenantId;
+
+			if (role.getCode().equals("CITIZEN") || role.getCode().equals("BPA_ARCHITECT")
+					|| role.getCode().equals("BPA_BUILDER") || role.getCode().equals("BPA_ENGINEER")
+					|| role.getCode().equals("BPA_STRUCTURALENGINEER") || role.getCode().equals("BPA_SUPERVISOR")
+					|| role.getCode().equals("BPA_TOWNPLANNER")) {
+				processedRoleTenantId = role.getTenantId().split("\\.")[0];
+			} else {
+				processedRoleTenantId = role.getTenantId();
+			}
             batchValues.add(
                     new MapSqlParameterSource("role_code", role.getCode())
-                            .addValue("role_tenantid", role.getTenantId())
+                            .addValue("role_tenantid", processedRoleTenantId)
                             .addValue("user_id", entityUser.getId())
                             .addValue("user_tenantid", entityUser.getTenantId())
                             .addValue("lastmodifieddate", new Date())
                             .getValues());
+//            batchValues.add(
+//            		new MapSqlParameterSource("role_code", role.getCode())
+//            		.addValue("role_tenantid", role.getTenantId())
+//            		.addValue("user_id", entityUser.getId())
+//            		.addValue("user_tenantid", entityUser.getTenantId())
+//            		.addValue("lastmodifieddate", new Date())
+//            		.getValues());
         }
         namedParameterJdbcTemplate.batchUpdate(RoleQueryBuilder.INSERT_USER_ROLES,
                 batchValues.toArray(new Map[entityUser.getRoles().size()]));
