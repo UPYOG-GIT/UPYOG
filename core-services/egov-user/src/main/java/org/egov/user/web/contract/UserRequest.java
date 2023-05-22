@@ -215,8 +215,6 @@ public class UserRequest {
         return roleEntities.stream()
                 .map(role -> {
                     if (role.getCode().equals("CITIZEN")) {
-//                        String tenantId = role.getTenantId();
-//                        String[] tenantIdParts = tenantId.split("\\.");
                             role.setTenantId(role.getTenantId().split("\\.")[0]);
                     }
                     return new RoleRequest(role);
