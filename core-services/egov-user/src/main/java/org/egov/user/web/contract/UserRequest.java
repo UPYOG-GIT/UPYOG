@@ -211,15 +211,15 @@ public class UserRequest {
 
     private Set<RoleRequest> convertDomainRoleToContract(Set<Role> roleEntities) {
         if (roleEntities == null) return new HashSet<>();
-//        return roleEntities.stream().map(RoleRequest::new).collect(Collectors.toSet());
-        return roleEntities.stream()
-                .map(role -> {
-                    if (role.getCode().equals("CITIZEN")) {
-                            role.setTenantId(role.getTenantId().split("\\.")[0]);
-                    }
-                    return new RoleRequest(role);
-                })
-                .collect(Collectors.toSet());
+        return roleEntities.stream().map(RoleRequest::new).collect(Collectors.toSet());
+//        return roleEntities.stream()
+//                .map(role -> {
+//                    if (role.getCode().equals("CITIZEN")) {
+//                            role.setTenantId(role.getTenantId().split("\\.")[0]);
+//                    }
+//                    return new RoleRequest(role);
+//                })
+//                .collect(Collectors.toSet());
     }
 
     @JsonIgnore
