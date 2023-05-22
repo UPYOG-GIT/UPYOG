@@ -255,7 +255,7 @@ public class UserTypeQueryBuilder {
 //			preparedStatementValues.add(userSearchCriteria.getTenantId().trim());
 			preparedStatementValues.add(processedRoleTenantId);
 			
-			selectQuery.append(" ur.user_tenantid = ?");
+			selectQuery.append(" AND ur.user_tenantid = ?");
 			preparedStatementValues.add(userSearchCriteria.getTenantId().trim());
 		}
 
