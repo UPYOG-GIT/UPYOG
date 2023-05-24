@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
@@ -12,6 +12,9 @@ const ToolTipWrapper = ({ child, label, t }) => (
 );
 
 const EmployeeSideBar = () => {
+  const [roleCode, setRoleCode] = useState([]);
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData.code);
   const STADMIN = Digit.UserService.hasAccess("STADMIN");
   const NATADMIN = Digit.UserService.hasAccess("NATADMIN");
 
@@ -23,16 +26,39 @@ const EmployeeSideBar = () => {
   if (NATADMIN) {
     key = "ACTION_TEST_NATDASHBOARD";
   }
-
-  function getRedirectionUrl(){
-    if (NATADMIN)
-      return "/digit-ui/employee/payment/integration/dss/NURT_DASHBOARD";
-    else if(STADMIN)
-      return "/employee/integration/dss/home";
-    else
-      return "/employee";
+  
+  function getRedirectionUrl() {
+    const [redirectUrl, setRedirectUrl] = useState(""); 
+  
+    useEffect(() => {
+      async function fetchData() {
+        const usersResponse = await Digit.UserService.userSearch(
+          Digit.ULBService.getCitizenCurrentTenant(),
+          { uuid: [userInfo?.info?.uuid] },
+          {}
+        );
+  
+        const roles = usersResponse?.user[0]?.roles?.map((roleData) => roleData.code);
+  
+     //   console.log("-----" + JSON.stringify(roles));
+  
+        if (NATADMIN) {
+          setRedirectUrl("/digit-ui/employee/payment/integration/dss/NURT_DASHBOARD");
+        } else if (STADMIN) {
+          setRedirectUrl("/employee/integration/dss/home");
+        } else if (roles.includes("BPAREG_APPROVER")) { 
+          setRedirectUrl("/digit-ui/employee");
+        } else {
+          setRedirectUrl("/employee");
+        }
+      }
+  
+      fetchData();
+    }, []);
+  
+    return redirectUrl;
   }
-
+  
   const { t } = useTranslation();
   return (
     <div className="sidebar">
