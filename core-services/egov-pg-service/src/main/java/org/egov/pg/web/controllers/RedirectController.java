@@ -19,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -52,8 +53,9 @@ public class RedirectController {
 
 	private Cipher dcipher;
 
-	@Autowired
-	private TransactionRepository transactionRepository;
+//	@Autowired
+//	private TransactionRepository transactionRepository;
+	
 	
 	@Autowired
 	public RedirectController(TransactionService transactionService) {
@@ -220,7 +222,13 @@ public class RedirectController {
 
 	private void getWorkingKey(String tenantId) {
 		log.info("inside getWorkingKey..... tenantId: " + tenantId);
-		Map<String, Object> ccAvenueDetails = transactionRepository.getCcavenueDetails(tenantId);
+		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId);
+		
+//		String sqlQuery = "SELECT merchant_id,access_code,working_key FROM eg_pg_ccavenue_details WHERE tenant_id='"
+//				+ tenantId + "'";
+//		log.info("sqlQuery: "+sqlQuery);
+////		return jdbcTemplate.queryForList(sql, new Object[] { tenantId });
+//		Map<String, Object> ccAvenueDetails =  jdbcTemplate.queryForMap(sqlQuery);
 		this.workingKey = ccAvenueDetails.get("working_key").toString();
 		
 //		if (tenantId.equals("cg.birgaon")) {

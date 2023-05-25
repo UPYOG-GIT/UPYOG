@@ -28,6 +28,7 @@ import org.egov.common.contract.request.User;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.repository.TransactionRepository;
 import org.egov.pg.service.Gateway;
+import org.egov.pg.service.TransactionService;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CcavenueGateway implements Gateway {
 
 	@Autowired
-	private TransactionRepository transactionRepository;
+	private TransactionService transactionService;
 	
 	private final String GATEWAY_NAME = "CCAVENUE";
 	private String ACCESS_CODE;
@@ -726,7 +727,7 @@ public class CcavenueGateway implements Gateway {
 //			this.WORKING_KEY = "7B3E3FF7D56888F44E1A7D46DF24CF52";
 //		}
 		
-		Map<String, Object> ccAvenueDetails = transactionRepository.getCcavenueDetails(tenantId);
+		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId);
 		this.MERCHANT_ID = ccAvenueDetails.get("merchant_id").toString();
 		this.ACCESS_CODE = ccAvenueDetails.get("access_code").toString();
 		this.WORKING_KEY = ccAvenueDetails.get("working_key").toString();
