@@ -3,12 +3,14 @@ package org.egov.pg.web.controllers;
 import java.security.MessageDigest;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.egov.pg.repository.TransactionRepository;
 import org.egov.pg.service.TransactionService;
 import org.egov.pg.service.gateways.ccavenue.CcavenueResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -50,6 +53,10 @@ public class RedirectController {
 
 	private Cipher dcipher;
 
+//	@Autowired
+//	private TransactionRepository transactionRepository;
+	
+	
 	@Autowired
 	public RedirectController(TransactionService transactionService) {
 		this.transactionService = transactionService;
@@ -215,12 +222,21 @@ public class RedirectController {
 
 	private void getWorkingKey(String tenantId) {
 		log.info("inside getWorkingKey..... tenantId: " + tenantId);
-		if (tenantId.equals("cg.birgaon")) {
-			this.workingKey = "B27E5242E8FC395A07F65AB900F021FA";
-		} else if (tenantId.equals("cg.dhamtari")) {
-			this.workingKey = "D682025F99E01FA0F0FAA079B1B3F793";
-		} else if (tenantId.equals("cg.bhilaicharoda")) {
-			this.workingKey = "7B3E3FF7D56888F44E1A7D46DF24CF52";
-		}
+		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId);
+		
+//		String sqlQuery = "SELECT merchant_id,access_code,working_key FROM eg_pg_ccavenue_details WHERE tenant_id='"
+//				+ tenantId + "'";
+//		log.info("sqlQuery: "+sqlQuery);
+////		return jdbcTemplate.queryForList(sql, new Object[] { tenantId });
+//		Map<String, Object> ccAvenueDetails =  jdbcTemplate.queryForMap(sqlQuery);
+		this.workingKey = ccAvenueDetails.get("working_key").toString();
+		
+//		if (tenantId.equals("cg.birgaon")) {
+//			this.workingKey = "B27E5242E8FC395A07F65AB900F021FA";
+//		} else if (tenantId.equals("cg.dhamtari")) {
+//			this.workingKey = "D682025F99E01FA0F0FAA079B1B3F793";
+//		} else if (tenantId.equals("cg.bhilaicharoda")) {
+//			this.workingKey = "7B3E3FF7D56888F44E1A7D46DF24CF52";
+//		}
 	}
 }
