@@ -1,14 +1,16 @@
 package org.egov.pg.repository;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.pg.models.Transaction;
 import org.egov.pg.web.models.TransactionCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Repository
 @Slf4j
@@ -50,10 +52,17 @@ public class TransactionRepository {
 		String sql = "select txn_response from eg_pg_resp where txn_id=?";
 		return jdbcTemplate.queryForObject(sql, new Object[] { txnId }, String.class);
 	}
-	
+
 	public String getTenantId(String txnId) {
 		String sql = "select tenant_id from eg_pg_transactions where txn_id=?";
 		return jdbcTemplate.queryForObject(sql, new Object[] { txnId }, String.class);
 	}
 
+	public Map<String, Object> getCcavenueDetails(String tenantId) {
+		String sqlQuery = "SELECT merchant_id,access_code,working_key FROM eg_pg_ccavenue_details WHERE tenant_id='"
+				+ tenantId + "'";
+		log.info("sqlQuery: "+sqlQuery);
+//		return jdbcTemplate.queryForList(sql, new Object[] { tenantId });
+		return jdbcTemplate.queryForMap(sqlQuery);
+	}
 }

@@ -26,6 +26,7 @@ import javax.net.ssl.HttpsURLConnection;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.pg.models.Transaction;
+import org.egov.pg.repository.TransactionRepository;
 import org.egov.pg.service.Gateway;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
@@ -53,6 +54,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CcavenueGateway implements Gateway {
 
+	@Autowired
+	private TransactionRepository transactionRepository;
+	
 	private final String GATEWAY_NAME = "CCAVENUE";
 	private String ACCESS_CODE;
 //	private final String ACCESS_CODE;
@@ -708,19 +712,24 @@ public class CcavenueGateway implements Gateway {
 
 	private void setGatewayDetails(String tenantId) {
 		log.info("inside setGatewayDetails..... tenantId: " + tenantId);
-		if (tenantId.equals("cg.birgaon")) {
-			this.MERCHANT_ID = "2136858";
-			this.ACCESS_CODE = "AVWN26KC60AF20NWFA";
-			this.WORKING_KEY = "B27E5242E8FC395A07F65AB900F021FA";
-		} else if (tenantId.equals("cg.dhamtari")) {
-			this.MERCHANT_ID = "1941257";
-			this.ACCESS_CODE = "AVII96KA89BB16IIBB";
-			this.WORKING_KEY = "D682025F99E01FA0F0FAA079B1B3F793";
-		} else if (tenantId.equals("cg.bhilaicharoda")) {
-			this.MERCHANT_ID = "2160767";
-			this.ACCESS_CODE = "AVII29KC44BF31IIFB";
-			this.WORKING_KEY = "7B3E3FF7D56888F44E1A7D46DF24CF52";
-		}
+//		if (tenantId.equals("cg.birgaon")) {
+//			this.MERCHANT_ID = "2136858";
+//			this.ACCESS_CODE = "AVWN26KC60AF20NWFA";
+//			this.WORKING_KEY = "B27E5242E8FC395A07F65AB900F021FA";
+//		} else if (tenantId.equals("cg.dhamtari")) {
+//			this.MERCHANT_ID = "1941257";
+//			this.ACCESS_CODE = "AVII96KA89BB16IIBB";
+//			this.WORKING_KEY = "D682025F99E01FA0F0FAA079B1B3F793";
+//		} else if (tenantId.equals("cg.bhilaicharoda")) {
+//			this.MERCHANT_ID = "2160767";
+//			this.ACCESS_CODE = "AVII29KC44BF31IIFB";
+//			this.WORKING_KEY = "7B3E3FF7D56888F44E1A7D46DF24CF52";
+//		}
+		
+		Map<String, Object> ccAvenueDetails = transactionRepository.getCcavenueDetails(tenantId);
+		this.MERCHANT_ID = ccAvenueDetails.get("merchant_id").toString();
+		this.ACCESS_CODE = ccAvenueDetails.get("access_code").toString();
+		this.WORKING_KEY = ccAvenueDetails.get("working_key").toString();
 	}
 
 }
