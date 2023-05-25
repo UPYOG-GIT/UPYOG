@@ -10,6 +10,7 @@ import { getBusinessServices, convertDateToEpoch, downloadPdf, printPdf } from "
 import cloneDeep from "lodash/cloneDeep";
 
 const BpaApplicationDetail = () => {
+
   const { id } = useParams();
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -296,6 +297,7 @@ const BpaApplicationDetail = () => {
     }
   }
 
+  
   if(data?.comparisionReport && data && data?.applicationData?.businessService === "BPA_OC"){
     dowloadOptions.push({
       order: 4,
