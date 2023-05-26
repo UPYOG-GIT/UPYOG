@@ -37,43 +37,44 @@ public class UserService {
 
 	public UserDetailResponse getUsersForBpas(List<BPA> bpas) {
 		UserSearchRequest userSearchRequest = new UserSearchRequest();
-		 List<String> ids = new ArrayList<String>();
-		 List<String> uuids = new ArrayList<String>();
-		 bpas.forEach(bpa -> {
-			 if(bpa.getLandInfo()!=null){
-			 bpa.getLandInfo().getOwners().forEach(owner->{
-				 if (owner.getUuid() != null)
-					 ids.add(owner.getUuid().toString());
-					
+		List<String> ids = new ArrayList<String>();
+		List<String> uuids = new ArrayList<String>();
+		bpas.forEach(bpa -> {
+			if (bpa.getLandInfo() != null) {
+				bpa.getLandInfo().getOwners().forEach(owner -> {
+					if (owner.getUuid() != null)
+						ids.add(owner.getUuid().toString());
+
 					if (owner.getUuid() != null)
 						uuids.add(owner.getUuid().toString());
-			 });
-		 }
+				});
+			}
 		});
-			
-		 userSearchRequest.setId(ids);
-		 userSearchRequest.setUuid(uuids);
-			StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
-			return userCall(userSearchRequest, uri);
+
+		userSearchRequest.setId(ids);
+		userSearchRequest.setUuid(uuids);
+		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
+		return userCall(userSearchRequest, uri);
 	}
+
 	/**
 	 * Returns UserDetailResponse by calling user service with given uri and object
 	 * 
-	 * @param userRequest
-	 *            Request object for user service
-	 * @param uri
-	 *            The address of the end point
+	 * @param userRequest Request object for user service
+	 * @param uri         The address of the end point
 	 * @return Response from user service as parsed as userDetailResponse
 	 */
 	@SuppressWarnings("rawtypes")
 	UserDetailResponse userCall(Object userRequest, StringBuilder uri) {
 		String dobFormat = null;
+		log.info("uri++++++: " + uri.toString());
 		if (uri.toString().contains(config.getUserSearchEndpoint())
 				|| uri.toString().contains(config.getUserUpdateEndpoint()))
 			dobFormat = "yyyy-MM-dd";
 		else if (uri.toString().contains(config.getUserCreateEndpoint()))
 			dobFormat = "dd/MM/yyyy";
 		try {
+			log.info("dobFormat++++++++: " + dobFormat);
 			LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, userRequest);
 			parseResponse(responseMap, dobFormat);
 			UserDetailResponse userDetailResponse = mapper.convertValue(responseMap, UserDetailResponse.class);
@@ -86,10 +87,9 @@ public class UserService {
 	/**
 	 * Parses date formats to long for all users in responseMap
 	 * 
-	 * @param responeMap
-	 *            LinkedHashMap got from user api response
+	 * @param responeMap LinkedHashMap got from user api response
 	 */
-	@SuppressWarnings({"unchecked", "rawtypes"})
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void parseResponse(LinkedHashMap responeMap, String dobFormat) {
 		List<LinkedHashMap> users = (List<LinkedHashMap>) responeMap.get("user");
 		String format1 = "dd-MM-yyyy HH:mm:ss";
@@ -109,10 +109,8 @@ public class UserService {
 	/**
 	 * Converts date to long
 	 * 
-	 * @param date
-	 *            date to be parsed
-	 * @param format
-	 *            Format of the date
+	 * @param date   date to be parsed
+	 * @param format Format of the date
 	 * @return Long value of date
 	 */
 	private Long dateTolong(String date, String format) {
@@ -129,14 +127,12 @@ public class UserService {
 	/**
 	 * Call search in user service based on ownerids from criteria
 	 * 
-	 * @param criteria
-	 *            The search criteria containing the ownerids
-	 * @param requestInfo
-	 *            The requestInfo of the request
+	 * @param criteria    The search criteria containing the ownerids
+	 * @param requestInfo The requestInfo of the request
 	 * @return Search response from user service based on ownerIds
 	 */
 	public UserDetailResponse getUser(BPASearchCriteria criteria, RequestInfo requestInfo) {
-		log.info("criteria.getTenantId()+++++++ "+criteria.getTenantId());
+		log.info("criteria.getTenantId()+++++++ " + criteria.getTenantId());
 		UserSearchRequest userSearchRequest = getUserSearchRequest(criteria, requestInfo);
 		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
 		UserDetailResponse userDetailResponse = userCall(userSearchRequest, uri);
@@ -146,10 +142,8 @@ public class UserService {
 	/**
 	 * Creates userSearchRequest from bpaSearchCriteria
 	 * 
-	 * @param criteria
-	 *            The bpaSearch criteria
-	 * @param requestInfo
-	 *            The requestInfo of the request
+	 * @param criteria    The bpaSearch criteria
+	 * @param requestInfo The requestInfo of the request
 	 * @return The UserSearchRequest based on ownerIds
 	 */
 	private UserSearchRequest getUserSearchRequest(BPASearchCriteria criteria, RequestInfo requestInfo) {
@@ -164,57 +158,59 @@ public class UserService {
 			userSearchRequest.setUuid(criteria.getOwnerIds());
 		return userSearchRequest;
 	}
-	
-	private UserDetailResponse searchByUserName(String userName,String tenantId){
-        UserSearchRequest userSearchRequest = new UserSearchRequest();
-        userSearchRequest.setUserType("CITIZEN");
-        userSearchRequest.setUserName(userName);
-        userSearchRequest.setTenantId(tenantId);
-        StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
-        return userCall(userSearchRequest,uri);
 
-    }
-	
-	private String getStateLevelTenant(String tenantId){
-        return tenantId.split("\\.")[0];
-    }
+	private UserDetailResponse searchByUserName(String userName, String tenantId) {
+		UserSearchRequest userSearchRequest = new UserSearchRequest();
+		userSearchRequest.setUserType("CITIZEN");
+		userSearchRequest.setUserName(userName);
+		userSearchRequest.setTenantId(tenantId);
+		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
+		return userCall(userSearchRequest, uri);
+
+	}
+
+	private String getStateLevelTenant(String tenantId) {
+		return tenantId.split("\\.")[0];
+	}
 
 	/**
-     * Searches registered user for mobileNumbers in the given BPA
-     * @param bpa
-     * @return uuids of the users
-     */
-    public Set<String> getUUidFromUserName(BPA bpa, Map<String, String> mobilenumberToUUIDs){
+	 * Searches registered user for mobileNumbers in the given BPA
+	 * 
+	 * @param bpa
+	 * @return uuids of the users
+	 */
+	public Set<String> getUUidFromUserName(BPA bpa, Map<String, String> mobilenumberToUUIDs) {
 
-        String tenantId = bpa.getTenantId();
-        List<OwnerInfo> ownerInfos = bpa.getLandInfo().getOwners();
-       // List<OwnerInfo> ownerInfos = bpa.getLandInfo().getOwners().stream().filter(ow -> ow.getActive()).collect(Collectors.toList());
-        Set<String> mobileNumbers = new HashSet<>();
+		String tenantId = bpa.getTenantId();
+		List<OwnerInfo> ownerInfos = bpa.getLandInfo().getOwners();
+		// List<OwnerInfo> ownerInfos = bpa.getLandInfo().getOwners().stream().filter(ow
+		// -> ow.getActive()).collect(Collectors.toList());
+		Set<String> mobileNumbers = new HashSet<>();
 
-        // Get all unique mobileNumbers in the license
-        ownerInfos.forEach(owner -> {
-			if(owner.getActive())
-			{
+		// Get all unique mobileNumbers in the license
+		ownerInfos.forEach(owner -> {
+			if (owner.getActive()) {
 				mobileNumbers.add(owner.getMobileNumber());
 			}
-        });
+		});
 
-        Set<String> uuids = new HashSet<>();
+		Set<String> uuids = new HashSet<>();
 
-        // For every unique mobilenumber search the use with mobilenumber as username and get uuid
-        mobileNumbers.forEach(mobileNumber -> {
+		// For every unique mobilenumber search the use with mobilenumber as username
+		// and get uuid
+		mobileNumbers.forEach(mobileNumber -> {
 //            UserDetailResponse userDetailResponse = searchByUserName(mobileNumber, getStateLevelTenant(tenantId));
-            UserDetailResponse userDetailResponse = searchByUserName(mobileNumber, tenantId);
-            if(!CollectionUtils.isEmpty(userDetailResponse.getUser())){
-					mobilenumberToUUIDs.put(mobileNumber,userDetailResponse.getUser().get(0).getUuid());
-            }
-        });
+			UserDetailResponse userDetailResponse = searchByUserName(mobileNumber, tenantId);
+			if (!CollectionUtils.isEmpty(userDetailResponse.getUser())) {
+				mobilenumberToUUIDs.put(mobileNumber, userDetailResponse.getUser().get(0).getUuid());
+			}
+		});
 
-		for(String value: mobilenumberToUUIDs.values()){
+		for (String value : mobilenumberToUUIDs.values()) {
 			uuids.add(value);
 		}
 
 		return uuids;
-    }
-    
+	}
+
 }
