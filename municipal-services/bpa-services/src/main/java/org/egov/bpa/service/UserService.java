@@ -134,6 +134,7 @@ public class UserService {
 	public UserDetailResponse getUser(BPASearchCriteria criteria, RequestInfo requestInfo) {
 		log.info("criteria.getTenantId()+++++++ " + criteria.getTenantId());
 		UserSearchRequest userSearchRequest = getUserSearchRequest(criteria, requestInfo);
+		log.info("userSearchRequest.getTenantId(): " + userSearchRequest.getTenantId());
 		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
 		UserDetailResponse userDetailResponse = userCall(userSearchRequest, uri);
 		return userDetailResponse;
