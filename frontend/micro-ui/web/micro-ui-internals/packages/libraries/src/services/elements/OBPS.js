@@ -53,7 +53,7 @@ export const OBPSService = {
       params: {},
       auth: true,
     }),
-    updateNOC: (details, tenantId) =>
+  updateNOC: (details, tenantId) =>
     Request({
       url: Urls.obps.updateNOC,
       data: details,
@@ -64,7 +64,7 @@ export const OBPSService = {
       params: {},
       auth: true,
     }),
-  BPASearch:(tenantId, params) =>
+  BPASearch: (tenantId, params) =>
     Request({
       url: Urls.obps.bpaSearch,
       params: { tenantId, ...params },
@@ -72,7 +72,7 @@ export const OBPSService = {
       userService: true,
       method: "POST"
     }),
-  BPAREGSearch:(tenantId, details, params) =>
+  BPAREGSearch: (tenantId, details, params) =>
     Request({
       url: Urls.obps.bpaRegSearch,
       params: { ...params },
@@ -81,18 +81,18 @@ export const OBPSService = {
       method: "POST",
       data: details,
     }),
-    BPAREGCreate: (details, tenantId) =>
+  BPAREGCreate: (details, tenantId) =>
     Request({
       url: Urls.obps.bpaRegCreate,
       data: details,
       useCache: false,
       setTimeParam: false,
-      userService: window.location.href.includes("openlink")? false : true,
+      userService: window.location.href.includes("openlink") ? false : true,
       method: "POST",
       params: {},
       auth: window.location.href.includes("openlink") ? false : true,
     }),
-    BPAREGGetBill: (tenantId, filters = {}) =>
+  BPAREGGetBill: (tenantId, filters = {}) =>
     Request({
       url: Urls.obps.bpaRegGetBill,
       useCache: false,
@@ -114,10 +114,10 @@ export const OBPSService = {
       data: details,
       useCache: false,
       setTimeParam: false,
-      userService:  window.location.href.includes("openlink") ? false : true,
+      userService: window.location.href.includes("openlink") ? false : true,
       method: "POST",
       params: {},
-      auth:  window.location.href.includes("openlink") ? false : true,
+      auth: window.location.href.includes("openlink") ? false : true,
     }),
   receipt_download: (bussinessService, consumerCode, tenantId, filters = {}) =>
     Request({
@@ -153,17 +153,17 @@ export const OBPSService = {
     const paymentRes = await Digit.PaymentService.recieptSearch(
       License?.tenantId,
       "BPAREG",
-      {consumerCodes: License?.applicationNumber, isEmployee:true}
+      { consumerCodes: License?.applicationNumber, isEmployee: true }
     );
 
     const mdmsRes = await MdmsService.getMultipleTypes(License?.tenantId, "StakeholderRegistraition", ["TradeTypetoRoleMapping"]);
 
     if (License?.tradeLicenseDetail?.applicationDocuments?.length && mdmsRes?.StakeholderRegistraition?.TradeTypetoRoleMapping?.length > 0) {
       mdmsRes?.StakeholderRegistraition?.TradeTypetoRoleMapping?.map(doc => {
-        if(doc?.docTypes?.length > 0 && doc?.tradeType == License?.tradeLicenseDetail?.tradeUnits?.[0]?.tradeType) {
+        if (doc?.docTypes?.length > 0 && doc?.tradeType == License?.tradeLicenseDetail?.tradeUnits?.[0]?.tradeType) {
           doc?.docTypes?.map(docType => {
             License?.tradeLicenseDetail?.applicationDocuments?.forEach(document => {
-              if(docType?.code == document?.documentType && docType?.info) document.info = docType?.info
+              if (docType?.code == document?.documentType && docType?.info) document.info = docType?.info
             })
           })
         }
@@ -173,82 +173,82 @@ export const OBPSService = {
     const appDocumentFileStoreIds = License?.tradeLicenseDetail?.applicationDocuments?.map(appDoc => appDoc?.fileStoreId)
     let fileDetails = {};
     if (appDocumentFileStoreIds?.length > 0) {
-       fileDetails =  await UploadServices.Filefetch(appDocumentFileStoreIds, Digit.ULBService.getStateId());
+      fileDetails = await UploadServices.Filefetch(appDocumentFileStoreIds, Digit.ULBService.getStateId());
     }
 
     const details = [
       {
         title: " ",
         values: [
-          { title: "BPA_APPLICATION_NUMBER_LABEL", value: License?.applicationNumber || "NA"  }
+          { title: "BPA_APPLICATION_NUMBER_LABEL", value: License?.applicationNumber || "NA" }
         ]
       },
       License?.tradeLicenseDetail?.tradeUnits?.[0]?.tradeType.includes("ARCHITECT") ? {
-      title: "BPA_LICENSE_DETAILS_LABEL",
-      asSectionHeader: true,
-      values: [
-        { title: "BPA_LICENSE_TYPE", value: `TRADELICENSE_TRADETYPE_${License?.tradeLicenseDetail?.tradeUnits?.[0]?.tradeType?.split(".")[0]}` || "NA" },
-        { title: "BPA_COUNCIL_OF_ARCH_NO_LABEL", value: License?.tradeLicenseDetail?.additionalDetail?.counsilForArchNo || "NA" }
-      ]
-    } : {
-      title: "BPA_LICENSE_DETAILS_LABEL",
-      asSectionHeader: true,
-      values: [
-        { title: "BPA_LICENSE_TYPE", value: `TRADELICENSE_TRADETYPE_${License?.tradeLicenseDetail?.tradeUnits?.[0]?.tradeType?.split(".")[0]}` || "NA"  }
-      ]
-    }, {
-      title: "BPA_LICENSEE_DETAILS_HEADER_OWNER_INFO",
-      asSectionHeader: true,
-      values: [
-        { title: "BPA_APPLICANT_NAME_LABEL", value: License?.tradeLicenseDetail?.owners?.[0]?.name || "NA"  },
-        { title: "BPA_APPLICANT_GENDER_LABEL", value: License?.tradeLicenseDetail?.owners?.[0]?.gender || "NA"  },
-        { title: "BPA_OWNER_MOBILE_NO_LABEL", value: License?.tradeLicenseDetail?.owners?.[0]?.mobileNumber || "NA"  },
-        { title: "BPA_APPLICANT_EMAIL_LABEL", value: License?.tradeLicenseDetail?.owners?.[0]?.emailId || "NA"   },
-        { title: "BPA_APPLICANT_PAN_NO", value: License?.tradeLicenseDetail?.owners?.[0]?.pan || "NA" }
-      ]
-    }, {
-      title: "BPA_PERMANANT_ADDRESS_LABEL",
-      asSectionHeader: true,
-      values: [
-        { title: "BPA_PERMANANT_ADDRESS_LABEL", value: License?.tradeLicenseDetail?.owners?.[0]?.permanentAddress || "NA" }
-      ]
-    }, {
-      title: "BPA_APPLICANT_CORRESPONDENCE_ADDRESS_LABEL",
-      asSectionHeader: true,
-      values: [
-        { title: "BPA_APPLICANT_CORRESPONDENCE_ADDRESS_LABEL", value: License?.tradeLicenseDetail?.owners?.[0]?.correspondenceAddress || "NA"  }
-      ]
-    },{
-      title: "BPA_DOCUMENT_DETAILS_LABEL",
-      asSectionHeader: true,
-      additionalDetails: {
-        documentsWithUrl: [{
-          title: "",
-          values: License?.tradeLicenseDetail?.applicationDocuments?.map(doc => ({
-            title: `BPAREG_HEADER_${doc?.documentType?.replaceAll('.', '_')}`,
-            documentType: doc?.documentType,
-            documentUid: doc?.documentUid,
-            fileStoreId: doc?.fileStoreId,
-            id: doc?.id,
-            docInfo: doc?.info,
-            url: fileDetails?.data[doc?.fileStoreId] ? fileDetails?.data[doc?.fileStoreId]?.split(',')[0] : ""
-          }))
-        }]
-      },
-    },
-    paymentRes?.Payments?.length > 0 && {
-      title: "BPA_FEE_DETAILS_LABEL",
-      additionalDetails: {
-        inspectionReport: [],
+        title: "BPA_LICENSE_DETAILS_LABEL",
+        asSectionHeader: true,
         values: [
-          { title: "BPAREG_FEES", value: <span>&#8377;{paymentRes?.Payments?.[0]?.totalAmountPaid}</span>},
-          { title: "BPA_STATUS_LABEL", isTransLate: true, isStatus: true, value: paymentRes?.Payments?.[0]?.totalAmountPaid ? ("WF_BPA_PAID") : "NA", isTransLate:true }
+          { title: "BPA_LICENSE_TYPE", value: `TRADELICENSE_TRADETYPE_${License?.tradeLicenseDetail?.tradeUnits?.[0]?.tradeType?.split(".")[0]}` || "NA" },
+          { title: "BPA_COUNCIL_OF_ARCH_NO_LABEL", value: License?.tradeLicenseDetail?.additionalDetail?.counsilForArchNo || "NA" }
         ]
+      } : {
+        title: "BPA_LICENSE_DETAILS_LABEL",
+        asSectionHeader: true,
+        values: [
+          { title: "BPA_LICENSE_TYPE", value: `TRADELICENSE_TRADETYPE_${License?.tradeLicenseDetail?.tradeUnits?.[0]?.tradeType?.split(".")[0]}` || "NA" }
+        ]
+      }, {
+        title: "BPA_LICENSEE_DETAILS_HEADER_OWNER_INFO",
+        asSectionHeader: true,
+        values: [
+          { title: "BPA_APPLICANT_NAME_LABEL", value: License?.tradeLicenseDetail?.owners?.[0]?.name || "NA" },
+          { title: "BPA_APPLICANT_GENDER_LABEL", value: License?.tradeLicenseDetail?.owners?.[0]?.gender || "NA" },
+          { title: "BPA_OWNER_MOBILE_NO_LABEL", value: License?.tradeLicenseDetail?.owners?.[0]?.mobileNumber || "NA" },
+          { title: "BPA_APPLICANT_EMAIL_LABEL", value: License?.tradeLicenseDetail?.owners?.[0]?.emailId || "NA" },
+          { title: "BPA_APPLICANT_PAN_NO", value: License?.tradeLicenseDetail?.owners?.[0]?.pan || "NA" }
+        ]
+      }, {
+        title: "BPA_PERMANANT_ADDRESS_LABEL",
+        asSectionHeader: true,
+        values: [
+          { title: "BPA_PERMANANT_ADDRESS_LABEL", value: License?.tradeLicenseDetail?.owners?.[0]?.permanentAddress || "NA" }
+        ]
+      }, {
+        title: "BPA_APPLICANT_CORRESPONDENCE_ADDRESS_LABEL",
+        asSectionHeader: true,
+        values: [
+          { title: "BPA_APPLICANT_CORRESPONDENCE_ADDRESS_LABEL", value: License?.tradeLicenseDetail?.owners?.[0]?.correspondenceAddress || "NA" }
+        ]
+      }, {
+        title: "BPA_DOCUMENT_DETAILS_LABEL",
+        asSectionHeader: true,
+        additionalDetails: {
+          documentsWithUrl: [{
+            title: "",
+            values: License?.tradeLicenseDetail?.applicationDocuments?.map(doc => ({
+              title: `BPAREG_HEADER_${doc?.documentType?.replaceAll('.', '_')}`,
+              documentType: doc?.documentType,
+              documentUid: doc?.documentUid,
+              fileStoreId: doc?.fileStoreId,
+              id: doc?.id,
+              docInfo: doc?.info,
+              url: fileDetails?.data[doc?.fileStoreId] ? fileDetails?.data[doc?.fileStoreId]?.split(',')[0] : ""
+            }))
+          }]
+        },
+      },
+      paymentRes?.Payments?.length > 0 && {
+        title: "BPA_FEE_DETAILS_LABEL",
+        additionalDetails: {
+          inspectionReport: [],
+          values: [
+            { title: "BPAREG_FEES", value: <span>&#8377;{paymentRes?.Payments?.[0]?.totalAmountPaid}</span> },
+            { title: "BPA_STATUS_LABEL", isTransLate: true, isStatus: true, value: paymentRes?.Payments?.[0]?.totalAmountPaid ? ("WF_BPA_PAID") : "NA", isTransLate: true }
+          ]
+        }
       }
-    }
-  ]
+    ]
 
-  return {
+    return {
       applicationData: License,
       applicationDetails: details,
       tenantId: License?.tenantId,
@@ -258,13 +258,13 @@ export const OBPSService = {
   BPADetailsPage: async (tenantId, filters) => {
     const response = await OBPSService.BPASearch(tenantId, filters);
     let appDocumentFileStoreIds = response?.BPA?.[0]?.documents?.map(docId => docId.fileStoreId);
-    if(!appDocumentFileStoreIds) appDocumentFileStoreIds = [];
+    if (!appDocumentFileStoreIds) appDocumentFileStoreIds = [];
     response?.BPA?.[0]?.additionalDetails?.fieldinspection_pending?.map(fiData => {
       fiData?.docs?.map(fiDoc => {
-        if(fiDoc?.fileStoreId)  appDocumentFileStoreIds.push(fiDoc?.fileStoreId)
+        if (fiDoc?.fileStoreId) appDocumentFileStoreIds.push(fiDoc?.fileStoreId)
       })
     });
-    
+
     if (!response?.BPA?.length) {
       return;
     }
@@ -277,23 +277,23 @@ export const OBPSService = {
     BPA.riskType = riskType;
     const nocResponse = await OBPSService.NOCSearch(BPA?.tenantId, { sourceRefId: BPA?.applicationNo });
     const noc = nocResponse?.Noc;
-    const filter = { approvalNo: edcr?.permitNumber};
+    const filter = { approvalNo: edcr?.permitNumber };
     const bpaResponse = await OBPSService.BPASearch(tenantId, { ...filter });
-       const comparisionRep = {
-         ocdcrNumber: BPA?.edcrNumber.includes("OCDCR")? BPA?.edcrNumber:bpaResponse?.BPA?.[0]?.edcrNumber,
-         edcrNumber: bpaResponse?.BPA?.[0]?.edcrNumber.includes("OCDCR")? BPA?.edcrNumber: bpaResponse?.BPA?.[0]?.edcrNumber
-      }
+    const comparisionRep = {
+      ocdcrNumber: BPA?.edcrNumber.includes("OCDCR") ? BPA?.edcrNumber : bpaResponse?.BPA?.[0]?.edcrNumber,
+      edcrNumber: bpaResponse?.BPA?.[0]?.edcrNumber.includes("OCDCR") ? BPA?.edcrNumber : bpaResponse?.BPA?.[0]?.edcrNumber
+    }
     const comparisionReport = await OBPSService.comparisionReport(BPA?.tenantId, { ...comparisionRep });
 
     noc?.map(nocDetails => {
       nocDetails?.documents?.map(nocDoc => {
-        if(nocDoc?.fileStoreId) appDocumentFileStoreIds.push(nocDoc?.fileStoreId)
+        if (nocDoc?.fileStoreId) appDocumentFileStoreIds.push(nocDoc?.fileStoreId)
       })
     });
 
     let fileDetails = {};
     if (appDocumentFileStoreIds?.length > 0) {
-      fileDetails =  await UploadServices.Filefetch(appDocumentFileStoreIds, Digit.ULBService.getStateId());
+      fileDetails = await UploadServices.Filefetch(appDocumentFileStoreIds, Digit.ULBService.getStateId());
     }
 
 
@@ -337,42 +337,42 @@ export const OBPSService = {
     }
     if (fetchBillRes?.Bill?.length > 0) {
       collectionBillArray.push(
-        { title: `${fetchBillRes?.Bill?.[0]?.billDetails?.[0]?.billAccountDetails?.[0]?.taxHeadCode}_DETAILS` || `BPA_SANC_FEE_DETAILS`, value: "", isSubTitle: true},
+        { title: `${fetchBillRes?.Bill?.[0]?.billDetails?.[0]?.billAccountDetails?.[0]?.taxHeadCode}_DETAILS` || `BPA_SANC_FEE_DETAILS`, value: "", isSubTitle: true },
         { title: `BPA_SANC_FEE_LABEL`, value: `₹${fetchBillRes?.Bill?.[0]?.totalAmount}` },
         { title: "BPA_STATUS_LABEL", value: "Unpaid" }
       )
     }
     totalAmount > 0 && collectionBillArray.push({ title: "BPA_TOT_AMT_PAID", value: `₹${totalAmount}` });
-    
+
     const billDetails = {
       title: "BPA_FEE_DETAILS_LABEL",
       isFeeDetails: true,
       additionalDetails: {
-        inspectionReport:[],
+        inspectionReport: [],
         values: [...collectionBillArray]
       }
     };
 
     BPA?.additionalDetails?.fieldinspection_pending?.forEach(fiData => {
       fiData?.docs?.forEach(fiDoc => {
-        if(fileDetails?.data[fiDoc?.fileStoreId]) fiDoc.url = fileDetails?.data[fiDoc?.fileStoreId]?.split(',')[0]
+        if (fileDetails?.data[fiDoc?.fileStoreId]) fiDoc.url = fileDetails?.data[fiDoc?.fileStoreId]?.split(',')[0]
       })
     });
 
-    
-    function ConvertEpochToValidityDate (dateEpoch){
-      if(dateEpoch == null || dateEpoch == undefined || dateEpoch == ''){
-        return "NA" ;
+
+    function ConvertEpochToValidityDate(dateEpoch) {
+      if (dateEpoch == null || dateEpoch == undefined || dateEpoch == '') {
+        return "NA";
       }
       const dateFromApi = new Date(dateEpoch);
       let month = dateFromApi.getMonth() + 1;
       let day = dateFromApi.getDate();
-      let year = dateFromApi.getFullYear()-3;
+      let year = dateFromApi.getFullYear() - 3;
       month = (month > 9 ? "" : "0") + month;
       day = (day > 9 ? "" : "0") + day;
       return `${day}/${month}/${year}`;
     };
-    
+
     const nocDetails = noc
       ?.map((nocDetails, index) => ({
         title: index === 0 ? "BPA_NOC_DETAILS_SUMMARY" : "",
@@ -420,22 +420,22 @@ export const OBPSService = {
           ],
         },
       }));
-      let inspectionReport = [];
-      let checklist = [];
-      BPA?.additionalDetails?.fieldinspection_pending?.filter((ob) => ob.docs && ob.docs.length>0).map((ob,ind) => {
-        checklist = [];
-        inspectionReport.push({
+    let inspectionReport = [];
+    let checklist = [];
+    BPA?.additionalDetails?.fieldinspection_pending?.filter((ob) => ob.docs && ob.docs.length > 0).map((ob, ind) => {
+      checklist = [];
+      inspectionReport.push({
         title: "BPA_FI_REPORT",
         asSectionHeader: true,
         values: [
-          { title: "BPA_FI_DATE_LABEL", value: ob.date.includes("-")? `${ob.date?.split("-")[2]}/${ob.date?.split("-")[1]}/${ob.date?.split("-")[0]}`:ob.date },
+          { title: "BPA_FI_DATE_LABEL", value: ob.date.includes("-") ? `${ob.date?.split("-")[2]}/${ob.date?.split("-")[1]}/${ob.date?.split("-")[0]}` : ob.date },
           { title: "BPA_FI_TIME_LABEL", value: ob.time },
         ]
       });
-      ob?.questions?.map((q,index) => {
-        checklist.push({title: q.question, value: q.value});
-      checklist.push({ title: "BPA_ENTER_REMARKS", value: q.remarks});
-    })
+      ob?.questions?.map((q, index) => {
+        checklist.push({ title: q.question, value: q.value });
+        checklist.push({ title: "BPA_ENTER_REMARKS", value: q.remarks });
+      })
       inspectionReport.push(
         {
           title: "BPA_CHECK_LIST_DETAILS",
@@ -457,8 +457,9 @@ export const OBPSService = {
               url: fileDetails?.data?.[doc?.fileStoreId] ? fileDetails?.data?.[doc?.fileStoreId]?.split(',')[0] : ""
             }))
           }]
-        }})
+        }
       })
+    })
 
     let details = [];
 
@@ -472,37 +473,42 @@ export const OBPSService = {
 
     let envCitizenName = window.location.href.includes("/employee") ? "employee" : "citizen";
 
-    if(BPA?.businessService.includes("BPA_OC"))
-    {
-      applicationDetailsInfo["values"] = [...applicationDetailsInfo?.values,{ title: "BPA_PERMIT_APP_NUMBER", to:`/digit-ui/${envCitizenName}/obps/bpa/${bpaResponse?.BPA?.[0]?.applicationNo}`, value:bpaResponse?.BPA?.[0]?.approvalNo, isLink:true },];
-      applicationDetailsInfo["values"] = [...applicationDetailsInfo?.values,{ title: "BPA_PERMIT_VALIDITY", value: bpaResponse?.BPA?.[0]?.additionalDetails?.validityDate ? `${ConvertEpochToValidityDate(bpaResponse?.BPA?.[0]?.additionalDetails?.validityDate)} - ${format(new Date(bpaResponse?.BPA?.[0]?.additionalDetails?.validityDate), 'dd/MM/yyyy')}` : "NA" },];
+    if (BPA?.businessService.includes("BPA_OC")) {
+      applicationDetailsInfo["values"] = [...applicationDetailsInfo?.values, { title: "BPA_PERMIT_APP_NUMBER", to: `/digit-ui/${envCitizenName}/obps/bpa/${bpaResponse?.BPA?.[0]?.applicationNo}`, value: bpaResponse?.BPA?.[0]?.approvalNo, isLink: true },];
+      applicationDetailsInfo["values"] = [...applicationDetailsInfo?.values, { title: "BPA_PERMIT_VALIDITY", value: bpaResponse?.BPA?.[0]?.additionalDetails?.validityDate ? `${ConvertEpochToValidityDate(bpaResponse?.BPA?.[0]?.additionalDetails?.validityDate)} - ${format(new Date(bpaResponse?.BPA?.[0]?.additionalDetails?.validityDate), 'dd/MM/yyyy')}` : "NA" },];
+
     }
 
     let permitcondn = [];
-    BPA?.additionalDetails?.pendingapproval && BPA?.additionalDetails?.pendingapproval.length>0 && BPA?.additionalDetails?.pendingapproval.map((ob,index) => {
-      permitcondn.push({title:`${index+1}. ${ob}`, value:""})
+    BPA?.additionalDetails?.pendingapproval && BPA?.additionalDetails?.pendingapproval.length > 0 && BPA?.additionalDetails?.pendingapproval.map((ob, index) => {
+      permitcondn.push({ title: `${index + 1}. ${ob}`, value: "" })
     })
 
     let PermitConditions = {
-      title:"BPA_PERMIT_CONDITIONS",
+      title: "BPA_PERMIT_CONDITIONS",
       isTitleVisible: permitcondn?.length > 0 ? false : true,
       isNotAllowed: permitcondn?.length > 0 ? false : true,
-      additionalDetails:{
-        inspectionReport:[],
-        permit:[...permitcondn]
+      additionalDetails: {
+        inspectionReport: [],
+        permit: [...permitcondn]
       }
     }
 
-    if(permitcondn.length == 0) PermitConditions={};
+    if (permitcondn.length == 0) PermitConditions = {};
     if (riskType == "LOW" && permitcondn.length > 0) {
-      permitcondn = []; PermitConditions={};
-    }
-    
-    if(BPA?.approvalNo) {
-      applicationDetailsInfo?.values?.push({ title: BPA?.businessService !== "BPA_OC" ?  "BPA_PERMIT_NUMBER_LABEL":"BPA_OC_PERMIT_NUMBER_LABEL", value: BPA?.approvalNo || "NA"  });
-      applicationDetailsInfo?.values?.push({ title: BPA?.businessService !== "BPA_OC" ? "BPA_PERMIT_VALIDITY" : "BPA_OC_PERMIT_VALIDITY", value: BPA?.additionalDetails?.validityDate ? `${ConvertEpochToValidityDate(BPA?.additionalDetails?.validityDate)} - ${format(new Date(BPA?.additionalDetails?.validityDate), 'dd/MM/yyyy')}` : "NA"  });
+      permitcondn = []; PermitConditions = {};
     }
 
+    if (BPA?.approvalNo) {
+      const validityDate = new Date(BPA?.additionalDetails?.validityDate);
+      validityDate.setFullYear(validityDate.getFullYear() - 1);
+      applicationDetailsInfo?.values?.push({ title: BPA?.businessService !== "BPA_OC" ? "BPA_PERMIT_NUMBER_LABEL" : "BPA_OC_PERMIT_NUMBER_LABEL", value: BPA?.approvalNo || "NA" });
+      applicationDetailsInfo?.values?.push({
+        title: BPA?.businessService !== "BPA_OC" ? "BPA_PERMIT_VALIDITY" : "BPA_OC_PERMIT_VALIDITY",
+        value: BPA?.additionalDetails?.validityDate ? `${ConvertEpochToValidityDate(BPA?.additionalDetails?.validityDate)} - ${format(validityDate, 'dd/MM/yyyy')}` : "NA"
+      });
+    }
+    // console.log("date------------" + BPA?.additionalDetails?.validityDate)
 
     const basicDetails = {
       title: "BPA_BASIC_DETAILS_TITLE",
@@ -519,15 +525,15 @@ export const OBPSService = {
       ]
     };
 
-    const plotDetails =  {
+    const plotDetails = {
       title: "BPA_PLOT_DETAILS_TITLE",
       asSectionHeader: true,
       isCommon: true,
       values: [
         { title: "BPA_BOUNDARY_PLOT_AREA_LABEL", value: `${edcr?.planDetail?.planInformation?.plotArea}`, isNotTranslated: true, isUnit: "BPA_SQ_FT_LABEL" },
-        { title: "BPA_PLOT_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.plotNo || "NA", isNotTranslated: true  },
-        { title: "BPA_KHATHA_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.khataNo || "NA", isNotTranslated: true  },
-        { title: "BPA_HOLDING_NUMBER_LABEL", value: BPA?.additionalDetails?.holdingNo || "NA", isNotTranslated: true  },
+        { title: "BPA_PLOT_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.plotNo || "NA", isNotTranslated: true },
+        { title: "BPA_KHATHA_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.khataNo || "NA", isNotTranslated: true },
+        { title: "BPA_HOLDING_NUMBER_LABEL", value: BPA?.additionalDetails?.holdingNo || "NA", isNotTranslated: true },
         { title: "BPA_BOUNDARY_LAND_REG_DETAIL_LABEL", value: BPA?.additionalDetails?.registrationDetails || "NA", isNotTranslated: true }
       ]
     };
@@ -554,10 +560,10 @@ export const OBPSService = {
       isBackGroundColor: true,
       additionalDetails: {
         values: [
-          { title: BPA?.businessService !== "BPA_OC" ? "BPA_BUILDING_EXTRACT_HEADER" : "BPA_ACTUAL_BUILDING_EXTRACT_HEADER", value : " ", isHeader: true},
-          { title: "BPA_TOTAL_BUILT_UP_AREA_HEADER", value: edcr?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea, isUnit: "BPA_SQ_MTRS_LABEL"},
+          { title: BPA?.businessService !== "BPA_OC" ? "BPA_BUILDING_EXTRACT_HEADER" : "BPA_ACTUAL_BUILDING_EXTRACT_HEADER", value: " ", isHeader: true },
+          { title: "BPA_TOTAL_BUILT_UP_AREA_HEADER", value: edcr?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea, isUnit: "BPA_SQ_MTRS_LABEL" },
           { title: "BPA_SCRUTINY_DETAILS_NUMBER_OF_FLOORS_LABEL", value: edcr?.planDetail?.blocks?.[0]?.building?.totalFloors || "NA" },
-          { title: "BPA_HEIGHT_FROM_GROUND_LEVEL", value: edcr?.planDetail?.blocks?.[0]?.building?.declaredBuildingHeigh ,  isUnit: "BPA_MTRS_LABEL" }
+          { title: "BPA_HEIGHT_FROM_GROUND_LEVEL", value: edcr?.planDetail?.blocks?.[0]?.building?.declaredBuildingHeigh, isUnit: "BPA_MTRS_LABEL" }
         ],
         scruntinyDetails: []
       }
@@ -569,8 +575,8 @@ export const OBPSService = {
       isBackGroundColor: true,
       additionalDetails: {
         values: [
-          { title: "BPA_APP_DETAILS_DEMOLITION_DETAILS_LABEL", value : " ", isHeader: true},
-          { title: "BPA_APPLICATION_DEMOLITION_AREA_LABEL", value: edcr?.planDetail?.planInformation?.demolitionArea, isUnit: "BPA_SQ_MTRS_LABEL" } 
+          { title: "BPA_APP_DETAILS_DEMOLITION_DETAILS_LABEL", value: " ", isHeader: true },
+          { title: "BPA_APPLICATION_DEMOLITION_AREA_LABEL", value: edcr?.planDetail?.planInformation?.demolitionArea, isUnit: "BPA_SQ_MTRS_LABEL" }
         ],
         scruntinyDetails: []
       }
@@ -582,7 +588,7 @@ export const OBPSService = {
       isTitleRepeat: true,
       additionalDetails: {
         values: [
-          { title: "BPA_OCC_SUBOCC_HEADER", value : " ", isHeader: true} 
+          { title: "BPA_OCC_SUBOCC_HEADER", value: " ", isHeader: true }
         ],
         subOccupancyTableDetails: [
           { title: "BPA_APPLICATION_DEMOLITION_AREA_LABEL", value: edcr },
@@ -608,7 +614,7 @@ export const OBPSService = {
     const checkOwnerLength = BPA?.landInfo?.owners?.length || 1;
     if (BPA?.landInfo?.owners?.length > 0) {
       // BPA?.landInfo?.owners.sort((a, b) => b.isPrimaryOwner - a.isPrimaryOwner);
-      BPA?.landInfo?.owners?.forEach(ownerD => {if(!ownerD.isPrimaryOwner) ownerD.isPrimaryOwner = "false"})
+      BPA?.landInfo?.owners?.forEach(ownerD => { if (!ownerD.isPrimaryOwner) ownerD.isPrimaryOwner = "false" })
     }
     const ownerDetails = {
       title: "BPA_APPLICANT_DETAILS_HEADER",
@@ -616,7 +622,7 @@ export const OBPSService = {
       additionalDetails: {
         owners: BPA?.landInfo?.owners?.map((owner, index) => {
           return {
-            title: (Number(checkOwnerLength) > 1)  ? "COMMON_OWNER" : "",
+            title: (Number(checkOwnerLength) > 1) ? "COMMON_OWNER" : "",
             values: [
               { title: "CORE_COMMON_NAME", value: owner?.name },
               { title: "BPA_APPLICANT_GENDER_LABEL", value: owner?.gender },
@@ -628,7 +634,7 @@ export const OBPSService = {
       },
     };
 
-    const documentDetails =  {
+    const documentDetails = {
       title: "BPA_DOCUMENT_DETAILS_LABEL",
       asSectionHeader: true,
       isDocumentDetails: true,
@@ -656,7 +662,7 @@ export const OBPSService = {
           approvalChecks.push(...checklist?.conditions)
         }
       })
-      
+
       approvalChecksDetails = {
         title: "", //window.location.href.includes("/employee") ? "" : "BPA_PERMIT_CONDITIONS",
         isTitleVisible: approvalChecks?.length > 0 ? false : true,
@@ -674,25 +680,23 @@ export const OBPSService = {
     let val;
     var i;
     let FieldInspectionData = [];
-    inspectionReport && BPA?.additionalDetails?.fieldinspection_pending?.[0]?.questions.length>0 && inspectionReport.map((ob,index) => {
-      if(ob.title.includes("FI_REPORT"))
-      FieldInspectionData = [...FieldInspectionData, {title:ob.title,additionalDetails:{inspectionReport:[],values:ob.values}} ];
-      else if(ob.title.includes("CHECK_LIST"))
-      FieldInspectionData = [...FieldInspectionData, {title:ob.title,additionalDetails:{isChecklist:true,inspectionReport:[],values:ob.values}}]
-      else
-      {
+    inspectionReport && BPA?.additionalDetails?.fieldinspection_pending?.[0]?.questions.length > 0 && inspectionReport.map((ob, index) => {
+      if (ob.title.includes("FI_REPORT"))
+        FieldInspectionData = [...FieldInspectionData, { title: ob.title, additionalDetails: { inspectionReport: [], values: ob.values } }];
+      else if (ob.title.includes("CHECK_LIST"))
+        FieldInspectionData = [...FieldInspectionData, { title: ob.title, additionalDetails: { isChecklist: true, inspectionReport: [], values: ob.values } }]
+      else {
         let improvedDoc = [...ob.additionalDetails.obpsDocuments?.[0]?.values];
         improvedDoc.map((ob) => { ob["isNotDuplicate"] = true; })
-        improvedDoc.map((ob,index) => {
-        val = ob.documentType;
-          if(ob.isNotDuplicate == true)
-          for(i=index+1; i<improvedDoc.length;i++)
-          {
-            if(val === improvedDoc[i].documentType)
-            improvedDoc[i].isNotDuplicate=false;
-          }
-      });
-      FieldInspectionData = [...FieldInspectionData,{title:ob.title,additionalDetails:{FIdocuments:[],"documents":[{values:improvedDoc}]}} ]
+        improvedDoc.map((ob, index) => {
+          val = ob.documentType;
+          if (ob.isNotDuplicate == true)
+            for (i = index + 1; i < improvedDoc.length; i++) {
+              if (val === improvedDoc[i].documentType)
+                improvedDoc[i].isNotDuplicate = false;
+            }
+        });
+        FieldInspectionData = [...FieldInspectionData, { title: ob.title, additionalDetails: { FIdocuments: [], "documents": [{ values: improvedDoc }] } }]
       }
     });
 
@@ -702,12 +706,12 @@ export const OBPSService = {
       isNotAllowed: BPA?.additionalDetails?.fieldinspection_pending?.length > 0 ? false : true,
       additionalDetails: {
         values: [],
-        fiReport : BPA?.additionalDetails?.fieldinspection_pending?.length > 0 ? true : false
+        fiReport: BPA?.additionalDetails?.fieldinspection_pending?.length > 0 ? true : false
       }
     }
 
-    if(BPA?.businessService !== "BPA_OC") {
-      details = [...details, applicationDetailsInfo, basicDetails, plotDetails, scrutinyDetails, buildingExtractionDetails, subOccupancyTableDetails, demolitionAreaDetails,addressDetails, ownerDetails, documentDetails, fiReports, ...nocDetails, approvalChecksDetails, PermitConditions]
+    if (BPA?.businessService !== "BPA_OC") {
+      details = [...details, applicationDetailsInfo, basicDetails, plotDetails, scrutinyDetails, buildingExtractionDetails, subOccupancyTableDetails, demolitionAreaDetails, addressDetails, ownerDetails, documentDetails, fiReports, ...nocDetails, approvalChecksDetails, PermitConditions]
     } else {
       details = [...details, applicationDetailsInfo, basicDetails, plotDetails, scrutinyDetails, buildingExtractionDetails, subOccupancyTableDetails, demolitionAreaDetails, documentDetails, fiReports, ...nocDetails, PermitConditions]
     }
@@ -715,10 +719,10 @@ export const OBPSService = {
     if (billDetails?.additionalDetails?.values?.length) {
       details.push(billDetails)
     }
-    
+
 
     let bpaFilterDetails = details?.filter(data => data);
-    
+
 
     return {
       applicationData: BPA,
@@ -729,7 +733,7 @@ export const OBPSService = {
       comparisionReport: comparisionReport?.comparisonDetail,
       businessService: BPA?.businessService,
       applicationNo: BPA?.applicationNo,
-      applicationStatus : BPA?.status,
+      applicationStatus: BPA?.status,
       collectionBillDetails: collectionBillDetails
     }
   }

@@ -14,16 +14,15 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList = [] }) => {
   }
   const { id } = useParams();
 
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { data = {}, isLoading } = Digit.Hooks.obps.useBPADetailsPage(tenantId, { applicationNo: id });
+  //const tenantId = Digit.ULBService.getCurrentTenantId();
+  //const { data = {}, isLoading } = Digit.Hooks.obps.useBPADetailsPage(tenantId, { applicationNo: id });
 
   const [feeDetails, setFeeDetails] = useState([]);
 
-  useEffect(async () => {
-    const feeDetails = await Digit.OBPSAdminService.getFeeDetails(data?.applicationData?.applicationNo);
-    setFeeDetails(feeDetails);
-  }, [data]);
-
+   useEffect(async () => {
+     const feeDetails = await Digit.OBPSAdminService.getFeeDetails(id);
+  setFeeDetails(feeDetails);
+ }, []);
 
   return (
     <Fragment>
@@ -35,12 +34,15 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList = [] }) => {
           <div>
 
             {scrutinyDetails?.values?.map((value, index) => {
-              console.log("s" + JSON.stringify(scrutinyDetails));
+     
+          
               if (value.title === "BPA_SANC_FEES_DETAILS") return (
                 <div style={{ fontFamily: "sans-serif", fontSize: "16px", lineHeight: "26px" }}>
                   
                   <div>
                     {feeDetails.map(item => (
+
+                      
                       <div>
                         <p style={{ textAlign: "left", fontWeight: 700 }}>{item.charges_type_name}</p>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
