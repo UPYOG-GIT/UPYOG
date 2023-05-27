@@ -510,4 +510,17 @@ public class BPARepository {
 				+ id);
 		return deleteResult;
 	}
+	
+	public List<Map<String, Object>> getDataCountsForDashboard() {
+	    String query = "SELECT " +
+	            "COUNT(CASE WHEN bp.status = 'APPROVED' THEN 1 END) AS Approved, " +
+	            "COUNT(CASE WHEN bp.status = 'REJECTED' THEN 1 END) AS Rejected, " +
+	            "COUNT(CASE " + "WHEN bp.status IN ('DOC_VERIFICATION_INPROGRESS_BY_ENGINEER',        'DOC_VERIFICATION_INPROGRESS_BY_BUILDER', 'APPROVAL_INPROGRESS', 'POST_FEE_APPROVAL_INPROGRESS') " +
+	            "    THEN 1 " +
+	            "END) AS department_inprocess " +
+	            "FROM eg_bpa_buildingplan bp";
+
+	    return jdbcTemplate.queryForList(query, new Object[]{});
+	}
+
 }

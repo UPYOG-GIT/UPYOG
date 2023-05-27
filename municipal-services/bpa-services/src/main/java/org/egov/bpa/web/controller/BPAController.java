@@ -485,4 +485,15 @@ public class BPAController {
 			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	
+	
+	@PostMapping(value = "/dashboard/count")
+	public ResponseEntity<List<Map<String, Object>>> getDataCountsForDashboard() {
+
+		List<Map<String, Object>> sqlResponseList = bpaService.getDataCountsForDashboard();
+		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
+
+	}
+
 }
