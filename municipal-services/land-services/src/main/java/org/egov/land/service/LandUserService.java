@@ -50,18 +50,21 @@ public class LandUserService {
 
 	public void manageUser(LandInfoRequest landRequest) {
 		LandInfo landInfo = landRequest.getLandInfo();
-		 @Valid RequestInfo requestInfo = landRequest.getRequestInfo();
+		@Valid
+		RequestInfo requestInfo = landRequest.getRequestInfo();
 
 		landInfo.getOwners().forEach(owner -> {
 			UserDetailResponse userDetailResponse = null;
 			if (owner.getMobileNumber() != null) {
-				
+
 				if (owner.getTenantId() == null) {
 //					owner.setTenantId(landInfo.getTenantId().split("\\.")[0]);
 					owner.setTenantId(landInfo.getTenantId());
 				}
 
 				userDetailResponse = userExists(owner, requestInfo);
+
+				log.info("userDetailResponse+++++ :" + userDetailResponse);
 
 				if (userDetailResponse == null || CollectionUtils.isEmpty(userDetailResponse.getUser())
 						|| !owner.compareWithExistingUser(userDetailResponse.getUser().get(0))) {
@@ -78,7 +81,7 @@ public class LandUserService {
 				}
 				if (userDetailResponse != null)
 					setOwnerFields(owner, userDetailResponse, requestInfo);
-				
+
 			} else {
 				log.debug("MobileNo is not existed in ownerInfo.");
 				throw new CustomException(LandConstants.INVALID_ONWER_ERROR, "MobileNo is mandatory for ownerInfo");
@@ -101,18 +104,17 @@ public class LandUserService {
 	/**
 	 * Checks if the user exists in the database
 	 * 
-	 * @param owner
-	 *            The owner from the LandInfo
-	 * @param requestInfo
-	 *            The requestInfo of the request
+	 * @param owner       The owner from the LandInfo
+	 * @param requestInfo The requestInfo of the request
 	 * @return The search response from the user service
 	 */
 	private UserDetailResponse userExists(OwnerInfo owner, @Valid RequestInfo requestInfo) {
 
 		UserSearchRequest userSearchRequest = new UserSearchRequest();
-		userSearchRequest.setTenantId(owner.getTenantId().split("\\.")[0]);
+//		userSearchRequest.setTenantId(owner.getTenantId().split("\\.")[0]);
+		userSearchRequest.setTenantId(owner.getTenantId());
 		userSearchRequest.setMobileNumber(owner.getMobileNumber());
-		if(!StringUtils.isEmpty(owner.getUuid())) {
+		if (!StringUtils.isEmpty(owner.getUuid())) {
 			List<String> uuids = new ArrayList<String>();
 			uuids.add(owner.getUuid());
 			userSearchRequest.setUuid(uuids);
@@ -125,8 +127,7 @@ public class LandUserService {
 	/**
 	 * Sets the username as uuid
 	 * 
-	 * @param owner
-	 *            The owner to whom the username is to assigned
+	 * @param owner The owner to whom the username is to assigned
 	 */
 	private void setUserName(OwnerInfo owner) {
 		owner.setUserName(UUID.randomUUID().toString());
@@ -135,12 +136,9 @@ public class LandUserService {
 	/**
 	 * Sets ownerfields from the userResponse
 	 * 
-	 * @param owner
-	 *            The owner from landInfo
-	 * @param userDetailResponse
-	 *            The response from user search
-	 * @param requestInfo
-	 *            The requestInfo of the request
+	 * @param owner              The owner from landInfo
+	 * @param userDetailResponse The response from user search
+	 * @param requestInfo        The requestInfo of the request
 	 */
 	private void setOwnerFields(OwnerInfo owner, UserDetailResponse userDetailResponse, RequestInfo requestInfo) {
 		owner.setId(userDetailResponse.getUser().get(0).getId());
@@ -151,13 +149,10 @@ public class LandUserService {
 	/**
 	 * Sets the role,type,active and tenantId for a Citizen
 	 * 
-	 * @param tenantId
-	 *            TenantId of the property
-	 * @param role 
+	 * @param tenantId TenantId of the property
 	 * @param role
-	 *            The role of the user set in this case to CITIZEN
-	 * @param owner
-	 *            The user whose fields are to be set
+	 * @param role     The role of the user set in this case to CITIZEN
+	 * @param owner    The user whose fields are to be set
 	 */
 	private void addUserDefaultFields(String tenantId, Role role, OwnerInfo owner) {
 		owner.setActive(true);
@@ -172,7 +167,7 @@ public class LandUserService {
 		Set<String> uuids = new HashSet<String>();
 		landInfos.forEach(landInfo -> {
 			landInfo.getOwners().forEach(owner -> {
-				if (owner.getUuid() != null && owner.getStatus() )
+				if (owner.getUuid() != null && owner.getStatus())
 					uuids.add(owner.getUuid().toString());
 			});
 		});
@@ -186,13 +181,10 @@ public class LandUserService {
 	}
 
 	/**
-	 * Returns UserDetailResponse by calling user service with given uri and
-	 * object
+	 * Returns UserDetailResponse by calling user service with given uri and object
 	 * 
-	 * @param userRequest
-	 *            Request object for user service
-	 * @param uri
-	 *            The address of the end point
+	 * @param userRequest Request object for user service
+	 * @param uri         The address of the end point
 	 * @return Response from user service as parsed as userDetailResponse
 	 */
 	@SuppressWarnings("rawtypes")
@@ -209,15 +201,15 @@ public class LandUserService {
 			UserDetailResponse userDetailResponse = mapper.convertValue(responseMap, UserDetailResponse.class);
 			return userDetailResponse;
 		} catch (IllegalArgumentException e) {
-			throw new CustomException(LandConstants.ILLEGAL_ARGUMENT_EXCEPTION, "ObjectMapper not able to convertValue in userCall");
+			throw new CustomException(LandConstants.ILLEGAL_ARGUMENT_EXCEPTION,
+					"ObjectMapper not able to convertValue in userCall");
 		}
 	}
 
 	/**
 	 * Parses date formats to long for all users in responseMap
 	 * 
-	 * @param responeMap
-	 *            LinkedHashMap got from user api response
+	 * @param responeMap LinkedHashMap got from user api response
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void parseResponse(LinkedHashMap responeMap, String dobFormat) {
@@ -239,10 +231,8 @@ public class LandUserService {
 	/**
 	 * Converts date to long
 	 * 
-	 * @param date
-	 *            date to be parsed
-	 * @param format
-	 *            Format of the date
+	 * @param date   date to be parsed
+	 * @param format Format of the date
 	 * @return Long value of date
 	 */
 	private Long dateTolong(String date, String format) {
@@ -259,10 +249,8 @@ public class LandUserService {
 	/**
 	 * Call search in user service based on ownerids from criteria
 	 * 
-	 * @param criteria
-	 *            The search criteria containing the ownerids
-	 * @param requestInfo
-	 *            The requestInfo of the request
+	 * @param criteria    The search criteria containing the ownerids
+	 * @param requestInfo The requestInfo of the request
 	 * @return Search response from user service based on ownerIds
 	 */
 	public UserDetailResponse getUser(LandSearchCriteria criteria, RequestInfo requestInfo) {
@@ -275,10 +263,8 @@ public class LandUserService {
 	/**
 	 * Creates userSearchRequest from bpaSearchCriteria
 	 * 
-	 * @param criteria
-	 *            The bpaSearch criteria
-	 * @param requestInfo
-	 *            The requestInfo of the request
+	 * @param criteria    The bpaSearch criteria
+	 * @param requestInfo The requestInfo of the request
 	 * @return The UserSearchRequest based on ownerIds
 	 */
 	private UserSearchRequest getUserSearchRequest(LandSearchCriteria criteria, RequestInfo requestInfo) {
