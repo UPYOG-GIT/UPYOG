@@ -931,4 +931,10 @@ public class BPAService {
 	public int deleteSlabMasterById(List<Integer> ids) {
 		return repository.deleteSlabMasterById(ids);
 	}
+	
+	public List<Map<String, Object>> getDataCountsForDashboard() {
+		List<Map<String, Object>> resultList = repository.getDataCountsForDashboard();
+		log.info("getDataCountsForDashboard: " + resultList.toString());
+		return resultList;
+	}
 }
