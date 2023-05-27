@@ -218,7 +218,7 @@ public class BPAService {
 	 */
 	public List<BPA> search(BPASearchCriteria criteria, RequestInfo requestInfo) {
 		List<BPA> bpas = new LinkedList<>();
-		log.info("criteria.getTenantId():______===="+criteria.getTenantId());
+		log.info("criteria.getTenantId():______====" + criteria.getTenantId());
 		bpaValidator.validateSearch(requestInfo, criteria);
 		LandSearchCriteria landcriteria = new LandSearchCriteria();
 		landcriteria.setTenantId(criteria.getTenantId());
@@ -278,6 +278,8 @@ public class BPAService {
 		}
 		log.info("loading data of created and by me" + uuids.toString());
 		UserDetailResponse userInfo = userService.getUser(criteria, requestInfo);
+		log.info("userInfo.getUser().size(): " + userInfo.getUser().size());
+		log.info("userInfo: " + userInfo.getUser().toString());
 		if (userInfo != null) {
 			landcriteria.setMobileNumber(userInfo.getUser().get(0).getMobileNumber());
 		}
@@ -398,9 +400,9 @@ public class BPAService {
 		RequestInfo requestInfo = bpaRequest.getRequestInfo();
 		String tenantId = bpaRequest.getBPA().getTenantId().split("\\.")[0];
 		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
-		log.info("mdmsData: " + mdmsData);
+//		log.info("mdmsData: " + mdmsData);
 		BPA bpa = bpaRequest.getBPA();
-		log.info("bpa: " + bpa);
+//		log.info("bpa: " + bpa);
 
 		if (bpa.getId() == null) {
 			throw new CustomException(BPAErrorConstants.UPDATE_ERROR, "Application Not found in the System" + bpa);
@@ -833,7 +835,7 @@ public class BPAService {
 	}
 
 	public int deleteFeeDetailsById(List<Integer> ids, String applicationNo, String feeType) {
-		return repository.deleteFeeDetailsById(ids,applicationNo, feeType);
+		return repository.deleteFeeDetailsById(ids, applicationNo, feeType);
 	}
 
 	public List<Map<String, Object>> getFeeDetails(String applicationNo) {
@@ -842,8 +844,9 @@ public class BPAService {
 		return resultList;
 	}
 
-	public int verifyFeeDetailsByApplicationNo(String applicationNo, String isVerified,String verifiedBy,String feeType) {
-		return repository.verifyFeeDetailsByApplicationNo(applicationNo, isVerified,verifiedBy,feeType);
+	public int verifyFeeDetailsByApplicationNo(String applicationNo, String isVerified, String verifiedBy,
+			String feeType) {
+		return repository.verifyFeeDetailsByApplicationNo(applicationNo, isVerified, verifiedBy, feeType);
 	}
 
 	public int createPayType(PayTypeRequest payTypeRequest) {
