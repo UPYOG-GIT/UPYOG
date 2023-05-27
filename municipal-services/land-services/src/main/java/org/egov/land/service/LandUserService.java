@@ -52,7 +52,7 @@ public class LandUserService {
 		LandInfo landInfo = landRequest.getLandInfo();
 		@Valid
 		RequestInfo requestInfo = landRequest.getRequestInfo();
-		log.info("landInfo====: "+landInfo.getOwners().toString());
+		log.info("landInfo====: " + landInfo.getOwners().toString());
 		landInfo.getOwners().forEach(owner -> {
 			UserDetailResponse userDetailResponse = null;
 			if (owner.getMobileNumber() != null) {
@@ -64,7 +64,7 @@ public class LandUserService {
 
 				userDetailResponse = userExists(owner, requestInfo);
 
-				log.info("userDetailResponse+++++ :" + userDetailResponse);
+				log.info("userDetailResponse+++++ :" + userDetailResponse.getUser().toString());
 
 				if (userDetailResponse == null || CollectionUtils.isEmpty(userDetailResponse.getUser())
 						|| !owner.compareWithExistingUser(userDetailResponse.getUser().get(0))) {
@@ -109,7 +109,9 @@ public class LandUserService {
 	 * @return The search response from the user service
 	 */
 	private UserDetailResponse userExists(OwnerInfo owner, @Valid RequestInfo requestInfo) {
-
+		log.info("owner.getTenantId(): " + owner.getTenantId());
+		log.info("owner.getMobileNumber(): " + owner.getMobileNumber());
+		log.info("owner.getUuid(): " + owner.getUuid());
 		UserSearchRequest userSearchRequest = new UserSearchRequest();
 //		userSearchRequest.setTenantId(owner.getTenantId().split("\\.")[0]);
 		userSearchRequest.setTenantId(owner.getTenantId());
