@@ -513,6 +513,8 @@ public class BPARepository {
 	
 	public List<Map<String, Object>> getDataCountsForDashboard() {
 	    String query = "SELECT " +
+	    		"COUNT(CASE WHEN bp.status = 'INITIATED' THEN 1 END) AS Initiated, " +
+	    		"COUNT(CASE WHEN bp.status = 'CITIZEN_APPROVAL_INPROCESS' THEN 1 END) AS CITIZEN_APPROVAL_INPROCESS," +
 	            "COUNT(CASE WHEN bp.status = 'APPROVED' THEN 1 END) AS Approved, " +
 	            "COUNT(CASE WHEN bp.status = 'REJECTED' THEN 1 END) AS Rejected, " +
 	            "COUNT(CASE " + "WHEN bp.status IN ('DOC_VERIFICATION_INPROGRESS_BY_ENGINEER',        'DOC_VERIFICATION_INPROGRESS_BY_BUILDER', 'APPROVAL_INPROGRESS', 'POST_FEE_APPROVAL_INPROGRESS') " +
