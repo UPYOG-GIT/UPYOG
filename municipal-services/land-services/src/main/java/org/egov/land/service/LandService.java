@@ -51,7 +51,7 @@ public class LandService {
 		}
 
 		log.info("LandService.create()............");
-		log.info("landRequest.getLandInfo().getAddress(): " + landRequest.getLandInfo().getAddress().toString());
+//		log.info("landRequest.getLandInfo().getAddress(): " + landRequest.getLandInfo().getAddress().toString());
 		landValidator.validateLandInfo(landRequest, mdmsData);
 		userService.manageUser(landRequest);
 
