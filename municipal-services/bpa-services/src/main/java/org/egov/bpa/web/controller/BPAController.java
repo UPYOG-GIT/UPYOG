@@ -489,9 +489,9 @@ public class BPAController {
 	
 	
 	@PostMapping(value = "/dashboard/count")
-	public ResponseEntity<List<Map<String, Object>>> getDataCountsForDashboard() {
-
-		List<Map<String, Object>> sqlResponseList = bpaService.getDataCountsForDashboard();
+	public ResponseEntity<List<Map<String, Object>>> getDataCountsForDashboard(String tenantId) {
+	
+		List<Map<String, Object>> sqlResponseList = bpaService.getDataCountsForDashboard(tenantId);
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 
 	}

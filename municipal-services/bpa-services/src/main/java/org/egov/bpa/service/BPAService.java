@@ -935,8 +935,8 @@ public class BPAService {
 		return repository.deleteSlabMasterById(ids);
 	}
 	
-	public List<Map<String, Object>> getDataCountsForDashboard() {
-		List<Map<String, Object>> resultList = repository.getDataCountsForDashboard();
+	public List<Map<String, Object>> getDataCountsForDashboard(String tenantId) {
+		List<Map<String, Object>> resultList = repository.getDataCountsForDashboard(tenantId);
 		log.info("getDataCountsForDashboard: " + resultList.toString());
 		return resultList;
 	}
