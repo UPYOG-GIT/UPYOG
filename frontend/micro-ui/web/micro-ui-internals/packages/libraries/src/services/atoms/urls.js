@@ -142,6 +142,7 @@ const Urls = {
     deleteFeedetail:"/bpa-services/v1/bpa/_deletefeedetail",
     deleteSlab:"/bpa-services/v1/bpa/_deleteslab",
     deletePaytpRate:"/bpa-services/v1/bpa/_deletepaytprate",
+    getDashboardCount:"/bpa-services/v1/bpa/dashboard/count",
   },
 
   edcr: {

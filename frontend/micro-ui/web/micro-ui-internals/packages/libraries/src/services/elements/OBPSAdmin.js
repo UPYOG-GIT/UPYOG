@@ -207,4 +207,13 @@ export const OBPSAdminService = {
     .catch((err) => {
       return err;
     }),
+
+    
+    getDashboardCount: () =>
+    Request({
+      url: Urls.obps.getDashboardCount,
+      auth: false,
+      userService: false,
+      method: "POST"
+    }),
 }

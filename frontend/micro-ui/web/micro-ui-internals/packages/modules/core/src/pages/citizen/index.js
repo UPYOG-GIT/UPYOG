@@ -1,5 +1,5 @@
 import { BackButton } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import ErrorBoundary from "../../components/ErrorBoundaries";
@@ -16,6 +16,7 @@ import { List, ListItem, ListItemText, Alert } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
+
 
 const getTenants = (codes, tenants) => {
   return tenants.filter((tenant) => codes.map((item) => item.code).includes(tenant.code));
@@ -50,6 +51,38 @@ const Home = ({
       </Route>
     );
   });
+
+  const [initiatedCount, setInitiatedCount] = useState(null);
+  const [citizenApprovalInProcessCount, setcitizenApprovalInProcessCount] = useState(null);
+  const [approvedCount, setapprovedCount] = useState(null);
+  const [rejectedCount, setrejectedCount] = useState(null);
+  const [departmentInProcessCount, setdepartmentInProcessCount] = useState(null);
+
+    useEffect(async () => {
+      const getDashboardCount = await Digit.OBPSAdminService.getDashboardCount();
+
+
+        getDashboardCount.forEach((dashboardData) => {
+        const initiatedCount = dashboardData.initiated;
+        setInitiatedCount(initiatedCount);
+
+        const citizenApprovalInProcessCount = dashboardData.citizen_approval_inprocess;
+        setcitizenApprovalInProcessCount(citizenApprovalInProcessCount);
+
+        const approvedCount = dashboardData.approved;
+        setapprovedCount(approvedCount);
+
+        const rejectedCount = dashboardData.rejected;
+        setrejectedCount(rejectedCount);
+
+        const departmentInProcessCount = dashboardData.department_inprocess;
+        setdepartmentInProcessCount(departmentInProcessCount);
+
+      });
+  
+      
+    }, []);
+  
 
   const ModuleLevelLinkHomePages = modules.map(({ code, bannerImage }, index) => {
     let Links = Digit.ComponentRegistryService.getComponent(`${code}Links`) || (() => <React.Fragment />);
@@ -102,56 +135,96 @@ const Home = ({
         </Box>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-          <Card sx={{
-            width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-            borderRadius: '10px',
-          }}>
-            <CardContent>
-              <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-                gutterBottom>
-                05
-              </Typography>
-              <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-                Uploaded Proposals
-              </Typography>
+      <Card sx={{
+        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+        borderRadius: '10px',
+      }}>
+        <CardContent>
+          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+            gutterBottom>
+            {initiatedCount}
+          </Typography>
+          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+            Uploaded Proposals
+          </Typography>
+        </CardContent>
+      </Card>
 
-            </CardContent>
-          </Card>
+      <Card sx={{
+        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+        borderRadius: '10px',
+      }}>
+        <CardContent>
+          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+            gutterBottom>
+            {approvedCount}
+          </Typography>
+          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+            Approved Proposals
+          </Typography>
+        </CardContent>
+      </Card>
 
-          <Card sx={{
-            width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-            borderRadius: '10px',
-          }}>
-            <CardContent>
-              <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-                gutterBottom>
-                03
-              </Typography>
-              <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-                Approved Proposals
-              </Typography>
+      <Card sx={{
+        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+        borderRadius: '10px',
+      }}>
+        <CardContent>
+          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+            gutterBottom>
+            {rejectedCount}
+          </Typography>
+          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+            Rejected Proposals
+          </Typography>
+        </CardContent>
+      </Card>
 
-            </CardContent>
-          </Card>
+      {/* Additional Typography components */}
+      <Card sx={{
+        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+        borderRadius: '10px',
+      }}>
+        <CardContent>
+          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+            gutterBottom>
+            {citizenApprovalInProcessCount}
+          </Typography>
+          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+          Citizen Inprocess
+          </Typography>
+        </CardContent>
+      </Card>
 
-          <Card sx={{
-            width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-            borderRadius: '10px',
-          }}>
-            <CardContent>
-              <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-                gutterBottom>
-                02
-              </Typography>
-              <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-                Rejected Proposals
-              </Typography>
-
-            </CardContent>
-          </Card>
-          
-
-        </div>
+      <Card sx={{
+        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+        borderRadius: '10px',
+      }}>
+        <CardContent>
+          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+            gutterBottom>
+            {citizenApprovalInProcessCount}
+          </Typography>
+          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+           Citizen Inprocess
+          </Typography>
+        </CardContent>
+      </Card>
+      <Card sx={{
+        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+        borderRadius: '10px',
+      }}>
+        <CardContent>
+          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+            gutterBottom>
+            {departmentInProcessCount}
+          </Typography>
+          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+           Department Inprocess
+          </Typography>
+        </CardContent>
+      </Card>
+    </div>
 
         <Box flex="6" marginBottom={2}>
           <Alert severity="info" sx={{ maxWidth: 1300, padding: '1rem', justifyContent: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
