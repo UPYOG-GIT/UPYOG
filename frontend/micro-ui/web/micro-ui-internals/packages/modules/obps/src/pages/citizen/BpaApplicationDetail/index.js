@@ -108,7 +108,7 @@ const BpaApplicationDetail = () => {
 
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
-    console.log("Payments------" + JSON.stringify(payments));
+   
 
     const response = await fetch(Urls.payment.get_receipt, {
       method: 'POST',
@@ -417,23 +417,29 @@ const BpaApplicationDetail = () => {
   // } 
   else
 
-    if ((data && data?.applicationData?.businessService === "BPA" && data?.collectionBillDetails?.length > 0)) {
-      if (data?.applicationData?.status === "APPROVED") {
-        dowloadOptions.push({
-          order: 3,
-          label: t("BPA_PERMIT_ORDER"),
-          onClick: () => getPermitOccupancyOrderSearch({ tenantId: data?.applicationData?.tenantId }, "buildingpermit"),
-        });
-      }
-    } else {
-      if (data?.applicationData?.status === "APPROVED") {
-        dowloadOptions.push({
-          order: 3,
-          label: t("BPA_OC_CERTIFICATE"),
-          onClick: () => getPermitOccupancyOrderSearch({ tenantId: data?.applicationData?.tenantId }, "occupancy-certificate"),
-        });
-      }
+  if (data && data?.applicationData?.businessService === "BPA" && data?.collectionBillDetails?.length > 0) {
+    if (data?.applicationData?.status === "APPROVED") {
+      dowloadOptions.push({
+        order: 3,
+        label: t("BPA_PERMIT_ORDER"),
+        onClick: () => getPermitOccupancyOrderSearch({ tenantId: data?.applicationData?.tenantId }, "buildingpermit"),
+      });
+    } else if (data?.applicationData?.riskType === 'VLOW') {
+      dowloadOptions.push({
+        order: 3,
+        label: t("Direct Bhavan Anugya"),
+        onClick: () => getPermitOccupancyOrderSearch({ tenantId: data?.applicationData?.tenantId }, "buildingpermit-low"),
+      });
     }
+  } else if (data?.applicationData?.status === "APPROVED") {
+    dowloadOptions.push({
+      order: 3,
+      label: t("BPA_OC_CERTIFICATE"),
+      onClick: () => getPermitOccupancyOrderSearch({ tenantId: data?.applicationData?.tenantId }, "occupancy-certificate"),
+    });
+  }
+  
+    
 
   if (data?.comparisionReport) {
     dowloadOptions.push({
