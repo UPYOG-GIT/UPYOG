@@ -164,7 +164,7 @@ const BpaApplicationDetail = () => {
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
     printPdf(new Blob([fileStore], { type: "application/pdf" }), `permitOrder.pdf`);
-    console.log("requestData---" + JSON.stringify(requestData))
+    
   }
 
 
