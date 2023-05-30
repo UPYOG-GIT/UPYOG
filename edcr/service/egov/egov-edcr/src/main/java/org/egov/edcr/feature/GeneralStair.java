@@ -30,13 +30,19 @@ public class GeneralStair extends FeatureProcess {
 	private static final Logger LOG = LogManager.getLogger(GeneralStair.class);
 	private static final String FLOOR = "Floor";
 	private static final String RULE42_5_II = "42-5-ii";
-	private static final String RULE_77 = "77";
-	private static final String EXPECTED_NO_OF_RISER = "12";
+//	private static final String RULE_77 = "77";
+	private static final String RULE_77_1 = "77-1";
+	private static final String RULE_77_2 = "77-2";
+	private static final String RULE_77_3 = "77-3";
+	private static final String RULE_77_4 = "77-4";
+	private static final String RULE_77_5 = "77-5";
+	private static final String EXPECTED_NO_OF_RISER = "15";
 	private static final String NO_OF_RISER_DESCRIPTION = "Maximum no of risers required per flight for general stair %s flight %s";
 	private static final String WIDTH_DESCRIPTION = "Minimum width for general stair %s flight %s";
 	private static final String TREAD_DESCRIPTION = "Minimum tread for general stair %s flight %s";
 	private static final String NO_OF_RISERS = "Number of risers ";
 	private static final String FLIGHT_POLYLINE_NOT_DEFINED_DESCRIPTION = "Flight polyline is not defined in layer ";
+	private static final String FLIGHT_POLYLINE_NOT_CLOSED_DESCRIPTION = "Flight polyline is not closed ";
 	private static final String FLIGHT_LENGTH_DEFINED_DESCRIPTION = "Flight polyline length is not defined in layer ";
 	private static final String FLIGHT_WIDTH_DEFINED_DESCRIPTION = "Flight polyline width is not defined in layer ";
 	private static final String WIDTH_LANDING_DESCRIPTION = "Minimum width for general stair %s mid landing %s";
@@ -127,7 +133,7 @@ public class GeneralStair extends FeatureProcess {
 											scrutinyDetailRise, mostRestrictiveOccupancyType, floor, typicalFloorValues,
 											generalStair);
 
-									List<StairLanding> landings = generalStair.getLandings();
+//									List<StairLanding> landings = generalStair.getLandings();
 //                                    if (!landings.isEmpty()) {
 //                                        validateLanding(plan, block, scrutinyDetailLanding, mostRestrictiveOccupancyType,
 //                                                floor,
@@ -184,7 +190,8 @@ public class GeneralStair extends FeatureProcess {
 
 				if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
 					minWidth = Util.roundOffTwoDecimal(landingWidth);
-					BigDecimal minimumWidth = getRequiredWidth(block, mostRestrictiveOccupancyType);
+					BigDecimal flightWidth = getRequiredWidth(block, mostRestrictiveOccupancyType);
+					BigDecimal minimumWidth = flightWidth.multiply(BigDecimal.valueOf(2)).add(BigDecimal.valueOf(0.15));
 
 					if (minWidth.compareTo(minimumWidth) >= 0) {
 						valid = true;
@@ -194,12 +201,12 @@ public class GeneralStair extends FeatureProcess {
 							: " floor " + floor.getNumber();
 
 					if (valid) {
-						setReportOutputDetailsFloorStairWise(plan, RULE_77, value,
+						setReportOutputDetailsFloorStairWise(plan, RULE_77_3, value,
 								String.format(WIDTH_LANDING_DESCRIPTION, generalStair.getNumber(), landing.getNumber()),
 								minimumWidth.toString(), String.valueOf(minWidth), Result.Accepted.getResultVal(),
 								scrutinyDetailLanding);
 					} else {
-						setReportOutputDetailsFloorStairWise(plan, RULE_77, value,
+						setReportOutputDetailsFloorStairWise(plan, RULE_77_3, value,
 								String.format(WIDTH_LANDING_DESCRIPTION, generalStair.getNumber(), landing.getNumber()),
 								minimumWidth.toString(), String.valueOf(minWidth), Result.Not_Accepted.getResultVal(),
 								scrutinyDetailLanding);
@@ -286,6 +293,10 @@ public class GeneralStair extends FeatureProcess {
 							plan.addErrors(errors);
 						}
 
+					} else {
+						errors.put("Flight PolyLine " + flightLayerName,
+								FLIGHT_POLYLINE_NOT_CLOSED_DESCRIPTION + flightLayerName);
+						plan.addErrors(errors);
 					}
 				} else {
 					errors.put("Flight PolyLine " + flightLayerName,
@@ -321,12 +332,12 @@ public class GeneralStair extends FeatureProcess {
 					: " floor " + floor.getNumber();
 
 			if (valid) {
-				setReportOutputDetailsFloorStairWise(plan, RULE_77, value,
+				setReportOutputDetailsFloorStairWise(plan, RULE_77_2, value,
 						String.format(WIDTH_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
 						minimumWidth.toString(), String.valueOf(minFlightWidth), Result.Accepted.getResultVal(),
 						scrutinyDetail2);
 			} else {
-				setReportOutputDetailsFloorStairWise(plan, RULE_77, value,
+				setReportOutputDetailsFloorStairWise(plan, RULE_77_2, value,
 						String.format(WIDTH_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
 						minimumWidth.toString(), String.valueOf(minFlightWidth), Result.Not_Accepted.getResultVal(),
 						scrutinyDetail2);
@@ -336,28 +347,31 @@ public class GeneralStair extends FeatureProcess {
 	}
 
 	private BigDecimal getRequiredWidth(Block block, OccupancyTypeHelper mostRestrictiveOccupancyType) {
+//		BigDecimal buildingHeight = block.getBuilding().getHeight();
 		if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
 				&& DxfFileConstants.A_AF.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-			return BigDecimal.valueOf(0.75);
+			return BigDecimal.valueOf(0.85);
 		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
 				&& DxfFileConstants.A_AF_GH.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-			return BigDecimal.valueOf(0.75);
-		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
-				&& DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
-				&& block.getBuilding().getBuildingHeight().compareTo(BigDecimal.valueOf(10)) <= 0
-				&& block.getBuilding().getFloorsAboveGround().compareTo(BigDecimal.valueOf(3)) <= 0) {
-			return BigDecimal.valueOf(0.75);
+			return BigDecimal.valueOf(0.85);
 		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
 				&& DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-			return BigDecimal.valueOf(0.75);
+			return BigDecimal.valueOf(0.85);
+		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+				&& DxfFileConstants.B.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
+				&& block.getBuilding().getBuildingHeight().compareTo(BigDecimal.valueOf(24)) <= 0) {
+			return BigDecimal.valueOf(1.5);
 		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
 				&& DxfFileConstants.B.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-			return BigDecimal.valueOf(0.75);
+			return BigDecimal.valueOf(2.0);
+		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+				&& DxfFileConstants.C.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+			return BigDecimal.valueOf(1.5);
 		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
 				&& DxfFileConstants.D.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-			return BigDecimal.valueOf(0.75);
+			return BigDecimal.valueOf(1.5);
 		} else {
-			return BigDecimal.valueOf(0.75);
+			return BigDecimal.valueOf(1.5);
 		}
 	}
 
@@ -397,12 +411,12 @@ public class GeneralStair extends FeatureProcess {
 							? (String) typicalFloorValues.get("typicalFloors")
 							: " floor " + floor.getNumber();
 					if (valid) {
-						setReportOutputDetailsFloorStairWise(plan, RULE_77, value,
+						setReportOutputDetailsFloorStairWise(plan, RULE_77_4, value,
 								String.format(TREAD_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
 								requiredTread.toString(), String.valueOf(minTread), Result.Accepted.getResultVal(),
 								scrutinyDetail3);
 					} else {
-						setReportOutputDetailsFloorStairWise(plan, RULE_77, value,
+						setReportOutputDetailsFloorStairWise(plan, RULE_77_4, value,
 								String.format(TREAD_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
 								requiredTread.toString(), String.valueOf(minTread), Result.Not_Accepted.getResultVal(),
 								scrutinyDetail3);
@@ -437,29 +451,29 @@ public class GeneralStair extends FeatureProcess {
 		boolean valid = false;
 
 		if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
-//            if (Util.roundOffTwoDecimal(noOfRises).compareTo(Util.roundOffTwoDecimal(BigDecimal.valueOf(12))) <= 0) {
-//                valid = true;
-//            }
-			valid = true;
+            if (Util.roundOffTwoDecimal(noOfRises).compareTo(Util.roundOffTwoDecimal(BigDecimal.valueOf(15))) <= 0) {
+                valid = true;
+            }
+//			valid = true;
 			String value = typicalFloorValues.get("typicalFloors") != null
 					? (String) typicalFloorValues.get("typicalFloors")
 					: " floor " + floor.getNumber();
 			if (valid) {
-				setReportOutputDetailsFloorStairWise(plan, RULE_77, value,
-						String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()), "-",
-						String.valueOf(noOfRises), Result.Accepted.getResultVal(), scrutinyDetail3);
-//                setReportOutputDetailsFloorStairWise(plan, RULE_77, value,
-//                		String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
-//                		EXPECTED_NO_OF_RISER,
-//                		String.valueOf(noOfRises), Result.Accepted.getResultVal(), scrutinyDetail3);
+//				setReportOutputDetailsFloorStairWise(plan, RULE_77_5, value,
+//						String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()), "-",
+//						String.valueOf(noOfRises), Result.Accepted.getResultVal(), scrutinyDetail3);
+                setReportOutputDetailsFloorStairWise(plan, RULE_77_5, value,
+                		String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
+                		EXPECTED_NO_OF_RISER,
+                		String.valueOf(noOfRises), Result.Accepted.getResultVal(), scrutinyDetail3);
 			} else {
-				setReportOutputDetailsFloorStairWise(plan, RULE_77, value,
-						String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()), "-",
-						String.valueOf(noOfRises), Result.Not_Accepted.getResultVal(), scrutinyDetail3);
-//                setReportOutputDetailsFloorStairWise(plan, RULE_77, value,
-//                		String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
-//                		EXPECTED_NO_OF_RISER,
-//                		String.valueOf(noOfRises), Result.Not_Accepted.getResultVal(), scrutinyDetail3);
+//				setReportOutputDetailsFloorStairWise(plan, RULE_77_5, value,
+//						String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()), "-",
+//						String.valueOf(noOfRises), Result.Not_Accepted.getResultVal(), scrutinyDetail3);
+                setReportOutputDetailsFloorStairWise(plan, RULE_77_5, value,
+                		String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
+                		EXPECTED_NO_OF_RISER,
+                		String.valueOf(noOfRises), Result.Not_Accepted.getResultVal(), scrutinyDetail3);
 			}
 		}
 	}
