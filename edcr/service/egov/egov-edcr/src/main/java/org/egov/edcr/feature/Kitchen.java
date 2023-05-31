@@ -75,12 +75,15 @@ import org.springframework.stereotype.Service;
 public class Kitchen extends FeatureProcess {
 
     private static final String SUBRULE_41_III = "41-iii";
+    private static final String SUBRULE_67_1 = "67-1";
+    private static final String SUBRULE_67_2 = "67-2";
 
     private static final String SUBRULE_41_III_DESC = "Minimum height of kitchen";
     private static final String SUBRULE_41_III_AREA_DESC = "Total area of %s";
     private static final String SUBRULE_41_III_TOTAL_WIDTH = "Minimum Width of %s";
 
     public static final BigDecimal MINIMUM_HEIGHT_2_75 = BigDecimal.valueOf(2.75);
+    public static final BigDecimal MINIMUM_HEIGHT_2_6 = BigDecimal.valueOf(2.6);
     public static final BigDecimal MINIMUM_HEIGHT_2_4 = BigDecimal.valueOf(2.4);
     public static final BigDecimal MINIMUM_AREA_4_5 = BigDecimal.valueOf(4.5);
     public static final BigDecimal MINIMUM_AREA_7_5 = BigDecimal.valueOf(7.5);
@@ -177,8 +180,8 @@ public class Kitchen extends FeatureProcess {
                                 if (!kitchenHeights.isEmpty()) {
                                     BigDecimal minHeight = kitchenHeights.stream().reduce(BigDecimal::min).get();
 
-                                    minimumHeight = MINIMUM_HEIGHT_2_75;
-                                    subRule = SUBRULE_41_III;
+                                    minimumHeight = MINIMUM_HEIGHT_2_6;
+                                    subRule = SUBRULE_67_1;
                                     subRuleDesc = SUBRULE_41_III_DESC;
 
                                     boolean valid = false;
@@ -196,11 +199,11 @@ public class Kitchen extends FeatureProcess {
                                 }
 
                             }
-                            subRule = SUBRULE_41_III;
+                            subRule = SUBRULE_67_2;
 
                             if (!kitchenAreas.isEmpty()) {
                                 totalArea = kitchenAreas.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-                                minimumHeight = MINIMUM_AREA_5;
+                                minimumHeight = MINIMUM_AREA_4_5;
                                 subRuleDesc = String.format(SUBRULE_41_III_AREA_DESC, KITCHEN);
 
                                 boolean valid = false;
@@ -224,7 +227,7 @@ public class Kitchen extends FeatureProcess {
 
                             if (!kitchenStoreAreas.isEmpty()) {
                                 totalArea = kitchenStoreAreas.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-                                minimumHeight = MINIMUM_AREA_4_5;
+                                minimumHeight = MINIMUM_AREA_5;
                                 subRuleDesc = String.format(SUBRULE_41_III_AREA_DESC, KITCHEN_STORE);
 
                                 boolean valid = false;
