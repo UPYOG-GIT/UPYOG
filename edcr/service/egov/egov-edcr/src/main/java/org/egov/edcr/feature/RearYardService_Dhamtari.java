@@ -222,12 +222,6 @@ public class RearYardService_Dhamtari extends RearYardService {
 											buildingHeight);
 
 								}
-								/*
-								 * else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
-								 * checkRearYardForIndustrial(setback, block.getBuilding(), pl, block,
-								 * setback.getLevel(), plot, REAR_YARD_DESC, min, mean,
-								 * occupancy.getTypeHelper(), rearYardResult); }
-								 */
 //								else if (occupancy.getTypeHelper().getType() != null
 //										&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
 //									processRearYardGovtOccupancies(setback, block.getBuilding(), pl, block,

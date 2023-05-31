@@ -561,7 +561,7 @@ public class Sanitation extends FeatureProcess {
 						case DxfFileConstants.F_K:
 							helper.maleWc += 1d;
 							helper.femaleWc += 1d;
-							helper.urinal += 1d;
+							helper.urinal += 2d;
 //							helper.maleWc += carpetArea * 2 / (4.75 * 3 * 25);
 //							helper.femaleWc += carpetArea / (4.75 * 3 * 15);
 //							helper.urinal += carpetArea * 2 / (4.75 * 3 * 25);
@@ -575,33 +575,31 @@ public class Sanitation extends FeatureProcess {
 
 							break;
 						case DxfFileConstants.H:
-							helper.maleWc += carpetArea * 2 / (3 * 30 * 50);
-							helper.femaleWc += carpetArea / (3 * 30 * 25);
-							helper.urinal += carpetArea * 2 / (3 * 30 * 100);
-							helper.ruleNo.add("58(6)");
+							helper.maleWc += 1d;
+							helper.femaleWc += 1d;
+							helper.urinal += 2d;
 							break;
 						case DxfFileConstants.F_H:
-							helper.maleWc += carpetArea * 2 / (4.75 * 3 * 25);
-							helper.femaleWc += carpetArea / (4.75 * 3 * 15);
-							helper.urinal += carpetArea * 2 / (4.75 * 3 * 25);
-							// preferable one on each floor to be implemented
-							helper.maleWash += carpetArea * 2 / (4.75 * 3 * 100);
-							helper.femaleWash += carpetArea / (4.75 * 3 * 100);
-							helper.commonBath += carpetArea * 2 / (4.75 * 100);
-							processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-									failedDimensionSpWcMap);
-							// helper.femaleBath += carpetArea / (4.75 * 3 * 10);
+//							helper.maleWc += carpetArea * 2 / (4.75 * 3 * 25);
+//							helper.femaleWc += carpetArea / (4.75 * 3 * 15);
+//							helper.urinal += carpetArea * 2 / (4.75 * 3 * 25);
+//							// preferable one on each floor to be implemented
+//							helper.maleWash += carpetArea * 2 / (4.75 * 3 * 100);
+//							helper.femaleWash += carpetArea / (4.75 * 3 * 100);
+//							helper.commonBath += carpetArea * 2 / (4.75 * 100);
+//							processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
+//									failedDimensionSpWcMap);
+//							// helper.femaleBath += carpetArea / (4.75 * 3 * 10);
+							helper.maleWc += 1d;
+							helper.femaleWc += 1d;
+							helper.urinal += 2d;
 							helper.ruleNo.add(RULE_54_6);
 							break;
 						case DxfFileConstants.G:
 						case DxfFileConstants.G_SI:
-							helper.maleWc += carpetArea * 2 / (4.75 * 3 * 25);
-							helper.femaleWc += carpetArea / (4.75 * 3 * 15);
-							helper.urinal += carpetArea * 2 / (4.75 * 3 * 25);
-							// preferable one on each floor to be implemented
-							helper.ruleNo.add("57(13)");
-							// accepted = processSanity(pl, b, carpetArea, helper,
-							// scrutinyDetail, type);
+							helper.maleWc += 1d;
+							helper.femaleWc += 1d;
+							helper.urinal += 2d;
 							break;
 						case DxfFileConstants.I1:
 						case DxfFileConstants.I2:

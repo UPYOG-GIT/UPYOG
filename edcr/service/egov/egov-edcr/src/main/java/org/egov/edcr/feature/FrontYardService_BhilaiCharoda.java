@@ -53,6 +53,7 @@ import static org.egov.edcr.constants.DxfFileConstants.A_PO;
 import static org.egov.edcr.constants.DxfFileConstants.A_R;
 import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.constants.DxfFileConstants.J;
+import static org.egov.edcr.constants.DxfFileConstants.G;
 import static org.egov.edcr.utility.DcrConstants.FRONT_YARD_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
@@ -84,6 +85,7 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 	private static final Logger LOG = LogManager.getLogger(FrontYardService_BhilaiCharoda.class);
 
 	private static final String RULE_35 = "35 Table-8";
+	private static final String RULE_48_3 = "48(3)";
 	private static final String RULE_7_C_1 = "Table 7-C-1";
 	private static final String RULE_7_C_13 = "Table 7-C-13";
 //	private static final String RULE_36 = "36";
@@ -102,14 +104,19 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_2_25 = BigDecimal.valueOf(2.25); // New var added
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_2_5 = BigDecimal.valueOf(2.5);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_3 = BigDecimal.valueOf(3);
+	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_3_2 = BigDecimal.valueOf(3.2);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_4 = BigDecimal.valueOf(4);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_4_5 = BigDecimal.valueOf(4.5);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_5 = BigDecimal.valueOf(5);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_6 = BigDecimal.valueOf(6);
+	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_7_5 = BigDecimal.valueOf(7.5);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_9 = BigDecimal.valueOf(9);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_10 = BigDecimal.valueOf(10);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_12 = BigDecimal.valueOf(12);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_15 = BigDecimal.valueOf(15);
+	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_18 = BigDecimal.valueOf(18);
+	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_21 = BigDecimal.valueOf(21);
+	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_24 = BigDecimal.valueOf(24);
 	public static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
 
 	public static final String BSMT_FRONT_YARD_DESC = "Basement Front Yard";
@@ -170,29 +177,30 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 					if (setback.getFrontYard() != null) {
 						min = setback.getFrontYard().getMinimumDistance();
 						mean = setback.getFrontYard().getMean();
-						
-						//added for front road reserve deduction from rear setback
+
+						// added for front road reserve deduction from rear setback
 						List<Road> roadReserve = pl.getRoadReserves();
 						BigDecimal frontRoadReserve = BigDecimal.ZERO;
-						boolean roadReservePresent=false;
-						int frontRoadReserveIndex=-1;
-						
-						for(Road road:roadReserve) {
+						boolean roadReservePresent = false;
+						int frontRoadReserveIndex = -1;
+
+						for (Road road : roadReserve) {
 							frontRoadReserveIndex++;
-							if(road.getName().equals("ROAD_RESERVE_FRONT")) {
-								roadReservePresent=true;
+							if (road.getName().equals("ROAD_RESERVE_FRONT")) {
+								roadReservePresent = true;
 								break;
 							}
 						}
-						
+
 						if (roadReservePresent) {
-							frontRoadReserve = roadReserve.get(frontRoadReserveIndex).getShortestDistanceToRoad().get(0);
+							frontRoadReserve = roadReserve.get(frontRoadReserveIndex).getShortestDistanceToRoad()
+									.get(0);
 						}
 
 						if (frontRoadReserve.compareTo(BigDecimal.ZERO) >= 0) {
 							min = min.subtract(frontRoadReserve);
 						}
-						//road reserve calculation end
+						// road reserve calculation end
 
 						// if height defined at frontyard level, then use elase use buidling height.
 						BigDecimal buildingHeight = setback.getFrontYard().getHeight() != null
@@ -228,12 +236,14 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 											errors);
 
 								}
-								/*
-								 * else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
-								 * checkFrontYardForIndustrial(pl, block.getBuilding(), block.getName(),
-								 * setback.getLevel(), plot, FRONT_YARD_DESC, min, mean,
-								 * occupancy.getTypeHelper(), frontYardResult); }
-								 */
+
+								else if (occupancy.getTypeHelper().getType() != null
+										&& G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+									checkFrontYardForIndustrial(pl, block.getBuilding(), block.getName(),
+											setback.getLevel(), plot, FRONT_YARD_DESC, min, mean,
+											occupancy.getTypeHelper(), frontYardResult);
+								}
+
 								else if (occupancy.getTypeHelper().getType() != null
 										&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
 									processFrontYardGovtOccupancies(pl, block.getBuilding(), block.getName(),
@@ -298,7 +308,7 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot,
 			BigDecimal buildingHeight, BigDecimal roadWidth) {
-		double OneThirdHieght=0d;
+		double OneThirdHieght = 0d;
 		if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) <= 0
 				&& roadWidth.compareTo(BigDecimal.valueOf(18.0)) <= 0) {
 			if (depthOfPlot.compareTo(BigDecimal.valueOf(6.0)) <= 0) {
@@ -321,7 +331,7 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 		} else if (roadWidth.compareTo(BigDecimal.valueOf(18.0)) >= 0) {
 			minVal = FRONTYARDMINIMUM_DISTANCE_6;
 		} else if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) >= 0) {
-			OneThirdHieght=buildingHeight.doubleValue()/3;
+			OneThirdHieght = buildingHeight.doubleValue() / 3;
 			minVal = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
 		}
 
@@ -402,7 +412,7 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 			String frontYardFieldName, BigDecimal min, BigDecimal mean, OccupancyTypeHelper mostRestrictiveOccupancy,
 			FrontYardResult frontYardResult) {
 		Boolean valid = false;
-		String subRule = RULE_35;
+		String subRule = RULE_48_3;
 		String rule = FRONT_YARD_DESC;
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;
@@ -423,8 +433,8 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
 		BigDecimal buildingHeight = building.getBuildingHeight();
 		BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
-		double OneThirdHieght=0d;
-		
+		double OneThirdHieght = 0d;
+
 		if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) <= 0
 				&& roadWidth.compareTo(BigDecimal.valueOf(18)) <= 0) {
 			if (depthOfPlot.compareTo(BigDecimal.valueOf(9.0)) <= 0) {
@@ -441,7 +451,7 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 		} else if (roadWidth.compareTo(BigDecimal.valueOf(18.0)) >= 0) {
 			minVal = FRONTYARDMINIMUM_DISTANCE_6;
 		} else if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) >= 0) {
-			OneThirdHieght=buildingHeight.doubleValue()/3;
+			OneThirdHieght = buildingHeight.doubleValue() / 3;
 			minVal = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
 		}
 
@@ -488,7 +498,7 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot,
 			HashMap<String, String> errors, Plan pl, BigDecimal buildingHeight, BigDecimal roadWidth) {
 //		pl.getVirtualBuilding().getBuildingHeight();
-		double OneThirdHieght=0d;
+		double OneThirdHieght = 0d;
 		if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) <= 0
 				&& roadWidth.compareTo(BigDecimal.valueOf(18)) <= 0) {
 			if (depthOfPlot.compareTo(BigDecimal.valueOf(12.0)) <= 0) {
@@ -505,7 +515,7 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 		} else if (roadWidth.compareTo(BigDecimal.valueOf(18.0)) >= 0) {
 			minVal = FRONTYARDMINIMUM_DISTANCE_6;
 		} else if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) >= 0) {
-			OneThirdHieght=buildingHeight.doubleValue()/3;
+			OneThirdHieght = buildingHeight.doubleValue() / 3;
 			minVal = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
 		}
 
@@ -525,34 +535,33 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal plotArea,
 			BigDecimal widthOfPlot) {
-		if (plotArea.compareTo(BigDecimal.valueOf(550)) < 0) {
-			if (widthOfPlot.compareTo(BigDecimal.valueOf(10)) <= 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_3;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(12)) <= 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_4;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_5;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_6;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(18)) > 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_6;
-			}
-		} else if (plotArea.compareTo(BigDecimal.valueOf(550)) > 0
+		if (plotArea.compareTo(BigDecimal.valueOf(450)) < 0) {
+			minVal = FRONTYARDMINIMUM_DISTANCE_3_2;
+		} else if (plotArea.compareTo(BigDecimal.valueOf(450)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_9;
-
+			minVal = FRONTYARDMINIMUM_DISTANCE_4_5;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(1000)) > 0
+				&& plotArea.compareTo(BigDecimal.valueOf(2000)) <= 0) {
+			minVal = FRONTYARDMINIMUM_DISTANCE_7_5;
+		} else if (plotArea.compareTo(BigDecimal.valueOf(2000)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(5000)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_10;
-
+			minVal = FRONTYARDMINIMUM_DISTANCE_9;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(5000)) > 0
-				&& plotArea.compareTo(BigDecimal.valueOf(30000)) <= 0) {
+				&& plotArea.compareTo(BigDecimal.valueOf(7500)) <= 0) {
 			minVal = FRONTYARDMINIMUM_DISTANCE_12;
-
-		} else if (plotArea.compareTo(BigDecimal.valueOf(30000)) > 0) {
+		} else if (plotArea.compareTo(BigDecimal.valueOf(7500)) > 0
+				&& plotArea.compareTo(BigDecimal.valueOf(10000)) <= 0) {
 			minVal = FRONTYARDMINIMUM_DISTANCE_15;
-
+		} else if (plotArea.compareTo(BigDecimal.valueOf(10000)) > 0
+				&& plotArea.compareTo(BigDecimal.valueOf(12500)) <= 0) {
+			minVal = FRONTYARDMINIMUM_DISTANCE_18;
+		} else if (plotArea.compareTo(BigDecimal.valueOf(12500)) > 0
+				&& plotArea.compareTo(BigDecimal.valueOf(20000)) <= 0) {
+			minVal = FRONTYARDMINIMUM_DISTANCE_21;
+		} else if (plotArea.compareTo(BigDecimal.valueOf(20000)) > 0) {
+			minVal = FRONTYARDMINIMUM_DISTANCE_24;
 		}
+
 
 		/*
 		 * if (-1 == level) { rule = BSMT_FRONT_YARD_DESC; subRuleDesc =

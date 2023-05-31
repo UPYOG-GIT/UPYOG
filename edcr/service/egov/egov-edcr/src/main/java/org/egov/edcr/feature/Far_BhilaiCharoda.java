@@ -128,6 +128,7 @@ public class Far_BhilaiCharoda extends Far {
 	public static final String RULE_31_1 = "31-1";
 	public static final String RULE_38 = "38";
 	public static final String RULE_29 = "29";
+	public static final String RULE_48_3 = "48(3)";
 
 	private static final BigDecimal POINTTWO = BigDecimal.valueOf(0.2);
 	private static final BigDecimal POINTFOUR = BigDecimal.valueOf(0.4);
@@ -1003,19 +1004,11 @@ public class Far_BhilaiCharoda extends Far {
 
 		BigDecimal plotArea = pl.getPlot().getArea();
 
-		if (plotArea.compareTo(BigDecimal.valueOf(150.0)) <= 0) {
-			farValue = BigDecimal.valueOf(1.0);
-
-		} else if (plotArea.compareTo(BigDecimal.valueOf(150.0)) > 0
-				&& plotArea.compareTo(BigDecimal.valueOf(500.0)) <= 0) {
+		if (plotArea.compareTo(BigDecimal.valueOf(1000.0)) <= 0) {
 			farValue = BigDecimal.valueOf(1.25);
 
-		} else if (plotArea.compareTo(BigDecimal.valueOf(500.0)) > 0
-				&& plotArea.compareTo(BigDecimal.valueOf(750.0)) <= 0) {
-			farValue = BigDecimal.valueOf(1.5);
-
-		} else if (plotArea.compareTo(BigDecimal.valueOf(750.0)) > 0) {
-			farValue = BigDecimal.valueOf(1.75);
+		} else if (plotArea.compareTo(BigDecimal.valueOf(1000.0)) > 0) {
+			farValue = BigDecimal.valueOf(1.0);
 
 		}
 
@@ -1138,7 +1131,7 @@ public class Far_BhilaiCharoda extends Far {
 		String actualResult = far.toString();
 
 		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_29);
+		details.put(RULE_NO, occupancyName.equalsIgnoreCase("Industrial") ? RULE_48_3 : RULE_29);
 		details.put(OCCUPANCY, occupancyName);
 //		details.put(AREA_TYPE, typeOfArea);
 		details.put(PLOT_AREA, plotArea.toString());

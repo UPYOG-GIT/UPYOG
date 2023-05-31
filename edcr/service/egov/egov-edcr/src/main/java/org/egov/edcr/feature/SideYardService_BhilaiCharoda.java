@@ -94,21 +94,27 @@ public class SideYardService_BhilaiCharoda extends SideYardService {
 	private static final BigDecimal SIDEVALUE_ONEPOINTFIVE = BigDecimal.valueOf(1.5);
 	private static final BigDecimal SIDEVALUE_ONEPOINTSEVENFIVE = BigDecimal.valueOf(1.75);
 	private static final BigDecimal SIDEVALUE_TWO = BigDecimal.valueOf(2);
+	private static final BigDecimal SIDEVALUE_TWOPOINTONE = BigDecimal.valueOf(2.1);
 	private static final BigDecimal SIDEVALUE_TWOPOINTTWOFIVE = BigDecimal.valueOf(2.25);
 	private static final BigDecimal SIDEVALUE_TWOPOINTFIVE = BigDecimal.valueOf(2.5);
 	private static final BigDecimal SIDEVALUE_THREE = BigDecimal.valueOf(3);
 	private static final BigDecimal SIDEVALUE_THREEPOINTFIVE = BigDecimal.valueOf(3.5);
+	private static final BigDecimal SIDEVALUE_THREEPOINTSEVENFIVE = BigDecimal.valueOf(3.75);
 	private static final BigDecimal SIDEVALUE_FOUR = BigDecimal.valueOf(4);
 	private static final BigDecimal SIDEVALUE_FOURPOINTFIVE = BigDecimal.valueOf(4.5);
 	private static final BigDecimal SIDEVALUE_SIX = BigDecimal.valueOf(6);
+	private static final BigDecimal SIDEVALUE_SEVENPOINTFIVE = BigDecimal.valueOf(7.5);
 	private static final BigDecimal SIDEVALUE_NINE = BigDecimal.valueOf(9);
 	private static final BigDecimal SIDEVALUE_TEN = BigDecimal.valueOf(10);
+	private static final BigDecimal SIDEVALUE_TENPOINTFIVE = BigDecimal.valueOf(10.5);
+	private static final BigDecimal SIDEVALUE_TWELVE = BigDecimal.valueOf(12);
 
 	private static final String SIDENUMBER = "Side Number";
 	private static final String MINIMUMLABEL = "Minimum distance ";
 
 	private static final String RULE_35 = "35 Table-9";
 	private static final String RULE_7_C_1 = "Table 7-C-1";
+	private static final String RULE_48_3 = "48(3)";
 	private static final String RULE_7_C_13 = "Table 7-C-13";
 	private static final String RULE_36 = "36";
 	private static final String RULE_37_TWO_A = "37-2-A";
@@ -297,13 +303,14 @@ public class SideYardService_BhilaiCharoda extends SideYardService {
 											occupancy.getTypeHelper(), sideYard1Result, sideYard2Result, block);
 
 								}
-								/*
-								 * else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
-								 * checkSideYardForIndustrial(pl, block.getBuilding(), buildingHeight,
-								 * block.getName(), setback.getLevel(), plot, minlength, max, minMeanlength,
-								 * maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
-								 * }
-								 */
+
+								else if (occupancy.getTypeHelper().getType() != null
+										&& G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+									checkSideYardForIndustrial(pl, block.getBuilding(), buildingHeight, block.getName(),
+											setback.getLevel(), plot, minlength, max, minMeanlength, maxMeanLength,
+											occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
+								}
+
 								else if (occupancy.getTypeHelper().getType() != null
 										&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
 									processSideYardForGovtOccupancies(pl, block, block.getBuilding(), buildingHeight,
@@ -489,8 +496,8 @@ public class SideYardService_BhilaiCharoda extends SideYardService {
 //					&& pl.getPlanInformation().getRoadWidth().compareTo(ROAD_WIDTH_TWELVE_POINTTWO) < 0
 			) {
 				checkCommercial(pl, blockName, level, min, max, minMeanlength, maxMeanLength, mostRestrictiveOccupancy,
-						sideYard1Result, sideYard2Result, rule, subRule, valid2, valid1, side2val,
-						side1val, widthOfPlot, buildingHeight, roadWidth, block);
+						sideYard1Result, sideYard2Result, rule, subRule, valid2, valid1, side2val, side1val,
+						widthOfPlot, buildingHeight, roadWidth, block);
 			} else {
 				checkResidential(pl, blockName, level, min, max, minMeanlength, maxMeanLength, mostRestrictiveOccupancy,
 						sideYard1Result, sideYard2Result, rule, subRule, valid2, valid1, side2val, side1val,
@@ -605,47 +612,49 @@ public class SideYardService_BhilaiCharoda extends SideYardService {
 			SideYardResult sideYard2Result) {
 
 		String rule = SIDE_YARD_DESC;
-		String subRule = RULE_7_C_1;
+		String subRule = RULE_48_3;
 		Boolean valid2 = false;
 		Boolean valid1 = false;
 		BigDecimal side2val = BigDecimal.ZERO;
 		BigDecimal side1val = BigDecimal.ZERO;
 
-		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
+//		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
 		BigDecimal plotArea = pl.getPlot().getArea();
 
-		if (plotArea.compareTo(BigDecimal.valueOf(550)) < 0) {
-			if (widthOfPlot.compareTo(BigDecimal.valueOf(10)) <= 0) {
-				side2val = SIDEVALUE_ONEPOINTFIVE;
-				side1val = SIDEVALUE_ONEPOINTFIVE;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(12)) <= 0) {
-				side2val = SIDEVALUE_TWO;
-				side1val = SIDEVALUE_TWO;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
-				side2val = SIDEVALUE_THREE;
-				side1val = SIDEVALUE_THREE;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) {
-				side2val = SIDEVALUE_FOUR;
-				side1val = SIDEVALUE_FOUR;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(18)) > 0) {
-				side2val = SIDEVALUE_FOURPOINTFIVE;
-				side1val = SIDEVALUE_FOURPOINTFIVE;
-			}
-		} else if (plotArea.compareTo(BigDecimal.valueOf(550)) > 0
+		if (plotArea.compareTo(BigDecimal.valueOf(450)) < 0) {
+			side2val =  SIDEVALUE_TWOPOINTONE;
+			side1val = SIDEVALUE_TWOPOINTONE;
+		} else if (plotArea.compareTo(BigDecimal.valueOf(450)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+			side2val = SIDEVALUE_THREE;
+			side1val = SIDEVALUE_THREE;
+		} else if (plotArea.compareTo(BigDecimal.valueOf(1000)) > 0
+				&& plotArea.compareTo(BigDecimal.valueOf(2000)) <= 0) {
+			side2val = SIDEVALUE_THREEPOINTSEVENFIVE;
+			side1val = SIDEVALUE_THREEPOINTSEVENFIVE;
+		} else if (plotArea.compareTo(BigDecimal.valueOf(2000)) > 0
+				&& plotArea.compareTo(BigDecimal.valueOf(5000)) <= 0) {
 			side2val = SIDEVALUE_FOURPOINTFIVE;
 			side1val = SIDEVALUE_FOURPOINTFIVE;
-		} else if (plotArea.compareTo(BigDecimal.valueOf(1000)) > 0
-				&& plotArea.compareTo(BigDecimal.valueOf(5000)) <= 0) {
+		} else if (plotArea.compareTo(BigDecimal.valueOf(5000)) > 0
+				&& plotArea.compareTo(BigDecimal.valueOf(7500)) <= 0) {
 			side2val = SIDEVALUE_SIX;
 			side1val = SIDEVALUE_SIX;
-		} else if (plotArea.compareTo(BigDecimal.valueOf(5000)) > 0
-				&& plotArea.compareTo(BigDecimal.valueOf(30000)) <= 0) {
+		} else if (plotArea.compareTo(BigDecimal.valueOf(7500)) > 0
+				&& plotArea.compareTo(BigDecimal.valueOf(10000)) <= 0) {
+			side2val = SIDEVALUE_SEVENPOINTFIVE;
+			side1val = SIDEVALUE_SEVENPOINTFIVE;
+		} else if (plotArea.compareTo(BigDecimal.valueOf(10000)) > 0
+				&& plotArea.compareTo(BigDecimal.valueOf(12500)) <= 0) {
 			side2val = SIDEVALUE_NINE;
 			side1val = SIDEVALUE_NINE;
-		} else if (plotArea.compareTo(BigDecimal.valueOf(30000)) > 0) {
-			side2val = SIDEVALUE_TEN;
-			side1val = SIDEVALUE_TEN;
+		} else if (plotArea.compareTo(BigDecimal.valueOf(12500)) > 0
+				&& plotArea.compareTo(BigDecimal.valueOf(20000)) <= 0) {
+			side2val = SIDEVALUE_TENPOINTFIVE;
+			side1val = SIDEVALUE_TENPOINTFIVE;
+		} else if (plotArea.compareTo(BigDecimal.valueOf(20000)) > 0) {
+			side2val = SIDEVALUE_TWELVE;
+			side1val = SIDEVALUE_TWELVE;
 		}
 
 		if (max >= side1val.doubleValue())

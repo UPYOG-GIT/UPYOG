@@ -72,6 +72,7 @@ import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.F;
+import static org.egov.edcr.constants.DxfFileConstants.G;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
 @Service
@@ -101,6 +102,7 @@ public class Coverage_BhilaiCharoda extends Coverage {
 
 	public static final String RULE_38 = "38";
 	public static final String RULE_7_C_1 = "Table 7-C-1";
+	public static final String RULE_48_3 = "48(3)";
 	private static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
 	private static final BigDecimal ROAD_WIDTH_THIRTY_POINTFIVE = BigDecimal.valueOf(30.5);
 
@@ -184,6 +186,8 @@ public class Coverage_BhilaiCharoda extends Coverage {
 				permissibleCoverageValue = getPermissibleCoverageForResidential(area, developmentZone);
 			} else if (F.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
 				permissibleCoverageValue = getPermissibleCoverageForCommercial(area, developmentZone);
+			} else if (G.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
+				permissibleCoverageValue = getPermissibleCoverageForIndustrial(area, developmentZone);
 			}
 		}
 
@@ -257,6 +261,16 @@ public class Coverage_BhilaiCharoda extends Coverage {
 		return permissibleCoverage;
 	}
 
+	private BigDecimal getPermissibleCoverageForIndustrial(BigDecimal area, String developmentZone) {
+		LOG.info("inside getPermissibleCoverageForCommercial()");
+		BigDecimal permissibleCoverage = BigDecimal.ZERO;
+
+		permissibleCoverage = BigDecimal.valueOf(60);
+
+		LOG.info("return from getPermissibleCoverageForCommercial()");
+		return permissibleCoverage;
+	}
+
 	private void processCoverage(Plan pl, String occupancy, BigDecimal coverage, BigDecimal upperLimit) {
 		LOG.info("inside processCoverage()");
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
@@ -274,7 +288,7 @@ public class Coverage_BhilaiCharoda extends Coverage {
 		String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY, upperLimit.toString());
 		if (coverage.doubleValue() <= upperLimit.doubleValue()) {
 			Map<String, String> details = new HashMap<>();
-			details.put(RULE_NO, RULE_7_C_1);
+			details.put(RULE_NO, occupancy.equalsIgnoreCase("Industrial") ? RULE_48_3 : RULE_7_C_1 );
 			details.put(DESCRIPTION, desc);
 			details.put(OCCUPANCY, occupancy);
 			details.put(PERMISSIBLE, expectedResult);
@@ -285,7 +299,7 @@ public class Coverage_BhilaiCharoda extends Coverage {
 
 		} else {
 			Map<String, String> details = new HashMap<>();
-			details.put(RULE_NO, RULE_7_C_1);
+			details.put(RULE_NO, occupancy.equalsIgnoreCase("Industrial") ? RULE_48_3 : RULE_7_C_1);
 			details.put(DESCRIPTION, desc);
 			details.put(OCCUPANCY, occupancy);
 			details.put(PERMISSIBLE, expectedResult);

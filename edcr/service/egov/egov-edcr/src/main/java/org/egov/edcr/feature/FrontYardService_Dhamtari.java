@@ -232,12 +232,7 @@ public class FrontYardService_Dhamtari extends FrontYardService {
 										FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(), frontYardResult, errors);
 
 							}
-							/*
-							 * else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
-							 * checkFrontYardForIndustrial(pl, block.getBuilding(), block.getName(),
-							 * setback.getLevel(), plot, FRONT_YARD_DESC, min, mean,
-							 * occupancy.getTypeHelper(), frontYardResult); }
-							 */
+							
 //							else if (occupancy.getTypeHelper().getType() != null
 //									&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
 //								processFrontYardGovtOccupancies(pl, block.getBuilding(), block.getName(),
