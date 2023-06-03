@@ -9,7 +9,8 @@ const Search = ({ path }) => {
 
   const { t } = useTranslation();
   // const tenantId = Digit.ULBService.getCurrentTenantId();
-  const tenantId = Digit.ULBService.getCitizenCurrentTenant();
+  // const tenantId = Digit.ULBService.getCitizenCurrentTenant();
+  const tenantId = userInformation?.type === 'EMPLOYEE' ? Digit.ULBService.getCurrentTenantId() : Digit.ULBService.getCitizenCurrentTenant();
 
   //console.log("tenantId1111: " + tenantId)
   const location = useLocation();

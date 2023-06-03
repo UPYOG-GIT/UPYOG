@@ -27,8 +27,3 @@ update egbpa_sub_occupancy set colorcode= 65 where code= 'A-SA';
 update egbpa_sub_occupancy set colorcode= 66 where code= 'C-HOTHC';
 update egbpa_sub_occupancy set colorcode= 67 where code= 'E-SACA';
 
-
-update egbpa_sub_occupancy set name='Government/Semi Government' AND description='Government/Semi Government' where code= 'J';
-update egbpa_occupancy set name='Government/Semi Government' AND description='Government/Semi Government' where code= 'J';
-
-

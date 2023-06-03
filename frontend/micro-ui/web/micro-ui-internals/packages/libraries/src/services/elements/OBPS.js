@@ -533,6 +533,7 @@ export const OBPSService = {
         { title: "BPA_BOUNDARY_PLOT_AREA_LABEL", value: `${edcr?.planDetail?.planInformation?.plotArea}`, isNotTranslated: true, isUnit: "BPA_SQ_FT_LABEL" },
         { title: "BPA_PLOT_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.plotNo || "NA", isNotTranslated: true },
         { title: "BPA_KHATHA_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.khataNo || "NA", isNotTranslated: true },
+        { title: "BPA_PATWARI_HALKA_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.patwariHN || "NA", isNotTranslated: true },
         { title: "BPA_HOLDING_NUMBER_LABEL", value: BPA?.additionalDetails?.holdingNo || "NA", isNotTranslated: true },
         { title: "BPA_BOUNDARY_LAND_REG_DETAIL_LABEL", value: BPA?.additionalDetails?.registrationDetails || "NA", isNotTranslated: true }
       ]
