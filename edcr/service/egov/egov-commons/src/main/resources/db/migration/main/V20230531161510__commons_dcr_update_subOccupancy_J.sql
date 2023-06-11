@@ -1,1 +1,1 @@
-update egbpa_sub_occupancy set occupancy=(select id from egbpa_occupancy where code='J') where code = 'J'
+update egbpa_sub_occupancy set occupancy=(select id from egbpa_occupancy where code='J') where code = 'J';

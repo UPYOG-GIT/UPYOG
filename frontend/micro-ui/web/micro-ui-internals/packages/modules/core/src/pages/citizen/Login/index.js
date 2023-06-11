@@ -136,7 +136,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
     const newValue = e.target.value;
     setMobileNumber(newValue);
-   if (newValue.length < 10 || newValue < 10) {
+    if (newValue.length < 10 || newValue < 10) {
       setError(true);
     } else {
       setError(false);
@@ -146,7 +146,18 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
   const handleNameChange = (e) => {
     // const { value } = event.target;
-    setName(e.target.value);
+    // setName(e.target.value);
+
+    const value = e.target.value;
+    const isValid = /^[A-Za-z ]*$/.test(value);
+
+    if (isValid) {
+      // Update the name state or perform any other necessary actions
+      setName(value);
+    } else {
+      // Display an error message or handle invalid input
+      title: t("TL_NAME_ERROR_MESSAGE");
+    }
   };
 
   const selectMobileNumber = async () => {
@@ -157,12 +168,12 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       tenantId: selectedCity?.code,
       userType: getUserType(),
     };
-  
+
     Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", selectedCity);
-  
+
     if (isUserRegistered) {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
-  
+
       if (!err) {
         // Store the timestamp when OTP is sent
         const sentTimestamp = Date.now();
@@ -201,7 +212,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       }
     }
   };
-  
+
 
 
 
@@ -248,7 +259,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
           username: mobileNumber,
           password: otp,
           //tenantId: stateCode,
-      tenantId: selectedCity?.code,
+          tenantId: selectedCity?.code,
           userType: getUserType(),
         };
 
@@ -280,7 +291,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
           username: mobileNumber,
           otpReference: otp,
           //tenantId: stateCode,
-      tenantId: selectedCity?.code,
+          tenantId: selectedCity?.code,
         };
 
         const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.UserService.registerUser(requestData, stateCode);
@@ -293,7 +304,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         setUser({ info, ...tokens });
       }
     } catch (err) {
-      setIsOtpValid(false) ;
+      setIsOtpValid(false);
     }
   };
 
@@ -360,7 +371,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   function selectCity(city) {
     setSelectedCity(city);
     setShowError(false);
-   
+
   }
 
   return (
@@ -435,7 +446,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                 onChange={handleMobileChange}
                 error={error}
                 helperText={error ? "Invalid Mobile Number" : ""}
-                inputProps={{ 
+                inputProps={{
                   onInput: (e) => {
                     e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 10)
                   }
@@ -453,23 +464,23 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                   variant="standard"
                   margin="normal"
                   padding={5}
-                  inputProps={{ 
+                  inputProps={{
                     onInput: (e) => {
                       e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 6)
                     }
                   }}
-                
+
                   value={otp}
                   onChange={handleOtpChange} /> {timeLeft > 0 ? (
-                    <CardText  style={{color: "red"}}>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
+                    <CardText style={{ color: "red" }}>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
                   ) : (
-                    <p className="card-text-button" onClick={resendOtp} style={{color: "red"}}>
+                    <p className="card-text-button" onClick={resendOtp} style={{ color: "red" }}>
                       {t("CS_RESEND_OTP")}
                     </p>
                   )}
                   {!isOtpValid && <CardLabelError>{t("CS_INVALID_OTP")}</CardLabelError>}
-                   
-                 
+
+
                 </>
 
               ) : (
@@ -488,17 +499,17 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                       cities.map((city) => (
 
                         <MenuItem key={city.code} value={city.code}>
-                          {city.name} {"Municipal Corporation"} 
+                          {city.name} {"Municipal Corporation"}
                         </MenuItem>
                       ))}
                   </Select>
                   {showError && <CardLabelError>{t("CS_CITIZEN_DETAILS_ERROR_MSG1")}</CardLabelError>}
-                
+
                 </FormControl>
-                
+
 
               )}
-              
+
 
               {location.pathname === "/digit-ui/citizen/login" ? (
                 <Button
@@ -599,7 +610,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         {/* </AppContainer> */}
       </Switch>
     </div >
-    
+
 
   );
 
