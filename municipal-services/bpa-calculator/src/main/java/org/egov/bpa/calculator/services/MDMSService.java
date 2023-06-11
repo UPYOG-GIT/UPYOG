@@ -489,12 +489,12 @@ public class MDMSService {
 //			 log.info("index-----");
 //		 }
 
-		if (occupancyType.equals("Residential")) {
+		if (occupancyType.equalsIgnoreCase("Residential")) {
 			pCategory = 1; // this is srno. of proposal type master based on occupency
 			totalParkArea -= openParkArea;
-		} else if (occupancyType.equals("Mercantile / Commercial")) {
+		} else if (occupancyType.equalsIgnoreCase("Mercantile / Commercial")) {
 			pCategory = 2; // this is srno. of proposal type master based on occupency
-		} else if (occupancyType.equals("INDUSTRIAL")) {
+		} else if (occupancyType.equalsIgnoreCase("INDUSTRIAL")) {
 			pCategory = 3; // this is srno. of proposal type master based on occupency
 		}
 //		else if(occupancyType.equals("MIX")) {
