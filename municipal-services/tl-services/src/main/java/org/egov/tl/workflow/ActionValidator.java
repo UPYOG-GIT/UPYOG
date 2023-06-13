@@ -77,6 +77,12 @@ public class ActionValidator {
                         errorMap.put("INVALID ACTION", "Action should be NOWORKFLOW during create");
                     }
                     break;
+                    
+                case businessService_BPAREN:
+                	if (!TRIGGER_NOWORKFLOW.equalsIgnoreCase(license.getAction())) {
+                		errorMap.put("INVALID ACTION", "Action should be NOWORKFLOW during create");
+                	}
+                	break;
             }
         });
         //    validateRole(request);

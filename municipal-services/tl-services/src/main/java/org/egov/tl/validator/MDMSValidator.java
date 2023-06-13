@@ -16,6 +16,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 
 import static org.egov.tl.util.TLConstants.businessService_BPA;
+import static org.egov.tl.util.TLConstants.businessService_BPAREN;
 import static org.egov.tl.util.TLConstants.businessService_TL;
 
 
@@ -127,6 +128,13 @@ public class MDMSValidator {
                             errorMap.put("INVALID TRADETYPE", "The Trade type '" + unit.getTradeType() + "' does not exist");
                     });
                     break;
+                    
+                case businessService_BPAREN:
+                	license.getTradeLicenseDetail().getTradeUnits().forEach(unit -> {
+                		if (!tradeTypeUomMap.containsKey(unit.getTradeType()))
+                			errorMap.put("INVALID TRADETYPE", "The Trade type '" + unit.getTradeType() + "' does not exist");
+                	});
+                	break;
             }
 
         });

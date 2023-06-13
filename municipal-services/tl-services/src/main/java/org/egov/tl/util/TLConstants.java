@@ -19,6 +19,8 @@ public class TLConstants {
 
     public static  final String businessService_BPA = "BPAREG";
 
+    public static  final String businessService_BPAREN = "BPAREN";
+
     public static final String PROPERTY_JSONPATH = "$.Properties[0].propertyId";
 
     public static final String MODULE = "rainmaker-tl";
