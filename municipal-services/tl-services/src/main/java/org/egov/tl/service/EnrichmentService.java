@@ -188,6 +188,10 @@ public class EnrichmentService {
             case businessService_BPA:
                 applicationNumbers = getIdList(requestInfo, tenantId, config.getApplicationNumberIdgenNameBPA(), config.getApplicationNumberIdgenFormatBPA(), request.getLicenses().size());
                 break;
+                
+            case businessService_BPAREN:
+            	applicationNumbers = getIdList(requestInfo, tenantId, config.getApplicationNumberIdgenNameBPA(), config.getApplicationNumberIdgenFormatBPA(), request.getLicenses().size());
+            	break;
         }
         ListIterator<String> itr = applicationNumbers.listIterator();
 
@@ -347,6 +351,10 @@ public class EnrichmentService {
                 case businessService_BPA:
                     license.setStatus(STATUS_INITIATED);
                     break;
+                    
+                case businessService_BPAREN:
+                	license.setStatus(STATUS_PENDING_PAYMENT);
+                	break;
             }
         });
     }
