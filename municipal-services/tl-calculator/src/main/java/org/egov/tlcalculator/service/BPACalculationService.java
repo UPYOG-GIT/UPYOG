@@ -66,7 +66,7 @@ public class BPACalculationService {
      * @param calculationReq The calculationCriteria request
      * @return List of calculations for all applicationNumbers or tradeLicenses in calculationReq
      */
-    public List<Calculation> calculate(CalculationReq calculationReq) {
+    public List<Calculation> calculate(CalculationReq calculationReq, String servicename) {
 //    	log.info("CalculationReq: "+calculationReq.getCalulationCriteria().toString());
         String tenantId = calculationReq.getCalulationCriteria().get(0).getTenantId();
 //        String tenantId = calculationReq.getCalulationCriteria().get(0).getTenantId().split("\\.")[0];
@@ -74,7 +74,8 @@ public class BPACalculationService {
 //        log.info("mdmsData:" +mdmsData.toString());
         List<Calculation> calculations = getCalculation(calculationReq.getRequestInfo(),
                 calculationReq.getCalulationCriteria(), mdmsData);
-        demandService.generateDemand(calculationReq.getRequestInfo(), calculations, mdmsData, businessService_BPA);
+//        demandService.generateDemand(calculationReq.getRequestInfo(), calculations, mdmsData, businessService_BPA);
+        demandService.generateDemand(calculationReq.getRequestInfo(), calculations, mdmsData, servicename);
         CalculationRes calculationRes = CalculationRes.builder().calculations(calculations).build();
         producer.push(config.getSaveTopic(), calculationRes);
         return calculations;

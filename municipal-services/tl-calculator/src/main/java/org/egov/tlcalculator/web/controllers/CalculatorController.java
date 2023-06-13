@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.egov.tlcalculator.utils.TLCalculatorConstants.businessService_BPA;
+import static org.egov.tlcalculator.utils.TLCalculatorConstants.businessService_BPAREN;
 import static org.egov.tlcalculator.utils.TLCalculatorConstants.businessService_TL;
 
 
@@ -66,7 +67,8 @@ public class CalculatorController {
 				break;
 
 			case businessService_BPA:
-				calculations = bpaCalculationService.calculate(calculationReq);
+			case businessService_BPAREN:
+				calculations = bpaCalculationService.calculate(calculationReq, servicename);
 				break;
 			default:
 				throw new CustomException("UNKNOWN_BUSINESSSERVICE", " Business Service not supported");
