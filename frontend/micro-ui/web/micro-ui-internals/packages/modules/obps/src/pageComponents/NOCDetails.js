@@ -257,16 +257,17 @@ function SelectDocument({
                     <h1>{doc?.additionalDetails?.appNumberLink}</h1>
                 </div>
             </div>
-           {!(window.location.href.includes("sendbacktocitizen")) && <MultiUploadWrapper
+           {/* {!(window.location.href.includes("sendbacktocitizen")) && <MultiUploadWrapper
             module="BPA"
             tenantId={tenantId}
-            getFormState={e => getData(e,/* doc?.documentType?.replaceAll(".", "_") */doc.dropdownData[0].code)}
+            getFormState={e => getData(e,doc.dropdownData[0].code)}
             setuploadedstate={uploadedFilesPreFill}
             t={t}
+            disabled={true}
             allowedFileTypesRegex={allowedFileTypes}
             allowedMaxSizeInMB={5}
             acceptFiles= "image/*, .pdf, .png, .jpeg, .jpg"
-          />}
+          />} */}
         {doc?.uploadedDocuments?.length && !pdfLoading && <DocumentsPreview documents={doc?.uploadedDocuments} svgStyles = {{}} isSendBackFlow = {false} isHrLine = {true} titleStyles ={{fontSize: "18px", lineHeight: "24px", "fontWeight": 700, marginBottom: "10px"}}/>}
         </div>
     );
