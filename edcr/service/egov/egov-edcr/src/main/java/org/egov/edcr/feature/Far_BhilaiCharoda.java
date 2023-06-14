@@ -452,7 +452,7 @@ public class Far_BhilaiCharoda extends Far {
 				}
 
 				if (mostRestrictiveFar != null && mostRestrictiveFar.getConvertedSubtype() != null
-						&& !A_R.equals(mostRestrictiveFar.getSubtype().getCode())) {
+						&& mostRestrictiveFar.getSubtype()!=null && !A_R.equals(mostRestrictiveFar.getSubtype().getCode())) {
 					if (carpetArea.compareTo(BigDecimal.ZERO) == 0) {
 						pl.addError("Carpet area in block " + blk.getNumber() + "floor " + flr.getNumber(),
 								"Carpet area is not defined in block " + blk.getNumber() + "floor " + flr.getNumber());
