@@ -417,6 +417,7 @@ public class TradeLicenseService {
 				break;
 
 			case businessService_BPA:
+			case businessService_BPAREN:
 				String tradeType = tradeLicenseRequest.getLicenses().get(0).getTradeLicenseDetail().getTradeUnits()
 						.get(0).getTradeType();
 				if (pickWFServiceNameFromTradeTypeOnly)
@@ -456,6 +457,7 @@ public class TradeLicenseService {
 				break;
 
 			case businessService_BPA:
+			case businessService_BPAREN:
 				endStates = tradeUtil.getBPAEndState(tradeLicenseRequest);
 				wfIntegrator.callWorkFlow(tradeLicenseRequest);
 				break;

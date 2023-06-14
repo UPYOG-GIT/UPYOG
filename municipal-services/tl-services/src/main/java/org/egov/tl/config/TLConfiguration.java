@@ -141,6 +141,9 @@ public class TLConfiguration {
 
     @Value("${egov.bpa.calculator.calculate.endpoint}")
     private String calculateEndpointBPA;
+    
+    @Value("${egov.bpa.calculator.rencalculate.endpoint}")
+    private String calculateEndpointBPAREN;
 
     @Value("${egov.tl.calculator.getBill.endpoint}")
     private String getBillEndpoint;

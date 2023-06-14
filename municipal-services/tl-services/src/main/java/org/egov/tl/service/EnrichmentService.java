@@ -186,12 +186,9 @@ public class EnrichmentService {
                 break;
 
             case businessService_BPA:
+            case businessService_BPAREN:
                 applicationNumbers = getIdList(requestInfo, tenantId, config.getApplicationNumberIdgenNameBPA(), config.getApplicationNumberIdgenFormatBPA(), request.getLicenses().size());
                 break;
-                
-            case businessService_BPAREN:
-            	applicationNumbers = getIdList(requestInfo, tenantId, config.getApplicationNumberIdgenNameBPA(), config.getApplicationNumberIdgenFormatBPA(), request.getLicenses().size());
-            	break;
         }
         ListIterator<String> itr = applicationNumbers.listIterator();
 
@@ -474,6 +471,7 @@ public class EnrichmentService {
                         break;
 
                     case businessService_BPA:
+                    case businessService_BPAREN:
                         licenseNumbers = getIdList(requestInfo, tenantId, config.getLicenseNumberIdgenNameBPA(), config.getLicenseNumberIdgenFormatBPA(), count);
                         break;
                 }
