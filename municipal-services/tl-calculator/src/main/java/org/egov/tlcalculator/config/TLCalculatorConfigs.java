@@ -42,6 +42,9 @@ public class TLCalculatorConfigs {
 
     @Value("${egov.demand.businessserviceBPA}")
     private String businessServiceBPA;
+    
+    @Value("${egov.demand.businessserviceBPAREN}")
+    private String businessServiceBPAREN;
 
     //tradelicense Registry
     @Value("${egov.tradelicense.host}")
