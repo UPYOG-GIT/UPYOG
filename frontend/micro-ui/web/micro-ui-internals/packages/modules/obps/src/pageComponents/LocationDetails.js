@@ -220,8 +220,9 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
           //value={geoLocation && geoLocation.latitude && geoLocation.longitude?`${geoLocation.latitude},${geoLocation.longitude}`:""}
           value={isEditApplication || isSendBackTOCitizen?(geoLocation.latitude !== null?`${geoLocation.latitude}, ${geoLocation.longitude}`:""):placeName}
           onChange={selectGeolocation}
+          disabled={true}
         />
-        <LinkButton
+        {/* <LinkButton
           label={
             <div>
               <span>
@@ -233,7 +234,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
           }
           style={{ }}
           onClick={(e) => handleGIS()}
-        />
+        /> */}
       </div>
       {/* {isOpen && <GIS t={t} onSelect={onSelect} formData={formData} handleRemove={handleRemove} onSave={onSave} />} */}
       <CardLabel>{`${t("BPA_DETAILS_PIN_LABEL")}`}</CardLabel>
@@ -245,6 +246,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
         name="pincode"
         onChange={selectPincode}
         value={pincode}
+        disabled={true}
       />}
       <CardLabel>{`${t("BPA_CITY_LABEL")}*`}</CardLabel>
       {!isOpen && <RadioOrSelect

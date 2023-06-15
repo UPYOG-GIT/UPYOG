@@ -52,6 +52,8 @@ public class WorkflowIntegrator {
 	private static final String TLMODULENAMEVALUE = "TL";
 
 	private static final String BPAMODULENAMEVALUE = "BPAREG";
+	
+	private static final String BPARENEWMODULENAMEVALUE = "BPAREN";
 
 	private static final String WORKFLOWREQUESTARRAYKEY = "ProcessInstances";
 
@@ -116,6 +118,7 @@ public class WorkflowIntegrator {
 						break;
 
 					case businessService_BPA:
+						
 						String tradeType = tradeLicenseRequest.getLicenses().get(0).getTradeLicenseDetail().getTradeUnits().get(0).getTradeType();
 						if(pickWFServiceNameFromTradeTypeOnly)
 						{
@@ -123,6 +126,15 @@ public class WorkflowIntegrator {
 						}
 						obj.put(BUSINESSSERVICEKEY, tradeType);
 						obj.put(MODULENAMEKEY, BPAMODULENAMEVALUE);
+						break;
+					case businessService_BPAREN:
+						String tradeType1 = tradeLicenseRequest.getLicenses().get(0).getTradeLicenseDetail().getTradeUnits().get(0).getTradeType();
+						if(pickWFServiceNameFromTradeTypeOnly)
+						{
+							tradeType1=tradeType1.split("\\.")[0];
+						}
+						obj.put(BUSINESSSERVICEKEY, tradeType1);
+						obj.put(MODULENAMEKEY, BPARENEWMODULENAMEVALUE);
 						break;
 				}
 				obj.put(ACTIONKEY, license.getAction());

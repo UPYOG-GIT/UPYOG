@@ -186,6 +186,7 @@ public class EnrichmentService {
                 break;
 
             case businessService_BPA:
+            case businessService_BPAREN:
                 applicationNumbers = getIdList(requestInfo, tenantId, config.getApplicationNumberIdgenNameBPA(), config.getApplicationNumberIdgenFormatBPA(), request.getLicenses().size());
                 break;
         }
@@ -347,6 +348,10 @@ public class EnrichmentService {
                 case businessService_BPA:
                     license.setStatus(STATUS_INITIATED);
                     break;
+                    
+                case businessService_BPAREN:
+                	license.setStatus(STATUS_PENDING_PAYMENT);
+                	break;
             }
         });
     }
@@ -466,6 +471,7 @@ public class EnrichmentService {
                         break;
 
                     case businessService_BPA:
+                    case businessService_BPAREN:
                         licenseNumbers = getIdList(requestInfo, tenantId, config.getLicenseNumberIdgenNameBPA(), config.getLicenseNumberIdgenFormatBPA(), count);
                         break;
                 }

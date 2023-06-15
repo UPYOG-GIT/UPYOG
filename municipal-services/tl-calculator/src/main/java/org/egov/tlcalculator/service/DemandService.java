@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 import static org.egov.tlcalculator.utils.TLCalculatorConstants.BILLINGSLAB_KEY;
 import static org.egov.tlcalculator.utils.TLCalculatorConstants.MDMS_ROUNDOFF_TAXHEAD;
 import static org.egov.tlcalculator.utils.TLCalculatorConstants.businessService_BPA;
+import static org.egov.tlcalculator.utils.TLCalculatorConstants.businessService_BPAREN;
 import static org.egov.tlcalculator.utils.TLCalculatorConstants.businessService_TL;
 
 
@@ -213,6 +214,10 @@ public class DemandService {
                     singleDemand.setConsumerType("bpaStakeHolderReg");
                     singleDemand.setBusinessService(config.getBusinessServiceBPA());
                     break;
+                case businessService_BPAREN:
+                	singleDemand.setConsumerType("bpaStakeHolderRen");
+                	singleDemand.setBusinessService(config.getBusinessServiceBPAREN());
+                	break;
             }
             demands.add(singleDemand);
         }

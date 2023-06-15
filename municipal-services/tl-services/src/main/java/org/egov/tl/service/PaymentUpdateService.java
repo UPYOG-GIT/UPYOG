@@ -93,7 +93,8 @@ public class PaymentUpdateService {
 			List<PaymentDetail> paymentDetails = paymentRequest.getPayment().getPaymentDetails();
 			String tenantId = paymentRequest.getPayment().getTenantId();
 			for(PaymentDetail paymentDetail : paymentDetails){
-				if (paymentDetail.getBusinessService().equalsIgnoreCase(businessService_TL) || paymentDetail.getBusinessService().equalsIgnoreCase(businessService_BPA)) {
+				if (paymentDetail.getBusinessService().equalsIgnoreCase(businessService_TL) || paymentDetail.getBusinessService().equalsIgnoreCase(businessService_BPA)
+						|| paymentDetail.getBusinessService().equalsIgnoreCase(businessService_BPAREN)) {
 					TradeLicenseSearchCriteria searchCriteria = new TradeLicenseSearchCriteria();
 					searchCriteria.setTenantId(tenantId);
 					searchCriteria.setApplicationNumber(paymentDetail.getBill().getConsumerCode());
@@ -106,6 +107,7 @@ public class PaymentUpdateService {
 							break;
 
 						case businessService_BPA:
+						case businessService_BPAREN:
 							String tradeType = licenses.get(0).getTradeLicenseDetail().getTradeUnits().get(0).getTradeType();
 							if (pickWFServiceNameFromTradeTypeOnly)
 								tradeType = tradeType.split("\\.")[0];
@@ -141,6 +143,7 @@ public class PaymentUpdateService {
 					List<String> endStates = Collections.nCopies(updateRequest.getLicenses().size(), STATUS_APPROVED);
 					switch (paymentDetail.getBusinessService()) {
 						case businessService_BPA:
+						case businessService_BPAREN:
 							endStates = util.getBPAEndState(updateRequest);
 							break;
 					}

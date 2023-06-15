@@ -74,6 +74,7 @@ public class UserService{
                     businessService = businessService_TL;
                 switch (businessService) {
                     case businessService_BPA:
+                    case businessService_BPAREN:
 //                        UserDetailResponse userDetailResponse = searchByUserName(owner.getMobileNumber(), getStateLevelTenant(tradeLicense.getTenantId()));
                         UserDetailResponse userDetailResponse = searchByUserName(owner.getMobileNumber(), tradeLicense.getTenantId());
                         if (!userDetailResponse.getUser().isEmpty()) {
@@ -116,6 +117,7 @@ public class UserService{
                     switch (businessService)
                     {
                         case businessService_BPA:
+                        case businessService_BPAREN:
                             owner=ownerInfoBackup;
                             break;
                     }
@@ -211,6 +213,7 @@ public class UserService{
         String username = UUID.randomUUID().toString();
         switch (businessService) {
             case businessService_BPA:
+            case businessService_BPAREN:
                 username = owner.getMobileNumber();
                 break;
         }
@@ -273,6 +276,7 @@ public class UserService{
         {
             // for mseva notifications
             case businessService_BPA:
+            case businessService_BPAREN:
 //                owner.setPermanentCity(tenantId.split("\\.")[0]);
                 owner.setPermanentCity(tenantId);
                 break;

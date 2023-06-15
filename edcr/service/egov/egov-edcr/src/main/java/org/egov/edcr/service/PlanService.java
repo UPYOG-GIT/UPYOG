@@ -294,10 +294,10 @@ public class PlanService {
 
         List<EdcrApplicationDetail> edcrApplicationDetails = edcrApplicationDetailService
                 .fingByDcrApplicationId(edcrApplication.getId());
-        edcrApplicationDetails.get(0).setKhataNo(plan.getPlanInformation().getKhataNo());
-        edcrApplicationDetails.get(0).setMauza(plan.getPlanInformation().getMauza());
-        edcrApplicationDetails.get(0).setPlotNo(plan.getPlanInformation().getPlotNo());
-        edcrApplicationDetails.get(0).setPlotArea(plan.getPlanInformation().getPlotArea());
+//        edcrApplicationDetails.get(0).setKhataNo(plan.getPlanInformation().getKhataNo());
+//        edcrApplicationDetails.get(0).setMauza(plan.getPlanInformation().getMauza());
+//        edcrApplicationDetails.get(0).setPlotNo(plan.getPlanInformation().getPlotNo());
+//        edcrApplicationDetails.get(0).setPlotArea(plan.getPlanInformation().getPlotArea());
         final String fileName = edcrApplication.getApplicationNumber() + "-v" + edcrApplicationDetails.size() + ".pdf";
 
         final FileStoreMapper fileStoreMapper = fileStoreService.store(reportOutputStream, fileName, "application/pdf",

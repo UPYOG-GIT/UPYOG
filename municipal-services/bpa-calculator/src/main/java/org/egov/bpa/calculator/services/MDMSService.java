@@ -586,13 +586,17 @@ public class MDMSService {
 						s_category = 0;
 
 //					if (!calcon.equals("Buildup Area")) 
-					if (!calcon.equals("Buildup Area") || s_category.equals(1))
+					//If parking area added for calculation in future then uncomment below condition 
+					
+					/*if (!calcon.equals("Buildup Area") || s_category.equals(1))
 					// Parking area is applicable only for calculation based on
 					// Build up Area
 					{
 						parkArea = 0.0;
-					}
-
+					}*/
+					
+					parkArea = 0.0;		//parkArea is set to zero for all calculation
+					
 					// SET Default Area & Rate Category wise For Rate Master
 
 					if (pCategory.equals(1)) { // RESIDENTIAL

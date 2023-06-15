@@ -50,6 +50,8 @@ public class TLCalculatorConstants {
 
     public static final String businessService_BPA="BPAREG";
 
+    public static final String businessService_BPAREN="BPAREN";
+
     public static final String REBATE_MASTER = "Rebate";
 
     public static final String PENANLTY_MASTER = "Penalty";

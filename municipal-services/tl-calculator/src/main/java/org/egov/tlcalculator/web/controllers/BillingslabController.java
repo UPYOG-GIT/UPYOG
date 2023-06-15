@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 
 import static org.egov.tlcalculator.utils.TLCalculatorConstants.businessService_BPA;
+import static org.egov.tlcalculator.utils.TLCalculatorConstants.businessService_BPAREN;
 import static org.egov.tlcalculator.utils.TLCalculatorConstants.businessService_TL;
 
 @Controller
@@ -82,6 +83,7 @@ public class BillingslabController {
 				break;
 
 			case businessService_BPA:
+			case businessService_BPAREN:
 				BillingSlab billingSlab = bpaBillingSlabService.search(billingSlabSearchCriteria, requestInfo);
 				response = BillingSlabRes.builder().responseInfo(factory.createResponseInfoFromRequestInfo(requestInfo, true))
 						.billingSlab(Collections.singletonList(billingSlab)).build();

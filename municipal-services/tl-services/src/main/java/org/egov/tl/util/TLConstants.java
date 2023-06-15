@@ -19,6 +19,8 @@ public class TLConstants {
 
     public static  final String businessService_BPA = "BPAREG";
 
+    public static  final String businessService_BPAREN = "BPAREN";
+
     public static final String PROPERTY_JSONPATH = "$.Properties[0].propertyId";
 
     public static final String MODULE = "rainmaker-tl";
@@ -259,6 +261,8 @@ public class TLConstants {
     public static final String ACTION_MANUALLYEXPIRE = "MANUALEXPIRE";
 
     public static final String STATUS_INITIATED = "INITIATED";
+
+    public static final String STATUS_PENDING_PAYMENT = "PENDINGPAYMENT";
 
     public static final String STATUS_APPLIED  = "APPLIED";
 
