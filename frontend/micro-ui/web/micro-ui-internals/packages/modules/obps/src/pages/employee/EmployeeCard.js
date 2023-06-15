@@ -4,22 +4,26 @@ import { OBPSIconSolidBg, EmployeeModuleCard } from "@egovernments/digit-ui-reac
 import { showHidingLinksForStakeholder, showHidingLinksForBPA } from "../../utils";
 import { useLocation } from "react-router-dom";
 
+
 const OBPSEmployeeHomeCard = () => {
+  console.log("first")
 
   const [totalCount, setTotalCount] = useState(0);
     const { t } = useTranslation();
     const location = useLocation()
+    const [initiatedCount, setInitiatedCount] = useState(null);
+    const [citizenApprovalInProcessCount, setcitizenApprovalInProcessCount] = useState(null);
+    const [approvedCount, setapprovedCount] = useState(null);
+    const [rejectedCount, setrejectedCount] = useState(null);
+    const [departmentInProcessCount, setdepartmentInProcessCount] = useState(null);
+    const [reassignedCount, setReassignedCount] = useState(null);
   
-    const tenantId = Digit.ULBService.getCurrentTenantId();
+  
     // const tenantId1=Digit.ULBService.getCitizenCurrentTenant();
     const tenantId1=Digit.ULBService.getCurrentUlb()?.code;
     const stateCode = Digit.ULBService.getStateId();
   //   const userType = window.sessionStorage.getItem("userType");
-  // console.log("userType: "+userType);
-    // console.log("Hello");
-    // console.log(tenantId1)
-    // console.log(tenantId)
-    // console.log(Digit.ULBService.getCurrentUlb()?.code)
+
     const stakeholderEmployeeRoles = [ { code: "BPAREG_DOC_VERIFIER", tenantId: stateCode }, { code: "BPAREG_APPROVER", tenantId: stateCode }];
     const bpaEmployeeRoles = [ "BPA_FIELD_INSPECTOR", "BPA_NOC_VERIFIER", "BPA_APPROVER", "BPA_VERIFIER", "CEMP"];
 
@@ -27,7 +31,8 @@ const OBPSEmployeeHomeCard = () => {
     const checkingForBPARoles = showHidingLinksForBPA(bpaEmployeeRoles);
 
     const searchFormDefaultValues = {}
-  
+    const tenantId = Digit.ULBService.getCurrentTenantId();
+ 
     const filterFormDefaultValues = {
       moduleName: "bpa-services",
       applicationStatus: "",
@@ -83,7 +88,36 @@ const OBPSEmployeeHomeCard = () => {
       filters: { ...formInitValue },
       config:{ enabled: !!checkingForBPARoles }
     });
+   
+    useEffect(async () => {
+      const getDashboardCount = await Digit.OBPSAdminService.getDashboardCount(tenantId);
 
+
+        getDashboardCount.forEach((dashboardData) => {
+        const initiatedCount = dashboardData.initiated;
+        setInitiatedCount(initiatedCount);
+     
+
+        const citizenApprovalInProcessCount = dashboardData.citizen_approval_inprocess;
+        setcitizenApprovalInProcessCount(citizenApprovalInProcessCount);
+    
+
+        const approvedCount = dashboardData.approved;
+        setapprovedCount(approvedCount);
+
+        const rejectedCount = dashboardData.rejected;
+        setrejectedCount(rejectedCount);
+
+        const departmentInProcessCount = dashboardData.department_inprocess;
+        setdepartmentInProcessCount(departmentInProcessCount);
+
+        const reassignedCount = dashboardData.reassign;
+        setReassignedCount(reassignedCount);
+
+      });
+  
+      
+    }, []);
   useEffect(() => {
     if (!isInboxLoading && !isInboxLoadingOfStakeholder) {
       const bpaCount = dataOfBPA?.totalCount ? dataOfBPA?.totalCount : 0;
@@ -143,6 +177,8 @@ const OBPSEmployeeHomeCard = () => {
         return obj.field !== 'BPA';
       });
     }
+
+   
   
     return checkingForBPARoles || checkingForStakeholderRoles ? <EmployeeModuleCard {...propsForModuleCard} /> : null
   }

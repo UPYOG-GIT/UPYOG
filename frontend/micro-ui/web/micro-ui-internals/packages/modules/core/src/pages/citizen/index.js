@@ -57,11 +57,14 @@ const Home = ({
   const [approvedCount, setapprovedCount] = useState(null);
   const [rejectedCount, setrejectedCount] = useState(null);
   const [departmentInProcessCount, setdepartmentInProcessCount] = useState(null);
+  const [reassignedCount, setReassignedCount] = useState(null);
+  const [totalProposal, setTotalProposal] = useState(null);
+  
 
     useEffect(async () => {
       const getDashboardCount = await Digit.OBPSAdminService.getDashboardCount();
 
-
+       console.log("getDashboardCount" + JSON.stringify(getDashboardCount))
         getDashboardCount.forEach((dashboardData) => {
         const initiatedCount = dashboardData.initiated;
         setInitiatedCount(initiatedCount);
@@ -77,6 +80,15 @@ const Home = ({
 
         const departmentInProcessCount = dashboardData.department_inprocess;
         setdepartmentInProcessCount(departmentInProcessCount);
+
+        const reassignedCount = dashboardData.reassign;
+        setReassignedCount(reassignedCount);
+
+
+        const totalProposal = initiatedCount + citizenApprovalInProcessCount + departmentInProcessCount + approvedCount
+        setTotalProposal(totalProposal)
+        console.log("totalProposal" + totalProposal)
+       
 
       });
   
@@ -135,6 +147,21 @@ const Home = ({
         </Box>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+        <Card sx={{
+        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+        borderRadius: '10px',
+      }}>
+        <CardContent>
+          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+            gutterBottom>
+            {totalProposal}
+          </Typography>
+          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+            Total Proposal
+          </Typography>
+        </CardContent>
+      </Card>
+
       <Card sx={{
         width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
         borderRadius: '10px',
@@ -145,7 +172,7 @@ const Home = ({
             {initiatedCount}
           </Typography>
           <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-            Uploaded Proposals
+            Initiated Proposals
           </Typography>
         </CardContent>
       </Card>
@@ -181,20 +208,7 @@ const Home = ({
       </Card>
 
       {/* Additional Typography components */}
-      <Card sx={{
-        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-        borderRadius: '10px',
-      }}>
-        <CardContent>
-          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-            gutterBottom>
-            {citizenApprovalInProcessCount}
-          </Typography>
-          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-          Citizen Inprocess
-          </Typography>
-        </CardContent>
-      </Card>
+     
 
       <Card sx={{
         width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',

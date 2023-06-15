@@ -209,9 +209,10 @@ export const OBPSAdminService = {
     }),
 
     
-    getDashboardCount: () =>
+    getDashboardCount: (tenantId) =>
     Request({
       url: Urls.obps.getDashboardCount,
+      params: {tenantId},
       auth: false,
       userService: false,
       method: "POST"
