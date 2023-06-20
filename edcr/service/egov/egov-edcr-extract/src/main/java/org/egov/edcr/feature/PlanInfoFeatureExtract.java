@@ -802,7 +802,7 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 			String json = null;
 			Map<String, Object> additionalDetail = new HashMap<>();
 			for (String pair : keyValuePairs) {
-				String[] keyValue = pair.split("=");
+				String[] keyValue = pair.split(":");
 				String key = keyValue[0];
 				String value = keyValue[1];
 				additionalDetail.put(key, value);
