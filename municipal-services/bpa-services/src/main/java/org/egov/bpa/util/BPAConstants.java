@@ -327,6 +327,8 @@ public class BPAConstants {
 	public static final String FILESTOREID = "fileStoreId";
 
 	public static final String LOW_RISKTYPE = "LOW";
+	
+	public static final String VLOW_RISKTYPE = "VLOW";
 
 	public static final String EDCR_PDF = "ScrutinyReport.pdf";
 
