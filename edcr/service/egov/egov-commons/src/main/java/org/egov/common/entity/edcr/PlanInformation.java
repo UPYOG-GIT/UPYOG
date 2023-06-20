@@ -176,13 +176,13 @@ public class PlanInformation implements Serializable {
 	private transient String multilevelParking = NA;
 	// Extracted from Plan info.Plot number.
 	private String plotNo;
-	// Extracted from Plan info.Plot number.
+	// Extracted from Plan info.Ward number.
 	private String wardNo;
 	// Extracted from Plan info.Khasra number.
 	private String khataNo;
 	// Extracted from Plan info.Patwari Halka number.
 	private String patwariHN;
-	// Extracted from Plan info.Mauza number.
+	// Extracted from Plan info.City.
 	private String mauza;
 	// Extracted from Plan info.District name.
 	private String district;
@@ -198,6 +198,8 @@ public class PlanInformation implements Serializable {
 	private transient int tenementCommercial;
 	// used for comparison in septic tank feature
 	private transient BigDecimal requiredWaterTankCapacity = BigDecimal.ZERO;
+	//used for additional details entry
+	private String additionalDetails = null;
 
 //	private transient BigDecimal roadArea;
 //
@@ -724,6 +726,14 @@ public class PlanInformation implements Serializable {
 
 	public void setPatwariHN(String patwariHN) {
 		this.patwariHN = patwariHN;
+	}
+
+	public String getAdditionalDetails() {
+		return additionalDetails;
+	}
+
+	public void setAdditionalDetails(String additionalDetails) {
+		this.additionalDetails = additionalDetails;
 	}
 	
 	
