@@ -561,11 +561,11 @@ public class SideYardService_BhilaiCharoda extends SideYardService {
 
 		if (pl.getPlanInformation() != null
 				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(12)) <= 0) {
-			exemptSideYard1ForAAndF(pl, block, sideYard1Result, BigDecimal.valueOf(min));
+			exemptSideYard2ForAAndF(pl, block, sideYard2Result, BigDecimal.valueOf(min));
 		}
 		if (pl.getPlanInformation() != null
 				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(7.5)) <= 0) {
-			exemptSideYard2ForAAndF(pl, block, sideYard2Result, BigDecimal.valueOf(max));
+			exemptSideYard1ForAAndF(pl, block, sideYard1Result, BigDecimal.valueOf(max));
 		}
 	}
 
