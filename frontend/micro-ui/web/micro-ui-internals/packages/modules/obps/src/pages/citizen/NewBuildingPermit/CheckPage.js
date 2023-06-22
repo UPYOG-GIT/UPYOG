@@ -155,7 +155,7 @@ import {
       return <Loader />
     }
 
-   console.log("paymentDetails" +  JSON.stringify(paymentDetails))
+  //  console.log("paymentDetails" +  JSON.stringify(paymentDetails))
     return (
     <React.Fragment>
     <Timeline currentStep={4} />

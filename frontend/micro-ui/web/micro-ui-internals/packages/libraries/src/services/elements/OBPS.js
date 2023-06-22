@@ -92,9 +92,36 @@ export const OBPSService = {
       params: {},
       auth: window.location.href.includes("openlink") ? false : true,
     }),
+  BPARENCreate: (details, tenantId) =>
+    Request({
+      url: Urls.obps.bpaRenCreate,
+      data: details,
+      useCache: false,
+      setTimeParam: false,
+      userService: window.location.href.includes("openlink") ? false : true,
+      method: "POST",
+      params: {},
+      auth: window.location.href.includes("openlink") ? false : true,
+    }),
   BPAREGGetBill: (tenantId, filters = {}) =>
     Request({
       url: Urls.obps.bpaRegGetBill,
+      useCache: false,
+      method: "POST",
+      auth: false,
+      userService: false,
+      params: { tenantId, ...filters },
+    })
+      .then((d) => {
+        return d;
+      })
+      .catch((err) => {
+        if (err?.response?.data?.Errors?.[0]?.code === "EG_BS_BILL_NO_DEMANDS_FOUND") return { Bill: [] };
+        else throw err;
+      }),
+  BPARENGetBill: (tenantId, filters = {}) =>
+    Request({
+      url: Urls.obps.bpaRenGetBill,
       useCache: false,
       method: "POST",
       auth: false,
@@ -283,8 +310,10 @@ export const OBPSService = {
       ocdcrNumber: BPA?.edcrNumber.includes("OCDCR") ? BPA?.edcrNumber : bpaResponse?.BPA?.[0]?.edcrNumber,
       edcrNumber: bpaResponse?.BPA?.[0]?.edcrNumber.includes("OCDCR") ? BPA?.edcrNumber : bpaResponse?.BPA?.[0]?.edcrNumber
     }
+    const additionDetails = JSON.parse(edcr?.planDetail?.planInformation?.additionalDetails);
+    const sector = additionDetails!==null? additionDetails?.Sector:null;
+    const block = additionDetails!==null? additionDetails?.Block:null;
     const comparisionReport = await OBPSService.comparisionReport(BPA?.tenantId, { ...comparisionRep });
-
     noc?.map(nocDetails => {
       nocDetails?.documents?.map(nocDoc => {
         if (nocDoc?.fileStoreId) appDocumentFileStoreIds.push(nocDoc?.fileStoreId)
@@ -535,7 +564,13 @@ export const OBPSService = {
         { title: "BPA_KHATHA_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.khataNo || "NA", isNotTranslated: true },
         { title: "BPA_PATWARI_HALKA_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.patwariHN || "NA", isNotTranslated: true },
         { title: "BPA_HOLDING_NUMBER_LABEL", value: BPA?.additionalDetails?.holdingNo || "NA", isNotTranslated: true },
-        { title: "BPA_BOUNDARY_LAND_REG_DETAIL_LABEL", value: BPA?.additionalDetails?.registrationDetails || "NA", isNotTranslated: true }
+        { title: "BPA_BOUNDARY_LAND_REG_DETAIL_LABEL", value: BPA?.additionalDetails?.registrationDetails || "NA", isNotTranslated: true },
+        ...(sector !== null
+          ? [{ title: "BPA_SECTOR_LABEL", value: sector, isNotTranslated: true }]
+          : []),
+          ...(block !== null
+            ? [{ title: "BPA_BLOCK_LABEL", value: block, isNotTranslated: true }]
+            : [])
       ]
     };
 

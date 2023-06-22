@@ -216,7 +216,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         } else {
             // const usersResponse = await Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: fields?.[indexValue]?.mobileNumber }, {});
             const usersResponse = await Digit.UserService.userSearch(Digit.ULBService.getCitizenCurrentTenant(), { userName: fields?.[indexValue]?.mobileNumber }, {});
-            console.log(JSON.stringify(usersResponse));
+            // console.log(JSON.stringify(usersResponse));
             if (usersResponse?.user?.length === 0) {
                 setShowToast({ key: "true", warning: true, message: "ERR_MOBILE_NUMBER_NOT_REGISTERED" });
                 return;
@@ -299,10 +299,12 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.landInfo.address.mauza = formData?.data?.edcrDetails?.planDetail?.planInformation?.mauza;
                 payload.landInfo.address.occupancy = formData?.data?.edcrDetails?.planDetail?.planInformation?.occupancy;
                 payload.landInfo.address.plotArea = formData?.data?.edcrDetails?.planDetail?.planInformation?.plotArea;
-                payload.landInfo.address.patwariHN = formData?.data?.edcrDetails?.planDetail?.planInformation?.patwariHN
-                payload.landInfo.address.wardNo = formData?.data?.edcrDetails?.planDetail?.planInformation?.wardNo
+                payload.landInfo.address.patwariHN = formData?.data?.edcrDetails?.planDetail?.planInformation?.patwariHN;
+                payload.landInfo.address.patwariHN = formData?.data?.edcrDetails?.planDetail?.planInformation?.patwariHN;
+                payload.landInfo.address.additionDetails = formData?.data?.edcrDetails?.planDetail?.planInformation?.additionalDetails;
 
-                //console.log(formData?.data?.edcrDetails?.planDetail?.planInformation?.wardNo);
+                // console.log(formData?.data?.edcrDetails?.planDetail?.planInformation?.additionalDetails);
+                // const data = JSON.parse(formData?.data?.edcrDetails?.planDetail?.planInformation?.additionalDetails);
 
 
                 payload.landInfo.owners = conversionOwners;
