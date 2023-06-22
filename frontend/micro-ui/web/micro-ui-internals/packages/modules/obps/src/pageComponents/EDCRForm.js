@@ -28,7 +28,10 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
 
 
     function setApplicantName(e) {
-        setName(e.target.value);
+        const value = e.target.value;
+        const titleCaseValue = value.toLowerCase().replace(/(^|\s)\w/g, (match) => match.toUpperCase());
+        setName(titleCaseValue);
+        // setName(e.target.value);
     }
 
     function setTypeOfTenantID(value) {
@@ -129,8 +132,8 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
                 optionKey="i18nKey"
                 select={setTypeOfTenantID}
                 uploadMessage={uploadMessage}
-                // disabled={true} // Disable dropdown if there is only one item
-                // defaultValue={citymoduleList[0]} // Set default value if there is only one item
+            // disabled={true} // Disable dropdown if there is only one item
+            // defaultValue={citymoduleList[0]} // Set default value if there is only one item
             />
             <CardLabel>{`${t("EDCR_SCRUTINY_NAME_LABEL")} *`}</CardLabel>
             <TextInput
