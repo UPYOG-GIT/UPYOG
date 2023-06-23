@@ -535,5 +535,67 @@ public class BPARepository {
 
 	    return jdbcTemplate.queryForList(query, new Object[]{});
 	}
+	
+	public List<Map<String, Object>> getApplicationDataInDasboardForUlb(String tenantId, String applicationType) {
+	    String query = "SELECT " +
+	            "billdetail.consumercode AS applicationno, " +
+	            "bp.tenantid, " +
+	            "TO_CHAR(TO_TIMESTAMP(bp.createdtime / 1000), 'DD/MM/YYYY') AS applicationdate, " +
+	         //   "TO_CHAR(TO_TIMESTAMP(bp.approvaldate / 1000), 'DD/MM/YYYY') AS approval_date, " +
+	           // "Architectuser.uuid AS uuid, " +
+	           // "Citizenuser.uuid AS Cuuid, " +
+	            "Architectuser.name AS username, " +
+	            "Architectuser.mobilenumber AS altcontactnumber, " +
+	            "Architectuser.emailid AS emailid, " +
+	            "Citizenuser.name AS name, " +
+	            "Citizenuser.mobilenumber AS mobilenumber, " +
+	            //"adr.khataNo AS khatano, " +
+	            "adr.mauza AS city, " +
+	            "adr.plotno AS plotno, " +
+	           // "adr.plotArea AS plotarea, " +
+	            "adr.occupancy AS occupancy_type, " +
+	            //"adr.patwarihn AS patwari_halka_no, " +
+	            //"SUM(CASE WHEN billdetail.businessservice = 'BPA.NC_APP_FEE' THEN billdetail.totalamount ELSE 0 END) AS prefees, " +
+	            //"SUM(CASE WHEN billdetail.businessservice = 'BPA.NC_SAN_FEE' THEN billdetail.totalamount ELSE 0 END) AS postfees, " +
+	            "CASE " +
+	            "    WHEN bp.status = 'APPROVED' THEN 'Approved' " +
+	            "    WHEN bp.status IN ('PENDING_APPL_FEE','DOC_VERIFICATION_PENDING_BY_ENGINEER','DOC_VERIFICATION_INPROGRESS_BY_BUILDER','APPROVAL_INPROGRESS','DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'POST_FEE_APPROVAL_INPROGRESS', 'PENDING_SANC_FEE_PAYMENT') THEN 'Pending' " +
+	            "    WHEN bp.status = 'REJECTED' THEN 'Rejected' " +
+	            "END AS status, " +
+	            "TO_CHAR(TO_TIMESTAMP(bp.approvaldate / 1000), 'DD/MM/YYYY') AS Building_permission_certificate " +
+	            "FROM egbs_billdetail_v1 billdetail " +
+	            "INNER JOIN eg_bpa_buildingplan bp ON billdetail.consumercode = bp.applicationno " +
+	            "INNER JOIN eg_pg_transactions txn ON billdetail.billid = txn.bill_id " +
+	            "INNER JOIN eg_land_address adr ON adr.landinfoid = bp.landid " +
+	            "INNER JOIN eg_user Architectuser ON bp.createdby = Architectuser.uuid " +
+	            "INNER JOIN eg_land_ownerinfo ownerinfo ON bp.landid = ownerinfo.landinfoid " +
+	            "INNER JOIN eg_user Citizenuser ON ownerinfo.uuid = Citizenuser.uuid " +
+	            "WHERE 1=1 " +
+	            "AND bp.status IN ('APPROVED','REJECTED','PENDING_APPL_FEE','DOC_VERIFICATION_PENDING_BY_ENGINEER', 'DOC_VERIFICATION_INPROGRESS_BY_BUILDER', 'APPROVAL_INPROGRESS', 'DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'POST_FEE_APPROVAL_INPROGRESS', 'PENDING_SANC_FEE_PAYMENT') " +
+	            "AND txn.txn_status='SUCCESS' " +
+	            "GROUP BY " +
+	            "billdetail.consumercode, " +
+	            "bp.createdtime, " +
+	            "bp.approvaldate, " +
+	            "Architectuser.name, " +
+	            "Architectuser.mobilenumber, " +
+	            "Architectuser.emailid, " +
+	            "Citizenuser.name, " +
+	            "Citizenuser.mobilenumber, " +
+	            "adr.khataNo, " +
+	            "adr.plotno, " +
+	            "adr.plotArea, " +
+	            "occupancy_type, " +
+	            "patwari_halka_no, " +
+	            "adr.mauza, " +
+	            "bp.status, " +
+	            "bp.tenantid, " +
+	            "Architectuser.uuid, " +
+	            "Citizenuser.uuid " +
+	            "ORDER BY billdetail.consumercode";
+
+	    return jdbcTemplate.queryForList(query, new Object[]{});
+	}
+
 
 }

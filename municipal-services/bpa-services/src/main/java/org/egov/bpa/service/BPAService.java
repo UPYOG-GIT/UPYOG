@@ -940,4 +940,11 @@ public class BPAService {
 		log.info("getDataCountsForDashboard: " + resultList.toString());
 		return resultList;
 	}
+	
+	public List<Map<String, Object>> getApplicationDataInDasboardForUlb(String tenantId, String applicationType){
+		List<Map<String, Object>> resultList = repository.getApplicationDataInDasboardForUlb(tenantId, applicationType);
+		log.info("getApplicationDataInDasboardForUlb--: " + resultList.toString());
+		return resultList;
+		
+	}
 }
