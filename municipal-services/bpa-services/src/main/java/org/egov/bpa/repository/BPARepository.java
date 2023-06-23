@@ -518,6 +518,9 @@ public class BPARepository {
 	            "COUNT(CASE WHEN bp.status = 'APPROVED' THEN 1 END) AS Approved, " +
 	            "COUNT(CASE WHEN bp.status = 'REJECTED' THEN 1 END) AS Rejected, " + 
 	            "COUNT(CASE WHEN bp.status = 'REASSIGN' THEN 1 END) AS Reassign, " +
+	            "COUNT(CASE WHEN bp.status = 'INPROGRESS' THEN 1 END) AS Inprogress, " +
+	            "COUNT(CASE WHEN bp.status = 'PENDING_APPL_FEE' THEN 1 END) AS appl_fee, " +
+	            "COUNT(CASE WHEN bp.status = 'PENDING_SANC_FEE_PAYMENT' THEN 1 END) AS sanc_fee_pending, " +    
 	            "COUNT(CASE " +
 	            "    WHEN bp.status IN ('DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'DOC_VERIFICATION_INPROGRESS_BY_BUILDER', 'APPROVAL_INPROGRESS', 'POST_FEE_APPROVAL_INPROGRESS') " +
 	            "    THEN 1 " +
@@ -532,7 +535,5 @@ public class BPARepository {
 
 	    return jdbcTemplate.queryForList(query, new Object[]{});
 	}
-
-
 
 }
