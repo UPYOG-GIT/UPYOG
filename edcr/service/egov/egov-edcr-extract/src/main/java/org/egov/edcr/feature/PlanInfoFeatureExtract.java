@@ -30,6 +30,8 @@ import org.kabeja.dxf.DXFLWPolyline;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Service
 public class PlanInfoFeatureExtract extends FeatureExtract {
 	private static final Logger LOG = LogManager.getLogger(PlanInfoFeatureExtract.class);
@@ -746,7 +748,6 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 			pl.addError(DxfFileConstants.PATWARI_HN,
 					getLocaleMessage(OBJECTNOTDEFINED, DxfFileConstants.PATWARI_HN + " of PLAN_INFO layer"));
 
-
 		String district = planInfoProperties.get(DxfFileConstants.DISTRICT);
 		if (StringUtils.isNotBlank(district))
 			pi.setDistrict(district);
@@ -757,7 +758,6 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		else
 			pl.addError(DxfFileConstants.MAUZA,
 					getLocaleMessage(OBJECTNOTDEFINED, DxfFileConstants.MAUZA + " of PLAN_INFO layer"));
-
 
 		String leaseHoldLand = planInfoProperties.get(DxfFileConstants.LEASEHOLD_LAND);
 		if (StringUtils.isNotBlank(leaseHoldLand)) {
@@ -793,6 +793,28 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 			tenementCommertial = tenementCommertial.replaceAll(digitsRegex, "");
 			if (getNumericValue(tenementCommertial, pl, DxfFileConstants.TENEMENT_FOR_COMMERCIAL.toString()) != null)
 				pi.setTenementCommercial(Integer.valueOf(tenementCommertial));
+		}
+
+		String additionalDetails = planInfoProperties.get(DxfFileConstants.ADDITIONAL_DETAILS);
+		if (StringUtils.isNotBlank(additionalDetails)) {
+//			String[] additionalDetailsArr = additionalDetails.split(";");
+			String[] keyValuePairs = additionalDetails.split(";");
+			String json = null;
+			Map<String, Object> additionalDetail = new HashMap<>();
+			for (String pair : keyValuePairs) {
+				String[] keyValue = pair.split(":");
+				String key = keyValue[0];
+				String value = keyValue[1];
+				additionalDetail.put(key, value);
+			}
+			ObjectMapper objectMapper = new ObjectMapper();
+			try {
+				if (!additionalDetail.isEmpty())
+					json = objectMapper.writeValueAsString(additionalDetail);
+			} catch (Exception ex) {
+
+			}
+			pi.setAdditionalDetails(json);
 		}
 
 		return pi;

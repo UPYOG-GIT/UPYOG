@@ -48,7 +48,7 @@ const BpaApplicationDetail = () => {
   {
     businessService = ["BPA.NC_OC_APP_FEE","BPA.NC_OC_SAN_FEE"];
   }
-  console.log("--"+ JSON.stringify(data?.applicationData?.applicationNo))
+  // console.log("--"+ JSON.stringify(data?.applicationData?.applicationNo))
 
 
   useEffect(() => {

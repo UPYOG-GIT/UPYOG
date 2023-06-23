@@ -153,7 +153,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
     if (isValid) {
       // Update the name state or perform any other necessary actions
-      setName(value);
+      const titleCaseValue = value.toLowerCase().replace(/(^|\s)\w/g, (match) => match.toUpperCase());
+      setName(titleCaseValue);
     } else {
       // Display an error message or handle invalid input
       title: t("TL_NAME_ERROR_MESSAGE");
@@ -265,6 +266,19 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
 
         const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
+        // console.log("info :"+JSON.stringify(info));
+        const usersResponse1 = await Digit.UserService.userSearch(info?.tenantId, { uuid: [info?.uuid] }, {});
+
+        // console.log("usersResponse11: " + JSON.stringify(usersResponse1));
+        if (usersResponse1 && usersResponse1.user[0].roles.length > 1 && usersResponse1.user && usersResponse1.user.length) {
+          const date = usersResponse1?.user[0]?.validityDate;
+          const dateTimeParts = date.split(/[- :]/);
+          const dateTimeObject = new Date(dateTimeParts[2], dateTimeParts[1] - 1, dateTimeParts[0], dateTimeParts[3], dateTimeParts[4], dateTimeParts[5]);
+          info.validityDate = dateTimeObject.getTime();
+        } else {
+          info.validityDate = null;
+        }
+
 
         if (location.state?.role) {
 
@@ -282,7 +296,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
           //info.tenantId = Digit.ULBService.getStateId();
           info.tenantId = selectedCity?.code;
         }
-
+        // console.log("info1 :"+JSON.stringify(info));
         setUser({ info, ...tokens });
 
       } else if (!isUserRegistered) {
