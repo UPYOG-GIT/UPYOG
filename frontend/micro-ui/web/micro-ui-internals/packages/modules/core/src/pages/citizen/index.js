@@ -58,7 +58,11 @@ const Home = ({
   const [rejectedCount, setrejectedCount] = useState(null);
   const [departmentInProcessCount, setdepartmentInProcessCount] = useState(null);
   const [reassignedCount, setReassignedCount] = useState(null);
+  const [applFeePending, setApplFeePending] = useState(null);
+  const [sancFeePending, setSancFeePending] = useState(null);
+  const [inprogressCount, setInprogressCount] = useState(null);
   const [totalProposal, setTotalProposal] = useState(null);
+
   
 
     useEffect(async () => {
@@ -84,8 +88,17 @@ const Home = ({
         const reassignedCount = dashboardData.reassign;
         setReassignedCount(reassignedCount);
 
+        const applFeePending = dashboardData.appl_fee;
+        setApplFeePending(applFeePending);
 
-        const totalProposal = initiatedCount + citizenApprovalInProcessCount + departmentInProcessCount + approvedCount
+        const sancFeePending = dashboardData.sanc_fee_pending;
+        setSancFeePending(sancFeePending);
+
+        const inprogressCount = dashboardData.inprogress;
+        setInprogressCount(inprogressCount);
+
+
+        const totalProposal = initiatedCount + citizenApprovalInProcessCount + departmentInProcessCount + approvedCount + inprogressCount + applFeePending + sancFeePending
         setTotalProposal(totalProposal)
         console.log("totalProposal" + totalProposal)
        
@@ -176,6 +189,20 @@ const Home = ({
           </Typography>
         </CardContent>
       </Card>
+      <Card sx={{
+        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+        borderRadius: '10px',
+      }}>
+        <CardContent>
+          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+            gutterBottom>
+            {inprogressCount}
+          </Typography>
+          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+           Architect Inprogress
+          </Typography>
+        </CardContent>
+      </Card>
 
       <Card sx={{
         width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
@@ -235,6 +262,34 @@ const Home = ({
           </Typography>
           <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
            Department Inprocess
+          </Typography>
+        </CardContent>
+      </Card>
+      <Card sx={{
+        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+        borderRadius: '10px',
+      }}>
+        <CardContent>
+          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+            gutterBottom>
+            {applFeePending}
+          </Typography>
+          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+          Pre Fee Pending
+          </Typography>
+        </CardContent>
+      </Card>
+      <Card sx={{
+        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+        borderRadius: '10px',
+      }}>
+        <CardContent>
+          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+            gutterBottom>
+            {sancFeePending}
+          </Typography>
+          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+          Post Fee Pending
           </Typography>
         </CardContent>
       </Card>
