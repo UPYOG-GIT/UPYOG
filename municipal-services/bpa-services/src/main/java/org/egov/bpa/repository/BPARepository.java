@@ -536,7 +536,7 @@ public class BPARepository {
 	    return jdbcTemplate.queryForList(query, new Object[]{});
 	}
 	
-	public List<Map<String, Object>> getApplicationDataInDashboardForUlb(String tenantId, String applicationType) {
+	public List<Map<String, Object>> getApplicationDataInDasboardForUlb(String tenantId, String applicationType) {
 	    String query = "SELECT " +
 	            "billdetail.consumercode AS applicationno, " +
 	            "bp.tenantid, " +
@@ -559,7 +559,7 @@ public class BPARepository {
 	            "SUM(CASE WHEN billdetail.businessservice = 'BPA.NC_SAN_FEE' THEN billdetail.totalamount ELSE 0 END) AS postfees, " +
 	            "CASE " +
 	            "    WHEN bp.status = 'APPROVED' THEN 'Approved' " +
-	            "    WHEN bp.status IN ('PENDING_APPL_FEE', 'DOC_VERIFICATION_PENDING_BY_ENGINEER', 'DOC_VERIFICATION_INPROGRESS_BY_BUILDER', 'APPROVAL_INPROGRESS', 'DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'POST_FEE_APPROVAL_INPROGRESS', 'PENDING_SANC_FEE_PAYMENT') THEN 'Pending' " +
+	            "    WHEN bp.status IN ('PENDING_APPL_FEE','DOC_VERIFICATION_PENDING_BY_ENGINEER','DOC_VERIFICATION_INPROGRESS_BY_BUILDER','APPROVAL_INPROGRESS','DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'POST_FEE_APPROVAL_INPROGRESS', 'PENDING_SANC_FEE_PAYMENT') THEN 'Pending' " +
 	            "    WHEN bp.status = 'REJECTED' THEN 'Rejected' " +
 	            "END AS status, " +
 	            "TO_CHAR(TO_TIMESTAMP(bp.approvaldate / 1000), 'DD/MM/YYYY') AS Building_permission_certificate " +
@@ -596,8 +596,6 @@ public class BPARepository {
 
 	    return jdbcTemplate.queryForList(query, new Object[]{});
 	}
-
-
 
 
 }
