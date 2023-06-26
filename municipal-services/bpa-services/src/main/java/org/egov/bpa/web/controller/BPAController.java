@@ -499,8 +499,8 @@ public class BPAController {
 	}
 	
 	
-	@GetMapping(value = "/applicationData/{tenantId}/{applicationType}")
-	public ResponseEntity<List<Map<String, Object>>> getApplicationDataInDasboardForUlb(@PathVariable String tenantId, @PathVariable String applicationType) {
+	@GetMapping(value = "/applicationData")
+	public ResponseEntity<List<Map<String, Object>>> getApplicationDataInDasboardForUlb(String tenantId, String applicationType) {
 	    List<Map<String, Object>> sqlResponseList = bpaService.getApplicationDataInDasboardForUlb(tenantId, applicationType);
 	    return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 	}

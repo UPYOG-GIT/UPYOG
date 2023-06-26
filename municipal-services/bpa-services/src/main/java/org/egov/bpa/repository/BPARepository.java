@@ -172,6 +172,14 @@ public class BPARepository {
 				+ payTypeFeeDetailRequest.getTenantId() + "'" + " and id=" + payTypeFeeDetailRequest.getId();
 		int updateResult = jdbcTemplate.update(updateQuery);
 		log.info("BPARepository.updateFeeDetails: " + updateResult + " data updated into paytype_master table");
+		
+		String totalAmountQuery = "SELECT SUM(amount) as amount from fee_details WHERE application_no='"
+				+ payTypeFeeDetailRequest.getApplicationNo() + "' and feetype='" + payTypeFeeDetailRequest.getFeeType()
+				+ "'";
+		Map<String, Object> resultMap = jdbcTemplate.queryForMap(totalAmountQuery);
+		updateBillDetailAmount(payTypeFeeDetailRequest.getApplicationNo(),
+				Double.valueOf(resultMap.get("amount").toString()));
+		
 		return updateResult;
 	}
 
@@ -541,22 +549,22 @@ public class BPARepository {
 	            "billdetail.consumercode AS applicationno, " +
 	            "bp.tenantid, " +
 	            "TO_CHAR(TO_TIMESTAMP(bp.createdtime / 1000), 'DD/MM/YYYY') AS applicationdate, " +
-	         //   "TO_CHAR(TO_TIMESTAMP(bp.approvaldate / 1000), 'DD/MM/YYYY') AS approval_date, " +
-	           // "Architectuser.uuid AS uuid, " +
-	           // "Citizenuser.uuid AS Cuuid, " +
+	            "TO_CHAR(TO_TIMESTAMP(bp.approvaldate / 1000), 'DD/MM/YYYY') AS approval_date, " +
+	            "Architectuser.uuid AS uuid, " +
+	            "Citizenuser.uuid AS Cuuid, " +
 	            "Architectuser.name AS username, " +
 	            "Architectuser.mobilenumber AS altcontactnumber, " +
 	            "Architectuser.emailid AS emailid, " +
 	            "Citizenuser.name AS name, " +
 	            "Citizenuser.mobilenumber AS mobilenumber, " +
-	            //"adr.khataNo AS khatano, " +
+	            "adr.khataNo AS khatano, " +
 	            "adr.mauza AS city, " +
 	            "adr.plotno AS plotno, " +
-	           // "adr.plotArea AS plotarea, " +
+	            "adr.plotArea AS plotarea, " +
 	            "adr.occupancy AS occupancy_type, " +
-	            //"adr.patwarihn AS patwari_halka_no, " +
-	            //"SUM(CASE WHEN billdetail.businessservice = 'BPA.NC_APP_FEE' THEN billdetail.totalamount ELSE 0 END) AS prefees, " +
-	            //"SUM(CASE WHEN billdetail.businessservice = 'BPA.NC_SAN_FEE' THEN billdetail.totalamount ELSE 0 END) AS postfees, " +
+	            "adr.patwarihn AS patwari_halka_no, " +
+	            "SUM(CASE WHEN billdetail.businessservice = 'BPA.NC_APP_FEE' THEN billdetail.totalamount ELSE 0 END) AS prefees, " +
+	            "SUM(CASE WHEN billdetail.businessservice = 'BPA.NC_SAN_FEE' THEN billdetail.totalamount ELSE 0 END) AS postfees, " +
 	            "CASE " +
 	            "    WHEN bp.status = 'APPROVED' THEN 'Approved' " +
 	            "    WHEN bp.status IN ('PENDING_APPL_FEE','DOC_VERIFICATION_PENDING_BY_ENGINEER','DOC_VERIFICATION_INPROGRESS_BY_BUILDER','APPROVAL_INPROGRESS','DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'POST_FEE_APPROVAL_INPROGRESS', 'PENDING_SANC_FEE_PAYMENT') THEN 'Pending' " +
