@@ -172,6 +172,14 @@ public class BPARepository {
 				+ payTypeFeeDetailRequest.getTenantId() + "'" + " and id=" + payTypeFeeDetailRequest.getId();
 		int updateResult = jdbcTemplate.update(updateQuery);
 		log.info("BPARepository.updateFeeDetails: " + updateResult + " data updated into paytype_master table");
+		
+		String totalAmountQuery = "SELECT SUM(amount) as amount from fee_details WHERE application_no='"
+				+ payTypeFeeDetailRequest.getApplicationNo() + "' and feetype='" + payTypeFeeDetailRequest.getFeeType()
+				+ "'";
+		Map<String, Object> resultMap = jdbcTemplate.queryForMap(totalAmountQuery);
+		updateBillDetailAmount(payTypeFeeDetailRequest.getApplicationNo(),
+				Double.valueOf(resultMap.get("amount").toString()));
+		
 		return updateResult;
 	}
 
