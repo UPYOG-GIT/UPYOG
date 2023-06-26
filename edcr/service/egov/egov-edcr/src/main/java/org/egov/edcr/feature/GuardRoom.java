@@ -112,10 +112,10 @@ public class GuardRoom extends FeatureProcess {
 				minArea = atreaList.stream().reduce(BigDecimal::min).get();
 				minCabinHeight = cabinHeightList.stream().reduce(BigDecimal::min).get();
 
-				if (minHeight.compareTo(new BigDecimal("4")) >= 0 && minWidth.compareTo(new BigDecimal("3")) >= 0) {
+				if (minHeight.compareTo(new BigDecimal("3")) >= 0 && minWidth.compareTo(new BigDecimal("3")) >= 0) {
 					details.put(RULE_NO, RULE_48_A);
 					details.put(DESCRIPTION, GUARD_ROOM_DIMENSION_DESCRIPTION);
-					details.put(REQUIRED, "Dimension > 3x4");
+					details.put(REQUIRED, "Dimension >= 3x3");
 					details.put(PROVIDED, "Dimension: " + minWidth + "x" + minHeight);
 					details.put(STATUS, Result.Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
@@ -124,17 +124,17 @@ public class GuardRoom extends FeatureProcess {
 					details = new HashMap<>();
 					details.put(RULE_NO, RULE_48_A);
 					details.put(DESCRIPTION, GUARD_ROOM_DIMENSION_DESCRIPTION);
-					details.put(REQUIRED, "Dimension > 3x4");
+					details.put(REQUIRED, "Dimension >= 3x3");
 					details.put(PROVIDED, "Dimension: " + minWidth + "x" + minHeight);
 					details.put(STATUS, Result.Not_Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 				}
 
-				if (minArea.compareTo(new BigDecimal("10")) <= 0) {
+				if (minArea.compareTo(new BigDecimal("9")) <= 0) {
 					details = new HashMap<>();
 					details.put(RULE_NO, RULE_48_A);
 					details.put(DESCRIPTION, GUARD_ROOM_AREA_DESCRIPTION);
-					details.put(REQUIRED, "Area < = 10");
+					details.put(REQUIRED, "Area < = 9");
 					details.put(PROVIDED, "Area: " + minArea);
 					details.put(STATUS, Result.Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
@@ -142,7 +142,7 @@ public class GuardRoom extends FeatureProcess {
 					details = new HashMap<>();
 					details.put(RULE_NO, RULE_48_A);
 					details.put(DESCRIPTION, GUARD_ROOM_AREA_DESCRIPTION);
-					details.put(REQUIRED, "Area < = 10");
+					details.put(REQUIRED, "Area < = 9");
 					details.put(PROVIDED, "Area: " + minArea);
 					details.put(STATUS, Result.Not_Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);

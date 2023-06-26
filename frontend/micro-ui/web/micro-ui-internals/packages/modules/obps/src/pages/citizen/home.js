@@ -1,11 +1,12 @@
-import { BPAHomeIcon, BPAIcon, CitizenHomeCard, EDCRIcon, EmployeeModuleCard, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import { BPAHomeIcon, BPAIcon, CitizenHomeCard, EDCRIcon, EmployeeModuleCard, Loader, Toast, SubmitBar, Card, CardText } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 
 const BPACitizenHomeScreen = ({ parentRoute }) => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData.code);
+  const validityDate = userInfo?.info?.validityDate;
   const stateCode = Digit.ULBService.getStateId();
   const [stakeHolderRoles, setStakeholderRoles] = useState(false);
   const { data: stakeHolderDetails, isLoading: stakeHolderDetailsLoading } = Digit.Hooks.obps.useMDMS(
@@ -21,51 +22,116 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
   const { data: homePageUrlLinks, isLoading: homePageUrlLinksLoading } = Digit.Hooks.obps.useMDMS(state, "BPA", ["homePageUrlLinks"]);
   const [showToast, setShowToast] = useState(null);
   const [totalCount, setTotalCount] = useState("-");
-  let validityDate = null;
-  // let roleCode = null;
-  const [roleCode, setRoleCode] = useState([]);
-  // const [userRoles, setUserRoles] = useState([]);
+  // console.log("userinfo: "+JSON.stringify(userInfo));
 
-  
-  useEffect(async () => {
-    //if (uuid) {
-    const usersResponse1 = await Digit.UserService.userSearch(Digit.ULBService.getCitizenCurrentTenant(), { uuid: [userInfo?.info?.uuid] }, {});
-    //  console.log("usersResponse1 "+JSON.stringify(usersResponse1))
-    const roles = usersResponse1?.user[0]?.roles?.map((roleData) => roleData.code);
-    // setUserRoles(roles);
-    //  console.log(JSON.stringify(userRoles));
-    if (usersResponse1 && usersResponse1.user && usersResponse1.user.length) {
-      //console.log("usersResponse11: " + JSON.stringify(usersResponse1));
-      const code = usersResponse1?.user[0]?.roles[1]?.code;
-      setRoleCode(code);
-      //  console.log("roleCode:" + roleCode);
-      validityDate = usersResponse1?.user[0]?.validityDate;
-      // console.log("validityDate: " + validityDate);
-    }
-    //}
-  }, []);
-  // const userRoles1 = usersResponse1?.user[0]?.roles?.map((roleData) => roleData.code);
-    //  console.log(JSON.stringify(userRoles));
-    //  console.log("roleCode:" + roleCode);
-
-  // console.log("userInfo" +JSON.stringify(userInfo));
-  // console.log("Tenant "+Digit.ULBService.getCitizenCurrentTenant());
-  //console.log("date: "+new Date().toLocaleString());
   const currentDate = new Date();
-  const year = currentDate.getFullYear();
-  const month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
-  const day = ("0" + currentDate.getDate()).slice(-2);
-  const hours = ("0" + currentDate.getHours()).slice(-2);
-  const minutes = ("0" + currentDate.getMinutes()).slice(-2);
-  const seconds = ("0" + currentDate.getSeconds()).slice(-2);
+  // console.log("date: " + currentDate.getTime());
+  // console.log("validityDate: " + validityDate);
+  // console.log("userRoles: " + userRoles);
+  let tradeType = null;
+  if (userRoles.includes("BPA_ARCHITECT")) {
+    tradeType = "ARCHITECT.CLASSA";
+  } else if (userRoles.includes("BPA_BUILDER")) {
+    tradeType = "BUILDER.CLASSA";
+  } else if (userRoles.includes("BPA_ENGINEER")) {
+    tradeType = "ENGINEER.CLASSA";
+  } else if (userRoles.includes("BPA_STRUCTURALENGINEER")) {
+    tradeType = "STRUCTURALENGINEER.CLASSA";
+  } else if (userRoles.includes("BPA_SUPERVISOR")) {
+    tradeType = "SUPERVISOR.CLASSA";
+  } else if (userRoles.includes("BPA_TOWNPLANNER")) {
+    tradeType = "TOWNPLANNER.CLASSA";
+  }
 
-  const dateTime = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
-  //console.log("date: " + dateTime);
-  if (roleCode === 'BPA_ARCHITECT' && new Date(validityDate).getTime() > new Date(dateTime).getTime()) {
+
+  // if (false) {
+  // if (userRoles && (userRoles.includes("BPA_ARCHITECT") || userRoles.includes("BPA_BUILDER") || userRoles.includes("BPA_ENGINEER") || userRoles.includes("BPA_STRUCTURALENGINEER") || userRoles.includes("BPA_SUPERVISOR") || userRoles.includes("BPA_TOWNPLANNER")) && validityDate < currentDate.getTime()) {
+  if (userRoles && tradeType !== null && validityDate < currentDate.getTime()) {
     // console.log("Hiiiiii");
     // console.log("validityDate: " + validityDate);
+    
+    let payload = {
+      "Licenses": [
+        {
+          "tradeLicenseDetail": {
+            "owners": [
+              {
+                "id": userInfo?.info?.id,
+                "uuid": userInfo?.info?.uuid,
+                "userName": userInfo?.info?.userName,
+                "gender": "",
+                "mobileNumber": userInfo?.info?.mobileNumber,
+                "emailId": userInfo?.info?.email,
+                "name": userInfo?.info?.name,
+                "roles": userInfo?.info?.roles,
+                "permanentAddress": "",
+                "correspondenceAddress": "",
+                "pan": "",
+                "dob": null,
+                // "permanentPinCode": "143001"
+              }
+            ],
+            "subOwnerShipCategory": "INDIVIDUAL",
+            "tradeUnits": [
+              {
+                "tradeType": tradeType,
+              }
+            ],
+            "address": {
+              "city": "",
+              "landmark": "",
+              "pincode": ""
+            },
+            "institution": null,
+            "applicationDocuments": null
+          },
+          "licenseType": "PERMANENT",
+          "businessService": "BPAREN",
+          "tenantId": userInfo?.info?.tenantId,
+          "action": "NOWORKFLOW"
+        }
+      ]
+    }
+
+    // console.log("payload: " + JSON.stringify(payload));
+    const [responseData, setResponseData] = useState(null);
+    const [paymentDetailsResponse, setPaymentDetailsResponse] = useState(null);
+    // useEffect(async () => {
+    useEffect(async () => {
+      // const response = await Digit.OBPSService.BPARENCreate(payload, userInfo?.info?.tenantId);
+      const { Licenses } = await Digit.OBPSService.BPARENCreate(payload, userInfo?.info?.tenantId);
+      // console.log("object "+JSON.stringify(ResponseInfo));
+      // console.log("Licenses "+JSON.stringify(Licenses));
+      // const data = await Licenses.json();
+      setResponseData(Licenses[0]);
+    }, []);
+    // console.log("Response111 :"+JSON.stringify(responseData));
+    let consumerCode = responseData?.applicationNumber;
+
+    const fetchBillParams = { consumerCode };
+    const { data: paymentDetails } = Digit.Hooks.obps.useBPAREGgetbill(
+      { businessService: "BPAREN", ...fetchBillParams, tenantId: userInfo?.info?.tenantId.split(".")[0] },
+      {
+        enabled: consumerCode ? true : false,
+        retry: false,
+      }
+    );
+    // console.log("paymentDetails: "+JSON.stringify(paymentDetails?.billResponse));
+    const homeScreen = (
+      <div className="mainContent citizenAllServiceGrid">
+        <Card>
+          <CardText>{"Please Pay Renewal Fee for Renew your Registration"}</CardText>
+          {<Link to={{
+            pathname: `/digit-ui/citizen/payment/collect/BPAREN/${consumerCode}/${userInfo?.info?.tenantId}?tenantId=${userInfo?.info?.tenantId}`
+          }}>
+            <SubmitBar label={t("COMMON_MAKE_PAYMENT")} />
+          </Link>}
+        </Card>
+      </div>
+    )
+    return homeScreen;
   } else {
-    //console.log("Hiiiiii2222");
+    // console.log("Hiiiiii2222");
 
     const closeToast = () => {
       window.location.replace("/digit-ui/citizen/all-services");
@@ -83,7 +149,6 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
       ? { limit: 10, offset: 0, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.sortOrder }
       : { limit: pageSize, offset: pageOffset, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.sortOrder };
     const inboxSearchParams = { limit: 10, offset: 0, mobileNumber: userInfo?.info?.mobileNumber };
-    //console.log("tenantId"+userInfo?.info?.tenantId);
     const { isLoading: bpaLoading, data: bpaInboxData } = Digit.Hooks.obps.useArchitectInbox({
       //tenantId: stateCode,
       tenantId: userInfo?.info?.tenantId,

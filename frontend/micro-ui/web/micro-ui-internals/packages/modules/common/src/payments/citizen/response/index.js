@@ -29,7 +29,7 @@ export const SuccessfulPayment = (props)=>{
     staleTime: Infinity,
     refetchOnWindowFocus: false,
   });
-
+  // console.log("data "+JSON.stringify(data));
   const { label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService: business_service }, { enabled: false });
 
   // const { data: demand } = Digit.Hooks.useDemandSearch(
