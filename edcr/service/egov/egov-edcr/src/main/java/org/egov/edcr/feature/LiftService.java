@@ -164,7 +164,7 @@ public class LiftService extends FeatureProcess {
 //                                            .equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype()
 //                                                    .getCode()))) {
 
-						String occupancyType = (occupancyTypeHelper.getType() != null)
+						String occupancyType = (occupancyTypeHelper!=null && occupancyTypeHelper.getType() != null)
 								? occupancyTypeHelper.getType().getName()
 								: null;
 //					String occupancyType=occupancyTypeHelper.getType().getName();

@@ -92,6 +92,7 @@ import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
+import org.jfree.util.Log;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -320,12 +321,17 @@ public class Parking_Dhamtari extends FeatureProcess {
 //						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
 
 				occupancyTypeHelper = floor.getOccupancies().get(0).getTypeHelper();
-				BigDecimal floorBuiltUpArea = floor.getOccupancies().get(0).getBuiltUpArea();
+				if (occupancyTypeHelper == null || (occupancyTypeHelper != null
+						&& (occupancyTypeHelper.getType() == null || occupancyTypeHelper.getSubtype() == null))) {
+					Log.error("Occupany not defined properly");
+					pl.addError(OCCUPANCY, getLocaleMessage(OBJECTNOTDEFINED, OCCUPANCY + " not properly defined"));
+				} else {
+					BigDecimal floorBuiltUpArea = floor.getOccupancies().get(0).getBuiltUpArea();
 
-				requiredCarParkArea += getRequiredCarParkArea(floorBuiltUpArea, occupancyTypeHelper, coverParkingArea,
-						basementParkingArea, openParkingArea, stiltParkingArea, lowerGroungFloorParkingArea, noOfBeds,
-						noOfSeats);
-//				
+					requiredCarParkArea += getRequiredCarParkArea(floorBuiltUpArea, occupancyTypeHelper,
+							coverParkingArea, basementParkingArea, openParkingArea, stiltParkingArea,
+							lowerGroungFloorParkingArea, noOfBeds, noOfSeats);
+				}
 			}
 		}
 

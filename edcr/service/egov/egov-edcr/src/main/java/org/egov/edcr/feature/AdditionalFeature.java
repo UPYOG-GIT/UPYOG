@@ -308,7 +308,8 @@ public class AdditionalFeature extends FeatureProcess {
 
 			OccupancyTypeHelper occupancyTypeHelper = block.getBuilding().getMostRestrictiveFarHelper();
 
-			if (occupancyTypeHelper.getSubtype() != null && A_R.equals(occupancyTypeHelper.getSubtype().getCode())) {
+			if (occupancyTypeHelper != null && occupancyTypeHelper.getSubtype() != null
+					&& A_R.equals(occupancyTypeHelper.getSubtype().getCode())) {
 				requiredFloorCount = "<= 3";
 				if (floorAbvGround.compareTo(BigDecimal.valueOf(3)) <= 0) {
 					isAccepted = true;
@@ -355,7 +356,8 @@ public class AdditionalFeature extends FeatureProcess {
 
 			OccupancyTypeHelper occupancyTypeHelper = block.getBuilding().getMostRestrictiveFarHelper();
 
-			if (occupancyTypeHelper.getSubtype() != null && A_R.equals(occupancyTypeHelper.getSubtype().getCode())) {
+			if (occupancyTypeHelper != null && occupancyTypeHelper.getSubtype() != null
+					&& A_R.equals(occupancyTypeHelper.getSubtype().getCode())) {
 //				isReport = true;
 				requiredBuildingHeight = "<= 9.5";
 				if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) <= 0) {
@@ -400,7 +402,8 @@ public class AdditionalFeature extends FeatureProcess {
 //				String status;
 				String minRequiredFloorHeight = StringUtils.EMPTY;
 				String maxPermissibleFloorHeight = StringUtils.EMPTY;
-				if (occupancyTypeHelper.getType() != null && G.equals(occupancyTypeHelper.getType().getCode())) {
+				if (occupancyTypeHelper != null && occupancyTypeHelper.getType() != null
+						&& G.equals(occupancyTypeHelper.getType().getCode())) {
 					minRequiredFloorHeight = "3.60" + DcrConstants.IN_METER;
 					maxPermissibleFloorHeight = "-";
 					if (floorHeight.compareTo(BigDecimal.valueOf(3.60)) >= 0) {
