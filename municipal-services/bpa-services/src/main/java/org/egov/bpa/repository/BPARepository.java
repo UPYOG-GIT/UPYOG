@@ -528,22 +528,29 @@ public class BPARepository {
 	            "COUNT(CASE WHEN bp.status = 'REASSIGN' THEN 1 END) AS Reassign, " +
 	            "COUNT(CASE WHEN bp.status = 'INPROGRESS' THEN 1 END) AS Inprogress, " +
 	            "COUNT(CASE WHEN bp.status = 'PENDING_APPL_FEE' THEN 1 END) AS appl_fee, " +
-	            "COUNT(CASE WHEN bp.status = 'PENDING_SANC_FEE_PAYMENT' THEN 1 END) AS sanc_fee_pending, " +
+	            "COUNT(CASE WHEN bp.status = 'PENDING_SANC_FEE_PAYMENT' THEN 1 END) AS sanc_fee_pending " +
+	            "FROM eg_bpa_buildingplan bp";
+
+	    String query2 = "SELECT " +
 	            "COUNT(CASE WHEN (bp.status != 'INITIATED' AND txn_status = 'SUCCESS' AND txn_amount = 1.00) THEN 1 END) AS direct_bhawan_anugya " +
 	            "FROM eg_bpa_buildingplan bp, eg_pg_transactions bd " +
 	            "WHERE bp.applicationno = bd.consumer_code";
 
 	    if (tenantId != null) {
-	        query1 += " AND bp.tenantid = '" + tenantId + "'";
+	        query1 += " WHERE bp.tenantid = '" + tenantId + "'";
+	        query2 += " AND bp.tenantid = '" + tenantId + "'";
 	    }
 
 	    log.info("query1---" + query1);
+	    log.info("query2---" + query2);
 
 	    List<Map<String, Object>> result = new ArrayList<>();
+
 	    result.add(jdbcTemplate.queryForMap(query1));
+	    result.add(jdbcTemplate.queryForMap(query2));
+
 	    return result;
 	}
-
 
 	
 	public List<Map<String, Object>> getApplicationDataInDasboardForUlb(String tenantId, String applicationType) {
