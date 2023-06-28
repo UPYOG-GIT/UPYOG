@@ -520,7 +520,7 @@ public class BPARepository {
 	}
 	
 	public List<Map<String, Object>> getDataCountsForDashboard(String tenantId) {
-	    String query = "SELECT " +
+	    String query1 = "SELECT " +
 	            "COUNT(CASE WHEN bp.status = 'INITIATED' THEN 1 END) AS Initiated, " +
 	            "COUNT(CASE WHEN bp.status = 'CITIZEN_APPROVAL_INPROCESS' THEN 1 END) AS CITIZEN_APPROVAL_INPROCESS, " +
 	            "COUNT(CASE WHEN bp.status = 'APPROVED' THEN 1 END) AS Approved, " +
@@ -529,22 +529,21 @@ public class BPARepository {
 	            "COUNT(CASE WHEN bp.status = 'INPROGRESS' THEN 1 END) AS Inprogress, " +
 	            "COUNT(CASE WHEN bp.status = 'PENDING_APPL_FEE' THEN 1 END) AS appl_fee, " +
 	            "COUNT(CASE WHEN bp.status = 'PENDING_SANC_FEE_PAYMENT' THEN 1 END) AS sanc_fee_pending, " +
-	            "COUNT(CASE WHEN (bp.status != 'INITIATED' AND txn_status = 'SUCCESS' AND txn_amount = 1.00) THEN 1 END) AS direct_bhawan_anugya, " +
-	            "COUNT(CASE " +
-	            "    WHEN bp.status IN ('DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'DOC_VERIFICATION_INPROGRESS_BY_BUILDER', 'APPROVAL_INPROGRESS', 'POST_FEE_APPROVAL_INPROGRESS') " +
-	            "    THEN 1 " +
-	            "END) AS department_inprocess " +
-	            "FROM eg_bpa_buildingplan bp " +
-	            "JOIN eg_pg_transactions bd ON bp.applicationno = bd.consumer_code";
+	            "COUNT(CASE WHEN (bp.status != 'INITIATED' AND txn_status = 'SUCCESS' AND txn_amount = 1.00) THEN 1 END) AS direct_bhawan_anugya " +
+	            "FROM eg_bpa_buildingplan bp, eg_pg_transactions bd " +
+	            "WHERE bp.applicationno = bd.consumer_code";
 
 	    if (tenantId != null) {
-	        query += " WHERE bp.tenantid = '" + tenantId + "'";
+	        query1 += " AND bp.tenantid = '" + tenantId + "'";
 	    }
 
-	    log.info("query---" + query);
+	    log.info("query1---" + query1);
 
-	    return jdbcTemplate.queryForList(query);
+	    List<Map<String, Object>> result = new ArrayList<>();
+	    result.add(jdbcTemplate.queryForMap(query1));
+	    return result;
 	}
+
 
 	
 	public List<Map<String, Object>> getApplicationDataInDasboardForUlb(String tenantId, String applicationType) {
