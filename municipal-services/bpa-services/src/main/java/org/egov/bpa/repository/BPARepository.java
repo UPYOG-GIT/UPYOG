@@ -532,7 +532,7 @@ public class BPARepository {
 	            "FROM eg_bpa_buildingplan bp";
 
 	    String query2 = "SELECT " +
-	            "COUNT(CASE WHEN (bp.status != 'INITIATED' AND txn_status = 'SUCCESS' AND txn_amount = 1.00) THEN 1 END) AS direct_bhawan_anugya " +
+	            "COUNT(CASE WHEN (bp.status != 'INITIATED' AND bp.status != 'PENDING_APPL_FEE' AND bp.status != 'CITIZEN_APPROVAL_INPROCESS' AND txn_status = 'SUCCESS' AND txn_amount = 1.00) THEN 1 END) AS direct_bhawan_anugya " +
 	            "FROM eg_bpa_buildingplan bp, eg_pg_transactions bd " +
 	            "WHERE bp.applicationno = bd.consumer_code";
 
