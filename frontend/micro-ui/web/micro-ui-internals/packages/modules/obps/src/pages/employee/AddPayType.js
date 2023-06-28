@@ -310,7 +310,7 @@ const AddPayType = () => {
     <h1 className="flex-right">Net Amount :{totalAmount.toFixed(2)}</h1>
         {feeDetailtblval.length<1?
           <React.Fragment>
-            <button type="button" className="button-sub-text" onClick={errorhandel} style={{margin:"10px",backgroundColor: "#008CBA"}}>Add New Row</button>
+            <button type="button" className="button-sub-text" onClick={()=>setModalData(true)} style={{margin:"10px",backgroundColor: "#008CBA"}}>Add New Row</button>
             <button type="button" className="button-sub-text" onClick={errorhandel} style={{margin:"10px",backgroundColor: "#008CBA"}}>Delete</button>
           </React.Fragment>
         :
