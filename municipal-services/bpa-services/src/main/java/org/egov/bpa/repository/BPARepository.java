@@ -540,7 +540,7 @@ public class BPARepository {
 			    + "        COUNT(CASE WHEN bp.status = 'INPROGRESS' THEN 1 END) AS Inprogress,\n"
 			    + "        COUNT(CASE WHEN bp.status = 'PENDING_APPL_FEE' THEN 1 END) AS appl_fee,\n"
 			    + "        COUNT(CASE WHEN bp.status = 'PENDING_SANC_FEE_PAYMENT' THEN 1 END) AS sanc_fee_pending,\n"
-			    + "        SUM(CASE WHEN bp.status IN ('DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'DOC_VERIFICATION_INPROGRESS_BY_BUILDER', 'POST_FEE_APPROVAL_INPROGRESS', 'APPROVAL_INPROGRESS') THEN 1 ELSE 0 END) AS department_inprocess\n"    
+			    + "        COUNT(CASE WHEN bp.status IN ('DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'DOC_VERIFICATION_INPROGRESS_BY_BUILDER', 'POST_FEE_APPROVAL_INPROGRESS', 'APPROVAL_INPROGRESS') THEN 1 END) AS department_inprocess\n"
 			    + "    FROM eg_bpa_buildingplan bp\n"
 			    + ") AS counts;";
 
