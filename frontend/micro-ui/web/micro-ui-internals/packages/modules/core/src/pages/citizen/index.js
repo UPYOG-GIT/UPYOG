@@ -52,62 +52,99 @@ const Home = ({
     );
   });
 
-  const [initiatedCount, setInitiatedCount] = useState(null);
-  const [citizenApprovalInProcessCount, setcitizenApprovalInProcessCount] = useState(null);
-  const [approvedCount, setapprovedCount] = useState(null);
-  const [rejectedCount, setrejectedCount] = useState(null);
-  const [departmentInProcessCount, setdepartmentInProcessCount] = useState(null);
-  const [reassignedCount, setReassignedCount] = useState(null);
-  const [applFeePending, setApplFeePending] = useState(null);
-  const [sancFeePending, setSancFeePending] = useState(null);
-  const [inprogressCount, setInprogressCount] = useState(null);
-  const [totalProposal, setTotalProposal] = useState(null);
+  const [initiatedCount, setInitiatedCount] = useState(0);
+  const [citizenApprovalInProcessCount, setCitizenApprovalInProcessCount] = useState(0);
+  const [approvedCount, setApprovedCount] = useState(0);
+  const [rejectedCount, setRejectedCount] = useState(0);
+  const [departmentInProcessCount, setDepartmentInProcessCount] = useState(0);
+  const [reassignedCount, setReassignedCount] = useState(0);
+  const [applFeePending, setApplFeePending] = useState(0);
+  const [sancFeePending, setSancFeePending] = useState(0);
+  const [inprogressCount, setInprogressCount] = useState(0);
+  const [totalProposal, setTotalProposal] = useState(0);
+  const [directBhawanAnugya, setDirectBhawanAnugya] = useState(0);
 
-  
 
-    useEffect(async () => {
-      const getDashboardCount = await Digit.OBPSAdminService.getDashboardCount();
 
-       console.log("getDashboardCount" + JSON.stringify(getDashboardCount))
-        getDashboardCount.forEach((dashboardData) => {
+  useEffect(async () => {
+    const getDashboardCount = await Digit.OBPSAdminService.getDashboardCount();
+
+    console.log("getDashboardCount--" + JSON.stringify(getDashboardCount))
+
+
+
+
+    getDashboardCount.forEach((dashboardData) => {
+
+
+
+      if (dashboardData.initiated !== undefined) {
         const initiatedCount = dashboardData.initiated;
         setInitiatedCount(initiatedCount);
+        console.log("initiatedCount" + initiatedCount);
+      }
 
+      if (dashboardData.citizen_approval_inprocess !== undefined) {
         const citizenApprovalInProcessCount = dashboardData.citizen_approval_inprocess;
-        setcitizenApprovalInProcessCount(citizenApprovalInProcessCount);
+        setCitizenApprovalInProcessCount(citizenApprovalInProcessCount);
+      }
 
+      if (dashboardData.approved !== undefined) {
         const approvedCount = dashboardData.approved;
-        setapprovedCount(approvedCount);
+        setApprovedCount(approvedCount);
+      }
 
+      if (dashboardData.rejected !== undefined) {
         const rejectedCount = dashboardData.rejected;
-        setrejectedCount(rejectedCount);
+        setRejectedCount(rejectedCount);
+      }
 
+      if (dashboardData.direct_bhawan_anugya !== undefined) {
+        const directBhawanAnugya = dashboardData.direct_bhawan_anugya;
+        setDirectBhawanAnugya(directBhawanAnugya);
+      }
+
+      if (dashboardData.department_inprocess !== undefined) {
         const departmentInProcessCount = dashboardData.department_inprocess;
-        setdepartmentInProcessCount(departmentInProcessCount);
+        setDepartmentInProcessCount(departmentInProcessCount);
+      }
 
+      if (dashboardData.reassign !== undefined) {
         const reassignedCount = dashboardData.reassign;
         setReassignedCount(reassignedCount);
+      }
 
+      if (dashboardData.appl_fee !== undefined) {
         const applFeePending = dashboardData.appl_fee;
         setApplFeePending(applFeePending);
+      }
 
+      if (dashboardData.sanc_fee_pending !== undefined) {
         const sancFeePending = dashboardData.sanc_fee_pending;
         setSancFeePending(sancFeePending);
+      }
 
+      if (dashboardData.inprogress !== undefined) {
         const inprogressCount = dashboardData.inprogress;
         setInprogressCount(inprogressCount);
+      }
 
 
-        const totalProposal = initiatedCount + citizenApprovalInProcessCount + departmentInProcessCount + approvedCount + inprogressCount + applFeePending + sancFeePending
-        setTotalProposal(totalProposal)
-        console.log("totalProposal" + totalProposal)
-       
+      if (dashboardData.total !== undefined) {
+        const totalProposal = dashboardData.total;
+        setTotalProposal(totalProposal);
+      }
 
-      });
-  
-      
-    }, []);
-  
+
+
+    });
+
+
+
+
+
+  }, []);
+
 
   const ModuleLevelLinkHomePages = modules.map(({ code, bannerImage }, index) => {
     let Links = Digit.ComponentRegistryService.getComponent(`${code}Links`) || (() => <React.Fragment />);
@@ -134,13 +171,13 @@ const Home = ({
             <List sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', marginTop: -2 }}>
               <ListItem>
 
-                <ListItemText primary="Birgaon Municipal Corporation"  style={{color: "#444444"}} />
+                <ListItemText primary="Birgaon Municipal Corporation" style={{ color: "#444444" }} />
               </ListItem>
               <ListItem>
-                <ListItemText primary="Dhamtari Municipal Corporation" style={{color: "#444444"}}/>
+                <ListItemText primary="Dhamtari Municipal Corporation" style={{ color: "#444444" }} />
               </ListItem>
               <ListItem>
-                <ListItemText primary="Bhilai-Charoda Municipal Corporation" style={{color: "#444444"}} />
+                <ListItemText primary="Bhilai-Charoda Municipal Corporation" style={{ color: "#444444" }} />
               </ListItem>
             </List>
 
@@ -160,140 +197,140 @@ const Home = ({
         </Box>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-        <Card sx={{
-        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-        borderRadius: '10px',
-      }}>
-        <CardContent>
-          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-            gutterBottom>
-            {totalProposal}
-          </Typography>
-          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-            Total Proposal
-          </Typography>
-        </CardContent>
-      </Card>
+          <Card sx={{
+            width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+            borderRadius: '10px',
+          }}>
+            <CardContent>
+              <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+                gutterBottom>
+                {totalProposal}
+              </Typography>
+              <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+                Total Proposal
+              </Typography>
+            </CardContent>
+          </Card>
 
-      <Card sx={{
-        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-        borderRadius: '10px',
-      }}>
-        <CardContent>
-          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-            gutterBottom>
-            {initiatedCount}
-          </Typography>
-          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-            Initiated Proposals
-          </Typography>
-        </CardContent>
-      </Card>
-      <Card sx={{
-        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-        borderRadius: '10px',
-      }}>
-        <CardContent>
-          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-            gutterBottom>
-            {inprogressCount}
-          </Typography>
-          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-           Architect Inprogress
-          </Typography>
-        </CardContent>
-      </Card>
+          <Card sx={{
+            width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+            borderRadius: '10px',
+          }}>
+            <CardContent>
+              <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+                gutterBottom>
+                {initiatedCount}
+              </Typography>
+              <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+                Initiated Proposals
+              </Typography>
+            </CardContent>
+          </Card>
+          <Card sx={{
+            width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+            borderRadius: '10px',
+          }}>
+            <CardContent>
+              <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+                gutterBottom>
+                {inprogressCount}
+              </Typography>
+              <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+                Architect Inprogress
+              </Typography>
+            </CardContent>
+          </Card>
 
-      <Card sx={{
-        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-        borderRadius: '10px',
-      }}>
-        <CardContent>
-          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-            gutterBottom>
-            {approvedCount}
-          </Typography>
-          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-            Approved Proposals
-          </Typography>
-        </CardContent>
-      </Card>
+          <Card sx={{
+            width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+            borderRadius: '10px',
+          }}>
+            <CardContent>
+              <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+                gutterBottom>
+                {approvedCount}
+              </Typography>
+              <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+                Approved Proposals
+              </Typography>
+            </CardContent>
+          </Card>
 
-      <Card sx={{
-        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-        borderRadius: '10px',
-      }}>
-        <CardContent>
-          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-            gutterBottom>
-            {rejectedCount}
-          </Typography>
-          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-            Rejected Proposals
-          </Typography>
-        </CardContent>
-      </Card>
+          <Card sx={{
+            width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+            borderRadius: '10px',
+          }}>
+            <CardContent>
+              <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+                gutterBottom>
+                {directBhawanAnugya}
+              </Typography>
+              <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+                Direct Bhawan Anugya
+              </Typography>
+            </CardContent>
+          </Card>
 
-      {/* Additional Typography components */}
-     
+          {/* Additional Typography components */}
 
-      <Card sx={{
-        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-        borderRadius: '10px',
-      }}>
-        <CardContent>
-          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-            gutterBottom>
-            {citizenApprovalInProcessCount}
-          </Typography>
-          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-           Citizen Inprocess
-          </Typography>
-        </CardContent>
-      </Card>
-      <Card sx={{
-        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-        borderRadius: '10px',
-      }}>
-        <CardContent>
-          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-            gutterBottom>
-            {departmentInProcessCount}
-          </Typography>
-          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-           Department Inprocess
-          </Typography>
-        </CardContent>
-      </Card>
-      <Card sx={{
-        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-        borderRadius: '10px',
-      }}>
-        <CardContent>
-          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-            gutterBottom>
-            {applFeePending}
-          </Typography>
-          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-          Pre Fee Pending
-          </Typography>
-        </CardContent>
-      </Card>
-      <Card sx={{
-        width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-        borderRadius: '10px',
-      }}>
-        <CardContent>
-          <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-            gutterBottom>
-            {sancFeePending}
-          </Typography>
-          <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-          Post Fee Pending
-          </Typography>
-        </CardContent>
-      </Card>
-    </div>
+
+          <Card sx={{
+            width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+            borderRadius: '10px',
+          }}>
+            <CardContent>
+              <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+                gutterBottom>
+                {citizenApprovalInProcessCount}
+              </Typography>
+              <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+                Citizen Inprocess
+              </Typography>
+            </CardContent>
+          </Card>
+          <Card sx={{
+            width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+            borderRadius: '10px',
+          }}>
+            <CardContent>
+              <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+                gutterBottom>
+                {departmentInProcessCount}
+              </Typography>
+              <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+                Department Inprocess
+              </Typography>
+            </CardContent>
+          </Card>
+          <Card sx={{
+            width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+            borderRadius: '10px',
+          }}>
+            <CardContent>
+              <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+                gutterBottom>
+                {applFeePending}
+              </Typography>
+              <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+                Pre Fee Pending
+              </Typography>
+            </CardContent>
+          </Card>
+          <Card sx={{
+            width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+            borderRadius: '10px',
+          }}>
+            <CardContent>
+              <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+                gutterBottom>
+                {sancFeePending}
+              </Typography>
+              <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+                Post Fee Pending
+              </Typography>
+            </CardContent>
+          </Card>
+        </div>
 
         <Box flex="6" marginBottom={2}>
           <Alert severity="info" sx={{ maxWidth: 1300, padding: '1rem', justifyContent: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -329,7 +366,7 @@ const Home = ({
         style={
           location?.pathname === "/digit-ui/citizen/select-location" || location?.pathname === "/digit-ui/citizen/register/name" || location?.pathname === "/digit-ui/citizen/register/otp" || location?.pathname === "/digit-ui/citizen/select-language" || location?.pathname === "/digit-ui/citizen/login/otp" || location?.pathname === "/digit-ui/citizen/login"
             ? {
-              backgroundImage: `url("https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/background_pic1.png")`, width: '100%', backgroundRepeat: 'no-repeat',height:'auto'
+              backgroundImage: `url("https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/background_pic1.png")`, width: '100%', backgroundRepeat: 'no-repeat', height: 'auto'
             }
             : {}
         }
@@ -370,20 +407,20 @@ const Home = ({
           </ErrorBoundary>
         </Switch>
       </div>
-     <div style={{ width: '100%', bottom: 0}}>
-  <div style={{ display: 'flex', justifyContent: 'center', color: "#22394d", height: 'auto' }}>
-    <img style={{ cursor: "pointer", display: "inline-flex", height: '1.4em' }} alt={"Powered by UPYOG"} src={`${sourceUrl}/digit-footer+copy.png`} onError={"this.src='./../digit-footer+copy.png'"} onClick={() => {
-      window.open('https://upyog.niua.org/', '_blank').focus();
-    }}></img>
-    <span style={{ margin: "0 10px" }}>|</span>
-    <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400" }} onClick={() => { window.open('https://niua.in/', '_blank').focus(); }} >Copyright © 2022 National Institute of Urban Affairs</span>
-    <span style={{ margin: "0 10px" }}>|</span>
-    <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400" }} href={pdfUrl} target='_blank'>Developed by </a>
-    <img style={{ cursor: "pointer", display: "inline-flex", height: '1.4em' }} alt={"Developed By Entit Consulatncy Services"} src={`${sourceUrl}/entit-logo.png`} onError={"this.src='./../entit-logo.png'"} onClick={() => {
-      window.open('https://www.entitcs.com/', '_blank').focus();
-    }}></img>
-  </div>
-</div>
+      <div style={{ width: '100%', bottom: 0 }}>
+        <div style={{ display: 'flex', justifyContent: 'center', color: "#22394d", height: 'auto' }}>
+          <img style={{ cursor: "pointer", display: "inline-flex", height: '1.4em' }} alt={"Powered by UPYOG"} src={`${sourceUrl}/digit-footer+copy.png`} onError={"this.src='./../digit-footer+copy.png'"} onClick={() => {
+            window.open('https://upyog.niua.org/', '_blank').focus();
+          }}></img>
+          <span style={{ margin: "0 10px" }}>|</span>
+          <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400" }} onClick={() => { window.open('https://niua.in/', '_blank').focus(); }} >Copyright © 2022 National Institute of Urban Affairs</span>
+          <span style={{ margin: "0 10px" }}>|</span>
+          <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400" }} href={pdfUrl} target='_blank'>Developed by </a>
+          <img style={{ cursor: "pointer", display: "inline-flex", height: '1.4em' }} alt={"Developed By Entit Consulatncy Services"} src={`${sourceUrl}/entit-logo.png`} onError={"this.src='./../entit-logo.png'"} onClick={() => {
+            window.open('https://www.entitcs.com/', '_blank').focus();
+          }}></img>
+        </div>
+      </div>
 
     </div>
 
