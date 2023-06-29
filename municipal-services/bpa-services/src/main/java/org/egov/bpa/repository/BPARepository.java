@@ -520,16 +520,29 @@ public class BPARepository {
 	}
 	
 	public List<Map<String, Object>> getDataCountsForDashboard(String tenantId) {
-	    String query1 = "SELECT " +
-	            "COUNT(CASE WHEN bp.status = 'INITIATED' THEN 1 END) AS Initiated, " +
-	            "COUNT(CASE WHEN bp.status = 'CITIZEN_APPROVAL_INPROCESS' THEN 1 END) AS CITIZEN_APPROVAL_INPROCESS, " +
-	            "COUNT(CASE WHEN bp.status = 'APPROVED' THEN 1 END) AS Approved, " +
-	            "COUNT(CASE WHEN bp.status = 'REJECTED' THEN 1 END) AS Rejected, " +
-	            "COUNT(CASE WHEN bp.status = 'REASSIGN' THEN 1 END) AS Reassign, " +
-	            "COUNT(CASE WHEN bp.status = 'INPROGRESS' THEN 1 END) AS Inprogress, " +
-	            "COUNT(CASE WHEN bp.status = 'PENDING_APPL_FEE' THEN 1 END) AS appl_fee, " +
-	            "COUNT(CASE WHEN bp.status = 'PENDING_SANC_FEE_PAYMENT' THEN 1 END) AS sanc_fee_pending " +
-	            "FROM eg_bpa_buildingplan bp";
+		String query1 = "SELECT\n"
+			    + "    Initiated,\n"
+			    + "    CITIZEN_APPROVAL_INPROCESS,\n"
+			    + "    Approved,\n"
+			    + "    Rejected,\n"
+			    + "    Reassign,\n"
+			    + "    Inprogress,\n"
+			    + "    appl_fee,\n"
+			    + "    sanc_fee_pending,\n"
+			    + "    (Initiated + CITIZEN_APPROVAL_INPROCESS + Approved + Rejected + Reassign + Inprogress + appl_fee + sanc_fee_pending) AS Total\n"
+			    + "FROM (\n"
+			    + "    SELECT\n"
+			    + "        COUNT(CASE WHEN bp.status = 'INITIATED' THEN 1 END) AS Initiated,\n"
+			    + "        COUNT(CASE WHEN bp.status = 'CITIZEN_APPROVAL_INPROCESS' THEN 1 END) AS CITIZEN_APPROVAL_INPROCESS,\n"
+			    + "        COUNT(CASE WHEN bp.status = 'APPROVED' THEN 1 END) AS Approved,\n"
+			    + "        COUNT(CASE WHEN bp.status = 'REJECTED' THEN 1 END) AS Rejected,\n"
+			    + "        COUNT(CASE WHEN bp.status = 'REASSIGN' THEN 1 END) AS Reassign,\n"
+			    + "        COUNT(CASE WHEN bp.status = 'INPROGRESS' THEN 1 END) AS Inprogress,\n"
+			    + "        COUNT(CASE WHEN bp.status = 'PENDING_APPL_FEE' THEN 1 END) AS appl_fee,\n"
+			    + "        COUNT(CASE WHEN bp.status = 'PENDING_SANC_FEE_PAYMENT' THEN 1 END) AS sanc_fee_pending\n"
+			    + "    FROM eg_bpa_buildingplan bp\n"
+			    + ") AS counts;";
+
 
 	    String query2 = "SELECT " +
 	            "COUNT(CASE WHEN (bp.status != 'INITIATED' AND bp.status != 'PENDING_APPL_FEE' AND bp.status != 'CITIZEN_APPROVAL_INPROCESS' AND txn_status = 'SUCCESS' AND txn_amount = 1.00) THEN 1 END) AS direct_bhawan_anugya " +
