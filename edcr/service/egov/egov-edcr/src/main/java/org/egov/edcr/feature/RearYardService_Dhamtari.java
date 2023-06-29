@@ -446,7 +446,7 @@ public class RearYardService_Dhamtari extends RearYardService {
 				&& plotArea.compareTo(BigDecimal.valueOf(10000)) <= 0) {
 			minVal = REARYARDMINIMUM_DISTANCE_3;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(10000)) > 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_3;
+			minVal = REARYARDMINIMUM_DISTANCE_4_5;
 		}
 
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
