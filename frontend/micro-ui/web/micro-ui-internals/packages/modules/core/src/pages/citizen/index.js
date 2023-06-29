@@ -207,7 +207,7 @@ const Home = ({
                 {totalProposal}
               </Typography>
               <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-                Total Proposal
+                Total Application
               </Typography>
             </CardContent>
           </Card>
@@ -222,7 +222,7 @@ const Home = ({
                 {initiatedCount}
               </Typography>
               <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-                Initiated Proposals
+                Initiated Application
               </Typography>
             </CardContent>
           </Card>
@@ -251,7 +251,7 @@ const Home = ({
                 {approvedCount}
               </Typography>
               <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-                Approved Proposals
+                Approved Application
               </Typography>
             </CardContent>
           </Card>
