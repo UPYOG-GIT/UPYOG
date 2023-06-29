@@ -101,11 +101,11 @@ public class EnrichmentService {
 		bpaRequest.getBPA().setAccountId(bpaRequest.getBPA().getAuditDetails().getCreatedBy());
 		String applicationType = values.get(BPAConstants.APPLICATIONTYPE);
 		if (applicationType.equalsIgnoreCase(BPAConstants.BUILDING_PLAN)) {
-			if (!bpaRequest.getBPA().getRiskType().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)
-				    || !bpaRequest.getBPA().getRiskType().equalsIgnoreCase(BPAConstants.VLOW_RISKTYPE)){
-				bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_MODULE_CODE);
-			} else {
+			if (bpaRequest.getBPA().getRiskType().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)
+				    || bpaRequest.getBPA().getRiskType().equalsIgnoreCase(BPAConstants.VLOW_RISKTYPE)){
 				bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_LOW_MODULE_CODE);
+			} else {
+				bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_MODULE_CODE);
 			}
 		} else {
 			bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_OC_MODULE_CODE);
