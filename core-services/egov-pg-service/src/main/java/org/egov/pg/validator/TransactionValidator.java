@@ -138,6 +138,9 @@ public class TransactionValidator {
 			long currentTimeMillis = System.currentTimeMillis();
 			long thirtyMinutesInMillis = 30 * 60 * 1000;
 			
+			log.info("createdTime: "+createdTime);
+			log.info("currentTimeMillis: "+currentTimeMillis);
+			
 			if (curr.getTxnStatus().equals(Transaction.TxnStatusEnum.PENDING)
 					&& !(currentTimeMillis - createdTime > thirtyMinutesInMillis)) {
 				errorMap.put("TXN_ABRUPTLY_DISCARDED",
