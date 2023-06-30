@@ -81,11 +81,17 @@ public class EnrichmentService {
                 });
             }
             Action action = processStateAndAction.getAction();
+            log.info("action==" + processStateAndAction.getAction());
+            log.info("getCurrentState==" + action.getCurrentState());
+            
             Boolean isStateChanging = (action.getCurrentState().equalsIgnoreCase( action.getNextState())) ? false : true;
+            log.info("isStateChanging==" + isStateChanging);
             if(isStateChanging)
+            	  log.info("processStateAndActions==" + processStateAndActions.toString());
                 processStateAndAction.getProcessInstanceFromRequest().setStateSla(processStateAndAction.getResultantState().getSla());
             enrichAndUpdateSlaForTransition(processStateAndAction,isStateChanging);
             setNextActions(requestInfo,processStateAndActions,true);
+           	
         });
         enrichUsers(requestInfo,processStateAndActions);
     }
