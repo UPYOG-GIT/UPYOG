@@ -134,8 +134,6 @@ public class TransactionValidator {
 		List<Transaction> existingTxnsForBill = transactionRepository.fetchTransactions(criteria);
 
 		for (Transaction curr : existingTxnsForBill) {
-			log.info("BillId : " + curr.getBillId());
-			log.info("Created Time: " + curr.getAuditDetails().getCreatedTime().toString());
 			if (curr.getTxnStatus().equals(Transaction.TxnStatusEnum.PENDING)) {
 				errorMap.put("TXN_ABRUPTLY_DISCARDED",
 						"A transaction for this bill has been abruptly discarded, please retry after "
