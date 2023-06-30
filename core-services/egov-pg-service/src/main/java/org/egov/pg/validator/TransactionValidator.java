@@ -136,8 +136,8 @@ public class TransactionValidator {
 //		long criteriaCreatedTime = criteria.getCreatedTime();
 		long thirtyMinutesInMillis = 30 * 60 * 1000;
 
-		log.info("createdTime: " + criteria.getCreatedTime());
-//		log.info("currentTimeMillis: " + System.currentTimeMillis());
+//		log.info("createdTime: " + criteria.getCreatedTime());
+		log.info("currentTimeMillis: " + System.currentTimeMillis());
 		
 		for (Transaction curr : existingTxnsForBill) {
 			if (curr.getTxnStatus().equals(Transaction.TxnStatusEnum.PENDING)
