@@ -132,9 +132,16 @@ public class TransactionValidator {
 		TransactionCriteria criteria = TransactionCriteria.builder().billId(txn.getBillId()).build();
 
 		List<Transaction> existingTxnsForBill = transactionRepository.fetchTransactions(criteria);
+		long currentTime = System.currentTimeMillis();
+		long criteriaCreatedTime = criteria.getCreatedTime();
+		long thirtyMinutesInMillis = 30 * 60 * 1000;
 
+		log.info("createdTime: " + criteriaCreatedTime);
+		log.info("currentTimeMillis: " + currentTime);
+		
 		for (Transaction curr : existingTxnsForBill) {
-			if (curr.getTxnStatus().equals(Transaction.TxnStatusEnum.PENDING)) {
+			if (curr.getTxnStatus().equals(Transaction.TxnStatusEnum.PENDING)
+					&& !(currentTime - criteriaCreatedTime > thirtyMinutesInMillis)) {
 				errorMap.put("TXN_ABRUPTLY_DISCARDED",
 						"A transaction for this bill has been abruptly discarded, please retry after "
 								+ (props.getEarlyReconcileJobRunInterval() * 2) + " mins");
