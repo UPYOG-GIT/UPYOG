@@ -59,7 +59,7 @@ public class TransactionValidator {
 		log.info("transactionRequest.getTransaction(): " + transactionRequest.getTransaction());
 		log.info("errorMap: " + errorMap);
 
-		if (!errorMap.isEmpty())
+		if (!errorMap.isEmpty() && !errorMap.containsKey("TXN_ABRUPTLY_DISCARDED"))
 			throw new CustomException(errorMap);
 		else
 			paymentsService.validatePayment(transactionRequest);
@@ -134,8 +134,8 @@ public class TransactionValidator {
 		List<Transaction> existingTxnsForBill = transactionRepository.fetchTransactions(criteria);
 
 		for (Transaction curr : existingTxnsForBill) {
-			log.info("BillId : "+curr.getBillId());
-			log.info("Created Time: "+curr.getAuditDetails().getCreatedTime().toString());
+			log.info("BillId : " + curr.getBillId());
+			log.info("Created Time: " + curr.getAuditDetails().getCreatedTime().toString());
 			if (curr.getTxnStatus().equals(Transaction.TxnStatusEnum.PENDING)) {
 				errorMap.put("TXN_ABRUPTLY_DISCARDED",
 						"A transaction for this bill has been abruptly discarded, please retry after "
