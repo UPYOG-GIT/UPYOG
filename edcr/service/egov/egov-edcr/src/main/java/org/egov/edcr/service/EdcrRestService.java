@@ -105,6 +105,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.jfree.util.Log;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -168,7 +169,7 @@ public class EdcrRestService {
 
 	@Autowired
 	private RestTemplate restTemplate;
-	
+
 //	@Autowired
 //	private PlanInformation planInformation;
 
@@ -1064,6 +1065,33 @@ public class EdcrRestService {
 	public String getFileDownloadUrl(final String fileStoreId, final String tenantId) {
 		return String.format(FILE_DOWNLOAD_URL, ApplicationThreadLocals.getDomainURL()) + "?tenantId=" + tenantId
 				+ "&fileStoreId=" + fileStoreId;
+	}
+
+	public Integer deleteScrutiny() {
+
+		Query querySchema = getCurrentSession().createSQLQuery("SELECT schema_name FROM information_schema.schemata");
+		List<Object> results = querySchema.list();
+		int deletedCount = 0;
+		for (Object result : results) {
+			String schemaName = (String) result;
+			if (!schemaName.contains("_") && !schemaName.contains("public")) {
+
+				String queryString = "WITH deleted_edcr_application_detail AS ( " + "DELETE FROM " + schemaName
+						+ ".edcr_application_detail "
+						+ "WHERE status = 'Not Accepted' AND createddate < NOW() - INTERVAL '7 days' "
+						+ "RETURNING dxffileid " + "), " + "deleted_edcr_application AS ( " + "DELETE FROM "
+						+ schemaName + ".edcr_application "
+						+ "WHERE status = 'Not Accepted' AND createddate < NOW() - INTERVAL '7 days' " + "RETURNING id "
+						+ ") " + "DELETE FROM " + schemaName + ".eg_filestoremap "
+						+ "WHERE id IN (SELECT dxffileid FROM deleted_edcr_application_detail)";
+
+				final Query query = getCurrentSession().createSQLQuery(queryString);
+
+				deletedCount = deletedCount + query.executeUpdate();
+			}
+		}
+		Log.info(deletedCount+ "rejected scrutiny records deleted from edcr database");
+		return deletedCount;
 	}
 
 	public Date resetFromDateTimeStamp(final Date date) {
