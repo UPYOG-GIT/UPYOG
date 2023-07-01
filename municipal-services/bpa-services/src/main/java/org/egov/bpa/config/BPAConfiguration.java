@@ -243,6 +243,10 @@ public class BPAConfiguration {
 	@Value("${egov.bpa.validity.date.in.months}")
 	private Integer validityInMonths;
 	
+	@Value("${egov.bpa.validity.date.in.months.for.pre}")
+	private Integer validityInMonthsForPre;
+	
+	
 	//landInfo
 	
 	@Value("${egov.landinfo.host}")
@@ -343,4 +347,6 @@ public class BPAConfiguration {
 
 	@Value("${egov.shortener.url}")
 	private String shortenerURL;
+
+	
 }

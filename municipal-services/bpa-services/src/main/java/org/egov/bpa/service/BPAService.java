@@ -8,6 +8,7 @@ import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -411,6 +412,7 @@ public class BPAService {
 		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
 		String applicationType = edcrResponse.get(BPAConstants.APPLICATIONTYPE);
 		log.info("applicationType is " + applicationType);
+
 		BusinessService businessService = workflowService.getBusinessService(bpa, bpaRequest.getRequestInfo(),
 				bpa.getApplicationNo());
 
@@ -478,6 +480,31 @@ public class BPAService {
 		enrichmentService.postStatusEnrichment(bpaRequest);
 
 		log.info("Bpa status is : " + bpa.getStatus());
+
+		// Validity Date for Direct Bhawan Anugya
+
+		if (edcrResponse.get("Occupancy").equalsIgnoreCase("Residential")
+				&& (bpa.getBusinessService().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)
+						|| bpa.getBusinessService().equalsIgnoreCase(BPAConstants.VLOW_RISKTYPE))) {
+			
+			
+			int validityInMonthsForPre = config.getValidityInMonthsForPre();
+			Calendar calendar = Calendar.getInstance();
+
+			// Adding 1 month to current date
+			calendar.add(Calendar.MONTH, validityInMonthsForPre);
+			Map<String, Object> additionalDetail = null;
+
+			if (bpa.getAdditionalDetails() != null) {
+				additionalDetail = (Map) bpa.getAdditionalDetails();
+			} else {
+				additionalDetail = new HashMap<String, Object>();
+				bpa.setAdditionalDetails(additionalDetails);
+			}
+
+			additionalDetail.put("validityDateForPre", calendar.getTimeInMillis());
+
+		}
 
 		/*
 		 * if (Arrays.asList(config.getSkipPaymentStatuses().split(",")).contains(bpa.
