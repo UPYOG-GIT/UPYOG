@@ -427,6 +427,11 @@ public class RestEdcrApplicationController {
 
         return getComparisonSuccessResponse(comparisonDetail, requestInfoWrapper.getRequestInfo());
     }
+    
+    @GetMapping("/deleterejectedscrutiny")
+    public ResponseEntity<Integer> deleteScrutiny() {
+        return new ResponseEntity<>(edcrRestService.deleteScrutiny(), HttpStatus.OK);
+    }
 
     private ResponseEntity<?> getComparisonSuccessResponse(ComparisonDetail comparisonDetail, RequestInfo requestInfo) {
         ComparisonResponse comparisonResponse = new ComparisonResponse();

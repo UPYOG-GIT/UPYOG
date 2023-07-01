@@ -59,7 +59,7 @@ public class TransactionValidator {
 		log.info("transactionRequest.getTransaction(): " + transactionRequest.getTransaction());
 		log.info("errorMap: " + errorMap);
 
-		if (!errorMap.isEmpty() && !errorMap.containsKey("TXN_ABRUPTLY_DISCARDED"))
+		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
 		else
 			paymentsService.validatePayment(transactionRequest);
