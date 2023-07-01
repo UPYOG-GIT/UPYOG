@@ -299,6 +299,7 @@ public class EDCRService {
 		DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
 		Map<String, String> edcrDetails = new HashMap<String, String>();
 		List<String> serviceType = context.read("edcrDetail.*.planDetail.planInformation.serviceType");
+		String occupancy = context.read("edcrDetail.*.planDetail.planInformation.occupancy");
 		if (CollectionUtils.isEmpty(serviceType)) {
 			serviceType.add("NEW_CONSTRUCTION");
 		}
@@ -308,6 +309,7 @@ public class EDCRService {
 		}
 		List<String> approvalNo = context.read("edcrDetail.*.permitNumber");
 		edcrDetails.put(BPAConstants.SERVICETYPE, serviceType.get(0).toString());
+		edcrDetails.put("Occupancy", occupancy);
 		edcrDetails.put(BPAConstants.APPLICATIONTYPE, applicationType.get(0).toString());
 		if (approvalNo.size() > 0 && approvalNo != null) {
 			edcrDetails.put(BPAConstants.PERMIT_NO, approvalNo.get(0).toString());
