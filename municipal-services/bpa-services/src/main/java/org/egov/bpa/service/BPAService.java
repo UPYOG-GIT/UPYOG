@@ -487,6 +487,8 @@ public class BPAService {
 				&& state.equals("DOC_VERIFICATION_PENDING_BY_ENGINEER")
 				&& (bpa.getBusinessService().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)
 						|| bpa.getBusinessService().equalsIgnoreCase(BPAConstants.VLOW_RISKTYPE))) {
+			log.info("inside if condition");
+			log.info("edcrResponse.get Occupancy" +  edcrResponse.get("Occupancy"));
 
 			int validityInMonthsForPre = config.getValidityInMonthsForPre();
 			Calendar calendar = Calendar.getInstance();
