@@ -184,7 +184,7 @@ public class SideYardService_BhilaiCharoda extends SideYardService {
 //				LOG.info(block.getBuilding().getBuildingHeight());
 
 				for (SetBack setback : block.getSetBacks()) {
-					if (setback.getLevel() == 0) {
+					if (setback.getLevel() == 0 && !block.getBuilding().getTotalArea().isEmpty()) {
 						final Occupancy occupancy = block.getBuilding().getTotalArea().get(0);
 						Yard sideYard1 = null;
 						Yard sideYard2 = null;
