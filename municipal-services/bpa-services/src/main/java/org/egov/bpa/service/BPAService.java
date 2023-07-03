@@ -484,25 +484,22 @@ public class BPAService {
 		// Validity Date for Direct Bhawan Anugya
 
 		if (edcrResponse.get("Occupancy").equalsIgnoreCase("Residential")
+				&& state.equals("DOC_VERIFICATION_INPROGRESS_BY_ENGINEER")
 				&& (bpa.getBusinessService().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)
 						|| bpa.getBusinessService().equalsIgnoreCase(BPAConstants.VLOW_RISKTYPE))) {
-			
-			
+			log.info("inside if condition");
+			log.info("edcrResponse.get Occupancy" +  edcrResponse.get("Occupancy"));
+
 			int validityInMonthsForPre = config.getValidityInMonthsForPre();
 			Calendar calendar = Calendar.getInstance();
 
 			// Adding 1 month to current date
 			calendar.add(Calendar.MONTH, validityInMonthsForPre);
 			Map<String, Object> additionalDetail = null;
-
-			if (bpa.getAdditionalDetails() != null) {
-				additionalDetail = (Map) bpa.getAdditionalDetails();
-			} else {
-				additionalDetail = new HashMap<String, Object>();
-				bpa.setAdditionalDetails(additionalDetails);
-			}
+			additionalDetail = (Map) bpa.getAdditionalDetails();
 
 			additionalDetail.put("validityDateForPre", calendar.getTimeInMillis());
+			bpa.setAdditionalDetails(additionalDetail);
 
 		}
 
