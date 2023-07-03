@@ -484,7 +484,7 @@ public class BPAService {
 		// Validity Date for Direct Bhawan Anugya
 
 		if (edcrResponse.get("Occupancy").equalsIgnoreCase("Residential")
-				&& state.equals("DOC_VERIFICATION_PENDING_BY_ENGINEER")
+				&& state.equals("DOC_VERIFICATION_INPROGRESS_BY_ENGINEER")
 				&& (bpa.getBusinessService().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)
 						|| bpa.getBusinessService().equalsIgnoreCase(BPAConstants.VLOW_RISKTYPE))) {
 			log.info("inside if condition");
