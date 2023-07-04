@@ -160,7 +160,7 @@ public class RearYardService_Dhamtari extends RearYardService {
 				RearYardResult rearYardResult = new RearYardResult();
 
 				for (SetBack setback : block.getSetBacks()) {
-					if (setback.getLevel() == 0) {
+					if (setback.getLevel() == 0 && !block.getBuilding().getTotalArea().isEmpty()) {
 						final Occupancy occupancy = block.getBuilding().getTotalArea().get(0);
 						BigDecimal min;
 						BigDecimal mean;
