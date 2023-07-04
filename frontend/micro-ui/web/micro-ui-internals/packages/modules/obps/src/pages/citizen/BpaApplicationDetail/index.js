@@ -348,15 +348,6 @@ const BpaApplicationDetail = () => {
           onClick: () => getRecieptSearch({ tenantId: data?.applicationData?.tenantId, payments: pay, consumerCodes: data?.applicationData?.applicationNo }),
         });
 
-        if (pay?.paymentDetails[0]?.businessService === "BPA.NC_SAN_FEE" || pay?.paymentDetails[0]?.businessService === "BPA.NC_APP_FEE") {
-
-          dowloadOptions.push({
-            order: 3,
-            label: t("Regularization Certificate"),
-            onClick: () => getPermitOccupancyOrderSearch({ tenantId: data?.applicationData?.tenantId }, "bpa-revocation"),
-          });
-        }
-
         // });
       }
 
