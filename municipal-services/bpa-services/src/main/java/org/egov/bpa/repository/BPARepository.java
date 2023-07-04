@@ -227,7 +227,7 @@ public class BPARepository {
 				+ "' AND businessservice = 'BPA.NC_SAN_FEE') RETURNING id), updated_billacountdetail AS (UPDATE egbs_billaccountdetail_v1 SET amount = '"
 				+ totalAmount
 				+ "' WHERE demanddetailid = ( SELECT id FROM updated_demanddetail) RETURNING id) UPDATE egbs_demanddetail_v1_audit SET taxamount = '"
-				+ totalAmount + "' WHERE demanddetailid = (SELECT id FROM updated_demanddetail) RETURNING id";
+				+ totalAmount + "' WHERE demanddetailid = (SELECT id FROM updated_demanddetail)";
 		int updateResult = jdbcTemplate.update(updateQuery);
 		log.info("BPARepository.updateFeeDetails: " + updateResult + " data updated into paytype_master table");
 //		return updateResult;
