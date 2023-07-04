@@ -389,11 +389,6 @@ const BpaApplicationDetail = () => {
     }
     ;
 
-    (data?.applicationData?.status.includes("REVOCATION")) && dowloadOptions.push({
-      order: 3,
-      label: t("BPA_REVOCATION_PDF_LABEL"),
-      onClick: () => getRevocationPDFSearch({ tenantId: data?.applicationData?.tenantId }),
-    });
   }
 
 

@@ -172,14 +172,14 @@ public class BPARepository {
 				+ payTypeFeeDetailRequest.getTenantId() + "'" + " and id=" + payTypeFeeDetailRequest.getId();
 		int updateResult = jdbcTemplate.update(updateQuery);
 		log.info("BPARepository.updateFeeDetails: " + updateResult + " data updated into fee_details table");
-		
+
 		String totalAmountQuery = "SELECT SUM(amount) as amount from fee_details WHERE application_no='"
 				+ payTypeFeeDetailRequest.getApplicationNo() + "' and feetype='" + payTypeFeeDetailRequest.getFeeType()
 				+ "'";
 		Map<String, Object> resultMap = jdbcTemplate.queryForMap(totalAmountQuery);
 		updateBillDetailAmount(payTypeFeeDetailRequest.getApplicationNo(),
 				Double.valueOf(resultMap.get("amount").toString()));
-		
+
 		return updateResult;
 	}
 
@@ -217,8 +217,17 @@ public class BPARepository {
 	}
 
 	public void updateBillDetailAmount(String applicationNo, double totalAmount) {
-		String updateQuery = "UPDATE egbs_billdetail_v1 SET totalamount='" + totalAmount + "' WHERE consumercode ='"
-				+ applicationNo + "' AND businessservice='BPA.NC_SAN_FEE'";
+//		String updateQuery = "UPDATE egbs_billdetail_v1 SET totalamount='" + totalAmount + "' WHERE consumercode ='"
+//				+ applicationNo + "' AND businessservice='BPA.NC_SAN_FEE'";
+		String updateQuery = "WITH updated_billdetail AS (UPDATE egbs_billdetail_v1 SET totalamount='" + totalAmount
+				+ "' WHERE consumercode = '" + applicationNo
+				+ "' AND businessservice ='BPA.NC_SAN_FEE' RETURNING id),updated_demanddetail AS (UPDATE egbs_demanddetail_v1 SET taxamount = '"
+				+ totalAmount + "', collectionamount = '" + totalAmount
+				+ "' WHERE demandid = ( SELECT id FROM egbs_demand_v1 WHERE consumercode = '" + applicationNo
+				+ "' AND businessservice = 'BPA.NC_SAN_FEE') RETURNING id), updated_billacountdetail AS (UPDATE egbs_billaccountdetail_v1 SET amount = '"
+				+ totalAmount
+				+ "' WHERE demanddetailid = ( SELECT id FROM updated_demanddetail) RETURNING id) UPDATE egbs_demanddetail_v1_audit SET taxamount = '"
+				+ totalAmount + "' WHERE demanddetailid = (SELECT id FROM updated_demanddetail) RETURNING id";
 		int updateResult = jdbcTemplate.update(updateQuery);
 		log.info("BPARepository.updateFeeDetails: " + updateResult + " data updated into paytype_master table");
 //		return updateResult;
@@ -514,121 +523,80 @@ public class BPARepository {
 		String id = ids.toString().replace("[", "").replace("]", "");
 		String deleteQuery = "DELETE FROM slab_master WHERE id IN (" + id + ")";
 		int deleteResult = jdbcTemplate.update(deleteQuery);
-		log.info("BPARepository.deleteSlabMasterById: " + deleteResult + " data deleted from slab_master table of id(s) : "
-				+ id);
+		log.info("BPARepository.deleteSlabMasterById: " + deleteResult
+				+ " data deleted from slab_master table of id(s) : " + id);
 		return deleteResult;
 	}
-	
+
 	public List<Map<String, Object>> getDataCountsForDashboard(String tenantId) {
-		String query1 = "SELECT\n"
-			    + "    Initiated,\n"
-			    + "    CITIZEN_APPROVAL_INPROCESS,\n"
-			    + "    Approved,\n"
-			    + "    Rejected,\n"
-			    + "    Reassign,\n"
-			    + "    Inprogress,\n"
-			    + "    appl_fee,\n"
-			    + "    sanc_fee_pending,\n"
-			    + "    department_inprocess,\n"
-			    + "    (Initiated + CITIZEN_APPROVAL_INPROCESS + Approved + Rejected + Reassign + Inprogress + appl_fee + sanc_fee_pending + department_inprocess) AS Total\n"
-			    + "FROM (\n"
-			    + "    SELECT\n"
-			    + "        COUNT(CASE WHEN bp.status = 'INITIATED' THEN 1 END) AS Initiated,\n"
-			    + "        COUNT(CASE WHEN bp.status = 'CITIZEN_APPROVAL_INPROCESS' THEN 1 END) AS CITIZEN_APPROVAL_INPROCESS,\n"
-			    + "        COUNT(CASE WHEN bp.status = 'APPROVED' THEN 1 END) AS Approved,\n"
-			    + "        COUNT(CASE WHEN bp.status = 'REJECTED' THEN 1 END) AS Rejected,\n"
-			    + "        COUNT(CASE WHEN bp.status = 'REASSIGN' THEN 1 END) AS Reassign,\n"
-			    + "        COUNT(CASE WHEN bp.status = 'INPROGRESS' THEN 1 END) AS Inprogress,\n"
-			    + "        COUNT(CASE WHEN bp.status = 'PENDING_APPL_FEE' THEN 1 END) AS appl_fee,\n"
-			    + "        COUNT(CASE WHEN bp.status = 'PENDING_SANC_FEE_PAYMENT' THEN 1 END) AS sanc_fee_pending,\n"
-			    + "        COUNT(CASE WHEN bp.status IN ('DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'DOC_VERIFICATION_INPROGRESS_BY_BUILDER', 'POST_FEE_APPROVAL_INPROGRESS', 'APPROVAL_INPROGRESS') THEN 1 END) AS department_inprocess\n"
-			    + "    FROM eg_bpa_buildingplan bp\n"
-			    + ") AS counts;";	
+		String query1 = "SELECT\n" + "    Initiated,\n" + "    CITIZEN_APPROVAL_INPROCESS,\n" + "    Approved,\n"
+				+ "    Rejected,\n" + "    Reassign,\n" + "    Inprogress,\n" + "    appl_fee,\n"
+				+ "    sanc_fee_pending,\n" + "    department_inprocess,\n"
+				+ "    (Initiated + CITIZEN_APPROVAL_INPROCESS + Approved + Rejected + Reassign + Inprogress + appl_fee + sanc_fee_pending + department_inprocess) AS Total\n"
+				+ "FROM (\n" + "    SELECT\n"
+				+ "        COUNT(CASE WHEN bp.status = 'INITIATED' THEN 1 END) AS Initiated,\n"
+				+ "        COUNT(CASE WHEN bp.status = 'CITIZEN_APPROVAL_INPROCESS' THEN 1 END) AS CITIZEN_APPROVAL_INPROCESS,\n"
+				+ "        COUNT(CASE WHEN bp.status = 'APPROVED' THEN 1 END) AS Approved,\n"
+				+ "        COUNT(CASE WHEN bp.status = 'REJECTED' THEN 1 END) AS Rejected,\n"
+				+ "        COUNT(CASE WHEN bp.status = 'REASSIGN' THEN 1 END) AS Reassign,\n"
+				+ "        COUNT(CASE WHEN bp.status = 'INPROGRESS' THEN 1 END) AS Inprogress,\n"
+				+ "        COUNT(CASE WHEN bp.status = 'PENDING_APPL_FEE' THEN 1 END) AS appl_fee,\n"
+				+ "        COUNT(CASE WHEN bp.status = 'PENDING_SANC_FEE_PAYMENT' THEN 1 END) AS sanc_fee_pending,\n"
+				+ "        COUNT(CASE WHEN bp.status IN ('DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'DOC_VERIFICATION_INPROGRESS_BY_BUILDER', 'POST_FEE_APPROVAL_INPROGRESS', 'APPROVAL_INPROGRESS') THEN 1 END) AS department_inprocess\n"
+				+ "    FROM eg_bpa_buildingplan bp\n" + ") AS counts;";
 
+		String query2 = "SELECT "
+				+ "COUNT(CASE WHEN (bp.status != 'INITIATED' AND bp.status != 'PENDING_APPL_FEE' AND bp.status != 'CITIZEN_APPROVAL_INPROCESS' AND txn_status = 'SUCCESS' AND txn_amount = 1.00) THEN 1 END) AS direct_bhawan_anugya "
+				+ "FROM eg_bpa_buildingplan bp, eg_pg_transactions bd " + "WHERE bp.applicationno = bd.consumer_code";
 
+		if (tenantId != null) {
+			query1 += " WHERE bp.tenantid = '" + tenantId + "'";
+			query2 += " AND bp.tenantid = '" + tenantId + "'";
+		}
 
-	    String query2 = "SELECT " +
-	            "COUNT(CASE WHEN (bp.status != 'INITIATED' AND bp.status != 'PENDING_APPL_FEE' AND bp.status != 'CITIZEN_APPROVAL_INPROCESS' AND txn_status = 'SUCCESS' AND txn_amount = 1.00) THEN 1 END) AS direct_bhawan_anugya " +
-	            "FROM eg_bpa_buildingplan bp, eg_pg_transactions bd " +
-	            "WHERE bp.applicationno = bd.consumer_code";
+		log.info("query1---" + query1);
+		log.info("query2---" + query2);
 
-	    if (tenantId != null) {
-	        query1 += " WHERE bp.tenantid = '" + tenantId + "'";
-	        query2 += " AND bp.tenantid = '" + tenantId + "'";
-	    }
+		List<Map<String, Object>> result = new ArrayList<>();
 
-	    log.info("query1---" + query1);
-	    log.info("query2---" + query2);
+		result.add(jdbcTemplate.queryForMap(query1));
+		result.add(jdbcTemplate.queryForMap(query2));
 
-	    List<Map<String, Object>> result = new ArrayList<>();
-
-	    result.add(jdbcTemplate.queryForMap(query1));
-	    result.add(jdbcTemplate.queryForMap(query2));
-
-	    return result;
+		return result;
 	}
 
-	
 	public List<Map<String, Object>> getApplicationDataInDasboardForUlb(String tenantId, String applicationType) {
-	    String query = "SELECT " +
-	            "billdetail.consumercode AS applicationno, " +
-	            "bp.tenantid, " +
-	            "TO_CHAR(TO_TIMESTAMP(bp.createdtime / 1000), 'DD/MM/YYYY') AS applicationdate, " +
-	            "TO_CHAR(TO_TIMESTAMP(bp.approvaldate / 1000), 'DD/MM/YYYY') AS approval_date, " +
-	            "Architectuser.uuid AS uuid, " +
-	            "Citizenuser.uuid AS Cuuid, " +
-	            "Architectuser.name AS username, " +
-	            "Architectuser.mobilenumber AS altcontactnumber, " +
-	            "Architectuser.emailid AS emailid, " +
-	            "Citizenuser.name AS name, " +
-	            "Citizenuser.mobilenumber AS mobilenumber, " +
-	            "adr.khataNo AS khatano, " +
-	            "adr.mauza AS city, " +
-	            "adr.plotno AS plotno, " +
-	            "adr.plotArea AS plotarea, " +
-	            "adr.occupancy AS occupancy_type, " +
-	            "adr.patwarihn AS patwari_halka_no, " +
-	            "SUM(CASE WHEN billdetail.businessservice = 'BPA.NC_APP_FEE' THEN billdetail.totalamount ELSE 0 END) AS prefees, " +
-	            "SUM(CASE WHEN billdetail.businessservice = 'BPA.NC_SAN_FEE' THEN billdetail.totalamount ELSE 0 END) AS postfees, " +
-	            "CASE " +
-	            "    WHEN bp.status = 'APPROVED' THEN 'Approved' " +
-	            "    WHEN bp.status IN ('PENDING_APPL_FEE','DOC_VERIFICATION_PENDING_BY_ENGINEER','DOC_VERIFICATION_INPROGRESS_BY_BUILDER','APPROVAL_INPROGRESS','DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'POST_FEE_APPROVAL_INPROGRESS', 'PENDING_SANC_FEE_PAYMENT') THEN 'Pending' " +
-	            "    WHEN bp.status = 'REJECTED' THEN 'Rejected' " +
-	            "END AS status, " +
-	            "TO_CHAR(TO_TIMESTAMP(bp.approvaldate / 1000), 'DD/MM/YYYY') AS Building_permission_certificate " +
-	            "FROM egbs_billdetail_v1 billdetail " +
-	            "INNER JOIN eg_bpa_buildingplan bp ON billdetail.consumercode = bp.applicationno " +
-	            "INNER JOIN eg_pg_transactions txn ON billdetail.billid = txn.bill_id " +
-	            "INNER JOIN eg_land_address adr ON adr.landinfoid = bp.landid " +
-	            "INNER JOIN eg_user Architectuser ON bp.createdby = Architectuser.uuid " +
-	            "INNER JOIN eg_land_ownerinfo ownerinfo ON bp.landid = ownerinfo.landinfoid " +
-	            "INNER JOIN eg_user Citizenuser ON ownerinfo.uuid = Citizenuser.uuid " +
-	            "WHERE 1=1 " +
-	            "AND bp.status IN ('APPROVED','REJECTED','PENDING_APPL_FEE','DOC_VERIFICATION_PENDING_BY_ENGINEER', 'DOC_VERIFICATION_INPROGRESS_BY_BUILDER', 'APPROVAL_INPROGRESS', 'DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'POST_FEE_APPROVAL_INPROGRESS', 'PENDING_SANC_FEE_PAYMENT') " +
-	            "AND txn.txn_status='SUCCESS' " +
-	            "GROUP BY " +
-	            "billdetail.consumercode, " +
-	            "bp.createdtime, " +
-	            "bp.approvaldate, " +
-	            "Architectuser.name, " +
-	            "Architectuser.mobilenumber, " +
-	            "Architectuser.emailid, " +
-	            "Citizenuser.name, " +
-	            "Citizenuser.mobilenumber, " +
-	            "adr.khataNo, " +
-	            "adr.plotno, " +
-	            "adr.plotArea, " +
-	            "occupancy_type, " +
-	            "patwari_halka_no, " +
-	            "adr.mauza, " +
-	            "bp.status, " +
-	            "bp.tenantid, " +
-	            "Architectuser.uuid, " +
-	            "Citizenuser.uuid " +
-	            "ORDER BY billdetail.consumercode";
+		String query = "SELECT " + "billdetail.consumercode AS applicationno, " + "bp.tenantid, "
+				+ "TO_CHAR(TO_TIMESTAMP(bp.createdtime / 1000), 'DD/MM/YYYY') AS applicationdate, "
+				+ "TO_CHAR(TO_TIMESTAMP(bp.approvaldate / 1000), 'DD/MM/YYYY') AS approval_date, "
+				+ "Architectuser.uuid AS uuid, " + "Citizenuser.uuid AS Cuuid, " + "Architectuser.name AS username, "
+				+ "Architectuser.mobilenumber AS altcontactnumber, " + "Architectuser.emailid AS emailid, "
+				+ "Citizenuser.name AS name, " + "Citizenuser.mobilenumber AS mobilenumber, "
+				+ "adr.khataNo AS khatano, " + "adr.mauza AS city, " + "adr.plotno AS plotno, "
+				+ "adr.plotArea AS plotarea, " + "adr.occupancy AS occupancy_type, "
+				+ "adr.patwarihn AS patwari_halka_no, "
+				+ "SUM(CASE WHEN billdetail.businessservice = 'BPA.NC_APP_FEE' THEN billdetail.totalamount ELSE 0 END) AS prefees, "
+				+ "SUM(CASE WHEN billdetail.businessservice = 'BPA.NC_SAN_FEE' THEN billdetail.totalamount ELSE 0 END) AS postfees, "
+				+ "CASE " + "    WHEN bp.status = 'APPROVED' THEN 'Approved' "
+				+ "    WHEN bp.status IN ('PENDING_APPL_FEE','DOC_VERIFICATION_PENDING_BY_ENGINEER','DOC_VERIFICATION_INPROGRESS_BY_BUILDER','APPROVAL_INPROGRESS','DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'POST_FEE_APPROVAL_INPROGRESS', 'PENDING_SANC_FEE_PAYMENT') THEN 'Pending' "
+				+ "    WHEN bp.status = 'REJECTED' THEN 'Rejected' " + "END AS status, "
+				+ "TO_CHAR(TO_TIMESTAMP(bp.approvaldate / 1000), 'DD/MM/YYYY') AS Building_permission_certificate "
+				+ "FROM egbs_billdetail_v1 billdetail "
+				+ "INNER JOIN eg_bpa_buildingplan bp ON billdetail.consumercode = bp.applicationno "
+				+ "INNER JOIN eg_pg_transactions txn ON billdetail.billid = txn.bill_id "
+				+ "INNER JOIN eg_land_address adr ON adr.landinfoid = bp.landid "
+				+ "INNER JOIN eg_user Architectuser ON bp.createdby = Architectuser.uuid "
+				+ "INNER JOIN eg_land_ownerinfo ownerinfo ON bp.landid = ownerinfo.landinfoid "
+				+ "INNER JOIN eg_user Citizenuser ON ownerinfo.uuid = Citizenuser.uuid " + "WHERE 1=1 "
+				+ "AND bp.status IN ('APPROVED','REJECTED','PENDING_APPL_FEE','DOC_VERIFICATION_PENDING_BY_ENGINEER', 'DOC_VERIFICATION_INPROGRESS_BY_BUILDER', 'APPROVAL_INPROGRESS', 'DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'POST_FEE_APPROVAL_INPROGRESS', 'PENDING_SANC_FEE_PAYMENT') "
+				+ "AND txn.txn_status='SUCCESS' " + "GROUP BY " + "billdetail.consumercode, " + "bp.createdtime, "
+				+ "bp.approvaldate, " + "Architectuser.name, " + "Architectuser.mobilenumber, "
+				+ "Architectuser.emailid, " + "Citizenuser.name, " + "Citizenuser.mobilenumber, " + "adr.khataNo, "
+				+ "adr.plotno, " + "adr.plotArea, " + "occupancy_type, " + "patwari_halka_no, " + "adr.mauza, "
+				+ "bp.status, " + "bp.tenantid, " + "Architectuser.uuid, " + "Citizenuser.uuid "
+				+ "ORDER BY billdetail.consumercode";
 
-	    return jdbcTemplate.queryForList(query, new Object[]{});
+		return jdbcTemplate.queryForList(query, new Object[] {});
 	}
-
 
 }
