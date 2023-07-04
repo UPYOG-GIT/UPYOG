@@ -1,4 +1,4 @@
-import { CardLabel, FormStep, LinkButton, RadioOrSelect, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, FormStep, LinkButton, RadioOrSelect, TextArea, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import GIS from "./GIS";
@@ -22,6 +22,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
   const [street, setStreet] = useState(formData?.address?.street || "");
   const [landmark, setLandmark] = useState(formData?.address?.landmark || formData?.address?.Landmark || "");
   const [placeName, setplaceName] = useState(formData?.address?.placeName || formData?.placeName || "");
+  const [fullAddress, setFullAddress] = useState(formData?.address?.address || formData?.address || "");
   //const { isLoading, data: citymodules } = Digit.Hooks.obps.useMDMS(stateId, "tenant", ["citymodule"]);
   let [cities, setcitiesopetions] = useState(allCities);
   let validation = { };
@@ -131,6 +132,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
     address.landmark = landmark;
     address.geoLocation = geoLocation;
     address.placeName = placeName;
+    address.address = fullAddress;
     onSelect(config.key, address);
   };
 
@@ -162,6 +164,10 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
 
   function selectStreet(e) {
     setStreet(e.target.value)
+  }
+
+  function selectFullAddress(e) {
+    setFullAddress(e.target.value)
   }
 
   function selectGeolocation(e) {
@@ -300,6 +306,16 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
       //     pattern: getPattern("Name"),
       //     title: t("BPA_INVALID_NAME"),
       // })}
+      />}
+      <CardLabel>{`${t("Complete Address")}*`}</CardLabel>
+      {!isOpen && <TextArea
+        style={{ }}
+        isMandatory={false}
+        optionKey="i18nKey"
+        t={t}
+        name="fullAddress"
+        onChange={selectFullAddress}
+        value={fullAddress}
       />}
     </FormStep>}
     </div>

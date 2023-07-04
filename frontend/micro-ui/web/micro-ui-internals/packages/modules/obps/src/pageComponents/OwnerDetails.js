@@ -287,6 +287,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 //For LandInfo
                 payload.landInfo = {};
                 //For Address
+                console.log(formData?.address?.address);
                 payload.landInfo.address = {};
                 if (formData?.address?.city?.code) payload.landInfo.address.city = formData?.address?.city?.code;
                 if (formData?.address?.locality?.code) payload.landInfo.address.locality = { code: formData?.address?.locality?.code };
@@ -294,6 +295,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 if (formData?.address?.landmark) payload.landInfo.address.landmark = formData?.address?.landmark;
                 if (formData?.address?.street) payload.landInfo.address.street = formData?.address?.street;
                 if (formData?.address?.geoLocation) payload.landInfo.address.geoLocation = formData?.address?.geoLocation;
+                if (formData?.address?.address) payload.landInfo.address.address = formData?.address?.address;
                 payload.landInfo.address.plotNo = formData?.data?.edcrDetails?.planDetail?.planInformation?.plotNo;
                 payload.landInfo.address.khataNo = formData?.data?.edcrDetails?.planDetail?.planInformation?.khataNo;
                 payload.landInfo.address.mauza = formData?.data?.edcrDetails?.planDetail?.planInformation?.mauza;

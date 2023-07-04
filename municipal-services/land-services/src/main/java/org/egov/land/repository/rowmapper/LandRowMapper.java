@@ -69,7 +69,7 @@ public class LandRowMapper implements ResultSetExtractor<List<LandInfo>> {
 						.id(rs.getString("landInfo_ad_id")).landmark(rs.getString("landmark")).geoLocation(geoLocation)
 						.pincode(rs.getString("pincode")).doorNo(rs.getString("doorno")).street(rs.getString("street"))
 						.wardNo(rs.getString("wardNo")).patwariHN(rs.getString("patwariHN")).tenantId(tenantId)
-						.locality(locality).build();
+						.address(rs.getString("address")).locality(locality).build();
 
 				currentLandInfo = LandInfo.builder().id(id).landUId(rs.getString("landuid"))
 						.landUniqueRegNo(rs.getString("land_regno")).tenantId(tenantId)

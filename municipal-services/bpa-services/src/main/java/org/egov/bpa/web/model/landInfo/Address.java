@@ -117,6 +117,9 @@ public class Address {
 
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails = null;
+	
+	@JsonProperty("address")
+	private String address = null;
 
 	public Address tenantId(String tenantId) {
 		this.tenantId = tenantId;
@@ -532,6 +535,7 @@ public class Address {
 		sb.append("    plotArea: ").append(toIndentedString(plotArea)).append("\n");
 		sb.append("    wardNo: ").append(toIndentedString(wardNo)).append("\n");
 		sb.append("    patwariHN: ").append(toIndentedString(patwariHN)).append("\n");
+		sb.append("    address: ").append(toIndentedString(address)).append("\n");
 		sb.append("}");
 		return sb.toString();
 	}
@@ -594,4 +598,14 @@ public class Address {
 	public void setPatwariHN(String patwariHN) {
 		this.patwariHN = patwariHN;
 	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	
+	
 }
