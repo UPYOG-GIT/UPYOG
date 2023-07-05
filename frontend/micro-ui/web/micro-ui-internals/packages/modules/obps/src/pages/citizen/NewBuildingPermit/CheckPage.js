@@ -187,7 +187,7 @@ import {
           <Row className="border-none" textStyle={{paddingLeft:"12px"}} label={t(`BPA_BOUNDARY_PLOT_AREA_LABEL`)} text={datafromAPI?.planDetail?.planInformation?.plotArea ? `${datafromAPI?.planDetail?.planInformation?.plotArea} ${t(`BPA_SQ_FT_LABEL`)}` : t("CS_NA")} />
           <Row className="border-none" label={t(`BPA_PLOT_NUMBER_LABEL`)} text={datafromAPI?.planDetail?.planInformation?.plotNo || t("CS_NA")} />
           <Row className="border-none" label={t(`Khasra Number`)} text={datafromAPI?.planDetail?.planInformation?.khataNo || t("CS_NA")}/>
-          <Row className="border-none" label={t(`Patwari Halka Number`)} text={datafromAPI?.planDetail?.planInformation?.patwariHN  || t("CS_NA")} />
+          <Row className="border-none" label={t(`BPA_PATWARI_HALKA_NUMBER_LABEL`)} text={datafromAPI?.planDetail?.planInformation?.patwariHN  || t("CS_NA")} />
           <Row className="border-none" label={t(`BPA_HOLDING_NUMBER_LABEL`)} text={data?.holdingNumber || t("CS_NA")} />
           <Row className="border-none" label={t(`BPA_BOUNDARY_LAND_REG_DETAIL_LABEL`)} text={data?.registrationDetails || t("CS_NA")} />
           
@@ -201,7 +201,7 @@ import {
       <CardSubHeader>{t("BPA_UPLOADED_PLAN_DIAGRAM")}</CardSubHeader>
       <LinkButton
         label={ <PDFSvg /> }
-          onClick={() => routeTo(datafromAPI?.dxfFile)}
+          onClick={() => routeTo(datafromAPI?.updatedDxfFile)}
        />
        <p style={{ marginTop: "8px", marginBottom: "20px", textAlign:"Left", fontSize: "16px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>{t(`BPA_UPLOADED_PLAN_DXF`)}</p>
       <CardSubHeader>{t("BPA_SCRUNTINY_REPORT_OUTPUT")}</CardSubHeader>
@@ -264,6 +264,7 @@ import {
           <Row className="border-none" label={t(`BPA_LOC_MOHALLA_LABEL`)} text={address?.locality?.name || t("CS_NA")} />
           <Row className="border-none" label={t(`BPA_DETAILS_SRT_NAME_LABEL`)} text={address?.street || t("CS_NA")} />
           <Row className="border-none" label={t(`ES_NEW_APPLICATION_LOCATION_LANDMARK`)} text={address?.landmark || t("CS_NA")} />
+          <Row className="border-none" label={t(`Proposed Site Address`)} text={address?.address || t("CS_NA")} />
       </StatusTable>
       </Card>
       <Card style={{paddingRight:"16px"}}>

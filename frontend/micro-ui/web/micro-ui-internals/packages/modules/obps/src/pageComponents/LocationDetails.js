@@ -22,7 +22,8 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
   const [street, setStreet] = useState(formData?.address?.street || "");
   const [landmark, setLandmark] = useState(formData?.address?.landmark || formData?.address?.Landmark || "");
   const [placeName, setplaceName] = useState(formData?.address?.placeName || formData?.placeName || "");
-  const [fullAddress, setFullAddress] = useState(formData?.address?.address || formData?.address || "");
+  const [siteAddress, setSiteAddress] = useState(formData?.address?.address || formData?.address || "");
+  const [isSiteAddressValid, setIsSiteAddressValid] = useState(true);
   //const { isLoading, data: citymodules } = Digit.Hooks.obps.useMDMS(stateId, "tenant", ["citymodule"]);
   let [cities, setcitiesopetions] = useState(allCities);
   let validation = { };
@@ -124,6 +125,10 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
 
 
   const handleSubmit = () => {
+    if (siteAddress.trim() === '') {
+      setIsSiteAddressValid(false);
+      return; // Stop form submission if the address is empty
+    }
     const address = { }
     address.pincode = pincode;
     address.city = selectedCity;
@@ -132,7 +137,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
     address.landmark = landmark;
     address.geoLocation = geoLocation;
     address.placeName = placeName;
-    address.address = fullAddress;
+    address.address = siteAddress;
     onSelect(config.key, address);
   };
 
@@ -166,8 +171,9 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
     setStreet(e.target.value)
   }
 
-  function selectFullAddress(e) {
-    setFullAddress(e.target.value)
+  function selectSiteAddress(e) {
+    setSiteAddress(e.target.value)
+    setIsSiteAddressValid(e.target.value.trim() !== '');
   }
 
   function selectGeolocation(e) {
@@ -307,15 +313,16 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
       //     title: t("BPA_INVALID_NAME"),
       // })}
       />}
-      <CardLabel>{`${t("Complete Address")}*`}</CardLabel>
+      <CardLabel>{`${t("BPA_SITE_ADDRESS_LABEL")}*`}{!isSiteAddressValid && <span style={{ color: 'red' }}> (Required)</span>}</CardLabel>
       {!isOpen && <TextArea
         style={{ }}
-        isMandatory={false}
+        isMandatory={true}
         optionKey="i18nKey"
         t={t}
-        name="fullAddress"
-        onChange={selectFullAddress}
-        value={fullAddress}
+        name="siteAddress"
+        onChange={selectSiteAddress}
+        isDependent={true}
+        value={siteAddress}
       />}
     </FormStep>}
     </div>

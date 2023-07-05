@@ -561,16 +561,17 @@ export const OBPSService = {
       values: [
         { title: "BPA_BOUNDARY_PLOT_AREA_LABEL", value: `${edcr?.planDetail?.planInformation?.plotArea}`, isNotTranslated: true, isUnit: "BPA_SQ_FT_LABEL" },
         { title: "BPA_PLOT_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.plotNo || "NA", isNotTranslated: true },
-        { title: "BPA_KHATHA_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.khataNo || "NA", isNotTranslated: true },
+        { title: "Khasra Number", value: edcr?.planDetail?.planInformation?.khataNo || "NA", isNotTranslated: true },
         { title: "BPA_PATWARI_HALKA_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.patwariHN || "NA", isNotTranslated: true },
         { title: "BPA_HOLDING_NUMBER_LABEL", value: BPA?.additionalDetails?.holdingNo || "NA", isNotTranslated: true },
-        { title: "BPA_BOUNDARY_LAND_REG_DETAIL_LABEL", value: BPA?.additionalDetails?.registrationDetails || "NA", isNotTranslated: true },
-        ...(sector !== null
-          ? [{ title: "BPA_SECTOR_LABEL", value: sector, isNotTranslated: true }]
-          : []),
-          ...(block !== null
-            ? [{ title: "BPA_BLOCK_LABEL", value: block, isNotTranslated: true }]
-            : [])
+        { title: "BPA_BOUNDARY_LAND_REG_DETAIL_LABEL", value: BPA?.additionalDetails?.registrationDetails || "NA", isNotTranslated: true }
+        // ...(sector !== null
+        //   ? [{ title: "BPA_SECTOR_LABEL", value: sector, isNotTranslated: true }]
+        //   : []),
+        //   ...(block !== null
+        //     ? [{ title: "BPA_BLOCK_LABEL", value: block, isNotTranslated: true }]
+        //     : [])
+        
       ]
     };
 
@@ -584,7 +585,7 @@ export const OBPSService = {
           { title: BPA?.businessService !== "BPA_OC" ? "BPA_EDCR_NO_LABEL" : "BPA_OC_EDCR_NO_LABEL", value: BPA?.edcrNumber || "NA" },
         ],
         scruntinyDetails: [
-          { title: "BPA_UPLOADED_PLAN_DIAGRAM", value: edcr?.dxfFile, text: "BPA_UPLOADED_PLAN_PDF" },
+          { title: "BPA_UPLOADED_PLAN_DIAGRAM", value: edcr?.updatedDxfFile, text: "BPA_UPLOADED_PLAN_PDF" },
           { title: "BPA_SCRUNTINY_REPORT_OUTPUT", value: edcr?.planReport, text: "BPA_SCRUTINY_REPORT_PDF" },
         ]
       }
@@ -642,7 +643,8 @@ export const OBPSService = {
         { title: "BPA_CITY_LABEL", value: BPA?.landInfo?.address?.city },
         { title: "BPA_LOC_MOHALLA_LABEL", value: BPA?.landInfo?.address?.locality?.name },
         { title: "BPA_DETAILS_SRT_NAME_LABEL", value: BPA?.landInfo?.address?.street },
-        { title: "ES_NEW_APPLICATION_LOCATION_LANDMARK", value: BPA?.landInfo?.address?.landmark }
+        { title: "ES_NEW_APPLICATION_LOCATION_LANDMARK", value: BPA?.landInfo?.address?.landmark },
+        { title: "BPA_SITE_ADDRESS_LABEL", value: BPA?.landInfo?.address?.address}
       ]
     };
 
