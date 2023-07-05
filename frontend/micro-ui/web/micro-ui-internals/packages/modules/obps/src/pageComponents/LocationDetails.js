@@ -313,7 +313,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
       //     title: t("BPA_INVALID_NAME"),
       // })}
       />}
-      <CardLabel>{`${t("BPA_SITE_ADDRESS_LABEL")}*`}{!isSiteAddressValid && <span style={{ color: 'red' }}> (Required)</span>}</CardLabel>
+      <CardLabel>{`${t("Proposed Site Address")}*`}{!isSiteAddressValid && <span style={{ color: 'red' }}> (Required)</span>}</CardLabel>
       {!isOpen && <TextArea
         style={{ }}
         isMandatory={true}

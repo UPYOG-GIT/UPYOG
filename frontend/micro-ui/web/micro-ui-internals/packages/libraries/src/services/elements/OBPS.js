@@ -644,7 +644,7 @@ export const OBPSService = {
         { title: "BPA_LOC_MOHALLA_LABEL", value: BPA?.landInfo?.address?.locality?.name },
         { title: "BPA_DETAILS_SRT_NAME_LABEL", value: BPA?.landInfo?.address?.street },
         { title: "ES_NEW_APPLICATION_LOCATION_LANDMARK", value: BPA?.landInfo?.address?.landmark },
-        { title: "BPA_SITE_ADDRESS_LABEL", value: BPA?.landInfo?.address?.address}
+        { title: "Proposed Site Address", value: BPA?.landInfo?.address?.address}
       ]
     };
 
