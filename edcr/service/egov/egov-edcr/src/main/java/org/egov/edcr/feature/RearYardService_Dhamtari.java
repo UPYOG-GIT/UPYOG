@@ -345,21 +345,21 @@ public class RearYardService_Dhamtari extends RearYardService {
 			Boolean valid) {
 
 		if (depthOfPlot.compareTo(BigDecimal.valueOf(12)) < 0) {
-			minVal = BigDecimal.ZERO;
+			meanVal = BigDecimal.ZERO;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_1_5;
+			meanVal = REARYARDMINIMUM_DISTANCE_1_5;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(15)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_2;
+			meanVal = REARYARDMINIMUM_DISTANCE_2;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(24)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_2_5;
+			meanVal = REARYARDMINIMUM_DISTANCE_2_5;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(30)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_3;
+			meanVal = REARYARDMINIMUM_DISTANCE_3;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(30)) > 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_4_5;
+			meanVal = REARYARDMINIMUM_DISTANCE_4_5;
 		}
 
 		/*
@@ -441,12 +441,12 @@ public class RearYardService_Dhamtari extends RearYardService {
 			BigDecimal widthOfPlot, Boolean valid) {
 
 		if (plotArea.compareTo(BigDecimal.valueOf(1000)) < 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_2_5;
+			meanVal = REARYARDMINIMUM_DISTANCE_2_5;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(1000)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(10000)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_3;
+			meanVal = REARYARDMINIMUM_DISTANCE_3;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(10000)) > 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_4_5;
+			meanVal = REARYARDMINIMUM_DISTANCE_4_5;
 		}
 
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
@@ -496,15 +496,15 @@ public class RearYardService_Dhamtari extends RearYardService {
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
 
 		if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) <= 0) {
-			minVal = BigDecimal.ZERO;
+			meanVal = BigDecimal.ZERO;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_1_5;
+			meanVal = REARYARDMINIMUM_DISTANCE_1_5;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_2;
+			meanVal = REARYARDMINIMUM_DISTANCE_2;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) > 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_3;
+			meanVal = REARYARDMINIMUM_DISTANCE_3;
 		}
 
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
@@ -536,8 +536,8 @@ public class RearYardService_Dhamtari extends RearYardService {
 
 			} else {
 				details.put(FIELDVERIFIED, MINIMUMLABEL);
-				details.put(PERMISSIBLE, rearYardResult.expectedminimumDistance.toString());
-				details.put(PROVIDED, rearYardResult.actualMinDistance.toString());
+				details.put(PERMISSIBLE, rearYardResult.expectedmeanDistance.toString());
+				details.put(PROVIDED, rearYardResult.actualMeanDistance.toString());
 			}
 			if (rearYardResult.status) {
 				details.put(STATUS, Result.Accepted.getResultVal());

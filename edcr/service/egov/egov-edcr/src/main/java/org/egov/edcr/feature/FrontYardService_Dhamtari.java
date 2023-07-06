@@ -255,8 +255,8 @@ public class FrontYardService_Dhamtari extends FrontYardService {
 										frontYardResult.level != null ? frontYardResult.level.toString() : "");
 								details.put(OCCUPANCY, frontYardResult.occupancy);
 								details.put(FIELDVERIFIED, MINIMUMLABEL);
-								details.put(PERMISSIBLE, frontYardResult.expectedminimumDistance.toString());
-								details.put(PROVIDED, frontYardResult.actualMinDistance.toString());
+								details.put(PERMISSIBLE, frontYardResult.expectedmeanDistance.toString());
+								details.put(PROVIDED, frontYardResult.actualMeanDistance.toString());
 
 								if (frontYardResult.status) {
 									details.put(STATUS, Result.Accepted.getResultVal());
@@ -402,18 +402,18 @@ public class FrontYardService_Dhamtari extends FrontYardService {
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
 
 		if (depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_1_5;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_1_5;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(12.2)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_2_5;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_2_5;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12.2)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_3;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_3;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_4_5;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_4_5;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) > 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_6;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_6;
 		}
 
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
@@ -460,21 +460,21 @@ public class FrontYardService_Dhamtari extends FrontYardService {
 			BigDecimal widthOfPlot, HashMap<String, String> errors, Plan pl) {
 		
 		if (depthOfPlot.compareTo(BigDecimal.valueOf(8)) < 0 ) {
-			minVal = BigDecimal.ZERO;
+			meanVal = BigDecimal.ZERO;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(8)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(12)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_2;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_2;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_3;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_3;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(24)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_4_5;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_4_5;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(30)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_8;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_8;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(30)) > 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_12;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_12;
 		}
 		
 		/*
@@ -518,21 +518,21 @@ public class FrontYardService_Dhamtari extends FrontYardService {
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal plotArea,
 			BigDecimal widthOfPlot) {
 		if (plotArea.compareTo(BigDecimal.valueOf(500)) < 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_3;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_3;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(500)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_5;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_5;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(1000)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(2000)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_9;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_9;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(2000)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(10000)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_10;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_10;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(10000)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(20000)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_12;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_12;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(20000)) > 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_15;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_15;
 		}
 
 		/*

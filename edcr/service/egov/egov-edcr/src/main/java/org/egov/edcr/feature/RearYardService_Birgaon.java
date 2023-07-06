@@ -349,18 +349,18 @@ public class RearYardService_Birgaon extends RearYardService {
 			String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot, Boolean valid) {
 
 		if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) <= 0) {
-			minVal = BigDecimal.ZERO;
+			meanVal = BigDecimal.ZERO;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_1;
+			meanVal = REARYARDMINIMUM_DISTANCE_1;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_1_5;
+			meanVal = REARYARDMINIMUM_DISTANCE_1_5;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_3;
+			meanVal = REARYARDMINIMUM_DISTANCE_3;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) > 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_5;
+			meanVal = REARYARDMINIMUM_DISTANCE_5;
 		}
 
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
@@ -422,30 +422,30 @@ public class RearYardService_Birgaon extends RearYardService {
 
 		if (plotArea.compareTo(BigDecimal.valueOf(550)) < 0) {
 			if (widthOfPlot.compareTo(BigDecimal.valueOf(10)) <= 0) {
-				minVal = REARYARDMINIMUM_DISTANCE_3;
+				meanVal = REARYARDMINIMUM_DISTANCE_3;
 			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(12)) <= 0) {
-				minVal = REARYARDMINIMUM_DISTANCE_3;
+				meanVal = REARYARDMINIMUM_DISTANCE_3;
 			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
-				minVal = REARYARDMINIMUM_DISTANCE_3;
+				meanVal = REARYARDMINIMUM_DISTANCE_3;
 			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) {
-				minVal = REARYARDMINIMUM_DISTANCE_4;
+				meanVal = REARYARDMINIMUM_DISTANCE_4;
 			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(18)) > 0) {
-				minVal = REARYARDMINIMUM_DISTANCE_4_5;
+				meanVal = REARYARDMINIMUM_DISTANCE_4_5;
 			}
 		} else if (plotArea.compareTo(BigDecimal.valueOf(550)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_4_5;
+			meanVal = REARYARDMINIMUM_DISTANCE_4_5;
 
 		} else if (plotArea.compareTo(BigDecimal.valueOf(1000)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(5000)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_6;
+			meanVal = REARYARDMINIMUM_DISTANCE_6;
 
 		} else if (plotArea.compareTo(BigDecimal.valueOf(5000)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(30000)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_9;
+			meanVal = REARYARDMINIMUM_DISTANCE_9;
 
 		} else if (plotArea.compareTo(BigDecimal.valueOf(30000)) > 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_12;
+			meanVal = REARYARDMINIMUM_DISTANCE_12;
 
 		}
 
@@ -464,12 +464,12 @@ public class RearYardService_Birgaon extends RearYardService {
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult, String subRule,
 			String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot, Boolean valid) {
 		if (depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) <= 0) {
-			minVal = BigDecimal.ZERO;
+			meanVal = BigDecimal.ZERO;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_1_5;
+			meanVal = REARYARDMINIMUM_DISTANCE_1_5;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) > 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_3;
+			meanVal = REARYARDMINIMUM_DISTANCE_3;
 		}
 
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
@@ -495,15 +495,15 @@ public class RearYardService_Birgaon extends RearYardService {
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
 
 		if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) <= 0) {
-			minVal = BigDecimal.ZERO;
+			meanVal = BigDecimal.ZERO;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_1_5;
+			meanVal = REARYARDMINIMUM_DISTANCE_1_5;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_2;
+			meanVal = REARYARDMINIMUM_DISTANCE_2;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) > 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_3;
+			meanVal = REARYARDMINIMUM_DISTANCE_3;
 		}
 
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
@@ -527,8 +527,8 @@ public class RearYardService_Birgaon extends RearYardService {
 
 			} else {
 				details.put(FIELDVERIFIED, MINIMUMLABEL);
-				details.put(PERMISSIBLE, rearYardResult.expectedminimumDistance.toString());
-				details.put(PROVIDED, rearYardResult.actualMinDistance.toString());
+				details.put(PERMISSIBLE, rearYardResult.expectedmeanDistance.toString());
+				details.put(PROVIDED, rearYardResult.actualMeanDistance.toString());
 			}
 			if (rearYardResult.status) {
 				details.put(STATUS, Result.Accepted.getResultVal());

@@ -260,8 +260,8 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 										frontYardResult.level != null ? frontYardResult.level.toString() : "");
 								details.put(OCCUPANCY, frontYardResult.occupancy);
 								details.put(FIELDVERIFIED, MINIMUMLABEL);
-								details.put(PERMISSIBLE, frontYardResult.expectedminimumDistance.toString());
-								details.put(PROVIDED, frontYardResult.actualMinDistance.toString());
+								details.put(PERMISSIBLE, frontYardResult.expectedmeanDistance.toString());
+								details.put(PROVIDED, frontYardResult.actualMeanDistance.toString());
 
 								if (frontYardResult.status) {
 									details.put(STATUS, Result.Accepted.getResultVal());
@@ -312,27 +312,27 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 		if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) <= 0
 				&& roadWidth.compareTo(BigDecimal.valueOf(18.0)) <= 0) {
 			if (depthOfPlot.compareTo(BigDecimal.valueOf(6.0)) <= 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_2_5;
+				meanVal = FRONTYARDMINIMUM_DISTANCE_2_5;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(6.0)) > 0
 					&& depthOfPlot.compareTo(BigDecimal.valueOf(9.0)) <= 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_3;
+				meanVal = FRONTYARDMINIMUM_DISTANCE_3;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(9.0)) > 0
 					&& depthOfPlot.compareTo(BigDecimal.valueOf(12.0)) <= 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_4;
+				meanVal = FRONTYARDMINIMUM_DISTANCE_4;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12.0)) > 0
 					&& depthOfPlot.compareTo(BigDecimal.valueOf(18.0)) <= 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_4_5;
+				meanVal = FRONTYARDMINIMUM_DISTANCE_4_5;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.0)) > 0
 					&& depthOfPlot.compareTo(BigDecimal.valueOf(24.0)) <= 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_5;
+				meanVal = FRONTYARDMINIMUM_DISTANCE_5;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24.0)) > 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_6;
+				meanVal = FRONTYARDMINIMUM_DISTANCE_6;
 			}
 		} else if (roadWidth.compareTo(BigDecimal.valueOf(18.0)) >= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_6;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_6;
 		} else if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) >= 0) {
 			OneThirdHieght = buildingHeight.doubleValue() / 3;
-			minVal = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
+			meanVal = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
 		}
 
 		/*
@@ -438,21 +438,21 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 		if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) <= 0
 				&& roadWidth.compareTo(BigDecimal.valueOf(18)) <= 0) {
 			if (depthOfPlot.compareTo(BigDecimal.valueOf(9.0)) <= 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_1_5;
+				meanVal = FRONTYARDMINIMUM_DISTANCE_1_5;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(9.0)) > 0
 					&& depthOfPlot.compareTo(BigDecimal.valueOf(18.0)) <= 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_3;
+				meanVal = FRONTYARDMINIMUM_DISTANCE_3;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.0)) > 0
 					&& depthOfPlot.compareTo(BigDecimal.valueOf(24.0)) <= 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_4_5;
+				meanVal = FRONTYARDMINIMUM_DISTANCE_4_5;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24.0)) > 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_6;
+				meanVal = FRONTYARDMINIMUM_DISTANCE_6;
 			}
 		} else if (roadWidth.compareTo(BigDecimal.valueOf(18.0)) >= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_6;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_6;
 		} else if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) >= 0) {
 			OneThirdHieght = buildingHeight.doubleValue() / 3;
-			minVal = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
+			meanVal = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
 		}
 
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
@@ -502,21 +502,21 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 		if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) <= 0
 				&& roadWidth.compareTo(BigDecimal.valueOf(18)) <= 0) {
 			if (depthOfPlot.compareTo(BigDecimal.valueOf(12.0)) <= 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_2_5;
+				meanVal = FRONTYARDMINIMUM_DISTANCE_2_5;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12.0)) > 0
 					&& depthOfPlot.compareTo(BigDecimal.valueOf(18.0)) <= 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_3;
+				meanVal = FRONTYARDMINIMUM_DISTANCE_3;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.0)) > 0
 					&& depthOfPlot.compareTo(BigDecimal.valueOf(24.0)) <= 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_4;
+				meanVal = FRONTYARDMINIMUM_DISTANCE_4;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24.0)) > 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_5;
+				meanVal = FRONTYARDMINIMUM_DISTANCE_5;
 			}
 		} else if (roadWidth.compareTo(BigDecimal.valueOf(18.0)) >= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_6;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_6;
 		} else if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) >= 0) {
 			OneThirdHieght = buildingHeight.doubleValue() / 3;
-			minVal = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
+			meanVal = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
 		}
 
 		/*
@@ -536,30 +536,30 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal plotArea,
 			BigDecimal widthOfPlot) {
 		if (plotArea.compareTo(BigDecimal.valueOf(450)) < 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_3_2;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_3_2;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(450)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_4_5;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_4_5;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(1000)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(2000)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_7_5;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_7_5;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(2000)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(5000)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_9;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_9;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(5000)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(7500)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_12;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_12;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(7500)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(10000)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_15;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_15;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(10000)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(12500)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_18;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_18;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(12500)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(20000)) <= 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_21;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_21;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(20000)) > 0) {
-			minVal = FRONTYARDMINIMUM_DISTANCE_24;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_24;
 		}
 
 

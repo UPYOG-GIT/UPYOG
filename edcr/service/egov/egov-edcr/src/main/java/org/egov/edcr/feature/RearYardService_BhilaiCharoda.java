@@ -358,22 +358,22 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 		if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) <= 0
 				&& roadWidth.compareTo(BigDecimal.valueOf(18)) <= 0) {
 			if (depthOfPlot.compareTo(BigDecimal.valueOf(9.0)) <= 0) {
-				minVal = BigDecimal.ZERO;
+				meanVal = BigDecimal.ZERO;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(9.0)) > 0
 					&& depthOfPlot.compareTo(BigDecimal.valueOf(12.0)) <= 0) {
-				minVal = REARYARDMINIMUM_DISTANCE_1_5;
+				meanVal = REARYARDMINIMUM_DISTANCE_1_5;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12.0)) > 0
 					&& depthOfPlot.compareTo(BigDecimal.valueOf(18.0)) <= 0) {
-				minVal = REARYARDMINIMUM_DISTANCE_2;
+				meanVal = REARYARDMINIMUM_DISTANCE_2;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.0)) > 0
 					&& depthOfPlot.compareTo(BigDecimal.valueOf(24.0)) <= 0) {
-				minVal = REARYARDMINIMUM_DISTANCE_3;
+				meanVal = REARYARDMINIMUM_DISTANCE_3;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24.0)) > 0) {
-				minVal = REARYARDMINIMUM_DISTANCE_3_5;
+				meanVal = REARYARDMINIMUM_DISTANCE_3_5;
 			}
 		} else if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) >= 0) {
 			OneThirdHieght = buildingHeight.doubleValue() / 3;
-			minVal = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
+			meanVal = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
 		}
 
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
@@ -434,27 +434,27 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 			BigDecimal widthOfPlot, Boolean valid) {
 
 		if (plotArea.compareTo(BigDecimal.valueOf(450)) < 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_2_1;
+			meanVal = REARYARDMINIMUM_DISTANCE_2_1;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(450)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_3;
+			meanVal = REARYARDMINIMUM_DISTANCE_3;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(1000)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(5000)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_4_5;
+			meanVal = REARYARDMINIMUM_DISTANCE_4_5;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(5000)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(7500)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_6;
+			meanVal = REARYARDMINIMUM_DISTANCE_6;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(7500)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(10000)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_7_5;
+			meanVal = REARYARDMINIMUM_DISTANCE_7_5;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(10000)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(12500)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_9;
+			meanVal = REARYARDMINIMUM_DISTANCE_9;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(12500)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(20000)) <= 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_10_5;
+			meanVal = REARYARDMINIMUM_DISTANCE_10_5;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(20000)) > 0) {
-			minVal = REARYARDMINIMUM_DISTANCE_12;
+			meanVal = REARYARDMINIMUM_DISTANCE_12;
 		}
 
 
@@ -477,17 +477,17 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 		if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) <= 0
 				&& roadWidth.compareTo(BigDecimal.valueOf(18)) <= 0) {
 			if (depthOfPlot.compareTo(BigDecimal.valueOf(9.0)) <= 0) {
-				minVal = BigDecimal.ZERO;
+				meanVal = BigDecimal.ZERO;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(9.0)) > 0
 					&& depthOfPlot.compareTo(BigDecimal.valueOf(18.0)) <= 0) {
-				minVal = REARYARDMINIMUM_DISTANCE_1_5;
+				meanVal = REARYARDMINIMUM_DISTANCE_1_5;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.0)) > 0) {
-				minVal = REARYARDMINIMUM_DISTANCE_3;
+				meanVal = REARYARDMINIMUM_DISTANCE_3;
 			}
 		} else if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) >= 0) {
 //			OneThirdHieght=buildingHeight.divide(BigDecimal.valueOf(3.0)).setScale(2, RoundingMode.UP);
 			OneThirdHieght = buildingHeight.doubleValue() / 3;
-			minVal = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
+			meanVal = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
 		}
 
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
@@ -517,19 +517,19 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 		if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) <= 0
 				&& roadWidth.compareTo(BigDecimal.valueOf(18)) <= 0) {
 			if (depthOfPlot.compareTo(BigDecimal.valueOf(6.0)) <= 0) {
-				minVal = BigDecimal.ZERO;
+				meanVal = BigDecimal.ZERO;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(6.0)) > 0
 					&& depthOfPlot.compareTo(BigDecimal.valueOf(18.0)) <= 0) {
-				minVal = REARYARDMINIMUM_DISTANCE_1_5;
+				meanVal = REARYARDMINIMUM_DISTANCE_1_5;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.0)) > 0
 					&& depthOfPlot.compareTo(BigDecimal.valueOf(24.0)) <= 0) {
-				minVal = REARYARDMINIMUM_DISTANCE_2;
+				meanVal = REARYARDMINIMUM_DISTANCE_2;
 			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24.0)) > 0) {
-				minVal = REARYARDMINIMUM_DISTANCE_3;
+				meanVal = REARYARDMINIMUM_DISTANCE_3;
 			}
 		} else if (buildingHeight.compareTo(BigDecimal.valueOf(9.5)) >= 0) {
 			OneThirdHieght = buildingHeight.doubleValue() / 3;
-			minVal = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
+			meanVal = BigDecimal.valueOf(OneThirdHieght).setScale(2, RoundingMode.HALF_UP);
 		}
 
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
@@ -561,8 +561,8 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 
 			} else {
 				details.put(FIELDVERIFIED, MINIMUMLABEL);
-				details.put(PERMISSIBLE, rearYardResult.expectedminimumDistance.toString());
-				details.put(PROVIDED, rearYardResult.actualMinDistance.toString());
+				details.put(PERMISSIBLE, rearYardResult.expectedmeanDistance.toString());
+				details.put(PROVIDED, rearYardResult.actualMeanDistance.toString());
 			}
 			if (rearYardResult.status) {
 				details.put(STATUS, Result.Accepted.getResultVal());
