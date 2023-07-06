@@ -119,9 +119,9 @@ public class Coverage extends FeatureProcess {
             if (block.getBuilding() != null) {
                 block.getBuilding().setCoverageArea(coverageAreaWithoutDeduction.subtract(coverageDeductionArea));
                 BigDecimal coverage = BigDecimal.ZERO;
-                if (pl.getPlot().getArea().doubleValue() > 0)
+                if (pl.getPlot().getPlotBndryArea().doubleValue() > 0)
                     coverage = block.getBuilding().getCoverageArea().multiply(BigDecimal.valueOf(100)).divide(
-                            pl.getPlanInformation().getPlotArea(), DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+                    		pl.getPlot().getPlotBndryArea(), DcrConstants.DECIMALDIGITS_MEASUREMENTS,
                             DcrConstants.ROUNDMODE_MEASUREMENTS);
 
                 block.getBuilding().setCoverage(coverage);
@@ -135,8 +135,8 @@ public class Coverage extends FeatureProcess {
 
       //  pl.setCoverageArea(totalCoverageArea);
         // use plotBoundaryArea
-        if (pl.getPlot() != null && pl.getPlot().getArea().doubleValue() > 0)
-            totalCoverage = totalCoverageArea.multiply(BigDecimal.valueOf(100)).divide(pl.getPlanInformation().getPlotArea(),
+        if (pl.getPlot() != null && pl.getPlot().getPlotBndryArea().doubleValue() > 0)
+            totalCoverage = totalCoverageArea.multiply(BigDecimal.valueOf(100)).divide(pl.getPlot().getPlotBndryArea(),
                     DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
         pl.setCoverage(totalCoverage);
         if (pl.getVirtualBuilding() != null) {

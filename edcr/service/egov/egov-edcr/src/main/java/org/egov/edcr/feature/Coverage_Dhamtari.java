@@ -123,7 +123,8 @@ public class Coverage_Dhamtari extends Coverage {
 		validate(pl);
 		BigDecimal totalCoverage = BigDecimal.ZERO;
 		BigDecimal totalCoverageArea = BigDecimal.ZERO;
-		BigDecimal area = pl.getPlot().getArea(); // add for get total plot area
+//		BigDecimal area = pl.getPlot().getArea(); // add for get total plot area
+		BigDecimal plotBoundaryArea = pl.getPlot().getPlotBndryArea(); // add for get total plot area
 		boolean isCenterArea = pl.getPlanInformation().isCenterArea();
 		// add for getting OccupancyType
 		OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
@@ -144,7 +145,7 @@ public class Coverage_Dhamtari extends Coverage {
 			if (block.getBuilding() != null) {
 				block.getBuilding().setCoverageArea(coverageAreaWithoutDeduction.subtract(coverageDeductionArea));
 				BigDecimal coverage = BigDecimal.ZERO;
-				if (pl.getPlot().getArea().doubleValue() > 0)
+				if (pl.getPlot().getPlotBndryArea().doubleValue() > 0)
 					coverage = block.getBuilding().getCoverageArea().multiply(BigDecimal.valueOf(100)).divide(
 							pl.getPlanInformation().getPlotArea(), DcrConstants.DECIMALDIGITS_MEASUREMENTS,
 							DcrConstants.ROUNDMODE_MEASUREMENTS);
@@ -160,9 +161,9 @@ public class Coverage_Dhamtari extends Coverage {
 
 		// pl.setCoverageArea(totalCoverageArea);
 		// use plotBoundaryArea
-		if (pl.getPlot() != null && pl.getPlot().getArea().doubleValue() > 0)
+		if (pl.getPlot() != null && pl.getPlot().getPlotBndryArea().doubleValue() > 0)
 			totalCoverage = totalCoverageArea.multiply(BigDecimal.valueOf(100)).divide(
-					pl.getPlanInformation().getPlotArea(), DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+					plotBoundaryArea, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
 					DcrConstants.ROUNDMODE_MEASUREMENTS);
 		pl.setCoverage(totalCoverage);
 		if (pl.getVirtualBuilding() != null) {
@@ -176,16 +177,16 @@ public class Coverage_Dhamtari extends Coverage {
 		// get coverage permissible value from method and store in
 		// permissibleCoverageValue
 		String ruleNo = "";
-		if (area.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null) {
+		if (plotBoundaryArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null) {
 //			occupancyType = mostRestrictiveOccupancy.getType().getCode();
 			if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForResidential(area);
+				permissibleCoverageValue = getPermissibleCoverageForResidential(plotBoundaryArea);
 				ruleNo = "Table 7-C-1";
 			} else if (F.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForCommercial(area, isCenterArea);
+				permissibleCoverageValue = getPermissibleCoverageForCommercial(plotBoundaryArea, isCenterArea);
 				ruleNo = "Table 7-C-3";
 			} else if (G.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForIndustrial(area);
+				permissibleCoverageValue = getPermissibleCoverageForIndustrial(plotBoundaryArea);
 				ruleNo = "Table 7-C-13";
 			}
 		}
