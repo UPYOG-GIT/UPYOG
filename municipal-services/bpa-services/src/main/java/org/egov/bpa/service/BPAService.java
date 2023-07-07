@@ -488,8 +488,7 @@ public class BPAService {
 
 		if (edcrResponse.get("Occupancy").equalsIgnoreCase("Residential")
 				&& bpa.getStatus().equalsIgnoreCase(BPAConstants.APPL_FEE_STATE)
-				&& (bpa.getBusinessService().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)
-						|| bpa.getBusinessService().equalsIgnoreCase(BPAConstants.VLOW_RISKTYPE))) {
+				&& (bpa.getBusinessService().equalsIgnoreCase(BPAConstants.BPA_LOW_BUSINESSSERVICE))) {
 			log.info("inside if condition--by nehaaaa");
 			log.info("edcrResponse.get Occupancy" + edcrResponse.get("Occupancy"));
 
