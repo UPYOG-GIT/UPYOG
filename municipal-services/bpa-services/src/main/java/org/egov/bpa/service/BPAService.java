@@ -487,11 +487,11 @@ public class BPAService {
 		// Validity Date for Direct Bhawan Anugya
 
 		if (edcrResponse.get("Occupancy").equalsIgnoreCase("Residential")
-				&& state.equals("INPROGRESS")
+				&& bpa.getStatus().equalsIgnoreCase(BPAConstants.APPL_FEE_STATE)
 				&& (bpa.getBusinessService().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)
 						|| bpa.getBusinessService().equalsIgnoreCase(BPAConstants.VLOW_RISKTYPE))) {
 			log.info("inside if condition--by nehaaaa");
-			log.info("edcrResponse.get Occupancy" +  edcrResponse.get("Occupancy"));
+			log.info("edcrResponse.get Occupancy" + edcrResponse.get("Occupancy"));
 
 			int validityInMonthsForPre = config.getValidityInMonthsForPre();
 			Calendar calendar = Calendar.getInstance();
