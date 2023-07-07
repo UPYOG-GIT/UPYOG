@@ -479,7 +479,10 @@ public class BPAService {
 		log.info("===> workflow done =>" + bpaRequest.getBPA().getStatus());
 		enrichmentService.postStatusEnrichment(bpaRequest);
 
-		log.info("Bpa status is : " + bpa.getStatus());
+		log.info("Bpa status is--- : " + bpa.getStatus());
+		log.info("Bpa Occupancy is---- : " + edcrResponse.get("Occupancy"));
+		log.info("Bpa getBusinessService is---- : " + bpa.getBusinessService());
+		log.info("Bpa state is---- : " + state);
 
 		// Validity Date for Direct Bhawan Anugya
 
