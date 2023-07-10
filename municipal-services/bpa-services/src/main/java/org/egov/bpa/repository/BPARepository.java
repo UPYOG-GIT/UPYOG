@@ -222,8 +222,7 @@ public class BPARepository {
 		String updateQuery = "WITH updated_billdetail AS (UPDATE egbs_billdetail_v1 SET totalamount='" + totalAmount
 				+ "' WHERE consumercode = '" + applicationNo
 				+ "' AND businessservice ='BPA.NC_SAN_FEE' RETURNING id),updated_demanddetail AS (UPDATE egbs_demanddetail_v1 SET taxamount = '"
-				+ totalAmount + "', collectionamount = '" + totalAmount
-				+ "' WHERE demandid = ( SELECT id FROM egbs_demand_v1 WHERE consumercode = '" + applicationNo
+				+ totalAmount + "' WHERE demandid = ( SELECT id FROM egbs_demand_v1 WHERE consumercode = '" + applicationNo
 				+ "' AND businessservice = 'BPA.NC_SAN_FEE') RETURNING id), updated_billacountdetail AS (UPDATE egbs_billaccountdetail_v1 SET amount = '"
 				+ totalAmount
 				+ "' WHERE demanddetailid = ( SELECT id FROM updated_demanddetail) RETURNING id) UPDATE egbs_demanddetail_v1_audit SET taxamount = '"
