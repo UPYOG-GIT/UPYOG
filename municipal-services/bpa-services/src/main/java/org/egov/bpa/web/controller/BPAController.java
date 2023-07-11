@@ -79,6 +79,7 @@ public class BPAController {
 
 	@PostMapping(value = "/_update")
 	public ResponseEntity<BPAResponse> update(@Valid @RequestBody BPARequest bpaRequest) {
+		log.info("INSIDE UPDATEEE---");
 		BPA bpa = bpaService.update(bpaRequest);
 		log.info("bpa---" + bpa.getApprovalNo());
 		List<BPA> bpas = new ArrayList<BPA>();
@@ -93,6 +94,19 @@ public class BPAController {
 
 	@PostMapping(value = "/_search")
 	public ResponseEntity<BPAResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+			@Valid @ModelAttribute BPASearchCriteria criteria) {
+
+		List<BPA> bpas = bpaService.search(criteria, requestInfoWrapper.getRequestInfo());
+		int count = bpaService.getBPACount(criteria, requestInfoWrapper.getRequestInfo());
+		BPAResponse response = BPAResponse
+				.builder().BPA(bpas).responseInfo(responseInfoFactory
+						.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
+				.count(count).build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "/application/_search")
+	public ResponseEntity<BPAResponse> searchByApplication(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
 			@Valid @ModelAttribute BPASearchCriteria criteria) {
 
 		List<BPA> bpas = bpaService.search(criteria, requestInfoWrapper.getRequestInfo());
@@ -497,7 +511,6 @@ public class BPAController {
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 
 	}
-	
 	
 	@GetMapping(value = "/applicationData")
 	public ResponseEntity<List<Map<String, Object>>> getApplicationDataInDasboardForUlb(String tenantId, String applicationType) {
