@@ -973,4 +973,11 @@ public class BPAService {
 		return resultList;
 		
 	}
+	
+	public List<Map<String, Object>> getListOfApplications(String tenantId) {
+		List<Map<String, Object>> resultList = repository.getListOfApplications(tenantId);
+		log.info("getDataCountsForDashboard: " + resultList.toString());
+		return resultList;
+	}
+	
 }

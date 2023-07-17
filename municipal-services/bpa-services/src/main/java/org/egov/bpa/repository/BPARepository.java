@@ -222,7 +222,8 @@ public class BPARepository {
 		String updateQuery = "WITH updated_billdetail AS (UPDATE egbs_billdetail_v1 SET totalamount='" + totalAmount
 				+ "' WHERE consumercode = '" + applicationNo
 				+ "' AND businessservice ='BPA.NC_SAN_FEE' RETURNING id),updated_demanddetail AS (UPDATE egbs_demanddetail_v1 SET taxamount = '"
-				+ totalAmount + "' WHERE demandid = ( SELECT id FROM egbs_demand_v1 WHERE consumercode = '" + applicationNo
+				+ totalAmount + "' WHERE demandid = ( SELECT id FROM egbs_demand_v1 WHERE consumercode = '"
+				+ applicationNo
 				+ "' AND businessservice = 'BPA.NC_SAN_FEE') RETURNING id), updated_billacountdetail AS (UPDATE egbs_billaccountdetail_v1 SET amount = '"
 				+ totalAmount
 				+ "' WHERE demanddetailid = ( SELECT id FROM updated_demanddetail) RETURNING id) UPDATE egbs_demanddetail_v1_audit SET taxamount = '"
@@ -596,6 +597,22 @@ public class BPARepository {
 				+ "ORDER BY billdetail.consumercode";
 
 		return jdbcTemplate.queryForList(query, new Object[] {});
+	}
+
+	public List<Map<String, Object>> getListOfApplications(String tenantId) {
+
+		String query1 = "SELECT" + "  bp.applicationno" + " FROM" + "  eg_bpa_buildingplan bp"
+				+ "  inner join eg_pg_transactions bd on bp.applicationno = bd.consumer_code" + "  where"
+				+ "  bp.status != 'INITIATED'" + "  AND bp.status != 'PENDING_APPL_FEE'"
+				+ "  AND bp.status != 'CITIZEN_APPROVAL_INPROCESS'" + "  AND txn_status = 'SUCCESS'"
+				+ "  AND txn_amount = 1.00";
+		if (tenantId != null) {
+			query1 += " WHERE bp.tenantid = '" + tenantId + "'";
+		}
+		List<Map<String, Object>> resultList = new ArrayList<>();
+		resultList.addAll(jdbcTemplate.queryForList(query1));
+
+		return jdbcTemplate.queryForList(query1, new Object[] {});
 	}
 
 }
