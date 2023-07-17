@@ -607,7 +607,7 @@ public class BPARepository {
 				+ "  AND bp.status != 'CITIZEN_APPROVAL_INPROCESS'" + "  AND txn_status = 'SUCCESS'"
 				+ "  AND txn_amount = 1.00";
 		if (tenantId != null) {
-			query1 += " WHERE bp.tenantid = '" + tenantId + "'";
+			query1 += " AND bp.tenantid = '" + tenantId + "'";
 		}
 		List<Map<String, Object>> resultList = new ArrayList<>();
 		resultList.addAll(jdbcTemplate.queryForList(query1));
