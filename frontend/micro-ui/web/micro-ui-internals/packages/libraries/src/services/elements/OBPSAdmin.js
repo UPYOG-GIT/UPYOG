@@ -217,4 +217,13 @@ export const OBPSAdminService = {
       userService: false,
       method: "POST"
     }),
+
+    searchByApplicationNo:(tenantId, applicationNo)   =>
+    Request({
+      url: Urls.obps.searchByApplicationNo,
+      params: { tenantId, applicationNo},
+      auth: false,
+      userService: true,
+      method: "POST"
+    }),
 }
