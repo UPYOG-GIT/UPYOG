@@ -502,12 +502,12 @@ public class BPAController {
 //	    List<Map<String, Object>> sqlResponseList = bpaService.getApplicationDataInDasboardForUlb(criteria);
 //	    return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 
-		List<BPA> bpas = bpaService.search(criteria, requestInfoWrapper.getRequestInfo());
-		int count = bpaService.getBPACount(criteria, requestInfoWrapper.getRequestInfo());
+		List<BPA> bpas = bpaService.getApplicationDataInDasboardForUlb(criteria);
+//		int count = bpaService.getBPACount(criteria, requestInfoWrapper.getRequestInfo());
 		BPAResponse response = BPAResponse
 				.builder().BPA(bpas).responseInfo(responseInfoFactory
 						.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
-				.count(count).build();
+				.build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 

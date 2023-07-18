@@ -967,8 +967,8 @@ public class BPAService {
 		return resultList;
 	}
 	
-	public List<Map<String, Object>> getApplicationDataInDasboardForUlb(String tenantId, String applicationType){
-		List<Map<String, Object>> resultList = repository.getApplicationDataInDasboardForUlb(tenantId, applicationType);
+	public List<BPA> getApplicationDataInDasboardForUlb(BPASearchCriteria criteria){
+		List<BPA> resultList = repository.getApplicationData(criteria);
 		log.info("getApplicationDataInDasboardForUlb--: " + resultList.toString());
 		return resultList;
 		

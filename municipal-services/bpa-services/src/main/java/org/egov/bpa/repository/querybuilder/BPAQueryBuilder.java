@@ -24,6 +24,31 @@ public class BPAQueryBuilder {
             + " FROM eg_bpa_buildingplan bpa"
             + LEFT_OUTER_JOIN_STRING
             + "eg_bpa_document bpadoc ON bpadoc.buildingplanid = bpa.id";;
+            
+    private static final String QUERY1="SELECT"
+    		+ "  billdetail.consumercode as applicationno,"
+    		+ "  bp.tenantid,"
+    		+ "  TO_CHAR("
+    		+ "  TO_TIMESTAMP(bp.createdtime / 1000),"
+    		+ "    'DD/MM/YYYY'"
+    		+ "  ) AS applicationdate,"
+    		+ "  TO_CHAR("
+    		+ "    TO_TIMESTAMP(bp.approvaldate / 1000),"
+    		+ "    'DD/MM/YYYY'"
+    		+ "  ) AS approval_date,"
+    		+ "  Architectuser.name AS username,"
+    		+ "  Architectuser.mobilenumber as altcontactnumber,"
+    		+ "  Architectuser.emailid as emailid,"
+    		+ "  Citizenuser.name as name,"
+    		+ "  Citizenuser.mobilenumber as mobilenumber"
+    		+ "  FROM egbs_billdetail_v1 billdetail"
+    		+ " INNER JOIN eg_bpa_buildingplan bp ON billdetail.consumercode = bp.applicationno"
+    		+ " INNER JOIN eg_pg_transactions txn on billdetail.billid=txn.bill_id"
+    		+ " INNER JOIN eg_land_address adr ON adr.landinfoid = bp.landid"
+    		+ " INNER JOIN eg_user Architectuser ON bp.createdby = Architectuser.uuid"
+    		+ " INNER JOIN eg_land_ownerinfo ownerinfo ON bp.landid = ownerinfo.landinfoid"
+    		+ " INNER JOIN eg_user Citizenuser ON ownerinfo.uuid = Citizenuser.uuid";;
+    	    
 
     private final String paginationWrapper = "SELECT * FROM "
             + "(SELECT *, DENSE_RANK() OVER (ORDER BY bpa_lastModifiedTime DESC) offset_ FROM " + "({})"
@@ -289,6 +314,151 @@ public class BPAQueryBuilder {
             return addCountWrapper(builder.toString());
         
         return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
+
+    }
+    public String getApplicationSearchQuery(BPASearchCriteria criteria, List<Object> preparedStmtList) {
+
+        StringBuilder builder = new StringBuilder(QUERY1);
+
+        if (criteria.getTenantId() != null) {
+            if (criteria.getTenantId().split("\\.").length == 1) {
+
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" bpa.tenantid like ?");
+                preparedStmtList.add('%' + criteria.getTenantId() + '%');
+            } else {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" bpa.tenantid=? ");
+                preparedStmtList.add(criteria.getTenantId());
+            }
+        }
+
+//        List<String> ids = criteria.getIds();
+//        if (!CollectionUtils.isEmpty(ids)) {
+//            addClauseIfRequired(preparedStmtList, builder);
+//            builder.append(" bpa.id IN (").append(createQuery(ids)).append(")");
+//            addToPreparedStatement(preparedStmtList, ids);
+//        }
+
+//        String edcrNumber = criteria.getEdcrNumber();
+//        if (edcrNumber != null) {
+//            List<String> edcrNumbers = Arrays.asList(edcrNumber.split(","));
+//            addClauseIfRequired(preparedStmtList, builder);
+//            builder.append(" bpa.edcrNumber IN (").append(createQuery(edcrNumbers)).append(")");
+//            addToPreparedStatement(preparedStmtList, edcrNumbers);
+//        }
+
+//        String applicationNo = criteria.getApplicationNo();
+//        if (applicationNo != null) {
+//            List<String> applicationNos = Arrays.asList(applicationNo.split(","));
+//            addClauseIfRequired(preparedStmtList, builder);
+//            builder.append(" bpa.applicationNo IN (").append(createQuery(applicationNos)).append(")");
+//            addToPreparedStatement(preparedStmtList, applicationNos);
+//        }
+//
+//        String approvalNo = criteria.getApprovalNo();
+//        if (approvalNo != null) {
+//            List<String> approvalNos = Arrays.asList(approvalNo.split(","));
+//            addClauseIfRequired(preparedStmtList, builder);
+//            builder.append(" bpa.approvalNo IN (").append(createQuery(approvalNos)).append(")");
+//            addToPreparedStatement(preparedStmtList, approvalNos);
+//        }
+
+        String status = criteria.getStatus();
+        if (status != null) {
+            List<String> statuses = Arrays.asList(status.split(","));
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" bpa.status IN (").append(createQuery(statuses)).append(")");
+            addToPreparedStatement(preparedStmtList, statuses);
+
+        }
+//        String applicationType = criteria.getApplicationType();
+//        if(applicationType != null) {
+//            List<String> applicationTypes = Arrays.asList(applicationType.split(","));
+//            addClauseIfRequired(preparedStmtList, builder);
+//            builder.append(" bpa.additionaldetails ->>'applicationType' IN (").append(createQuery(applicationTypes)).append(")");
+//            addToPreparedStatement(preparedStmtList, applicationTypes);
+//        }
+//        
+//        String serviceType = criteria.getServiceType();
+//        if(serviceType != null) {
+//            List<String> serviceTypes = Arrays.asList(serviceType.split(","));
+//            addClauseIfRequired(preparedStmtList, builder);
+//            builder.append(" bpa.additionaldetails ->>'serviceType' IN (").append(createQuery(serviceTypes)).append(")");
+//            addToPreparedStatement(preparedStmtList, serviceTypes);
+//        }
+//        
+//        String pemritNumber = criteria.getPermitNumber();
+//        if(pemritNumber != null) {
+//            List<String> pemritNumbers = Arrays.asList(pemritNumber.split(","));
+//            addClauseIfRequired(preparedStmtList, builder);
+//            builder.append(" bpa.additionaldetails ->>'permitNumber' IN (").append(createQuery(pemritNumbers)).append(")");
+//            addToPreparedStatement(preparedStmtList, pemritNumbers);
+//        }
+        
+//        Long permitDt = criteria.getApprovalDate();
+//        if (permitDt != null) {
+//
+//            Calendar permitDate = Calendar.getInstance();
+//            permitDate.setTimeInMillis(permitDt);
+//
+//            int year = permitDate.get(Calendar.YEAR);
+//            int month = permitDate.get(Calendar.MONTH);
+//            int day = permitDate.get(Calendar.DATE);
+//
+//            Calendar permitStrDate = Calendar.getInstance();
+//            permitStrDate.setTimeInMillis(0);
+//            permitStrDate.set(year, month, day, 0, 0, 0);
+//
+//            Calendar permitEndDate = Calendar.getInstance();
+//            permitEndDate.setTimeInMillis(0);
+//            permitEndDate.set(year, month, day, 23, 59, 59);
+//            addClauseIfRequired(preparedStmtList, builder);
+//            builder.append(" bpa.approvalDate BETWEEN ").append(permitStrDate.getTimeInMillis()).append(" AND ")
+//                    .append(permitEndDate.getTimeInMillis());
+//        }
+//        if (criteria.getFromDate() != null && criteria.getToDate() != null) {
+//            addClauseIfRequired(preparedStmtList, builder);
+//            builder.append(" bpa.createdtime BETWEEN ").append(criteria.getFromDate()).append(" AND ")
+//                    .append(criteria.getToDate());
+//        } else if (criteria.getFromDate() != null && criteria.getToDate() == null) {
+//            addClauseIfRequired(preparedStmtList, builder);
+//            builder.append(" bpa.createdtime >= ").append(criteria.getFromDate());
+//        }
+
+//        List<String> businessService = criteria.getBusinessService();
+//        if (!CollectionUtils.isEmpty(businessService)) {
+//            addClauseIfRequired(preparedStmtList, builder);
+//            builder.append(" bpa.businessService IN (").append(createQuery(businessService)).append(")");
+//            addToPreparedStatement(preparedStmtList, businessService);
+//        }
+//        List<String> landId = criteria.getLandId();
+//        List<String> createdBy = criteria.getCreatedBy();
+//        if (!CollectionUtils.isEmpty(landId)) {
+//            addClauseIfRequired(preparedStmtList, builder);
+//            if (!CollectionUtils.isEmpty(createdBy)) {
+//                builder.append("(");
+//            }
+//            builder.append(" bpa.landId IN (").append(createQuery(landId)).append(")");
+//            addToPreparedStatement(preparedStmtList, landId);
+//        }
+//
+//        if (!CollectionUtils.isEmpty(createdBy)) {
+//            if (!CollectionUtils.isEmpty(landId)) {
+//                builder.append(" OR ");
+//            } else {
+//                addClauseIfRequired(preparedStmtList, builder);
+//            }
+//            builder.append(" bpa.createdby IN (").append(createQuery(createdBy)).append(")");
+//            if (!CollectionUtils.isEmpty(landId)) {
+//                builder.append(")");
+//            }
+//            addToPreparedStatement(preparedStmtList, createdBy);
+//        }
+//        if(isCount)
+//            return addCountWrapper(builder.toString());
+//        
+//        return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
 
     }
 }
