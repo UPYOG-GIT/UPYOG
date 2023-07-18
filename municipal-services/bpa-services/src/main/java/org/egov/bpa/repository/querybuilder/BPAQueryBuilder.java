@@ -319,11 +319,11 @@ public class BPAQueryBuilder {
 			if (criteria.getTenantId().split("\\.").length == 1) {
 
 				addClauseIfRequired(preparedStmtList, builder);
-				builder.append(" bpa.tenantid like ?");
+				builder.append(" bp.tenantid like ?");
 				preparedStmtList.add('%' + criteria.getTenantId() + '%');
 			} else {
 				addClauseIfRequired(preparedStmtList, builder);
-				builder.append(" bpa.tenantid=? ");
+				builder.append(" bp.tenantid=? ");
 				preparedStmtList.add(criteria.getTenantId());
 			}
 		}
@@ -363,7 +363,7 @@ public class BPAQueryBuilder {
 		if (status != null) {
 			List<String> statuses = Arrays.asList(status.split(","));
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" bpa.status IN (").append(createQuery(statuses)).append(")");
+			builder.append(" bp.status IN (").append(createQuery(statuses)).append(")");
 			addToPreparedStatement(preparedStmtList, statuses);
 
 		}

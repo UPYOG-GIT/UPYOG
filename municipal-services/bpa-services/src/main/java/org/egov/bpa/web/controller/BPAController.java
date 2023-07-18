@@ -3,7 +3,6 @@ package org.egov.bpa.web.controller;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +41,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -494,6 +492,19 @@ public class BPAController {
 		List<Map<String, Object>> sqlResponseList = bpaService.getDataCountsForDashboard(tenantId);
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 
+	}
+	
+	@PostMapping(value = "/application/_search")
+	public ResponseEntity<BPAResponse> searchByApplication(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+			@Valid @ModelAttribute BPASearchCriteria criteria) {
+
+		List<BPA> bpas = bpaService.search(criteria, requestInfoWrapper.getRequestInfo());
+		int count = bpaService.getBPACount(criteria, requestInfoWrapper.getRequestInfo());
+		BPAResponse response = BPAResponse
+				.builder().BPA(bpas).responseInfo(responseInfoFactory
+						.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
+				.count(count).build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/applicationData")
