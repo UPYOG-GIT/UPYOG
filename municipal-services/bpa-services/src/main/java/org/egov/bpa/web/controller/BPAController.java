@@ -507,7 +507,7 @@ public class BPAController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@GetMapping(value = "/applicationData")
+	@PostMapping(value = "/applicationData")
 	public ResponseEntity<BPAResponse> getApplicationDataInDasboardForUlb(
 			@RequestBody RequestInfoWrapper requestInfoWrapper, @ModelAttribute BPASearchCriteria criteria) {
 //	    List<Map<String, Object>> sqlResponseList = bpaService.getApplicationDataInDasboardForUlb(criteria);
