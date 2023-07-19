@@ -294,6 +294,46 @@ public class BPAService {
 //		}
 		return bpas;
 	}
+	
+	
+	public List<BPA> applicationDataSearch(BPASearchCriteria criteria, RequestInfo requestInfo) {
+		List<BPA> bpas = new LinkedList<>();
+		log.info("criteria.getTenantId():______====" + criteria.getTenantId());
+
+		LandSearchCriteria landcriteria = new LandSearchCriteria();
+		landcriteria.setTenantId(criteria.getTenantId());
+		landcriteria.setLocality(criteria.getLocality());
+		List<String> edcrNos = null;
+		
+			bpas = getBPADataFromCriteria(criteria, requestInfo, edcrNos);
+			ArrayList<String> landIds = new ArrayList<>();
+			if (!bpas.isEmpty()) {
+				for (int i = 0; i < bpas.size(); i++) {
+					landIds.add(bpas.get(i).getLandId());
+				}
+				landcriteria.setIds(landIds);
+				landcriteria.setTenantId(bpas.get(0).getTenantId());
+//				log.info("Call with tenantId to Land::" + landcriteria.getTenantId());
+				ArrayList<LandInfo> landInfos = landService.searchLandInfoToBPA(requestInfo, landcriteria);
+
+				this.populateLandToBPA(bpas, landInfos, requestInfo);
+			}
+		
+//		if (criteria.getMobileNumber() != null) {
+//			bpas = this.getBPAFromMobileNumber(criteria, landcriteria, requestInfo);
+//		} else {
+//			List<String> roles = new ArrayList<>();
+//			for (Role role : requestInfo.getUserInfo().getRoles()) {
+//				roles.add(role.getCode());
+//			}
+//			if ((criteria.tenantIdOnly() || criteria.isEmpty()) && roles.contains(BPAConstants.CITIZEN)) {
+//				log.info("loading data of created and by me");
+//				bpas = this.getBPACreatedForByMe(criteria, requestInfo, landcriteria, edcrNos);
+//				log.info("no of bpas retuning by the search query" + bpas.size());
+//			} else 
+//		}
+		return bpas;
+	}
 
 	/**
 	 * search the BPA records created by and create for the logged in User
@@ -424,6 +464,13 @@ public class BPAService {
 	 */
 	public List<BPA> getBPAFromCriteria(BPASearchCriteria criteria, RequestInfo requestInfo, List<String> edcrNos) {
 		List<BPA> bpa = repository.getBPAData(criteria, edcrNos);
+		if (bpa.isEmpty())
+			return Collections.emptyList();
+		return bpa;
+	}
+	
+	public List<BPA> getBPADataFromCriteria(BPASearchCriteria criteria, RequestInfo requestInfo, List<String> edcrNos) {
+		List<BPA> bpa = repository.getApplicationData(criteria);
 		if (bpa.isEmpty())
 			return Collections.emptyList();
 		return bpa;
