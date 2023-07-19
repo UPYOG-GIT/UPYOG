@@ -2,7 +2,6 @@ package org.egov.bpa.repository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +9,7 @@ import org.egov.bpa.config.BPAConfiguration;
 import org.egov.bpa.producer.Producer;
 import org.egov.bpa.repository.querybuilder.BPAQueryBuilder;
 import org.egov.bpa.repository.rowmapper.BPARowMapper;
+import org.egov.bpa.repository.rowmapper.BPASearchDataRowMapper;
 import org.egov.bpa.web.model.BCategoryRequest;
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
@@ -45,6 +45,10 @@ public class BPARepository {
 
 	@Autowired
 	private BPARowMapper rowMapper;
+	
+	@Autowired
+	private BPASearchDataRowMapper searchDataRowMapper;
+	
 
 	/**
 	 * Pushes the request on save topic through kafka
@@ -601,7 +605,7 @@ public class BPARepository {
 	public List<BPA> getApplicationData(BPASearchCriteria criteria) {
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = queryBuilder.getApplicationSearchQuery(criteria, preparedStmtList);
-		List<BPA> ApplicationData = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+		List<BPA> ApplicationData = jdbcTemplate.query(query, preparedStmtList.toArray(), searchDataRowMapper);
 		return ApplicationData;
 	}
 
