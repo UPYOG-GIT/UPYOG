@@ -30,13 +30,13 @@ import org.egov.bpa.web.model.BPASearchCriteria;
 import org.egov.bpa.web.model.BSCategoryRequest;
 import org.egov.bpa.web.model.PayTpRateRequest;
 import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
-import org.egov.bpa.web.model.PayTypeFeeDetailRequestWrapper;
 import org.egov.bpa.web.model.PayTypeRequest;
 import org.egov.bpa.web.model.ProposalTypeRequest;
 import org.egov.bpa.web.model.SlabMasterRequest;
 import org.egov.bpa.web.model.Workflow;
 import org.egov.bpa.web.model.landInfo.LandInfo;
 import org.egov.bpa.web.model.landInfo.LandSearchCriteria;
+import org.egov.bpa.web.model.landInfo.OwnerInfo;
 import org.egov.bpa.web.model.user.UserDetailResponse;
 import org.egov.bpa.web.model.user.UserSearchRequest;
 import org.egov.bpa.web.model.workflow.BusinessService;
@@ -49,7 +49,6 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -307,16 +306,27 @@ public class BPAService {
 		
 			bpas = getBPADataFromCriteria(criteria, requestInfo, edcrNos);
 			ArrayList<String> landIds = new ArrayList<>();
+			List<String> uuids = new ArrayList<>();
 			if (!bpas.isEmpty()) {
 				for (int i = 0; i < bpas.size(); i++) {
 					landIds.add(bpas.get(i).getLandId());
+					uuids.add(bpas.get(i).getAuditDetails().getCreatedBy());
 				}
+				
+				
+//				if (requestInfo.getUserInfo() != null && !StringUtils.isEmpty(requestInfo.getUserInfo().getUuid())) {
+//					uuids.add(requestInfo.getUserInfo().getUuid());
+//					criteria.setCreatedBy(uuids);
+//				}
+				
 				landcriteria.setIds(landIds);
 				landcriteria.setTenantId(bpas.get(0).getTenantId());
 //				log.info("Call with tenantId to Land::" + landcriteria.getTenantId());
 				ArrayList<LandInfo> landInfos = landService.searchLandInfoToBPA(requestInfo, landcriteria);
+				UserDetailResponse userInfo = userService.getArchitectUser(uuids, requestInfo);
 
 				this.populateLandToBPA(bpas, landInfos, requestInfo);
+				this.populateArchitectToBPA(bpas, userInfo.getUser(), requestInfo);
 			}
 		
 //		if (criteria.getMobileNumber() != null) {
@@ -376,6 +386,16 @@ public class BPAService {
 		log.info("no of bpas queried" + bpas.size());
 		this.populateLandToBPA(bpas, landInfos, requestInfo);
 		return bpas;
+	}
+	
+	private void populateArchitectToBPA(List<BPA> bpas, List<OwnerInfo> ownerInfos, RequestInfo requestInfo) {
+		for (int i = 0; i < bpas.size(); i++) {
+			for (int j = 0; j < ownerInfos.size(); j++) {
+				if (ownerInfos.get(j).getUuid().equalsIgnoreCase(bpas.get(i).getAuditDetails().getCreatedBy())) {
+					bpas.get(i).setArchitect(ownerInfos.get(j));
+				}
+			}
+		}
 	}
 
 	/**

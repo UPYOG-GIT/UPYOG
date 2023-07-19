@@ -58,12 +58,11 @@ public class BPASearchDataRowMapper implements ResultSetExtractor<List<BPA>> {
 //						|| rs.getString("additionalDetails").equals("null") ? null : rs.getString("additionalDetails"),
 //						Object.class);
 				
-//				AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("bpa_createdBy"))
-//						.createdTime(rs.getLong("bpa_createdTime")).lastModifiedBy(rs.getString("bpa_lastModifiedBy"))
-//						.lastModifiedTime(lastModifiedTime).build();
+				AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("createdby")).build();
 
 
 				currentbpa = BPA.builder()
+						.auditDetails(auditdetails)
 						.applicationNo(applicationNo)
 						.tenantId(tenantId)
 						.approvalDate(rs.getLong("approval_date"))
