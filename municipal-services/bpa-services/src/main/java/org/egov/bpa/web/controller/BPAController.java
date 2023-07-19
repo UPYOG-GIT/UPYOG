@@ -498,7 +498,7 @@ public class BPAController {
 	public ResponseEntity<BPAResponse> searchByApplication(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
 			@Valid @ModelAttribute BPASearchCriteria criteria) {
 
-		List<BPA> bpas = bpaService.search(criteria, requestInfoWrapper.getRequestInfo());
+		List<BPA> bpas = bpaService.applicationSearch(criteria, requestInfoWrapper.getRequestInfo());
 		int count = bpaService.getBPACount(criteria, requestInfoWrapper.getRequestInfo());
 		BPAResponse response = BPAResponse
 				.builder().BPA(bpas).responseInfo(responseInfoFactory
@@ -513,7 +513,8 @@ public class BPAController {
 //	    List<Map<String, Object>> sqlResponseList = bpaService.getApplicationDataInDasboardForUlb(criteria);
 //	    return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 
-		List<BPA> bpas = bpaService.getApplicationDataInDasboardForUlb(criteria);
+//		List<BPA> bpas = bpaService.getApplicationDataInDasboardForUlb(criteria);applicationDataSearch
+		List<BPA> bpas = bpaService.applicationDataSearch(criteria,  requestInfoWrapper.getRequestInfo());
 //		int count = bpaService.getBPACount(criteria, requestInfoWrapper.getRequestInfo());
 		BPAResponse response = BPAResponse
 				.builder().BPA(bpas).responseInfo(responseInfoFactory
