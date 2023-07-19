@@ -1,10 +1,11 @@
 import React from "react";
 import { Route, Link, useHistory, useLocation } from "react-router-dom";
+import DashboardApplicationSearch from "../../../modules/core/src/pages/citizen/Home/DashboardApplicationSearch";
 
 
 const CitizenHomeCard = ({ header, links, state, Icon, Info, isInfo = false, styles }) => {
   const location = useLocation();
- 
+
   return (
     <div className="CitizenHomeCard" style={styles ? styles : {}}>
 
@@ -25,6 +26,14 @@ const CitizenHomeCard = ({ header, links, state, Icon, Info, isInfo = false, sty
       {location.pathname === "/digit-ui/citizen/obps-home" && (
         <div className="links">
           <a href="/digit-ui/employee">Employee Login</a>
+        </div>
+      )}
+
+      {location.pathname === "/digit-ui/citizen/obps-home" && (
+        <div className="links">
+          <a href="/digit-ui/citizen">Search By Application Number</a>
+         
+
         </div>
       )}
 
