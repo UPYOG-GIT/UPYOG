@@ -145,6 +145,8 @@ const Urls = {
     deleteSlab:"/bpa-services/v1/bpa/_deleteslab",
     deletePaytpRate:"/bpa-services/v1/bpa/_deletepaytprate",
     getDashboardCount:"/bpa-services/v1/bpa/dashboard/count",
+    //for searching application details by application number from dashboard
+    searchByApplicationNo: "/bpa-services/v1/bpa/application/_search"
   },
 
   edcr: {
