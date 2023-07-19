@@ -25,8 +25,8 @@ public class BPAQueryBuilder {
 			+ "eg_bpa_document bpadoc ON bpadoc.buildingplanid = bpa.id";;
 
 	private static final String QUERY1 = "SELECT" + " bp.id as bpa_id, billdetail.consumercode as applicationno," + "  bp.tenantid,"
-			+ "  TO_CHAR(" + "  TO_TIMESTAMP(bp.createdtime / 1000)," + "    'DD/MM/YYYY'" + "  ) AS applicationdate,"
-			+ "  TO_CHAR(" + "    TO_TIMESTAMP(bp.approvaldate / 1000)," + "    'DD/MM/YYYY'" + "  ) AS approval_date,"
+			+ "  bp.createdtime AS applicationdate,"
+			+ "  bp.approvaldate AS approval_date,"
 			+ "  Architectuser.name AS username," + "  Architectuser.mobilenumber as altcontactnumber,"
 			+ "  Architectuser.emailid as emailid," + "  Citizenuser.name as name,"
 			+ "  Citizenuser.mobilenumber as mobilenumber" + "  FROM egbs_billdetail_v1 billdetail"
