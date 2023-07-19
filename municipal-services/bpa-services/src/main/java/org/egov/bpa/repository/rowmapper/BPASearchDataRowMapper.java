@@ -44,6 +44,7 @@ public class BPASearchDataRowMapper implements ResultSetExtractor<List<BPA>> {
 		while (rs.next()) {
 			String id = rs.getString("bpa_id");
 			String applicationNo = rs.getString("applicationno");
+			String tenantId = rs.getString("bpa_tenantId");
 			//String approvalNo = rs.getString("approvalNo");
 			BPA currentbpa = buildingMap.get(id);
 			//String tenantId = rs.getString("bpa_tenantId");
@@ -64,13 +65,15 @@ public class BPASearchDataRowMapper implements ResultSetExtractor<List<BPA>> {
 
 				currentbpa = BPA.builder()
 						.applicationNo(applicationNo)
+						.tenantId(tenantId)
 						.approvalDate(rs.getLong("approval_date"))
 						.applicationDate(rs.getLong("applicationdate"))
+						.landId(rs.getString("bpa_landId"))
 						.build();
 
 				buildingMap.put(id, currentbpa);
 //			}
-			addChildrenToProperty(rs, currentbpa);
+			//addChildrenToProperty(rs, currentbpa);
 
 		}
 

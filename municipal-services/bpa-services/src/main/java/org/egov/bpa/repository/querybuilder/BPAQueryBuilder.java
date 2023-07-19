@@ -24,8 +24,8 @@ public class BPAQueryBuilder {
 			+ " FROM eg_bpa_buildingplan bpa" + LEFT_OUTER_JOIN_STRING
 			+ "eg_bpa_document bpadoc ON bpadoc.buildingplanid = bpa.id";;
 
-	private static final String QUERY1 = "SELECT" + " bp.id as bpa_id, billdetail.consumercode as applicationno," + "  bp.tenantid,"
-			+ "  bp.createdtime AS applicationdate,"
+	private static final String QUERY1 = "SELECT" + " bp.id as bpa_id, billdetail.consumercode as applicationno," + "  bp.tenantid as bpa_tenantId,"
+			+ "  bp.createdtime AS applicationdate, bp.landId as bpa_landId,"
 			+ "  bp.approvaldate AS approval_date,"
 			+ "  Architectuser.name AS username," + "  Architectuser.mobilenumber as altcontactnumber,"
 			+ "  Architectuser.emailid as emailid," + "  Citizenuser.name as name,"
