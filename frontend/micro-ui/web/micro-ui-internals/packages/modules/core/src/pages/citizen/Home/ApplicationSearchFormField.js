@@ -6,6 +6,8 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { fromUnixTime, format } from 'date-fns';
+import { OBPSService } from "../../../../../../libraries/src/services/elements/OBPS";
+import { MdmsService } from "../../../../../../libraries/src/services/elements/MDMS";
 // import { pdfDocumentName, pdfDownloadLink, stringReplaceAll } from "../../../utils";
 // import ApplicationTimeline from "../../../components/ApplicationTimeline";
 
@@ -13,25 +15,58 @@ import { fromUnixTime, format } from 'date-fns';
 
 const ApplicationSearchFormField = ({ formState, register, reset, previousPage }) => {
   const { t } = useTranslation();
- 
   const [applicationNo, setApplicationNo] = useState("");
   const [tableData, setTableData] = useState([]);
 
-  
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     try {
       const data = await Digit.OBPSAdminService.searchByApplicationNo('cg', applicationNo);
-      console.log("searchByApplicationNo Response:", data.BPA); // Log the API response directly
+      console.log("searchByApplicationNo Response:", data.BPA);
       setTableData(data.BPA);
     } catch (error) {
       console.error("Search Error:", error);
     }
   };
+
+  useEffect(() => {
+    // Function to fetch scrutiny details when 'tableData' changes
+    const fetchScrutinyDetails = async () => {
+      try {
+        if (tableData.length > 0 && tableData[0]?.tenantId && tableData[0]?.edcrNumber) {
+          const edcrResponse = await OBPSService.scrutinyDetails(tableData[0].tenantId, { edcrNumber: tableData[0].edcrNumber });
+          const [edcr] = edcrResponse?.edcrDetail;
+          const mdmsRes = await MdmsService.getMultipleTypes(tableData[0].tenantId, "BPA", ["RiskTypeComputation", "CheckList"]);
+          const riskType = Digit.Utils.obps.calculateRiskType(mdmsRes?.BPA?.RiskTypeComputation, edcr?.planDetail?.plot?.area, edcr?.planDetail?.blocks);
+
+          setTableData((prevTableData) =>
+          prevTableData.map((item) => ({
+            ...item,
+            riskType: riskType,
+          }))
+        );
+  
+         
+          
+          console.log("riskType: " + riskType);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    // Call the function to fetch data whenever 'tableData' changes
+    fetchScrutinyDetails();
+  }, [tableData]);
+
   const tableContainerStyle = {
     marginTop: "20px", 
   };
+  
 
+
+ 
   return (
 
     
@@ -80,7 +115,7 @@ const ApplicationSearchFormField = ({ formState, register, reset, previousPage }
           <Row className="border-none" label={t(`Application Date`)} text={tableData[0]?.auditDetails.createdTime ? format(new Date(tableData[0]?.auditDetails.createdTime), 'dd/MM/yyyy') : tableData[0]?.auditDetails.createdTime} />
           <Row className="border-none" label={t(`Application Type`)} text={t(`WF_BPA_${tableData[0]?.additionalDetails.applicationType}`)}/>
           <Row className="border-none" label={t(`Service Type`)} text={t(tableData[0]?.additionalDetails.serviceType)} />
-          <Row className="border-none" label={t(`Occupancy`)} text={tableData[0]?.landInfo?.address?.occupancy}/>
+          <Row className="border-none" label={t(`Occupancy Type`)} text={tableData[0]?.landInfo?.address?.occupancy}/>
           <Row className="border-none" label={t(`Risk Type`)} text={t(`WF_BPA_${tableData[0]?.riskType}`)} />
           <Row className="border-none" label={t(`BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL`)} text={tableData[0]?.landInfo?.owners[0]?.name} />
           <Row className="border-none" label={t(`Application Status`)} text={t(`WF_BPA_${tableData[0]?.status}`)} />
