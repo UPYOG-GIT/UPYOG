@@ -139,6 +139,14 @@ public class UserService {
 		UserDetailResponse userDetailResponse = userCall(userSearchRequest, uri);
 		return userDetailResponse;
 	}
+	
+	public UserDetailResponse getArchitectUser(List<String> uuids, RequestInfo requestInfo) {
+		UserSearchRequest userSearchRequest = getArchitectUserSearchRequest(uuids, requestInfo);
+		log.info("userSearchRequest.getTenantId(): " + userSearchRequest.getTenantId());
+		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
+		UserDetailResponse userDetailResponse = userCall(userSearchRequest, uri);
+		return userDetailResponse;
+	}
 
 	/**
 	 * Creates userSearchRequest from bpaSearchCriteria
@@ -157,6 +165,16 @@ public class UserService {
 		userSearchRequest.setUserType(BPAConstants.CITIZEN);
 		if (!CollectionUtils.isEmpty(criteria.getOwnerIds()))
 			userSearchRequest.setUuid(criteria.getOwnerIds());
+		return userSearchRequest;
+	}
+	
+	private UserSearchRequest getArchitectUserSearchRequest(List<String> uuids, RequestInfo requestInfo) {
+		UserSearchRequest userSearchRequest = new UserSearchRequest();
+		userSearchRequest.setRequestInfo(requestInfo);
+		userSearchRequest.setActive(true);
+		userSearchRequest.setUserType(BPAConstants.CITIZEN);
+		if (!CollectionUtils.isEmpty(uuids))
+			userSearchRequest.setUuid(uuids);
 		return userSearchRequest;
 	}
 
