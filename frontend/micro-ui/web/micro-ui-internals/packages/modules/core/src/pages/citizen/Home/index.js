@@ -4,8 +4,10 @@ import {
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
+import DashboardApplicationSearch from "./DashboardApplicationSearch";
 
 const Home = () => {
+  
   const { t } = useTranslation();
   const history = useHistory();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
@@ -128,6 +130,7 @@ const Home = () => {
           </div>
         )
       ) : null}
+   
     </div>
   );
 };
