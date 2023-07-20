@@ -16,6 +16,8 @@ import { List, ListItem, ListItemText, Alert } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
+import DashboardApplicationSearch from "./Home/DashboardApplicationSearch";
+
 
 
 const getTenants = (codes, tenants) => {
@@ -397,9 +399,18 @@ const Home = ({
             <Login stateCode={stateCode} isUserRegistered={false} />
           </Route>
 
+          
           <Route path={`${path}/user/profile`}>
             <UserProfile stateCode={stateCode} userType={"citizen"} cityDetails={cityDetails} />
           </Route>
+          <Route path={`${path}/pgr-home`}>
+            <DashboardApplicationSearch/>
+          </Route>
+
+        
+
+      
+        
 
           <ErrorBoundary>
             {appRoutes}
