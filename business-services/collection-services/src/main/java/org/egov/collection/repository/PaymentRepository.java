@@ -54,6 +54,7 @@ import org.egov.collection.model.PaymentDetail;
 import org.egov.collection.model.PaymentSearchCriteria;
 import org.egov.collection.repository.querybuilder.PaymentQueryBuilder;
 import org.egov.collection.repository.rowmapper.BillRowMapper;
+import org.egov.collection.repository.rowmapper.FeeDetailRowMapper;
 import org.egov.collection.repository.rowmapper.PaymentRowMapper;
 import org.egov.collection.web.contract.Bill;
 import org.egov.tracer.model.CustomException;
@@ -82,6 +83,9 @@ public class PaymentRepository {
 	private PaymentQueryBuilder paymentQueryBuilder;
 
 	private PaymentRowMapper paymentRowMapper;
+
+	@Autowired
+	private FeeDetailRowMapper feeDetailRowMapper;
 
 	private BillRowMapper billRowMapper;
 
@@ -159,6 +163,10 @@ public class PaymentRepository {
 			Map<String, Bill> billMap = getBills(billIds);
 			for (Payment payment : payments) {
 				payment.getPaymentDetails().forEach(detail -> {
+					String feeDetailQuery = "SELECT srno, charges_type_name, amount FROM fee_details WHERE bill_id='"
+							+ detail.getBillId() + "' ORDER BY srno ASC";
+					List<FeeDetail> feeDetails = jdbcTemplate.query(feeDetailQuery, feeDetailRowMapper);
+					detail.setFeeDetail(feeDetails);
 					detail.setBill(billMap.get(detail.getBillId()));
 				});
 			}

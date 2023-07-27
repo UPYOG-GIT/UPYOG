@@ -191,7 +191,7 @@ public class PaymentRowMapper implements ResultSetExtractor<List<Payment>> {
 			// PGobject billAdditionalObj = (PGobject)
 			// rs.getObject("bill_additionalDetails");
 
-			String query = "SELECT srno, charges_type_name, amount FROM fee_details WHERE bill_id='" + billId
+			/*String query = "SELECT srno, charges_type_name, amount FROM fee_details WHERE bill_id='" + billId
 					+ "' ORDER BY srno ASC";
 //			List<Map<String, Object>> feeDetailList = paymentRepository.getFeeDetail(billId);
 			List<Map<String, Object>> feeDetailList = jdbcTemplate.queryForList(query);
@@ -203,7 +203,7 @@ public class PaymentRowMapper implements ResultSetExtractor<List<Payment>> {
 				feeDetail.setChargesTypeName(feeMap.get("charges_type_name").toString());
 				feeDetail.setAmount(BigDecimal.valueOf(Double.valueOf(feeMap.get("amount").toString())));
 				paymentDetail.addFeeDetailsItem(feeDetail);
-			}
+			}*/
 
 //			log.info("feeDetail: " + paymentDetail.getFeeDetail().toString());
 			payment.addpaymentDetailsItem(paymentDetail);

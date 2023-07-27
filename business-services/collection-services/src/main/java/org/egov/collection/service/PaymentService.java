@@ -209,6 +209,8 @@ public class PaymentService {
         PaymentSearchCriteria criteria = PaymentSearchCriteria.builder().ids(new HashSet<String>(ids)).build();
         return paymentRepository.fetchPaymentsForPlainSearch(criteria);
     }
-
+    public List<Map<String, Object>> getFeeDetail(String billId) {
+    	return paymentRepository.getFeeDetail(billId);
+    }
 
 }
