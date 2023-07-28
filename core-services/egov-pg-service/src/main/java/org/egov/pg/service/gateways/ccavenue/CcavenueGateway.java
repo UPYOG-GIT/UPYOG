@@ -55,8 +55,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CcavenueGateway implements Gateway {
 
-	@Autowired
-	private TransactionService transactionService;
+//	@Autowired
+//	private TransactionService transactionService;
 	
 	private final String GATEWAY_NAME = "CCAVENUE";
 	private String ACCESS_CODE;
@@ -425,7 +425,7 @@ public class CcavenueGateway implements Gateway {
 		if (gatewayStatus.equalsIgnoreCase("success")) {
 			status = Transaction.TxnStatusEnum.SUCCESS;
 			return Transaction.builder().txnId(currentStatus.getTxnId()).txnAmount(resp.get("amount")).txnStatus(status)
-					.gatewayTxnId(resp.get("tracking_id")).gatewayPaymentMode(resp.get("payment_mode"))
+					.gatewayTxnId(resp.get("tracking_id")).gatewayPaymentMode("TestKit-"+resp.get("payment_mode"))
 					.gatewayStatusCode(resp.get("status_code")).gatewayStatusMsg(resp.get("status_message"))
 					.responseJson(resp).build();
 		} else {
@@ -461,12 +461,12 @@ public class CcavenueGateway implements Gateway {
 		URL url = null;
 		HttpURLConnection vHttpUrlConnection = null;
 		DataInputStream vInput = null;
-		String urlStr = "https://login.ccavenue.com/apis/servlet/DoWebTrans?enc_request=" + encryptedJsonData
-				+ "&access_code=" + ACCESS_CODE
-				+ "&request_type=JSON&response_type=JSON&command=orderStatusTracker&version=1.2";
-//		String urlStr = "https://logintest.ccavenue.com/apis/servlet/DoWebTrans?enc_request=" + encryptedJsonData
+//		String urlStr = "https://login.ccavenue.com/apis/servlet/DoWebTrans?enc_request=" + encryptedJsonData
 //				+ "&access_code=" + ACCESS_CODE
 //				+ "&request_type=JSON&response_type=JSON&command=orderStatusTracker&version=1.2";
+		String urlStr = "https://logintest.ccavenue.com/apis/servlet/DoWebTrans?enc_request=" + encryptedJsonData
+				+ "&access_code=" + ACCESS_CODE
+				+ "&request_type=JSON&response_type=JSON&command=orderStatusTracker&version=1.2";
 		StringBuffer vStringBuffer = null;
 		try {
 			url = new URL(urlStr);
@@ -718,19 +718,19 @@ public class CcavenueGateway implements Gateway {
 //			this.ACCESS_CODE = "AVWN26KC60AF20NWFA";
 //			this.WORKING_KEY = "B27E5242E8FC395A07F65AB900F021FA";
 //		} else if (tenantId.equals("cg.dhamtari")) {
-//			this.MERCHANT_ID = "1941257";
-//			this.ACCESS_CODE = "AVII96KA89BB16IIBB";
-//			this.WORKING_KEY = "D682025F99E01FA0F0FAA079B1B3F793";
+			this.MERCHANT_ID = "1941257";
+			this.ACCESS_CODE = "AVII96KA89BB16IIBB";
+			this.WORKING_KEY = "D682025F99E01FA0F0FAA079B1B3F793";
 //		} else if (tenantId.equals("cg.bhilaicharoda")) {
 //			this.MERCHANT_ID = "2160767";
 //			this.ACCESS_CODE = "AVII29KC44BF31IIFB";
 //			this.WORKING_KEY = "7B3E3FF7D56888F44E1A7D46DF24CF52";
 //		}
 		
-		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId);
-		this.MERCHANT_ID = ccAvenueDetails.get("merchant_id").toString();
-		this.ACCESS_CODE = ccAvenueDetails.get("access_code").toString();
-		this.WORKING_KEY = ccAvenueDetails.get("working_key").toString();
+//		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId);
+//		this.MERCHANT_ID = ccAvenueDetails.get("merchant_id").toString();
+//		this.ACCESS_CODE = ccAvenueDetails.get("access_code").toString();
+//		this.WORKING_KEY = ccAvenueDetails.get("working_key").toString();
 	}
 
 }
