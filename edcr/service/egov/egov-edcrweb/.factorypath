@@ -214,8 +214,9 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/com/octo/captcha/jcaptcha-api/2.0-alpha-1/jcaptcha-api-2.0-alpha-1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/jhlabs/filters/2.0.235-1/filters-2.0.235-1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/javaxt/javaxt-core/1.7.8/javaxt-core-1.7.8.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/pdfbox/pdfbox/2.0.4/pdfbox-2.0.4.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/pdfbox/fontbox/2.0.4/fontbox-2.0.4.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/pdfbox/pdfbox/2.0.28/pdfbox-2.0.28.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/pdfbox/fontbox/2.0.28/fontbox-2.0.28.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/commons/commons-compress/1.16.1/commons-compress-1.16.1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/objenesis/objenesis/2.6/objenesis-2.6.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/python/jython-standalone/2.7.1b3/jython-standalone-2.7.1b3.jar" enabled="true" runInBatchMode="false"/>

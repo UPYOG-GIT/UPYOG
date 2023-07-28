@@ -1093,6 +1093,9 @@ public class EdcrRestService {
 		Log.info(deletedCount+ "rejected scrutiny records deleted from edcr database");
 		return deletedCount;
 	}
+	
+	
+	
 
 	public Date resetFromDateTimeStamp(final Date date) {
 		final Calendar cal1 = Calendar.getInstance();

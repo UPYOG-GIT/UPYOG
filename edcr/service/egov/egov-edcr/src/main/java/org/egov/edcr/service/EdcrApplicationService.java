@@ -15,11 +15,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
@@ -52,6 +59,7 @@ import com.aspose.cad.imageoptions.PdfOptions;
 public class EdcrApplicationService {
 	private static final String RESUBMIT_SCRTNY = "Resubmit Plan Scrutiny";
 	private static final String NEW_SCRTNY = "New Plan Scrutiny";
+	private static final String REGULARISATION = "Regularisation";
 	public static final String ULB_NAME = "ulbName";
 	public static final String ABORTED = "Aborted";
 	private static Logger LOG = LogManager.getLogger(EdcrApplicationService.class);
@@ -121,6 +129,15 @@ public class EdcrApplicationService {
 	}
 
 	private Plan callDcrProcess(EdcrApplication edcrApplication, String applicationType) {
+		Plan planDetail = new Plan();
+		planDetail = planService.process(edcrApplication, applicationType);
+		updateFile(planDetail, edcrApplication);
+		edcrApplicationDetailService.saveAll(edcrApplication.getEdcrApplicationDetails());
+
+		return planDetail;
+	}
+
+	private Plan callRegularisationDcrProcess(EdcrApplication edcrApplication, String applicationType) {
 		Plan planDetail = new Plan();
 		planDetail = planService.process(edcrApplication, applicationType);
 		updateFile(planDetail, edcrApplication);
@@ -258,7 +275,7 @@ public class EdcrApplicationService {
 
 	private void updateFile(Plan pl, EdcrApplication edcrApplication) {
 //		String readFile = readFile(edcrApplication.getSavedDxfFile());
-		String filePath=edcrApplication.getSavedDxfFile().getAbsolutePath();
+		String filePath = edcrApplication.getSavedDxfFile().getAbsolutePath();
 //		String replace = readFile.replace("ENTITIES", "ENTITIES\n0\n" + pl.getAdditionsToDxf());
 //        String newFile = edcrApplication.getDxfFile().getOriginalFilename().replace(".dxf", "_system_scrutinized.dxf");
 		String newFile = edcrApplication.getDxfFile().getOriginalFilename().replace(".dxf", "_system_scrutinized.pdf");
@@ -275,18 +292,55 @@ public class EdcrApplicationService {
 		objImage.save(outputStream, pdfOptions);
 
 		byte[] pdfBytes = outputStream.toByteArray();
-		File f = new File(newFile);
-		try (FileOutputStream fos = new FileOutputStream(f)) {
-			if (!f.exists())
-				f.createNewFile();
+
+		try (PDDocument document = PDDocument.load(pdfBytes)) {
+			// Get the first page of the PDF (assuming there's only one page)
+			PDPage page = document.getPage(0);
+
+			// Create a new content stream to add the watermark
+			PDPageContentStream contentStream = new PDPageContentStream(document, page,
+					PDPageContentStream.AppendMode.APPEND, true, true);
+
+			PDExtendedGraphicsState graphicsState = new PDExtendedGraphicsState();
+			graphicsState.setNonStrokingAlphaConstant(0.5f);
+			graphicsState.setAlphaSourceFlag(true);
+			// Set the opacity (0.5f for semi-transparent)
+			contentStream.setGraphicsStateParameters(graphicsState);
+			InputStream imageStream = EdcrApplication.class.getResourceAsStream("/watermark.png");
+			java.awt.image.BufferedImage image1 = ImageIO.read(imageStream);
+			// Load the watermark image (replace "watermark.png" with the path to your
+			// watermark image)
+			PDImageXObject image = LosslessFactory.createFromImage(document, image1);
+			float xPos = 200.00f;
+			float yPos = 200.00f;
+			// Draw the watermark image on the page
+			contentStream.drawImage(image, xPos, yPos, image.getWidth() * 10, image.getHeight() * 10);
+
+			// Close the content stream
+			contentStream.close();
+
+			// Save the modified PDF
+			ByteArrayOutputStream modifiedPdfStream = new ByteArrayOutputStream();
+			document.save(modifiedPdfStream);
+			document.close();
+
+			// Convert the modified PDF to a byte array
+			byte[] modifiedPdfBytes = modifiedPdfStream.toByteArray();
+			File f = new File(newFile);
+			try (FileOutputStream fos = new FileOutputStream(f)) {
+				if (!f.exists())
+					f.createNewFile();
 //            fos.write(replace.getBytes());
-			fos.write(pdfBytes);
-			fos.flush();
-			FileStoreMapper fileStoreMapper = fileStoreService.store(f, f.getName(),
-					edcrApplication.getDxfFile().getContentType(), FILESTORE_MODULECODE);
-			edcrApplication.getEdcrApplicationDetails().get(0).setScrutinizedDxfFileId(fileStoreMapper);
+				fos.write(modifiedPdfBytes);
+				fos.flush();
+				FileStoreMapper fileStoreMapper = fileStoreService.store(f, f.getName(),
+						edcrApplication.getDxfFile().getContentType(), FILESTORE_MODULECODE);
+				edcrApplication.getEdcrApplicationDetails().get(0).setScrutinizedDxfFileId(fileStoreMapper);
+			} catch (IOException e) {
+				LOG.error("Error occurred when reading file!!!!!", e);
+			}
 		} catch (IOException e) {
-			LOG.error("Error occurred when reading file!!!!!", e);
+			LOG.error("Error occurred when processing PDF!!!!!", e);
 		}
 	}
 
@@ -300,7 +354,10 @@ public class EdcrApplicationService {
 		edcrApplication.setStatus(ABORTED);
 		edcrApplicationRepository.save(edcrApplication);
 		edcrApplication.getEdcrApplicationDetails().get(0).setComparisonDcrNumber(comparisonDcrNo);
-		callDcrProcess(edcrApplication, NEW_SCRTNY);
+		if (edcrApplication.getApplicationType().toString().equalsIgnoreCase(ApplicationType.REGULARISATION.toString()))
+			callRegularisationDcrProcess(edcrApplication, REGULARISATION);
+		else
+			callDcrProcess(edcrApplication, NEW_SCRTNY);
 		edcrIndexService.updateEdcrRestIndexes(edcrApplication, NEW_SCRTNY);
 
 		return edcrApplication;

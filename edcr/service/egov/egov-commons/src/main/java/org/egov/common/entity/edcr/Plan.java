@@ -79,6 +79,7 @@ public class Plan implements Serializable {
     Map<String, String> planInfoProperties = new HashMap<>();
 
     private Boolean edcrPassed = false;
+    private Boolean edcrPartialPassed = false;
     // Submission date of plan scrutiny.
     private Date applicationDate;
     /**
@@ -319,8 +320,16 @@ public class Plan implements Serializable {
     public void setEdcrPassed(Boolean edcrPassed) {
         this.edcrPassed = edcrPassed;
     }
+    
+    public Boolean getEdcrPartialPassed() {
+		return edcrPartialPassed;
+	}
 
-    public Date getApplicationDate() {
+	public void setEdcrPartialPassed(Boolean edcrPartialPassed) {
+		this.edcrPartialPassed = edcrPartialPassed;
+	}
+
+	public Date getApplicationDate() {
         return applicationDate;
     }
 

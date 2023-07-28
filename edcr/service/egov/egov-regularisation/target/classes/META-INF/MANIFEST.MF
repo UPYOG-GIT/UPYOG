@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Built-By: Entit
+Build-Jdk: 17.0.4
+Implementation-Title: e-governments regularisation
+Implementation-Vendor-Id: org.egov.edcr
+Implementation-Vendor: eGovernments Foundation
+Created-By: Maven Integration for Eclipse
+Implementation-Version: 2023-07-28 04:46
+Specification-Title: e-governments regularisation
+Specification-Version: 2.1.1-SNAPSHOT
+

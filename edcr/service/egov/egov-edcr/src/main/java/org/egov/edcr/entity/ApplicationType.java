@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ApplicationType {
 
-    PERMIT("Permit"), OCCUPANCY_CERTIFICATE("Occupancy certificate");
+    PERMIT("Permit"), OCCUPANCY_CERTIFICATE("Occupancy certificate"),REGULARISATION("Regularisation");
 
     @JsonValue
     private final String applicationTypeVal;

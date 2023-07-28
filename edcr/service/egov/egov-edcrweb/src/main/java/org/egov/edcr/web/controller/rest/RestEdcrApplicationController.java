@@ -81,7 +81,11 @@ import org.egov.infra.microservice.models.UserInfo;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.web.rest.error.ErrorResponse;
-import org.jfree.util.Log;
+import org.egov.regularisation.contract.RegEdcrDetail;
+import org.egov.regularisation.contract.RegEdcrRequest;
+import org.egov.regularisation.contract.RegEdcrResponse;
+import org.egov.regularisation.service.RegularisationRestService;
+import org.egov.regularisation.service.RegularisationValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,7 +122,7 @@ public class RestEdcrApplicationController {
 
     @Autowired
     private EdcrRestService edcrRestService;
-
+    
     @Autowired
     private PlanService planService;
 
@@ -139,7 +143,13 @@ public class RestEdcrApplicationController {
 
     @Autowired
     private EdcrValidator edcrValidator;
-
+    
+    @Autowired
+    private RegularisationRestService regularisationRestService;
+    
+    @Autowired
+    private RegularisationValidator regularisationValidator;
+    
     @PostMapping(value = "/scrutinizeplan", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> scrutinizePlan(@RequestBody MultipartFile planFile,
@@ -368,6 +378,15 @@ public class RestEdcrApplicationController {
 
     }
     
+    private ResponseEntity<?> getRegularisationSuccessResponse(List<org.egov.regularisation.contract.RegEdcrDetail> regEdcrDetails, RequestInfo requestInfo) {
+    	org.egov.regularisation.contract.RegEdcrResponse edcrRes = new org.egov.regularisation.contract.RegEdcrResponse();
+    	edcrRes.setEdcrDetail(regEdcrDetails);
+    	ResponseInfo responseInfo = regularisationRestService.createResponseInfoFromRequestInfo(requestInfo, true);
+    	edcrRes.setResponseInfo(responseInfo);
+    	return new ResponseEntity<>(edcrRes, HttpStatus.OK);
+    	
+    }
+    
     private ResponseEntity<?> getSuccessResponse(List<EdcrDetail> edcrDetails, RequestInfo requestInfo, Integer count) {
         EdcrResponse edcrRes = new EdcrResponse();
         edcrRes.setEdcrDetail(edcrDetails);
@@ -450,6 +469,125 @@ public class RestEdcrApplicationController {
             return false;
         }
         return true;
+    }
+    
+    
+    @PostMapping(value = "/rgascrutinize", consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE,
+            MediaType.MULTIPART_FORM_DATA_VALUE }, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<?> regularisationScrutinize(@RequestPart("planFile") MultipartFile planFile,
+            @RequestParam("edcrRequest") String edcrRequest, final HttpServletRequest request) {
+        String userInfo = request.getHeader(USER_INFO_HEADER_NAME);
+        LOGGER.info("###User Info####"+userInfo);
+        org.egov.regularisation.contract.RegEdcrDetail regEdcrDetail = new org.egov.regularisation.contract.RegEdcrDetail();
+        org.egov.regularisation.contract.RegEdcrRequest edcr = new org.egov.regularisation.contract.RegEdcrRequest();
+        if (!isValidJson(edcrRequest) || (userInfo != null && !isValidJson(userInfo))) {
+            ErrorResponse error = new ErrorResponse(INCORRECT_REQUEST, INVALID_JSON_FORMAT,
+                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+        try {
+            List<ErrorDetail> errorResponses = new ArrayList<ErrorDetail>();
+            edcr = new ObjectMapper().readValue(edcrRequest, org.egov.regularisation.contract.RegEdcrRequest.class);
+            if(userInfo != null) {
+                UserInfo userInfoReq = new ObjectMapper().readValue(userInfo, UserInfo.class);
+                UserInfo enrichUser = new UserInfo();
+                enrichUser.setId(userInfoReq.getId());
+                enrichUser.setUuid(userInfoReq.getUuid());
+                enrichUser.setMobile(userInfoReq.getMobile());
+                enrichUser.setTenantId(userInfoReq.getTenantId());
+                edcr.getRequestInfo().setUserInfo(enrichUser);
+            }
+            ErrorDetail edcRes = regularisationValidator.validate(edcr);
+            if (edcRes != null && StringUtils.isNotBlank(edcRes.getErrorMessage()))
+                return new ResponseEntity<>(edcRes, HttpStatus.BAD_REQUEST);
+            List<ErrorDetail> errors = regularisationRestService.validateEdcrMandatoryFields(edcr);
+            if (!errors.isEmpty())
+                return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+
+            String applicationType = edcr.getAppliactionType();
+            String serviceType = edcr.getApplicationSubType();
+            
+//            String areaCategory=edcr.getAreaCategory();  //add for areaCategory fetch
+//            LOGGER.info("Category Type : "+areaCategory);
+            
+            Map<String, List<Object>> masterData = new HashMap<>();
+            Boolean mdmsEnabled = mdmsConfiguration.getMdmsEnabled();
+            /*if (mdmsEnabled != null && mdmsEnabled) {
+                Object mdmsData = bpaMdmsUtil.mDMSCall(new RequestInfo(), edcr.getTenantId());
+                HashMap<String, String> data = new HashMap<>();
+                data.put("applicationType", applicationType);
+                data.put("serviceType", serviceType);
+                masterData = mDMSValidator.getAttributeValues(mdmsData, "BPA");
+                List<ErrorDetail> mdmsErrors = mDMSValidator.validateMdmsData(masterData, data);
+                if (!mdmsErrors.isEmpty())
+                    return new ResponseEntity<>(mdmsErrors, HttpStatus.BAD_REQUEST);
+
+                if ("BUILDING_OC_PLAN_SCRUTINY".equalsIgnoreCase(applicationType)) {
+                    edcr.setAppliactionType(ApplicationType.OCCUPANCY_CERTIFICATE.toString());
+                    errorResponses = edcrRestService.validateScrutinizeOcRequest(edcr, planFile);
+                } else if ("BUILDING_PLAN_SCRUTINY".equalsIgnoreCase(applicationType)) {
+                    ErrorDetail validateEdcrRequest = edcrRestService.validateEdcrRequest(edcr, planFile);
+                    if (validateEdcrRequest != null)
+                        errorResponses = Arrays.asList(validateEdcrRequest);
+
+                    edcr.setAppliactionType(ApplicationType.PERMIT.toString());
+                }
+
+            } else {*/
+//                if ("BUILDING_OC_PLAN_SCRUTINY".equalsIgnoreCase(applicationType)) {
+//                    edcr.setAppliactionType(ApplicationType.OCCUPANCY_CERTIFICATE.toString());
+//                    errorResponses = (edcrRestService.validateScrutinizeOcRequest(edcr, planFile));
+//                } else if ("BUILDING_PLAN_SCRUTINY".equalsIgnoreCase(applicationType)) {
+                    ErrorDetail validateEdcrRequest = regularisationRestService.validateEdcrRequest(edcr, planFile);
+                    if (validateEdcrRequest != null)
+                        errorResponses = Arrays.asList(validateEdcrRequest);
+
+                    edcr.setAppliactionType(ApplicationType.REGULARISATION.toString());
+//                }
+//            }
+
+            if (!errorResponses.isEmpty())
+                return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
+            else {
+                regEdcrDetail = regularisationRestService.createRegularisationEdcr(edcr, planFile, masterData);
+            }
+
+        } catch (IOException e) {
+            ErrorResponse error = new ErrorResponse(INCORRECT_REQUEST, e.getLocalizedMessage(),
+                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+        return getRegularisationSuccessResponse(Arrays.asList(regEdcrDetail), edcr.getRequestInfo());
+    }
+    
+    @PostMapping(value = "/rgascrutinydetails", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<?> regularisationScrutinyDetails(@ModelAttribute RegEdcrRequest regEdcrRequest,
+            @RequestBody @Valid RequestInfoWrapper requestInfoWrapper) {
+        ErrorDetail edcReqRes = regularisationValidator.validate(regEdcrRequest);
+        if (edcReqRes != null && StringUtils.isNotBlank(edcReqRes.getErrorMessage()))
+            return new ResponseEntity<>(edcReqRes, HttpStatus.BAD_REQUEST);
+        ErrorDetail edcRes = regularisationValidator.validate(requestInfoWrapper);
+        if (edcRes != null && StringUtils.isNotBlank(edcRes.getErrorMessage()))
+            return new ResponseEntity<>(edcRes, HttpStatus.BAD_REQUEST);
+        List<RegEdcrDetail> edcrDetail = regularisationRestService.fetchEdcr(regEdcrRequest, requestInfoWrapper);
+        Integer count = regularisationRestService.fetchCount(regEdcrRequest, requestInfoWrapper);
+        if (!edcrDetail.isEmpty() && edcrDetail.get(0).getErrors() != null) {
+            return new ResponseEntity<>(edcrDetail.get(0).getErrors(), HttpStatus.OK);
+        } else {
+            return getRegSuccessResponse(edcrDetail, requestInfoWrapper.getRequestInfo(), count);
+        }
+    }
+    
+    private ResponseEntity<?> getRegSuccessResponse(List<RegEdcrDetail> edcrDetails, RequestInfo requestInfo, Integer count) {
+        RegEdcrResponse edcrRes = new RegEdcrResponse();
+        edcrRes.setEdcrDetail(edcrDetails);
+        edcrRes.setCount(count);
+        ResponseInfo responseInfo = edcrRestService.createResponseInfoFromRequestInfo(requestInfo, true);
+        edcrRes.setResponseInfo(responseInfo);
+        return new ResponseEntity<>(edcrRes, HttpStatus.OK);
+
     }
 
 }
