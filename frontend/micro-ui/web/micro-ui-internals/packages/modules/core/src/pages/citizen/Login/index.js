@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import { AppContainer, PageBasedInput, BackButton, Card, Toast, LabelPageBasedInput, CardHeader, CardText, SearchOnRadioButtons, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { AppContainer, PageBasedInput, BackButton, Card, Toast, LabelPageBasedInput, CardHeader, CardText, SearchOnRadioButtons, CardLabelError, Dropdown } from "@egovernments/digit-ui-react-components";
 import { Route, Switch, useHistory, useRouteMatch, useLocation } from "react-router-dom";
 import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
@@ -59,6 +59,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   const [mobileNumber, setMobileNumber] = useState();
   const [otp, setOtp] = useState();
   const [name, setName] = useState();
+  const [guardianName, setGuardianName] = useState();
   const { data: cities, isLoading } = Digit.Hooks.useTenants();
 
   const [selectedCity, setSelectedCity] = useState(() => ({ code: Digit.ULBService.getCitizenCurrentTenant(true) }));
@@ -66,6 +67,10 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   const [timeLeft, setTimeLeft] = useState(40);
 
   const { pathname } = useLocation();
+
+  const relationshipOptions = ["S/O", "D/O", "W/O"];
+  const [relation, setRelation] = useState("");
+
 
   // console.log("city" + JSON.stringify(city))
   // console.log("cities" + JSON.stringify(cities))
@@ -161,6 +166,26 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     }
   };
 
+  const handleGuardianNameChange = (e) => {
+    // const { value } = event.target;
+    // setName(e.target.value);
+
+    const value = e.target.value;
+    const isValid = /^[A-Za-z ]*$/.test(value);
+
+    if (isValid) {
+      // Update the name state or perform any other necessary actions
+      const titleCaseValue = value.toLowerCase().replace(/(^|\s)\w/g, (match) => match.toUpperCase());
+      setGuardianName(titleCaseValue);
+    } else {
+      // Display an error message or handle invalid input
+      title: t("TL_NAME_ERROR_MESSAGE");
+    }
+
+   
+  
+  };
+
   const selectMobileNumber = async () => {
     // setParmas({ ...params, mobileNumber });
     const data = {
@@ -240,7 +265,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
 
 
-
+  const concatGuardianName = relation + " " + guardianName;
+  console.log("concatGuardianName" + concatGuardianName); 
   const selectOtp = async () => {
 
     try {
@@ -302,6 +328,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       } else if (!isUserRegistered) {
         const requestData = {
           name,
+          guardian: concatGuardianName,
           username: mobileNumber,
           otpReference: otp,
           //tenantId: stateCode,
@@ -388,6 +415,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
   }
 
+ 
   return (
     <div
 
@@ -444,6 +472,30 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                 value={name}
                 onChange={handleNameChange}
               ></TextField>
+
+
+              }
+              {location.pathname === "/digit-ui/citizen/register/name" &&
+                <Dropdown
+                  selected={relation}
+                  select={(val) => setRelation(val)}
+                  style={{ width: '100%', margin: 5 }}
+                  option={relationshipOptions}
+                  showArrow
+                  placeholder="Select"
+                  autoComplete="off"
+
+                ></Dropdown>
+              }
+
+              {location.pathname === "/digit-ui/citizen/register/name" && <TextField fullWidth
+                label="Guardian Name"
+                variant="standard"
+                padding={5}
+                margin="normal"
+                value={guardianName}
+                onChange={handleGuardianNameChange}
+              ></TextField>
               }
               <Route path={`${path}`} exact></Route>
 
@@ -466,6 +518,9 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                   }
                 }}
               />
+
+
+
 
               {location.pathname === "/digit-ui/citizen/login/otp" || location.pathname === "/digit-ui/citizen/register/otp" ? (
 
