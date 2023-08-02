@@ -44,7 +44,7 @@ public class User {
     private String password;
     private String salutation;
 
-    @Pattern(regexp = UserServiceConstants.PATTERN_NAME)
+   
     private String guardian;
 
     private GuardianRelation guardianRelation;
