@@ -155,8 +155,9 @@ public class UserRepository {
 		user.setCreatedBy(user.getLoggedInUserId());
 		user.setLastModifiedBy(user.getLoggedInUserId());
 		user.setUserTenantid(user.getUserTenantid());
+		user.setGuardian(user.getGuardian());
 		log.info("user.getUserTenantid()-------" + user.getUserTenantid());
-		// log.info("user.getUsertenantid()-------" + user.getUsertenantid());
+		 log.info("user.getGuardian()-------" + user.getGuardian());
 		final User savedUser = save(user);
 		if (user.getRoles().size() > 0) {
 			saveUserRoles(user);
