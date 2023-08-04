@@ -79,6 +79,7 @@ public class MezzanineFloorServiceExtract extends FeatureExtract {
                                             LOG.debug("Mezzanine Floor Area = " + polyLineBuiltUpArea);
                                             builtUpArea = builtUpArea.add(polyLineBuiltUpArea == null ? BigDecimal.ZERO
                                                     : polyLineBuiltUpArea);
+                                            occupancy.setTypeHelper(Util.findOccupancyType(polyline, pl));
                                         }
                                     occupancy.setBuiltUpArea(builtUpArea);
                                     List<DXFLWPolyline> mezzanineDeductPolyLines = Util.getPolyLinesByLayer(pl.getDoc(),
