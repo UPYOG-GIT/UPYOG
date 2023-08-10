@@ -235,21 +235,6 @@ const Home = ({
             <CardContent>
               <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
                 gutterBottom>
-                {inprogressCount}
-              </Typography>
-              <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-                Architect Inprogress
-              </Typography>
-            </CardContent>
-          </Card>
-
-          <Card sx={{
-            width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-            borderRadius: '10px',
-          }}>
-            <CardContent>
-              <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-                gutterBottom>
                 {approvedCount}
               </Typography>
               <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
@@ -283,13 +268,14 @@ const Home = ({
             <CardContent>
               <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
                 gutterBottom>
-                {citizenApprovalInProcessCount}
+                {inprogressCount}/{citizenApprovalInProcessCount}
               </Typography>
               <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-                Citizen Inprocess
+                Architect / Citizen Inprocess        
               </Typography>
             </CardContent>
           </Card>
+
           <Card sx={{
             width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
             borderRadius: '10px',
@@ -329,6 +315,20 @@ const Home = ({
               </Typography>
               <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
                 Post Fee Pending
+              </Typography>
+            </CardContent>
+          </Card>
+          <Card sx={{
+            width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
+            borderRadius: '10px',
+          }}>
+            <CardContent>
+              <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
+                gutterBottom>
+                {rejectedCount}
+              </Typography>
+              <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
+                Rejected Cases
               </Typography>
             </CardContent>
           </Card>
@@ -399,18 +399,18 @@ const Home = ({
             <Login stateCode={stateCode} isUserRegistered={false} />
           </Route>
 
-          
+
           <Route path={`${path}/user/profile`}>
             <UserProfile stateCode={stateCode} userType={"citizen"} cityDetails={cityDetails} />
           </Route>
           <Route path={`${path}/pgr-home`}>
-            <DashboardApplicationSearch/>
+            <DashboardApplicationSearch />
           </Route>
 
-        
 
-      
-        
+
+
+
 
           <ErrorBoundary>
             {appRoutes}
