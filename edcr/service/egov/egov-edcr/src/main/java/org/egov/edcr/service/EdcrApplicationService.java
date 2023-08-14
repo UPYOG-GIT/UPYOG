@@ -314,7 +314,7 @@ public class EdcrApplicationService {
 			float xPos = 200.00f;
 			float yPos = 200.00f;
 			// Draw the watermark image on the page
-			contentStream.drawImage(image, xPos, yPos, image.getWidth() * 10, image.getHeight() * 10);
+			contentStream.drawImage(image, xPos, yPos, page.getMediaBox().getWidth(), page.getMediaBox().getHeight());
 
 			// Close the content stream
 			contentStream.close();
