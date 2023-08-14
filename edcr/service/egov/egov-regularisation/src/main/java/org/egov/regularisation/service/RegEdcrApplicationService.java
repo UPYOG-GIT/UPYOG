@@ -276,8 +276,7 @@ public class RegEdcrApplicationService {
 		String filePath = regEdcrApplication.getSavedDxfFile().getAbsolutePath();
 //		String replace = readFile.replace("ENTITIES", "ENTITIES\n0\n" + pl.getAdditionsToDxf());
 //        String newFile = edcrApplication.getDxfFile().getOriginalFilename().replace(".dxf", "_system_scrutinized.dxf");
-		String newFile = regEdcrApplication.getDxfFile().getOriginalFilename().replace(".dxf",
-				"_system_scrutinized.pdf");
+		String newFile = regEdcrApplication.getDxfFile().getOriginalFilename().replace(".dxf", "_system_scrutinized.pdf");
 		// Load the source CAD file
 		Image objImage = Image.load(filePath);
 
@@ -313,7 +312,7 @@ public class RegEdcrApplicationService {
 			float xPos = 200.00f;
 			float yPos = 200.00f;
 			// Draw the watermark image on the page
-			contentStream.drawImage(image, xPos, yPos, page.getMediaBox().getWidth(), page.getMediaBox().getHeight());
+			contentStream.drawImage(image, xPos, yPos, image.getWidth() * 10, image.getHeight() * 10);
 
 			// Close the content stream
 			contentStream.close();
@@ -353,8 +352,7 @@ public class RegEdcrApplicationService {
 		regEdcrApplication.setStatus(ABORTED);
 		edcrApplicationRepository.save(regEdcrApplication);
 		regEdcrApplication.getEdcrApplicationDetails().get(0).setComparisonDcrNumber(comparisonDcrNo);
-		if (regEdcrApplication.getApplicationType().toString()
-				.equalsIgnoreCase(RegApplicationType.REGULARISATION.toString()))
+		if (regEdcrApplication.getApplicationType().toString().equalsIgnoreCase(RegApplicationType.REGULARISATION.toString()))
 			callRegularisationDcrProcess(regEdcrApplication, REGULARISATION);
 		else
 			callDcrProcess(regEdcrApplication, NEW_SCRTNY);

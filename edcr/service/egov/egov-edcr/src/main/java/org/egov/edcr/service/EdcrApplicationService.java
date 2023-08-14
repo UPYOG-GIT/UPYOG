@@ -311,10 +311,10 @@ public class EdcrApplicationService {
 			// Load the watermark image (replace "watermark.png" with the path to your
 			// watermark image)
 			PDImageXObject image = LosslessFactory.createFromImage(document, image1);
-			float xPos = 0f;
-			float yPos = 0f;
+			float xPos = 200.00f;
+			float yPos = 200.00f;
 			// Draw the watermark image on the page
-			contentStream.drawImage(image, xPos, yPos, page.getMediaBox().getWidth(), page.getMediaBox().getHeight());
+			contentStream.drawImage(image, xPos, yPos, image.getWidth() * 10, image.getHeight() * 10);
 
 			// Close the content stream
 			contentStream.close();
