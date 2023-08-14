@@ -309,8 +309,8 @@ public class RegEdcrApplicationService {
 			// Load the watermark image (replace "watermark.png" with the path to your
 			// watermark image)
 			PDImageXObject image = LosslessFactory.createFromImage(document, image1);
-			float xPos = 200.00f;
-			float yPos = 200.00f;
+			float xPos = 0f;
+			float yPos = 0f;
 			// Draw the watermark image on the page
 			contentStream.drawImage(image, xPos, yPos, page.getMediaBox().getWidth(), page.getMediaBox().getHeight());
 			
