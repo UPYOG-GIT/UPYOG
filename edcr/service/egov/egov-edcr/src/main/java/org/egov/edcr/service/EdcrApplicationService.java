@@ -294,38 +294,45 @@ public class EdcrApplicationService {
 		byte[] pdfBytes = outputStream.toByteArray();
 
 		try (PDDocument document = PDDocument.load(pdfBytes)) {
-			// Get the first page of the PDF (assuming there's only one page)
-			PDPage page = document.getPage(0);
+			byte[] modifiedPdfBytes;
+			if (edcrApplication.getStatus().equalsIgnoreCase("Accepted")) {
 
-			// Create a new content stream to add the watermark
-			PDPageContentStream contentStream = new PDPageContentStream(document, page,
-					PDPageContentStream.AppendMode.APPEND, true, true);
+				// Get the first page of the PDF (assuming there's only one page)
+				PDPage page = document.getPage(0);
 
-			PDExtendedGraphicsState graphicsState = new PDExtendedGraphicsState();
-			graphicsState.setNonStrokingAlphaConstant(0.5f);
-			graphicsState.setAlphaSourceFlag(true);
-			// Set the opacity (0.5f for semi-transparent)
-			contentStream.setGraphicsStateParameters(graphicsState);
-			InputStream imageStream = EdcrApplication.class.getResourceAsStream("/watermark.png");
-			java.awt.image.BufferedImage image1 = ImageIO.read(imageStream);
-			// Load the watermark image (replace "watermark.png" with the path to your
-			// watermark image)
-			PDImageXObject image = LosslessFactory.createFromImage(document, image1);
-			float xPos = 0f;
-			float yPos = 0f;
-			// Draw the watermark image on the page
-			contentStream.drawImage(image, xPos, yPos, page.getMediaBox().getWidth(), page.getMediaBox().getHeight());
+				// Create a new content stream to add the watermark
+				PDPageContentStream contentStream = new PDPageContentStream(document, page,
+						PDPageContentStream.AppendMode.APPEND, true, true);
 
-			// Close the content stream
-			contentStream.close();
+				PDExtendedGraphicsState graphicsState = new PDExtendedGraphicsState();
+				graphicsState.setNonStrokingAlphaConstant(0.5f);
+				graphicsState.setAlphaSourceFlag(true);
+				// Set the opacity (0.5f for semi-transparent)
+				contentStream.setGraphicsStateParameters(graphicsState);
+				InputStream imageStream = EdcrApplication.class.getResourceAsStream("/watermark.png");
+				java.awt.image.BufferedImage image1 = ImageIO.read(imageStream);
+				// Load the watermark image (replace "watermark.png" with the path to your
+				// watermark image)
+				PDImageXObject image = LosslessFactory.createFromImage(document, image1);
+				float xPos = 0f;
+				float yPos = 0f;
+				// Draw the watermark image on the page
+				contentStream.drawImage(image, xPos, yPos, page.getMediaBox().getWidth(),
+						page.getMediaBox().getHeight());
 
-			// Save the modified PDF
-			ByteArrayOutputStream modifiedPdfStream = new ByteArrayOutputStream();
-			document.save(modifiedPdfStream);
-			document.close();
+				// Close the content stream
+				contentStream.close();
 
-			// Convert the modified PDF to a byte array
-			byte[] modifiedPdfBytes = modifiedPdfStream.toByteArray();
+				// Save the modified PDF
+				ByteArrayOutputStream modifiedPdfStream = new ByteArrayOutputStream();
+				document.save(modifiedPdfStream);
+				document.close();
+
+				// Convert the modified PDF to a byte array
+				modifiedPdfBytes = modifiedPdfStream.toByteArray();
+			} else {
+				modifiedPdfBytes = outputStream.toByteArray();
+			}
 			File f = new File(newFile);
 			try (FileOutputStream fos = new FileOutputStream(f)) {
 				if (!f.exists())
