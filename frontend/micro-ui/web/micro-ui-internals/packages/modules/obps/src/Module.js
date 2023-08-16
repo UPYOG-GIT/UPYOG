@@ -8,6 +8,7 @@ import stakeholderInbox from "./pages/employee/stakeholderInbox";
 
 import BPACitizenHomeScreen from "./pages/citizen/home";
 import EDCRForm from "./pageComponents/EDCRForm";
+import RGAEDCRForm from "./pageComponents/RGAEDCRForm";
 import BasicDetails from "./pageComponents/BasicDetails";
 import DocsRequired from "./pageComponents/DocsRequired";
 import PlotDetails from "./pageComponents/PlotDetails";
@@ -23,6 +24,7 @@ import OCeDCRScrutiny from "./pageComponents/OCeDCRScrutiny";
 import OCUploadPlanDiagram from "./pageComponents/OCUploadPlanDiagram";
 import OCBasicDetails from "./pageComponents/OCBasicDetails";
 import CreateEDCR from "./pages/citizen/EDCR";
+import CreateRGAEDCR from "./pages/citizen/RGAEDCR";
 import CreateOCEDCR from "./pages/citizen/OCEDCR";
 import NewBuildingPermit from "./pages/citizen/NewBuildingPermit";
 import OCBuildingPermit from "./pages/citizen/OCBuildingPermit";
@@ -51,6 +53,7 @@ import OCBPACheckPage from "./pages/citizen/OCBuildingPermit/CheckPage";
 import OCBPASendBackCheckPage from "./pages/citizen/OCSendBackToCitizen/CheckPage";
 import StakeholderCheckPage from "./pages/citizen/StakeholderRegistration/CheckPage";
 import EDCRAcknowledgement from "./pages/citizen/EDCR/EDCRAcknowledgement";
+import RGAEDCRAcknowledgement from "./pages/citizen/RGAEDCR/EDCRAcknowledgement";
 import OCEDCRAcknowledgement from "./pages/citizen/OCEDCR/EDCRAcknowledgement";
 import BPAAcknowledgement from "./pages/citizen/NewBuildingPermit/OBPSAcknowledgement";
 import OCBPAAcknowledgement from "./pages/citizen/OCBuildingPermit/OBPSAcknowledgement";
@@ -117,6 +120,7 @@ const componentsToRegister = {
   OBPSCard:OBPSEmployeeHomeCard,
   BPACitizenHomeScreen,
   EDCRForm,
+  RGAEDCRForm,
   BasicDetails,
   DocsRequired,
   PlotDetails,
@@ -145,12 +149,14 @@ const componentsToRegister = {
   OCBPACheckPage,
   OCBPASendBackCheckPage,
   EDCRAcknowledgement,
+  RGAEDCRAcknowledgement,
   OCEDCRAcknowledgement,
   BPAAcknowledgement,
   OCBPAAcknowledgement,
   OCSendBackAcknowledgement,
   StakeholderAcknowledgement,
   ObpsCreateEDCR : CreateEDCR,
+  RgaCreateEDCR : CreateRGAEDCR,
   ObpsCreateOCEDCR : CreateOCEDCR,
   ObpsNewBuildingPermit : NewBuildingPermit,
   ObpsOCBuildingPermit : OCBuildingPermit,

@@ -29,6 +29,7 @@ const App = ({ path }) => {
 
   const BPACitizenHomeScreen = Digit?.ComponentRegistryService?.getComponent('BPACitizenHomeScreen');
   const CreateEDCR = Digit?.ComponentRegistryService?.getComponent('ObpsCreateEDCR');
+  const CreateRGAEDCR = Digit?.ComponentRegistryService?.getComponent('RgaCreateEDCR');
   const CreateOCEDCR = Digit?.ComponentRegistryService?.getComponent('ObpsCreateOCEDCR');
   const NewBuildingPermit = Digit?.ComponentRegistryService?.getComponent('ObpsNewBuildingPermit');
   const OCBuildingPermit = Digit?.ComponentRegistryService?.getComponent('ObpsOCBuildingPermit');
@@ -64,6 +65,7 @@ const App = ({ path }) => {
         <PrivateRoute path={`${path}/sendbacktocitizen/bpa/:tenantId/:applicationNo`} component={BPASendBackToCitizen} />
         <PrivateRoute path={`${path}/sendbacktocitizen/ocbpa/:tenantId/:applicationNo`} component={OCSendBackToCitizen} />
         <PrivateRoute path={`${path}/response`} component={OBPSResponse} />
+        <PrivateRoute path={`${path}/rga/edcrscrutiny/apply`} component={CreateRGAEDCR} />
       </Switch>
     </React.Fragment>
   )

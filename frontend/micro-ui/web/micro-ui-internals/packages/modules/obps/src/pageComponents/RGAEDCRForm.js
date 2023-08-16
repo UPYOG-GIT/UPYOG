@@ -1,11 +1,17 @@
-import React from 'react'
+import { CardLabel, Dropdown, FormStep, Loader, TextInput, Toast, UploadFile } from "@egovernments/digit-ui-react-components";
+import React, { useEffect, useState } from "react";
+import { useLocation, useHistory } from "react-router-dom";
+import { getPattern, stringReplaceAll, sortDropdownNames } from "../utils";
 
-const RGAEDCRForm = ({ t, config, onSelect, formData, isShowToast, isSubmitBtnDisable, setIsShowToast }) => {
+const RGAEDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, addNewOwner, isShowToast, isSubmitBtnDisable, setIsShowToast }) => {
 
+    // console.log("RGAEDCRFORM");
     const { pathname: url } = useLocation();
+    // const tenantId = Digit.ULBService.getCurrentTenantId();
     const tenantId = Digit.ULBService.getCitizenCurrentTenant();
     const stateId = Digit.ULBService.getStateId();
-    const [cityModuleList, setCityModuleList] = useState([{
+    // const [citymoduleList, setCitymoduleList] = useState();
+    const [citymoduleList, setCitymoduleList] = useState([{
         code: tenantId,
         i18nKey: `TENANT_TENANTS_${stringReplaceAll(tenantId.toUpperCase(), ".", "_")}`
     }]);
@@ -18,7 +24,10 @@ const RGAEDCRForm = ({ t, config, onSelect, formData, isShowToast, isSubmitBtnDi
     const [showToast, setShowToast] = useState(null);
     const history = useHistory();
 
+
+
     let validation = {};
+
 
     function setApplicantName(e) {
         const value = e.target.value;
@@ -36,11 +45,40 @@ const RGAEDCRForm = ({ t, config, onSelect, formData, isShowToast, isSubmitBtnDi
         setFile(e.target.files[0]);
     }
 
+    // const selectfile = (event) => {
+    //     const file = event.target.files[0];
+
+    //     if (file.type !== "image/vnd.dxf") {
+    //         setError("Only .dxf files are accepted");
+    //         alert("Only .dxf files are accepted")
+    //         setUploadedFile(null);
+    //         return;
+    //     }
+
+    //     setFile(file);
+    //     setError("");
+    //     setUploadedFile(file.name);
+    // };
 
     const onSkip = () => {
         setUploadMessage("NEED TO DELETE");
     };
-   
+    // console.log(JSON.stringify(citymoduleList))
+    // const { isLoading, data: citymodules } = Digit.Hooks.obps.useMDMS(stateId, "tenant", ["citymodule"]);
+    // useEffect(() => {
+    //     if (citymodules?.tenant?.citymodule?.length > 0) {
+    //         const list = citymodules?.tenant?.citymodule?.filter(data => data.code == "BPAAPPLY");
+    //         list?.[0]?.tenants?.forEach(data => {
+    //             data.i18nKey = `TENANT_TENANTS_${stringReplaceAll(data?.code?.toUpperCase(), ".", "_")}`;
+    //         })
+    //         if (Array.isArray(list?.[0]?.tenants)) list?.[0]?.tenants.reverse();
+    //         let sortTenants = sortDropdownNames(list?.[0]?.tenants, "code", t)
+    //         setCitymoduleList(sortTenants);
+    //     }
+    // }, [citymodules]);
+
+
+
     useEffect(() => {
         if (uploadMessage || isShowToast) {
             setName("");
@@ -51,7 +89,7 @@ const RGAEDCRForm = ({ t, config, onSelect, formData, isShowToast, isSubmitBtnDi
         }
         if (isShowToast) {
             history.replace(
-                `/digit-ui/citizen/obps/edcrscrutiny/apply/acknowledgement`,
+                `/digit-ui/citizen/obps/rga/edcrscrutiny/apply/acknowledgement`,
                 { data: isShowToast?.label ? isShowToast?.label : "BPA_INTERNAL_SERVER_ERROR", type: "ERROR" }
             );
         }
@@ -69,10 +107,14 @@ const RGAEDCRForm = ({ t, config, onSelect, formData, isShowToast, isSubmitBtnDi
         onSelect(config.key, data);
     };
 
+    // if (isLoading || isSubmitBtnDisable) {
+    //     return <Loader />;
+    // }
     if (isSubmitBtnDisable) {
         return <Loader />;
     }
-
+    // console.log(tenantId);
+    // console.log(JSON.stringify(citymoduleList))
     return (
         <FormStep
             t={t}
@@ -87,12 +129,13 @@ const RGAEDCRForm = ({ t, config, onSelect, formData, isShowToast, isSubmitBtnDi
             <Dropdown
                 t={t}
                 isMandatory={false}
-                option={cityModuleList}
+                option={citymoduleList}
                 selected={tenantIdData}
                 optionKey="i18nKey"
                 select={setTypeOfTenantID}
                 uploadMessage={uploadMessage}
-           
+            // disabled={true} // Disable dropdown if there is only one item
+            // defaultValue={citymoduleList[0]} // Set default value if there is only one item
             />
             <CardLabel>{`${t("EDCR_SCRUTINY_NAME_LABEL")} *`}</CardLabel>
             <TextInput
@@ -131,4 +174,4 @@ const RGAEDCRForm = ({ t, config, onSelect, formData, isShowToast, isSubmitBtnDi
     );
 };
 
-export default RGAEDCRForm
+export default RGAEDCRForm;

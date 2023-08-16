@@ -14,5 +14,19 @@ export const EDCRService = {
       params: { tenantId },
       auth: true,
       multipartFormData: true
+    }),
+
+  rgacreate: (data, tenantId) =>
+    Request({
+      url: Urls.edcr.rgacreate,
+      // data: data,
+      multipartData: data,
+      useCache: false,
+      setTimeParam: false,
+      userService: true,
+      method: "POST",
+      params: { tenantId },
+      auth: true,
+      multipartFormData: true
     })
 };

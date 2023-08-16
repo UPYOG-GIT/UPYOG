@@ -1,17 +1,17 @@
 export const newConfig = [
   {
-    head: "Rule Details",
+    head: "ES_NEW_APPLICATION_PROPERTY_ASSESSMENT",
     body: [
       {
         route: "home",
         component: "RGAEDCRForm",
         nextStep: "",
         hideInEmployee: true,
-        key: "RGAScrutinyDetails",
+        key: "ScrutinyDetails",
         texts: {
           headerCaption: "",
-          header: "EDCR_COMMON_APPL_NEW",
-          cardText: "BPA_PROVIDE_REQ_FOR_NEW_BPA",
+          header: "Regularisation Plan Scrutiny",
+          cardText: "Provide the details required for Regularisation Plan Scrutiny",
           submitBarLabel: "EDCR_SCRUTINY_SUBMIT_BUTTON",
           skipText: "EDCR_CLEAR_FORM",
         },

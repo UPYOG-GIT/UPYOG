@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
-import { newConfig as newConfigEDCR } from "../../../config/edcrConfig";
+import { newConfig as newConfigEDCR } from "../../../config/rgaEdcrConfig";
 import { uuidv4 } from "../../../utils";
 // import EDCRAcknowledgement from "./EDCRAcknowledgement";
 
-const CreateEDCR = ({ parentRoute }) => {
+const CreateRGAEDCR = ({ parentRoute }) => {
   const queryClient = useQueryClient();
   const match = useRouteMatch();
   const { t } = useTranslation();
@@ -48,8 +48,8 @@ const CreateEDCR = ({ parentRoute }) => {
     const file = data?.file;
     const tenantId = data?.tenantId?.code;
     const transactionNumber = uuidv4();
-    const appliactionType = "BUILDING_PLAN_SCRUTINY";
-    const applicationSubType = "NEW_CONSTRUCTION";
+    const appliactionType = "REGULARISATION";
+    const applicationSubType = "REGULARISATION";
 
     edcrRequest = { ...edcrRequest, tenantId };
     edcrRequest = { ...edcrRequest, transactionNumber };
@@ -61,13 +61,13 @@ const CreateEDCR = ({ parentRoute }) => {
     bodyFormData.append("edcrRequest", JSON.stringify(edcrRequest));
     bodyFormData.append("planFile", file);
 
-    Digit.EDCRService.create({ data: bodyFormData }, tenantId)
+    Digit.EDCRService.rgacreate({ data: bodyFormData }, tenantId)
       .then((result, err) => {
         setIsSubmitBtnDisable(false);
         if (result?.data?.edcrDetail) {
           setParams(result?.data?.edcrDetail);
           history.replace(
-            `/digit-ui/citizen/obps/edcrscrutiny/apply/acknowledgement`, ///${result?.data?.edcrDetail?.[0]?.edcrNumber}
+            `/digit-ui/citizen/obps/rga/edcrscrutiny/apply/acknowledgement`, ///${result?.data?.edcrDetail?.[0]?.edcrNumber}
             { data: result?.data?.edcrDetail }
           );
         }
@@ -93,11 +93,12 @@ const CreateEDCR = ({ parentRoute }) => {
   });
   config.indexRoute = "home";
 
-  const EDCRAcknowledgement = Digit?.ComponentRegistryService?.getComponent('EDCRAcknowledgement') ;
-
+  const EDCRAcknowledgement = Digit?.ComponentRegistryService?.getComponent('RGAEDCRAcknowledgement') ;
+  // console.log("config: "+JSON.stringify(config));
   return (
     <Switch>
       {config.map((routeObj, index) => {
+
         const { component, texts, inputs, key } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
@@ -116,4 +117,4 @@ const CreateEDCR = ({ parentRoute }) => {
   );
 };
 
-export default CreateEDCR;
+export default CreateRGAEDCR;

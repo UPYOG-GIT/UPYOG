@@ -8,6 +8,7 @@ import get from "lodash/get";
 import orderBy from "lodash/orderBy";
 import { getBusinessServices, convertDateToEpoch, downloadPdf, printPdf } from "../../../utils";
 import cloneDeep from "lodash/cloneDeep";
+import Urls from "../../../../../../libraries/src/services/atoms/urls";
 
 const BpaApplicationDetail = () => {
 
@@ -76,13 +77,40 @@ const BpaApplicationDetail = () => {
     }
   },[bpaDocs,data])
 
-  async function getRecieptSearch({tenantId, payments, ...params}) {
-    let response = { filestoreIds: [payments?.fileStoreId] };
-    //if (!payments?.fileStoreId) {
-      response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, "consolidatedreceipt");
-    //}
-    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-    window.open(fileStore[response?.filestoreIds[0]], "_blank");
+  // async function getRecieptSearch({tenantId, payments, ...params}) {
+  //   let response = { filestoreIds: [payments?.fileStoreId] };
+  //   //if (!payments?.fileStoreId) {
+  //     response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, "consolidatedreceipt");
+  //   //}
+  //   const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+  //   window.open(fileStore[response?.filestoreIds[0]], "_blank");
+  // }
+
+  async function getRecieptSearch({ tenantId, payments, ...params }) {
+   
+
+    const response = await fetch(Urls.payment.get_receipt, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ Payments: [{ ...payments }] })
+    });
+
+    if (!response.ok) {
+      console.log('Error: Failed to download PDF file');
+      return;
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'paymentReceipt.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   }
 
   async function getPermitOccupancyOrderSearch({tenantId},order,mode="download") {
@@ -92,14 +120,14 @@ const BpaApplicationDetail = () => {
     let response = await Digit.PaymentService.generatePdf(tenantId, { Bpa: [requestData] }, order);
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
-    requestData["applicationType"] = data?.applicationData?.additionalDetails?.applicationType;
-    let edcrResponse = await Digit.OBPSService.edcr_report_download({BPA: {...requestData}});
-    const responseStatus = parseInt(edcrResponse.status, 10);
-    if (responseStatus === 201 || responseStatus === 200) {
-      mode == "print"
-        ? printPdf(new Blob([edcrResponse.data], { type: "application/pdf" }))
-        : downloadPdf(new Blob([edcrResponse.data], { type: "application/pdf" }), `edcrReport.pdf`);
-    }
+    // requestData["applicationType"] = data?.applicationData?.additionalDetails?.applicationType;
+    // let edcrResponse = await Digit.OBPSService.edcr_report_download({BPA: {...requestData}});
+    // const responseStatus = parseInt(edcrResponse.status, 10);
+    // if (responseStatus === 201 || responseStatus === 200) {
+    //   mode == "print"
+    //     ? printPdf(new Blob([edcrResponse.data], { type: "application/pdf" }))
+    //     : downloadPdf(new Blob([edcrResponse.data], { type: "application/pdf" }), `edcrReport.pdf`);
+    // }
   }
 
   async function getRevocationPDFSearch({tenantId,...params}) {

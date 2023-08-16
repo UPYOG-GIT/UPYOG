@@ -151,6 +151,7 @@ const Urls = {
 
   edcr: {
     create: "/edcr/rest/dcr/scrutinize",
+    rgacreate: "/edcr/rest/dcr/rgascrutinize",
   },
 
   events: {

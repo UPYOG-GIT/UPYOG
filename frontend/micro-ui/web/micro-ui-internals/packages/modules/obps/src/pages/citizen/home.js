@@ -296,6 +296,17 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
         links: bpaLinks,
         styles: { minWidth: "90%", minHeight: "90%" }
       },
+      {
+        title: t("eDCR Regularisation Scrutiny"),
+        Icon: <EDCRIcon className="fill-path-primary-main" />,
+        links: [
+          {
+            link: `rga/edcrscrutiny/apply`,
+            i18nKey: t("Plan scrutiny for regularisation"),
+          },
+        ],
+        styles: { minWidth: "90%", minHeight: "90%" }
+      },
     ];
 
     const homeScreen = (
