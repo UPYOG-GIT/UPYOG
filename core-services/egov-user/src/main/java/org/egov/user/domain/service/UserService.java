@@ -218,6 +218,8 @@ public class UserService {
 	 * @return
 	 */
 	public User createUser(User user, RequestInfo requestInfo) {
+		log.info("Inside createUser method Guardiian------ " + user.getGuardian());
+		log.info("Inside createUser method  Guardian Relation------ " + user.getGuardianRelation());
 		user.setUuid(UUID.randomUUID().toString());
 		user.validateNewUser(createUserValidateName);
 		conditionallyValidateOtp(user);
