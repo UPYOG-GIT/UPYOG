@@ -151,14 +151,14 @@
 			  <configuration>
 			    <jsonLibrary>jackson2</jsonLibrary>
 			    <classes>
-			      <class>org.egov.rga.calculator.web.models.CalculationReq</class>
-			      <class>org.egov.rga.calculator.web.models.CalculationRes</class>
+			      <class>org.entit.rga.calculator.web.models.CalculationReq</class>
+			      <class>org.entit.rga.calculator.web.models.CalculationRes</class>
 			    </classes>
 			    <customTypeMappings>
 			      <customTypeMapping>org.egov.common.contract.request.User:User</customTypeMapping>
 			      <customTypeMapping>org.egov.common.contract.request.RequestInfo:RequestInfo</customTypeMapping>
 			      <customTypeMapping>org.egov.common.contract.response.ResponseInfo:ResponseInfo</customTypeMapping>
-			      <customTypeMapping>org.egov.rga.calculator.web.models.Document:Document</customTypeMapping>
+			      <customTypeMapping>org.entit.rga.calculator.web.models.Document:Document</customTypeMapping>
 			    </customTypeMappings>
 			    <namespace>Digit</namespace>
 			    <debug>true</debug>
