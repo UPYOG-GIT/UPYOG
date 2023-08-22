@@ -539,7 +539,7 @@ public class BPARepository {
 				+ "    (Initiated + CITIZEN_APPROVAL_INPROCESS + Approved + Rejected + Reassign + Inprogress + appl_fee + sanc_fee_pending + department_inprocess) AS Total\n"
 				+ "FROM (\n" + "    SELECT\n"
 				+ "        COUNT(CASE WHEN bp.status = 'INITIATED' THEN 1 END) AS Initiated,\n"
-				+ "        COUNT(CASE WHEN bp.status = 'CITIZEN_APPROVAL_INPROCESS' THEN 1 END) AS CITIZEN_APPROVAL_INPROCESS,\n"
+				+ "        COUNT(CASE WHEN bp.status = 'CITIZEN_APPROVAL_INPROCESS' and bp.status = 'CITIZEN_ACTION_PENDING_AT_DOC_VERIF' THEN 1 END) AS CITIZEN_APPROVAL_INPROCESS,\n"
 				+ "        COUNT(CASE WHEN bp.status = 'APPROVED' THEN 1 END) AS Approved,\n"
 				+ "        COUNT(CASE WHEN bp.status = 'REJECTED' THEN 1 END) AS Rejected,\n"
 				+ "        COUNT(CASE WHEN bp.status = 'REASSIGN' THEN 1 END) AS Reassign,\n"
