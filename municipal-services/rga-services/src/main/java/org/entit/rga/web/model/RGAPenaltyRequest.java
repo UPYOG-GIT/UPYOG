@@ -36,6 +36,6 @@ public class RGAPenaltyRequest {
 	private String occupancyType = null;
 
 	@JsonProperty("multipyPenalty")
-	private String multipyPenalty = null;
+	private double multipyPenalty;
 
 }
