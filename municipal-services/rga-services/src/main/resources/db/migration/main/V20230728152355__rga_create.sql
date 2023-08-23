@@ -62,6 +62,36 @@ CREATE TABLE IF NOT EXISTS eg_rga_auditdetails
 );
 
 
+CREATE TABLE IF NOT EXISTS eg_rga_penalty
+(
+    id SERIAL PRIMARY KEY,
+    ulb_tenantid character varying(56) NOT NULL,
+    from_val numeric(10,2) NOT NULL,
+    to_val numeric(10,2),
+    occupancy_type character varying(56) NOT NULL,
+    multipy_penalty numeric(10,2),
+    createdby character varying(128) NOT NULL,
+    createddate timestamp without time zone NOT NULL,
+    rate numeric(10,2)
+);
+
+
+CREATE TABLE IF NOT EXISTS eg_rga_slab_master
+(
+    id SERIAL PRIMARY KEY,
+    ulb_tenantid character varying(56) NOT NULL,
+    from_val numeric(10,2) NOT NULL,
+    to_val numeric(10,2),
+    rate numeric(10,2),
+    occupancy_type character varying(56) NOT NULL,
+    p_category integer,
+    b_category integer,
+    s_category integer,
+    createdby character varying(128) NOT NULL,
+    createddate timestamp without time zone NOT NULL
+   
+);
+
 CREATE SEQUENCE IF NOT EXISTS seq_eg_rg_apn
     INCREMENT 1
     START 1

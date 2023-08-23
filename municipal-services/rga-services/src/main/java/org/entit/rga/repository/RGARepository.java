@@ -179,10 +179,9 @@ public class RGARepository {
 				+ "values (?,?,?,?,?,?,?,'" + date + "')";
 		int insertResult = jdbcTemplate.update(insertQuery, rgaPenaltyRequest.getTenantId(),
 				rgaPenaltyRequest.getFromVal(), rgaPenaltyRequest.getToVal(), rgaPenaltyRequest.getOccupancyType(),
-				rgaPenaltyRequest.getMultipyPenalty(), rgaPenaltyRequest.getRate(), rgaPenaltyRequest.getCreatedBy()); // int
-																														// insertResult
-																														// =
-		jdbcTemplate.update(insertQuery);
+				rgaPenaltyRequest.getMultipyPenalty(), rgaPenaltyRequest.getRate(), rgaPenaltyRequest.getCreatedBy());
+		
+//		int insertResult = jdbcTemplate.update(insertQuery);
 
 		log.info("BPARepository.createRGAPenalty: " + insertResult + " data inserted into eg_rga_penalty table");
 		return insertResult;
