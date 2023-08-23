@@ -37,5 +37,8 @@ public class RGAPenaltyRequest {
 
 	@JsonProperty("multipyPenalty")
 	private double multipyPenalty;
+	
+	@JsonProperty("rate")
+	private double rate;
 
 }

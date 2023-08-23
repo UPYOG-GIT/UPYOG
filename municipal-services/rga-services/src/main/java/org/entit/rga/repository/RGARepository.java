@@ -141,8 +141,6 @@ public class RGARepository {
 	 * jdbcTemplate.queryForList(query, new Object[] { tenantId }); }
 	 */
 
-	
-
 	public int createRGASlabMaster(RGASlabMasterRequest rgaSlabMasterRequest) {
 
 		LocalDateTime date = LocalDateTime.now();
@@ -177,11 +175,13 @@ public class RGARepository {
 	public int createRGAPenalty(RGAPenaltyRequest rgaPenaltyRequest) {
 
 		LocalDateTime date = LocalDateTime.now();
-		String insertQuery = "insert into eg_rga_penalty(ulb_tenantid,from_val,to_val,occupancy_type,multipy_penalty,createdby,createddate) "
-				+ "values (?,?,?,?,?,?,'" + date + "')";
+		String insertQuery = "insert into eg_rga_penalty(ulb_tenantid,from_val,to_val,occupancy_type,multipy_penalty,rate,createdby,createddate) "
+				+ "values (?,?,?,?,?,?,?,'" + date + "')";
 		int insertResult = jdbcTemplate.update(insertQuery, rgaPenaltyRequest.getTenantId(),
 				rgaPenaltyRequest.getFromVal(), rgaPenaltyRequest.getToVal(), rgaPenaltyRequest.getOccupancyType(),
-				rgaPenaltyRequest.getMultipyPenalty(), rgaPenaltyRequest.getCreatedBy()); // int insertResult =
+				rgaPenaltyRequest.getMultipyPenalty(), rgaPenaltyRequest.getRate(), rgaPenaltyRequest.getCreatedBy()); // int
+																														// insertResult
+																														// =
 		jdbcTemplate.update(insertQuery);
 
 		log.info("BPARepository.createRGAPenalty: " + insertResult + " data inserted into eg_rga_penalty table");
@@ -189,11 +189,11 @@ public class RGARepository {
 	}
 
 	public List<Map<String, Object>> getRGAPenaltyByTenantId(String tenantId) {
-		String query = "SELECT id, from_val, to_val, occupancy_type," + " multipy_penalty "
+		String query = "SELECT id, from_val, to_val, occupancy_type, multipy_penalty, rate "
 				+ " FROM eg_rga_penalty WHERE ulb_tenantid=?";
 		return jdbcTemplate.queryForList(query, new Object[] { tenantId });
 	}
-	
+
 	public int deleteRGAPenaltyById(List<Integer> ids) {
 		String id = ids.toString().replace("[", "").replace("]", "");
 		String deleteQuery = "DELETE FROM eg_rga_penalty WHERE id IN (" + id + ")";
@@ -202,5 +202,5 @@ public class RGARepository {
 				+ " data deleted from eg_rga_penalty table of id(s) : " + id);
 		return deleteResult;
 	}
-	
+
 }
