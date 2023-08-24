@@ -325,6 +325,6 @@ public class RGAService {
 	}
 	
 	public int deleteRGAPenaltyById(List<Integer> ids) {
-		return repository.deleteRGASlabMasterById(ids);
+		return repository.deleteRGAPenaltyById(ids);
 	}
 }
