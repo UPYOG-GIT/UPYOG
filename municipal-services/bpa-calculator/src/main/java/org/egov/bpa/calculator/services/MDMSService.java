@@ -238,13 +238,15 @@ public class MDMSService {
 						log.info("nameOcc=====" + nameOcc);
 
 						if (nameOcc.equals("Residential")) {
-							ResArea += (Double) getOccupanciesMap.get("floorArea");
+							ResArea += Double.valueOf(getOccupanciesMap.get("floorArea").toString());
 							log.info("ResArea=====" + ResArea);
 						} else if (nameOcc.equals("Mercantile / Commercial")) {
-							CommArea += (Double) getOccupanciesMap.get("floorArea");
+//							CommArea += (Double) getOccupanciesMap.get("floorArea");
+							CommArea += Double.valueOf(getOccupanciesMap.get("floorArea").toString());
 							log.info("CommArea=====" + CommArea);
 						} else if (nameOcc.equals("Industrial")) {
-							IndArea += (Double) getOccupanciesMap.get("floorArea");
+//							IndArea += (Double) getOccupanciesMap.get("floorArea");
+							IndArea += Double.valueOf(getOccupanciesMap.get("floorArea").toString());
 							log.info("IndArea=====" + IndArea);
 						} else {
 							throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR,
