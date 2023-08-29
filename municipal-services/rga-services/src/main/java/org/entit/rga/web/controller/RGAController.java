@@ -18,11 +18,14 @@ import org.entit.rga.web.model.RGAPenaltyRequest;
 import org.entit.rga.web.model.RGAPenaltyRequestWrapper;
 import org.entit.rga.web.model.RGARequest;
 import org.entit.rga.web.model.RGAResponse;
+import org.entit.rga.web.model.RGASearchCriteria;
 import org.entit.rga.web.model.RGASlabMasterRequest;
 import org.entit.rga.web.model.RGASlabMasterRequestWrapper;
+import org.entit.rga.web.model.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,6 +76,19 @@ public class RGAController {
 //		log.info("Response Approval number----" + response.getRegularisation().get(0).getApprovalNo());
 		return new ResponseEntity<>(response, HttpStatus.OK);
 
+	}
+	
+	@PostMapping(value = "/_search")
+	public ResponseEntity<RGAResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+			@Valid @ModelAttribute RGASearchCriteria criteria) {
+
+		List<RGA> bpas = rgaService.search(criteria, requestInfoWrapper.getRequestInfo());
+		int count = rgaService.getBPACount(criteria, requestInfoWrapper.getRequestInfo());
+		RGAResponse response = RGAResponse
+				.builder().RGA(bpas).responseInfo(responseInfoFactory
+						.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
+				.count(count).build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	/*

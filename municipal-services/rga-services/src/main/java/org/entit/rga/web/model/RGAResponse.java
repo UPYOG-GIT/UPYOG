@@ -24,6 +24,9 @@ public class RGAResponse {
 
 	@JsonProperty("RGA")
 	private List<RGA> RGA;
+	
+	@JsonProperty("Count")
+	  private int count;
 
 	public RGAResponse responseInfo(ResponseInfo responseInfo) {
 		this.responseInfo = responseInfo;

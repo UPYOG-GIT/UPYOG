@@ -1,11 +1,14 @@
 package org.entit.rga.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
 import org.entit.rga.config.RGAConfiguration;
 import org.entit.rga.repository.RGARepository;
@@ -19,6 +22,10 @@ import org.entit.rga.web.model.RGAPenaltyRequest;
 import org.entit.rga.web.model.RGARequest;
 import org.entit.rga.web.model.RGASearchCriteria;
 import org.entit.rga.web.model.RGASlabMasterRequest;
+import org.entit.rga.web.model.landInfo.LandInfo;
+import org.entit.rga.web.model.landInfo.LandSearchCriteria;
+import org.entit.rga.web.model.user.UserDetailResponse;
+import org.entit.rga.web.model.user.UserSearchRequest;
 import org.entit.rga.web.model.workflow.BusinessService;
 import org.entit.rga.workflow.ActionValidator;
 import org.entit.rga.workflow.WorkflowIntegrator;
@@ -50,7 +57,7 @@ public class RGAService {
 	private ActionValidator actionValidator;
 
 	@Autowired
-	private RGAValidator rGAValidator;
+	private RGAValidator rgaValidator;
 
 	@Autowired
 	private RGAUtil util;
@@ -92,7 +99,7 @@ public class RGAService {
 		Map<String, String> values = edcrService.validateEdcrPlan(rgaRequest, mdmsData);
 		String applicationType = values.get(RGAConstants.APPLICATIONTYPE);
 //		this.validateCreateOC(applicationType, values, requestInfo, regularisationRequest);
-		rGAValidator.validateCreate(rgaRequest, mdmsData, values);
+		rgaValidator.validateCreate(rgaRequest, mdmsData, values);
 //		if (!applicationType.equalsIgnoreCase(RGAConstants.BUILDING_PLAN_OC)) {
 		landService.addLandInfoToBPA(rgaRequest);
 //		}
@@ -174,7 +181,7 @@ public class RGAService {
 		rgaRequest.getRegularisation().setAuditDetails(searchResult.get(0).getAuditDetails());
 
 //		nocService.manageOfflineNocs(regularisationRequest, mdmsData);
-		rGAValidator.validatePreEnrichData(rgaRequest, mdmsData);
+		rgaValidator.validatePreEnrichData(rgaRequest, mdmsData);
 		enrichmentService.enrichBPAUpdateRequest(rgaRequest, businessService);
 
 		this.handleRejectSendBackActions(applicationType, rgaRequest, businessService, searchResult, mdmsData,
@@ -256,6 +263,201 @@ public class RGAService {
 		return rgaRequest.getRegularisation();
 
 	}
+	
+	public List<RGA> search(RGASearchCriteria criteria, RequestInfo requestInfo) {
+		List<RGA> rgas = new LinkedList<>();
+		log.info("criteria.getTenantId():______====" + criteria.getTenantId());
+		rgaValidator.validateSearch(requestInfo, criteria);
+		LandSearchCriteria landcriteria = new LandSearchCriteria();
+		landcriteria.setTenantId(criteria.getTenantId());
+		landcriteria.setLocality(criteria.getLocality());
+		List<String> edcrNos = null;
+		if (criteria.getMobileNumber() != null) {
+			rgas = this.getBPAFromMobileNumber(criteria, landcriteria, requestInfo);
+		} else {
+			List<String> roles = new ArrayList<>();
+			for (Role role : requestInfo.getUserInfo().getRoles()) {
+				roles.add(role.getCode());
+			}
+			if ((criteria.tenantIdOnly() || criteria.isEmpty()) && roles.contains(RGAConstants.CITIZEN)) {
+				log.info("loading data of created and by me");
+				rgas = this.getBPACreatedForByMe(criteria, requestInfo, landcriteria, edcrNos);
+				log.info("no of bpas retuning by the search query" + rgas.size());
+			} else {
+				rgas = getBPAFromCriteria(criteria, requestInfo, edcrNos);
+				ArrayList<String> landIds = new ArrayList<>();
+				if (!rgas.isEmpty()) {
+					for (int i = 0; i < rgas.size(); i++) {
+						landIds.add(rgas.get(i).getLandId());
+					}
+					landcriteria.setIds(landIds);
+					landcriteria.setTenantId(rgas.get(0).getTenantId());
+					log.info("Call with tenantId to Land::" + landcriteria.getTenantId());
+					ArrayList<LandInfo> landInfos = landService.searchLandInfoToBPA(requestInfo, landcriteria);
+
+					this.populateLandToBPA(rgas, landInfos, requestInfo);
+				}
+			}
+		}
+		return rgas;
+	}
+	
+	private List<RGA> getBPACreatedForByMe(RGASearchCriteria criteria, RequestInfo requestInfo,
+			LandSearchCriteria landcriteria, List<String> edcrNos) {
+		List<RGA> rgas = null;
+		UserSearchRequest userSearchRequest = new UserSearchRequest();
+		if (criteria.getTenantId() != null) {
+			userSearchRequest.setTenantId(criteria.getTenantId());
+		}
+		List<String> uuids = new ArrayList<>();
+		if (requestInfo.getUserInfo() != null && !StringUtils.isEmpty(requestInfo.getUserInfo().getUuid())) {
+			uuids.add(requestInfo.getUserInfo().getUuid());
+			criteria.setOwnerIds(uuids);
+			criteria.setCreatedBy(uuids);
+		}
+		log.info("loading data of created and by me" + uuids.toString());
+		UserDetailResponse userInfo = userService.getUser(criteria, requestInfo);
+		log.info("userInfo.getUser().size(): " + userInfo.getUser().size());
+		log.info("userInfo: " + userInfo.getUser().toString());
+		if (userInfo != null) {
+			landcriteria.setMobileNumber(userInfo.getUser().get(0).getMobileNumber());
+		}
+		log.info("Call with multiple to Land::" + landcriteria.getTenantId() + landcriteria.getMobileNumber());
+		ArrayList<LandInfo> landInfos = landService.searchLandInfoToBPA(requestInfo, landcriteria);
+		ArrayList<String> landIds = new ArrayList<>();
+		if (!landInfos.isEmpty()) {
+			landInfos.forEach(land -> landIds.add(land.getId()));
+			criteria.setLandId(landIds);
+		}
+
+		rgas = getBPAFromCriteria(criteria, requestInfo, edcrNos);
+		log.info("no of bpas queried" + rgas.size());
+		this.populateLandToBPA(rgas, landInfos, requestInfo);
+		return rgas;
+	}
+	
+	private void populateLandToBPA(List<RGA> rgas, List<LandInfo> landInfos, RequestInfo requestInfo) {
+		for (int i = 0; i < rgas.size(); i++) {
+			for (int j = 0; j < landInfos.size(); j++) {
+				if (landInfos.get(j).getId().equalsIgnoreCase(rgas.get(i).getLandId())) {
+					rgas.get(i).setLandInfo(landInfos.get(j));
+				}
+			}
+			if (rgas.get(i).getLandId() != null && rgas.get(i).getLandInfo() == null) {
+				LandSearchCriteria missingLandcriteria = new LandSearchCriteria();
+				List<String> missingLandIds = new ArrayList<>();
+				missingLandIds.add(rgas.get(i).getLandId());
+				missingLandcriteria.setTenantId(rgas.get(0).getTenantId());
+				missingLandcriteria.setIds(missingLandIds);
+				log.info("Call with land ids to Land::" + missingLandcriteria.getTenantId()
+						+ missingLandcriteria.getIds());
+				List<LandInfo> newLandInfo = landService.searchLandInfoToBPA(requestInfo, missingLandcriteria);
+				for (int j = 0; j < newLandInfo.size(); j++) {
+					if (newLandInfo.get(j).getId().equalsIgnoreCase(rgas.get(i).getLandId())) {
+						rgas.get(i).setLandInfo(newLandInfo.get(j));
+					}
+				}
+			}
+		}
+	}
+	
+	private List<RGA> getBPAFromMobileNumber(RGASearchCriteria criteria, LandSearchCriteria landcriteria,
+			RequestInfo requestInfo) {
+		List<RGA> rgas = null;
+		log.info("Call with mobile number to Land::" + criteria.getMobileNumber());
+		landcriteria.setMobileNumber(criteria.getMobileNumber());
+		ArrayList<LandInfo> landInfo = landService.searchLandInfoToBPA(requestInfo, landcriteria);
+		ArrayList<String> landId = new ArrayList<>();
+		if (!landInfo.isEmpty()) {
+			landInfo.forEach(land -> landId.add(land.getId()));
+			criteria.setLandId(landId);
+		}
+		List<String> uuids = new ArrayList<>();
+		if (requestInfo.getUserInfo() != null && !StringUtils.isEmpty(requestInfo.getUserInfo().getUuid())) {
+			uuids.add(requestInfo.getUserInfo().getUuid());
+			criteria.setCreatedBy(uuids);
+		}
+		rgas = getBPAFromLandId(criteria, requestInfo, null);
+		if (!landInfo.isEmpty()) {
+			for (int i = 0; i < rgas.size(); i++) {
+				for (int j = 0; j < landInfo.size(); j++) {
+					if (landInfo.get(j).getId().equalsIgnoreCase(rgas.get(i).getLandId())) {
+						rgas.get(i).setLandInfo(landInfo.get(j));
+					}
+				}
+			}
+		}
+		return rgas;
+	}
+	
+	private List<RGA> getBPAFromLandId(RGASearchCriteria criteria, RequestInfo requestInfo, List<String> edcrNos) {
+		List<RGA> bpa = new LinkedList<>();
+		bpa = repository.getRGAData(criteria, edcrNos);
+		if (bpa.size() == 0) {
+			return Collections.emptyList();
+		}
+		return bpa;
+	}
+	
+	public List<RGA> getBPAFromCriteria(RGASearchCriteria criteria, RequestInfo requestInfo, List<String> edcrNos) {
+		List<RGA> bpa = repository.getRGAData(criteria, edcrNos);
+		if (bpa.isEmpty())
+			return Collections.emptyList();
+		return bpa;
+	}
+	
+	public int getBPACount(RGASearchCriteria criteria, RequestInfo requestInfo) {
+
+		LandSearchCriteria landcriteria = new LandSearchCriteria();
+		landcriteria.setTenantId(criteria.getTenantId());
+		landcriteria.setLocality(criteria.getLocality());
+		List<String> edcrNos = null;
+		if (criteria.getMobileNumber() != null) {
+			landcriteria.setMobileNumber(criteria.getMobileNumber());
+			ArrayList<LandInfo> landInfo = landService.searchLandInfoToBPA(requestInfo, landcriteria);
+			ArrayList<String> landId = new ArrayList<>();
+			if (!landInfo.isEmpty()) {
+				landInfo.forEach(land -> landId.add(land.getId()));
+				criteria.setLandId(landId);
+			}
+		} else {
+			List<String> roles = new ArrayList<>();
+			for (Role role : requestInfo.getUserInfo().getRoles()) {
+				roles.add(role.getCode());
+			}
+			if ((criteria.tenantIdOnly() || criteria.isEmpty()) && roles.contains(RGAConstants.CITIZEN)) {
+				UserSearchRequest userSearchRequest = new UserSearchRequest();
+				if (criteria.getTenantId() != null) {
+					userSearchRequest.setTenantId(criteria.getTenantId());
+				}
+				List<String> uuids = new ArrayList<>();
+				if (requestInfo.getUserInfo() != null && !StringUtils.isEmpty(requestInfo.getUserInfo().getUuid())) {
+					uuids.add(requestInfo.getUserInfo().getUuid());
+					criteria.setOwnerIds(uuids);
+					criteria.setCreatedBy(uuids);
+				}
+				UserDetailResponse userInfo = userService.getUser(criteria, requestInfo);
+				if (userInfo != null) {
+					landcriteria.setMobileNumber(userInfo.getUser().get(0).getMobileNumber());
+				}
+				ArrayList<LandInfo> landInfos = landService.searchLandInfoToBPA(requestInfo, landcriteria);
+				ArrayList<String> landIds = new ArrayList<>();
+				if (!landInfos.isEmpty()) {
+					landInfos.forEach(land -> landIds.add(land.getId()));
+					criteria.setLandId(landIds);
+				}
+			}
+		}
+		return repository.getBPACount(criteria, edcrNos);
+
+	}
+	
+//	public List<RGA> getBPADataFromCriteria(RGASearchCriteria criteria, RequestInfo requestInfo, List<String> edcrNos) {
+//		List<RGA> bpa = repository.getApplicationData(criteria);
+//		if (bpa.isEmpty())
+//			return Collections.emptyList();
+//		return bpa;
+//	}
 
 	public List<RGA> getRegularisationWithRegularisationId(RGARequest request) {
 		RGASearchCriteria criteria = new RGASearchCriteria();
@@ -263,7 +465,7 @@ public class RGAService {
 		ids.add(request.getRegularisation().getId());
 		criteria.setTenantId(request.getRegularisation().getTenantId());
 		criteria.setIds(ids);
-		List<RGA> bpa = repository.getRegularisationData(criteria, null);
+		List<RGA> bpa = repository.getRGAData(criteria, null);
 		return bpa;
 	}
 
@@ -285,12 +487,12 @@ public class RGAService {
 
 			if (!rGA.getWorkflow().getAction().equalsIgnoreCase(RGAConstants.ACTION_SENDBACKTOCITIZEN)) {
 				actionValidator.validateUpdateRequest(rGARequest, businessService);
-				rGAValidator.validateUpdate(rGARequest, searchResult, mdmsData,
+				rgaValidator.validateUpdate(rGARequest, searchResult, mdmsData,
 						workflowService.getCurrentState(rGA.getStatus(), businessService), edcrResponse);
 //				if (!applicationType.equalsIgnoreCase(RegularisationConstants.BUILDING_PLAN_OC)) {
 //					landService.updateLandInfo(regularisationRequest);
 //				}
-				rGAValidator.validateCheckList(mdmsData, rGARequest,
+				rgaValidator.validateCheckList(mdmsData, rGARequest,
 						workflowService.getCurrentState(rGA.getStatus(), businessService));
 			}
 		}

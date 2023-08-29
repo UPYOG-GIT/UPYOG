@@ -70,7 +70,7 @@ public class EDCRService {
 
 		RGASearchCriteria criteria = new RGASearchCriteria();
 		criteria.setEdcrNumber(rGA.getEdcrNumber());
-		List<RGA> rGAs = rGARepository.getRegularisationData(criteria, null);
+		List<RGA> rGAs = rGARepository.getRGAData(criteria, null);
 		if (rGAs.size() > 0) {
 			for (int i = 0; i < rGAs.size(); i++) {
 				if (!rGAs.get(i).getStatus().equalsIgnoreCase(RGAConstants.STATUS_REJECTED)

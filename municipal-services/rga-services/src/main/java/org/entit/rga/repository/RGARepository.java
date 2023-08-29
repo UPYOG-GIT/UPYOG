@@ -83,7 +83,7 @@ public class RGARepository {
 	 * @param criteria The BPA Search criteria
 	 * @return List of BPA from search
 	 */
-	public List<RGA> getRegularisationData(RGASearchCriteria criteria, List<String> edcrNos) {
+	public List<RGA> getRGAData(RGASearchCriteria criteria, List<String> edcrNos) {
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = queryBuilder.getRegularisationSearchQuery(criteria, preparedStmtList, edcrNos, false);
 		List<RGA> BPAData = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);

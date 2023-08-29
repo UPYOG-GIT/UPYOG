@@ -80,7 +80,7 @@ public class PaymentUpdateService {
 					searchCriteria.setTenantId(tenantId);
 //					List<String> codes = Arrays.asList(paymentDetail.getBill().getConsumerCode());
 					searchCriteria.setApplicationNo(paymentDetail.getBill().getConsumerCode());
-					List<RGA> rGAs = repository.getRegularisationData(searchCriteria, null);
+					List<RGA> rGAs = repository.getRGAData(searchCriteria, null);
 					if (CollectionUtils.isEmpty(rGAs)) {
 						throw new CustomException(RGAErrorConstants.INVALID_RECEIPT,
 								"No Building Plan Application found for the comsumerCode "
