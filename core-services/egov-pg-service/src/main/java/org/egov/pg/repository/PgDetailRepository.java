@@ -2,6 +2,7 @@ package org.egov.pg.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.config.AppProperties;
@@ -11,6 +12,7 @@ import org.egov.pg.models.PgDetailResponse;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -24,6 +26,9 @@ public class PgDetailRepository {
 
     private AppProperties appProperties;
     private RestTemplate restTemplate;
+    
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     PgDetailRepository(RestTemplate restTemplate, AppProperties appProperties) {
@@ -63,5 +68,13 @@ public class PgDetailRepository {
                     "occurred");
         }
     }
+    
+    public Map<String, Object> getCcavenueDetails(String tenantId) {
+		String sqlQuery = "SELECT merchant_id,access_code,working_key FROM eg_pg_ccavenue_details WHERE tenant_id='"
+				+ tenantId + "'";
+		log.info("sqlQuery: "+sqlQuery);
+//		return jdbcTemplate.queryForList(sql, new Object[] { tenantId });
+		return jdbcTemplate.queryForMap(sqlQuery);
+	}
 
 }

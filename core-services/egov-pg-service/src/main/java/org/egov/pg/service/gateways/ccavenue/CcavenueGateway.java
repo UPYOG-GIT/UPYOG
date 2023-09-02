@@ -5,7 +5,6 @@ import static java.util.Objects.isNull;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -19,34 +18,27 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.pg.models.Transaction;
-import org.egov.pg.repository.TransactionRepository;
+import org.egov.pg.repository.PgDetailRepository;
 import org.egov.pg.service.Gateway;
 import org.egov.pg.service.TransactionService;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -55,9 +47,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CcavenueGateway implements Gateway {
 
-	@Autowired
+//	@Autowired
 	private TransactionService transactionService;
-	
+
+//	@Autowired
+//	private TransactionsApiController transactionsApiController;
+
 	private final String GATEWAY_NAME = "CCAVENUE";
 	private String ACCESS_CODE;
 //	private final String ACCESS_CODE;
@@ -108,12 +103,14 @@ public class CcavenueGateway implements Gateway {
 	private static final String SEPERATOR = "|";
 	private String TX_DATE_FORMAT;
 	private final RequestInfo requestInfo;
-//	private PgDetailRepository pgDetailRepository;
+	private PgDetailRepository pgDetailRepository;
 
 	@Autowired
-	public CcavenueGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper) {
+	public CcavenueGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper,
+			PgDetailRepository pgDetailRepository) {
 		this.restTemplate = restTemplate;
 		this.objectMapper = objectMapper;
+//		this.transactionService = transactionService;
 		this.ACTIVE = Boolean.valueOf(environment.getRequiredProperty("ccavenue.active"));
 //		this.ACCESS_CODE = environment.getRequiredProperty("ccavenue.access.code");
 //		this.WORKING_KEY = environment.getRequiredProperty("ccavenue.working.key");
@@ -138,7 +135,7 @@ public class CcavenueGateway implements Gateway {
 				.build();
 
 		requestInfo = new RequestInfo("", "", 0L, "", "", "", "", "", "", userInfo);
-//		this.pgDetailRepository = pgDetailRepository;
+		this.pgDetailRepository = pgDetailRepository;
 	}
 
 	@Override
@@ -535,11 +532,14 @@ public class CcavenueGateway implements Gateway {
 				}
 				Map<String, String> responseMap = new HashMap<String, String>();
 				if (resp.containsKey("order_status")) {
-					if (resp.get("order_status").equalsIgnoreCase("Unsuccessful")) {
-						responseMap.put("order_status", resp.get("Failure"));
-					}
+//					if (resp.get("order_status").equalsIgnoreCase("Unsuccessful")) {
+//						responseMap.put("order_status", resp.get("Failure"));
+//					}
 					if (resp.get("order_status").equalsIgnoreCase("Shipped")) {
 						responseMap.put("order_status", "Success");
+					} else if (resp.get("order_status").equalsIgnoreCase("Unsuccessful")
+							|| resp.get("order_status").equalsIgnoreCase("Aborted")) {
+						responseMap.put("order_status", "Failure");
 					}
 				}
 
@@ -726,8 +726,10 @@ public class CcavenueGateway implements Gateway {
 //			this.ACCESS_CODE = "AVII29KC44BF31IIFB";
 //			this.WORKING_KEY = "7B3E3FF7D56888F44E1A7D46DF24CF52";
 //		}
-		
-		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId);
+
+//		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId);
+		Map<String, Object> ccAvenueDetails = pgDetailRepository.getCcavenueDetails(tenantId);
+//		Map<String, Object> ccAvenueDetails = transactionsApiController.getCcavenueDetails(tenantId);
 		this.MERCHANT_ID = ccAvenueDetails.get("merchant_id").toString();
 		this.ACCESS_CODE = ccAvenueDetails.get("access_code").toString();
 		this.WORKING_KEY = ccAvenueDetails.get("working_key").toString();
