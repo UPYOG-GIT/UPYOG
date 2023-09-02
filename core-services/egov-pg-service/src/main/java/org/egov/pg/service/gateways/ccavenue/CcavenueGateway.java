@@ -419,7 +419,7 @@ public class CcavenueGateway implements Gateway {
 //		String trackerStatus = resp.get("status");
 		log.info("gatewayStatus: " + gatewayStatus);
 
-		if (gatewayStatus.equalsIgnoreCase("success")) {
+		if (gatewayStatus.equalsIgnoreCase("success") || gatewayStatus.equalsIgnoreCase("Shipped")) {
 			status = Transaction.TxnStatusEnum.SUCCESS;
 			return Transaction.builder().txnId(currentStatus.getTxnId()).txnAmount(resp.get("amount")).txnStatus(status)
 					.gatewayTxnId(resp.get("tracking_id")).gatewayPaymentMode(resp.get("payment_mode"))
