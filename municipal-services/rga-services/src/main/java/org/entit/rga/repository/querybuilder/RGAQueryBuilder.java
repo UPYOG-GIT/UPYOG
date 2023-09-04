@@ -21,9 +21,9 @@ public class RGAQueryBuilder {
     private static final String QUERY = "SELECT rga.*,rgadoc.*,rga.id as bpa_id,rga.tenantid as bpa_tenantId,rga.lastModifiedTime as "
             + "bpa_lastModifiedTime,rga.createdBy as bpa_createdBy,rga.lastModifiedBy as bpa_lastModifiedBy,rga.createdTime as "
             + "bpa_createdTime,rga.additionalDetails,rga.landId as bpa_landId, rgadoc.id as bpa_doc_id, rgadoc.additionalDetails as doc_details, rgadoc.documenttype as bpa_doc_documenttype,rgadoc.filestoreid as bpa_doc_filestore"
-            + " FROM eg_bpa_buildingplan rga"
+            + " FROM eg_rga_buildingplan rga"
             + LEFT_OUTER_JOIN_STRING
-            + "eg_bpa_document rgadoc ON rgadoc.buildingplanid = rga.id";;
+            + "eg_rga_document rgadoc ON rgadoc.buildingplanid = rga.id";;
 
     private final String paginationWrapper = "SELECT * FROM "
             + "(SELECT *, DENSE_RANK() OVER (ORDER BY bpa_lastModifiedTime DESC) offset_ FROM " + "({})"

@@ -44,9 +44,9 @@ public class RGARowMapper implements ResultSetExtractor<List<RGA>> {
 			String id = rs.getString("bpa_id");
 			String applicationNo = rs.getString("applicationno");
 			String approvalNo = rs.getString("approvalNo");
-			RGA currentbpa = buildingMap.get(id);
+			RGA currentrga = buildingMap.get(id);
 			String tenantId = rs.getString("bpa_tenantId");
-			if (currentbpa == null) {
+			if (currentrga == null) {
 				Long lastModifiedTime = rs.getLong("bpa_lastModifiedTime");
 				if (rs.wasNull()) {
 					lastModifiedTime = null;
@@ -61,7 +61,7 @@ public class RGARowMapper implements ResultSetExtractor<List<RGA>> {
 						.lastModifiedTime(lastModifiedTime).build();
 
 
-				currentbpa = RGA.builder()
+				currentrga = RGA.builder()
 						.auditDetails(auditdetails)
 						.applicationNo(applicationNo)
 						.status(rs.getString("status"))
@@ -77,9 +77,9 @@ public class RGARowMapper implements ResultSetExtractor<List<RGA>> {
 						.businessService(rs.getString("businessService"))
 						.build();
 
-				buildingMap.put(id, currentbpa);
+				buildingMap.put(id, currentrga);
 			}
-			addChildrenToProperty(rs, currentbpa);
+			addChildrenToProperty(rs, currentrga);
 
 		}
 
@@ -90,18 +90,18 @@ public class RGARowMapper implements ResultSetExtractor<List<RGA>> {
 	/**
 	 * add child objects to the BPA fro the results set
 	 * @param rs
-	 * @param rGA
+	 * @param rga
 	 * @throws SQLException
 	 */
 	@SuppressWarnings("unused")
-	private void addChildrenToProperty(ResultSet rs, RGA rGA) throws SQLException {
+	private void addChildrenToProperty(ResultSet rs, RGA rga) throws SQLException {
 
-		String tenantId = rGA.getTenantId();
+		String tenantId = rga.getTenantId();
 		AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("bpa_createdBy"))
 				.createdTime(rs.getLong("bpa_createdTime")).lastModifiedBy(rs.getString("bpa_lastModifiedBy"))
 				.lastModifiedTime(rs.getLong("bpa_lastModifiedTime")).build();
 
-		if (rGA == null) {
+		if (rga == null) {
 			PGobject pgObj = (PGobject) rs.getObject("additionaldetail");
 			JsonNode additionalDetail = null;
 			try {
@@ -109,7 +109,7 @@ public class RGARowMapper implements ResultSetExtractor<List<RGA>> {
 			} catch (IOException e) {
 				log.error("Failed to parse additionalDetails",e);
 			}
-			rGA.setAdditionalDetails(additionalDetail);
+			rga.setAdditionalDetails(additionalDetail);
 		}
 
 
@@ -127,7 +127,7 @@ public class RGARowMapper implements ResultSetExtractor<List<RGA>> {
 					.id(documentId)
 					.additionalDetails(docDetails)
 					.documentUid(rs.getString("documentUid")).build();
-			rGA.addDocumentsItem(document);
+			rga.addDocumentsItem(document);
 		}
 	}
 }
