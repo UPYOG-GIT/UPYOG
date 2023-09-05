@@ -162,7 +162,8 @@ public class EDCRService {
 //		List<Double> buildingHeights = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight",
 //				typeRef);
 
-		if (CollectionUtils.isEmpty(edcrStatus) || !edcrStatus.get(0).equalsIgnoreCase("Accepted")) {
+		if (CollectionUtils.isEmpty(edcrStatus) || !edcrStatus.get(0).equalsIgnoreCase("Accepted")
+				|| !edcrStatus.get(0).equalsIgnoreCase("Partial Accepted")) {
 			throw new CustomException(RGAErrorConstants.INVALID_EDCR_NUMBER,
 					"The EDCR Number is not Accepted " + edcrNo);
 		}
@@ -305,7 +306,7 @@ public class EDCRService {
 		}
 		List<String> applicationType = context.read("edcrDetail.*.appliactionType");
 		if (CollectionUtils.isEmpty(applicationType)) {
-			applicationType.add("permit");
+			applicationType.add("REGULARISATION");
 		}
 		List<String> approvalNo = context.read("edcrDetail.*.permitNumber");
 		edcrDetails.put(RGAConstants.SERVICETYPE, serviceType.get(0).toString());
