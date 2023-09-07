@@ -162,8 +162,8 @@ public class EDCRService {
 //		List<Double> buildingHeights = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight",
 //				typeRef);
 
-		if (CollectionUtils.isEmpty(edcrStatus) || !edcrStatus.get(0).equalsIgnoreCase("Accepted")
-				|| !edcrStatus.get(0).equalsIgnoreCase("Partial Accepted")) {
+		if (CollectionUtils.isEmpty(edcrStatus) || (!edcrStatus.get(0).equalsIgnoreCase("Accepted")
+				&& !edcrStatus.get(0).equalsIgnoreCase("Partial Accepted"))) {
 			throw new CustomException(RGAErrorConstants.INVALID_EDCR_NUMBER,
 					"The EDCR Number is not Accepted " + edcrNo);
 		}
