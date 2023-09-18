@@ -307,12 +307,24 @@ public class Parking extends FeatureProcess {
 		OccupancyTypeHelper occupancyTypeHelper = null;
 		for (Block block : pl.getBlocks()) {
 
-//			for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
-//				occupancyTypeHelper=occupancy.getTypeHelper();
-//				break;
-//			}
+			for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
+				occupancyTypeHelper = occupancy.getTypeHelper();
+				break;
+			}
+			
+			if (occupancyTypeHelper == null || (occupancyTypeHelper != null
+					&& (occupancyTypeHelper.getType() == null || occupancyTypeHelper.getSubtype() == null))) {
+				Log.error("Occupany not defined properly");
+				pl.addError(OCCUPANCY, getLocaleMessage(OBJECTNOTDEFINED, OCCUPANCY + " not properly defined"));
+			} else {
+				BigDecimal floorBuiltUpArea = block.getBuilding().getTotalBuitUpArea();
 
-			for (Floor floor : block.getBuilding().getFloors()) {
+				requiredCarParkArea += getRequiredCarParkArea(floorBuiltUpArea, occupancyTypeHelper,
+						coverParkingArea, basementParkingArea, openParkingArea, stiltParkingArea,
+						lowerGroungFloorParkingArea);
+			}
+
+			/*for (Floor floor : block.getBuilding().getFloors()) {
 				coverParkingArea = coverParkingArea.add(floor.getParking().getCoverCars().stream()
 						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
 //				basementParkingArea = basementParkingArea.add(floor.getParking().getBasementCars().stream()
@@ -331,7 +343,7 @@ public class Parking extends FeatureProcess {
 							lowerGroungFloorParkingArea);
 				}
 //				
-			}
+			}*/
 		}
 
 		if (occupancyTypeHelper != null
