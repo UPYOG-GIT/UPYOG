@@ -309,14 +309,15 @@ public class Parking_Dhamtari extends FeatureProcess {
 		OccupancyTypeHelper occupancyTypeHelper = null;
 		for (Block block : pl.getBlocks()) {
 			String blockNumber = block.getNumber();
-//			for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
-//				occupancyTypeHelper=occupancy.getTypeHelper();
-//				break;
-//			}
 
 			for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
 				occupancyTypeHelper = occupancy.getTypeHelper();
 				break;
+			}
+			
+			for (Floor floor : block.getBuilding().getFloors()) {
+				coverParkingArea = coverParkingArea.add(floor.getParking().getCoverCars().stream()
+						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
 			}
 
 			if (occupancyTypeHelper == null || (occupancyTypeHelper != null
