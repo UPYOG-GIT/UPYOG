@@ -170,6 +170,49 @@ export const OBPSService = {
       userService: false,
       userDownload: true,
     }),
+
+    rgaScrutinyDetails: (tenantId, params) =>
+    Request({
+      url: Urls.obps.rgascrutinyDetails,
+      params: { tenantId, ...params },
+      auth: true,
+      userService: true,
+      method: "POST"
+    }),
+
+    RGASearch: (tenantId, params) =>
+    Request({
+      url: Urls.obps.rgaSearch,
+      params: { tenantId, ...params },
+      auth: true,
+      userService: true,
+      method: "POST"
+    }),
+
+    RGACreate: (details, tenantId) =>
+    Request({
+      url: Urls.obps.rgaCreate,
+      data: details,
+      useCache: false,
+      setTimeParam: false,
+      userService: true,
+      method: "POST",
+      params: {},
+      auth: true,
+    }),
+
+    RGAUpdate: (details, tenantId) =>
+    Request({
+      url: Urls.obps.rgaUpdate,
+      data: details,
+      useCache: false,
+      setTimeParam: false,
+      userService: true,
+      method: "POST",
+      params: {},
+      auth: true,
+    }),
+
   LicenseDetails: async (tenantId, params) => {
     const response = await OBPSService.BPAREGSearch(tenantId, {}, params);
     if (!response?.Licenses?.length) {
@@ -560,6 +603,7 @@ export const OBPSService = {
       isCommon: true,
       values: [
         { title: "BPA_BOUNDARY_PLOT_AREA_LABEL", value: `${edcr?.planDetail?.planInformation?.plotArea}`, isNotTranslated: true, isUnit: "BPA_SQ_FT_LABEL" },
+        { title: "Net Plot Area", value: `${edcr?.planDetail?.reportOutput.scrutinyDetails[0].detail[0]["Net Plot Area"]}`, isNotTranslated: true, isUnit: "BPA_SQ_FT_LABEL" },
         { title: "BPA_PLOT_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.plotNo || "NA", isNotTranslated: true },
         { title: "Khasra Number", value: edcr?.planDetail?.planInformation?.khataNo || "NA", isNotTranslated: true },
         { title: "BPA_PATWARI_HALKA_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.patwariHN || "NA", isNotTranslated: true },
