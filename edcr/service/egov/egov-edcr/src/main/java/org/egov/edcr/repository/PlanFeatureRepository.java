@@ -355,8 +355,8 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(RoadWidth.class);
         features.add(pf);
         
-        pf = new PlanFeature(PlotArea.class);
-        features.add(pf);
+//        pf = new PlanFeature(PlotArea.class);
+//        features.add(pf);
         
         pf = new PlanFeature(TerraceUtilityService.class);
         features.add(pf);
