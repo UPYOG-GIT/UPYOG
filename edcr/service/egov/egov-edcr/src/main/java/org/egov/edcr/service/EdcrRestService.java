@@ -1079,23 +1079,23 @@ public class EdcrRestService {
 				String queryString = "WITH deleted_edcr_application_detail AS ( " + "DELETE FROM " + schemaName
 						+ ".edcr_application_detail "
 						+ "WHERE status = 'Not Accepted' AND createddate < NOW() - INTERVAL '7 days' "
-						+ "RETURNING dxffileid " + "), " + "deleted_edcr_application AS ( " + "DELETE FROM "
-						+ schemaName + ".edcr_application "
+						+ "RETURNING dxffileid, reportoutputid, plandetailfilestore, scrutinizeddxffileid " + "), "
+						+ "deleted_edcr_application AS ( " + "DELETE FROM " + schemaName + ".edcr_application "
 						+ "WHERE status = 'Not Accepted' AND createddate < NOW() - INTERVAL '7 days' " + "RETURNING id "
 						+ ") " + "DELETE FROM " + schemaName + ".eg_filestoremap "
-						+ "WHERE id IN (SELECT dxffileid FROM deleted_edcr_application_detail)";
+						+ "WHERE id IN (SELECT dxffileid FROM deleted_edcr_application_detail UNION "
+						+ "SELECT reportoutputid FROM deleted_edcr_application_detail UNION "
+						+ "SELECT plandetailfilestore FROM deleted_edcr_application_detail UNION "
+						+ "SELECT scrutinizeddxffileid FROM deleted_edcr_application_detail)";
 
 				final Query query = getCurrentSession().createSQLQuery(queryString);
 
 				deletedCount = deletedCount + query.executeUpdate();
 			}
 		}
-		Log.info(deletedCount+ "rejected scrutiny records deleted from edcr database");
+		Log.info(deletedCount + "rejected scrutiny records deleted from edcr database");
 		return deletedCount;
 	}
-	
-	
-	
 
 	public Date resetFromDateTimeStamp(final Date date) {
 		final Calendar cal1 = Calendar.getInstance();
