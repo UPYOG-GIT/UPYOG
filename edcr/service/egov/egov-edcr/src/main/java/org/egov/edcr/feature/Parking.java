@@ -311,41 +311,43 @@ public class Parking extends FeatureProcess {
 				occupancyTypeHelper = occupancy.getTypeHelper();
 				break;
 			}
-			for (Floor floor : block.getBuilding().getFloors()) {
-				coverParkingArea = coverParkingArea.add(floor.getParking().getCoverCars().stream()
-						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
-			}
-			if (occupancyTypeHelper == null || (occupancyTypeHelper != null
-					&& (occupancyTypeHelper.getType() == null || occupancyTypeHelper.getSubtype() == null))) {
-				Log.error("Occupany not defined properly");
-				pl.addError(OCCUPANCY, getLocaleMessage(OBJECTNOTDEFINED, OCCUPANCY + " not properly defined"));
-			} else {
-				BigDecimal floorBuiltUpArea = block.getBuilding().getTotalBuitUpArea();
-
-				requiredCarParkArea += getRequiredCarParkArea(floorBuiltUpArea, occupancyTypeHelper, coverParkingArea,
-						basementParkingArea, openParkingArea, stiltParkingArea, lowerGroungFloorParkingArea);
-			}
-
+//			for (Floor floor : block.getBuilding().getFloors()) {
+//				coverParkingArea = coverParkingArea.add(floor.getParking().getCoverCars().stream()
+//						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
+//			}
 			/*
-			 * for (Floor floor : block.getBuilding().getFloors()) { coverParkingArea =
-			 * coverParkingArea.add(floor.getParking().getCoverCars().stream()
-			 * .map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add)); //
-			 * basementParkingArea =
-			 * basementParkingArea.add(floor.getParking().getBasementCars().stream() //
-			 * .map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
-			 * 
-			 * occupancyTypeHelper = floor.getOccupancies().get(0).getTypeHelper(); if
-			 * (occupancyTypeHelper == null || (occupancyTypeHelper != null &&
+			 * if (occupancyTypeHelper == null || (occupancyTypeHelper != null &&
 			 * (occupancyTypeHelper.getType() == null || occupancyTypeHelper.getSubtype() ==
 			 * null))) { Log.error("Occupany not defined properly"); pl.addError(OCCUPANCY,
 			 * getLocaleMessage(OBJECTNOTDEFINED, OCCUPANCY + " not properly defined")); }
 			 * else { BigDecimal floorBuiltUpArea =
-			 * floor.getOccupancies().get(0).getBuiltUpArea();
+			 * block.getBuilding().getTotalBuitUpArea();
 			 * 
 			 * requiredCarParkArea += getRequiredCarParkArea(floorBuiltUpArea,
 			 * occupancyTypeHelper, coverParkingArea, basementParkingArea, openParkingArea,
-			 * stiltParkingArea, lowerGroungFloorParkingArea); } // }
+			 * stiltParkingArea, lowerGroungFloorParkingArea); }
 			 */
+
+			for (Floor floor : block.getBuilding().getFloors()) {
+				coverParkingArea = coverParkingArea.add(floor.getParking().getCoverCars().stream()
+						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add)); //
+//				basementParkingArea = basementParkingArea.add(floor.getParking().getBasementCars().stream() //
+//						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
+
+				occupancyTypeHelper = floor.getOccupancies().get(0).getTypeHelper();
+				if (occupancyTypeHelper == null || (occupancyTypeHelper != null
+						&& (occupancyTypeHelper.getType() == null || occupancyTypeHelper.getSubtype() == null))) {
+					Log.error("Occupany not defined properly");
+					pl.addError(OCCUPANCY, getLocaleMessage(OBJECTNOTDEFINED, OCCUPANCY + " not properly defined"));
+				} else {
+					BigDecimal floorBuiltUpArea = floor.getOccupancies().get(0).getBuiltUpArea();
+
+					requiredCarParkArea += getRequiredCarParkArea(floorBuiltUpArea, occupancyTypeHelper,
+							coverParkingArea, basementParkingArea, openParkingArea, stiltParkingArea,
+							lowerGroungFloorParkingArea);
+				}
+			}
+//			 
 		}
 
 		if (occupancyTypeHelper != null
