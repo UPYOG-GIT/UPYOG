@@ -537,11 +537,15 @@ public class CcavenueGateway implements Gateway {
 //					}
 					if (resp.get("order_status").equalsIgnoreCase("Shipped")) {
 						responseMap.put("order_status", "Success");
-					} else if (resp.get("order_status").equalsIgnoreCase("Unsuccessful")
-							|| resp.get("order_status").equalsIgnoreCase("Aborted")
-							|| resp.get("order_status").equalsIgnoreCase("Failure")) {
+					} else {
 						responseMap.put("order_status", "Failure");
 					}
+					
+//					else if (resp.get("order_status").equalsIgnoreCase("Unsuccessful")
+//							|| resp.get("order_status").equalsIgnoreCase("Aborted")
+//							|| resp.get("order_status").equalsIgnoreCase("Failure")) {
+//						responseMap.put("order_status", "Failure");
+//					}
 				}
 
 				if (resp.containsKey("order_amt")) {
