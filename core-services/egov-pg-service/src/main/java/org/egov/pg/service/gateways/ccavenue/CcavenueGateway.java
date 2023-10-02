@@ -535,19 +535,29 @@ public class CcavenueGateway implements Gateway {
 //					if (resp.get("order_status").equalsIgnoreCase("Unsuccessful")) {
 //						responseMap.put("order_status", resp.get("Failure"));
 //					}
+//					Long createdTime = currentStatus.getAuditDetails().getCreatedTime();
+//					Long currentTime = System.currentTimeMillis();
+					Long timeDifference = System.currentTimeMillis() - currentStatus.getAuditDetails().getCreatedTime();
+					log.info("timeDifference: " + timeDifference);
 					if (resp.get("order_status").equalsIgnoreCase("Shipped")) {
 						responseMap.put("order_status", "Success");
 					} else if (resp.get("order_status").equalsIgnoreCase("Unsuccessful")
 							|| resp.get("order_status").equalsIgnoreCase("Aborted")
-							|| resp.get("order_status").equalsIgnoreCase("Failure")) {
+							|| resp.get("order_status").equalsIgnoreCase("Failure")
+							|| (resp.get("order_status").equalsIgnoreCase("Initiated")
+									&& (timeDifference >= 900000 && timeDifference <= 1800000))) {
 						responseMap.put("order_status", "Failure");
 					}
-					
+
+//					else if (resp.get("order_status").equalsIgnoreCase("Initiated")
+//							&& (timeDifference >= 900000 && timeDifference <= 1800000)) {
+//						responseMap.put("order_status", "Failure");
+//					}
+
 //					else {
 //						responseMap.put("order_status", "Failure");
 //					}
-					
-					
+
 				}
 
 				if (resp.containsKey("order_amt")) {
