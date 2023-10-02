@@ -553,8 +553,11 @@ public class CcavenueGateway implements Gateway {
 				if (resp.containsKey("order_bank_response")) {
 					responseMap.put("status_message", resp.get("order_bank_response"));
 				}
+				if (resp.containsKey("order_option_type")) {
+					responseMap.put("payment_mode", resp.get("order_option_type"));
+				}
 
-				responseMap.put("payment_mode", "");
+//				responseMap.put("payment_mode", "");
 				responseMap.put("status_code", "");
 				responseMap.put("failure_message", "");
 				return transformRawResponse(responseMap, currentStatus);
