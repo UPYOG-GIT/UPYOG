@@ -109,7 +109,8 @@ public class RecreationalSpace extends FeatureProcess {
 
 	private boolean checkOccupancyPresent(List<Occupancy> occupanc, OccupancyType occupancyType) {
 		for (Occupancy occ : occupanc) {
-			if (occ.getType().equals(occupancyType))
+//			if (occ.getType().equals(occupancyType))
+			if (occ.getTypeHelper().getSubtype()!=null && occ.getTypeHelper().getSubtype().equals(occupancyType))
 				return true;
 		}
 		return false;
@@ -130,7 +131,7 @@ public class RecreationalSpace extends FeatureProcess {
 			BigDecimal totalFloorArea = BigDecimal.ZERO;
 			int numberOfUnitsInBlock = 0;
 			boolean isReport=false;
-			/*if (block.getBuilding() != null && block.getBuilding().getFloorsAboveGround() != null
+			if (block.getBuilding() != null && block.getBuilding().getFloorsAboveGround() != null
 					&& block.getBuilding().getFloorsAboveGround().compareTo(THREE) > 0) {
 				if (!block.getBuilding().getOccupancies().isEmpty()
 						&& checkOccupancyPresent(block.getBuilding().getOccupancies(), OccupancyType.OCCUPANCY_A4)) {
@@ -190,7 +191,7 @@ public class RecreationalSpace extends FeatureProcess {
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 					isReport=true;
 				}
-			}*/
+			}
 			if(!isReport) {
 				ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
 				scrutinyDetail1.addColumnHeading(1, DESCRIPTION);
