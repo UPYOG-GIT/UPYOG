@@ -94,6 +94,8 @@ public class Block extends Measurement {
     private Parapet parapetV2;
     private Chimney chimneyV2;
     private List<Portico> porticos = new ArrayList<>();
+    
+    private BigDecimal HeightFromGroundLevel;
 
     @Override
     public String toString() {
@@ -425,4 +427,13 @@ public class Block extends Measurement {
 		this.porticos.add(portico);
 	}
 
+	public BigDecimal getHeightFromGroundLevel() {
+		return HeightFromGroundLevel;
+	}
+
+	public void setHeightFromGroundLevel(BigDecimal heightFromGroundLevel) {
+		HeightFromGroundLevel = heightFromGroundLevel;
+	}
+
+	
 }

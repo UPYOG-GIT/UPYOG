@@ -72,6 +72,7 @@ public class Basement extends FeatureProcess {
 	private static final String RULE_73 = "73";
 	public static final String BASEMENT_DESCRIPTION_ONE = "Height from the floor to the soffit of the roof slab or ceiling";
 	public static final String BASEMENT_DESCRIPTION = "Basement Present";
+	public static final String BASEMENT_HEIGHT_DESCRIPTION = "Basement Height from Ground Level";
 	public static final String BASEMENT_DESCRIPTION_TWO = "Minimum height of the ceiling of upper basement above ground level";
 
 	@Override
@@ -85,13 +86,23 @@ public class Basement extends FeatureProcess {
 
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 //		scrutinyDetail.setKey("Common_Basement");
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
+		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
 		scrutinyDetail.addColumnHeading(3, PRESENTED);
 //        scrutinyDetail.addColumnHeading(4, PROVIDED);
 		scrutinyDetail.addColumnHeading(4, STATUS);
 
 		Map<String, String> details = new HashMap<>();
+
+		ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
+//		scrutinyDetail.setKey("Common_Basement");
+		scrutinyDetail1.addColumnHeading(1, RULE_NO);
+		scrutinyDetail1.addColumnHeading(2, DESCRIPTION);
+		scrutinyDetail1.addColumnHeading(3, MAX_PERMISSIBLE);
+		scrutinyDetail1.addColumnHeading(4, PROVIDED);
+		scrutinyDetail1.addColumnHeading(5, STATUS);
+
+		Map<String, String> details1 = new HashMap<>();
 
 		BigDecimal minLength = BigDecimal.ZERO;
 
@@ -152,7 +163,7 @@ public class Basement extends FeatureProcess {
 					BigDecimal basementParkingArea = pl.getParkingDetails().getBasementCars().stream()
 							.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
 					if (basementParkingArea.compareTo(BigDecimal.ZERO) > 0) {
-						isPresent=true;
+						isPresent = true;
 					}
 					scrutinyDetail.getDetail().add(details);
 					details.put(RULE_NO, RULE_73);
@@ -160,6 +171,18 @@ public class Basement extends FeatureProcess {
 					details.put(STATUS, "");
 					details.put(PRESENTED, isPresent ? "Yes" : "No");
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+
+					BigDecimal heightFromGLevel = b.getHeightFromGroundLevel();
+
+					scrutinyDetail1.setKey("Block_" + b.getNumber() + "_" + "Basement Height From Ground Level");
+
+					scrutinyDetail1.getDetail().add(details1);
+					details1.put(RULE_NO, RULE_73);
+					details1.put(DESCRIPTION, BASEMENT_HEIGHT_DESCRIPTION);
+					details1.put(MAX_PERMISSIBLE, "1.75");
+					details1.put(PROVIDED, heightFromGLevel.toString());
+					details1.put(STATUS, heightFromGLevel.compareTo(BigDecimal.valueOf(1.75)) >= 0 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
 				}
 			}
 		}
