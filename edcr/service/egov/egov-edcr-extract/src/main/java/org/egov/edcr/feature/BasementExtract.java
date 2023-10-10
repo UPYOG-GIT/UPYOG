@@ -33,7 +33,6 @@ public class BasementExtract extends FeatureExtract {
 				String layerPattern = "BLK_" + b.getNumber() + "_LVL_-1_"
 						+ layerNames.getLayerName("LAYER_NAME_HEIGHT_FROM_GLEVEL");
 				boolean layerPresent = pl.getDoc().containsDXFLayer(layerPattern);
-
 				if (layerPresent) {
 					List<String> basementLayers = Util.getLayerNamesLike(pl.getDoc(), layerPattern);
 					List<DXFDimension> basementHeightDimensions = Util.getDimensionsByLayer(pl.getDoc(), layerPattern);
