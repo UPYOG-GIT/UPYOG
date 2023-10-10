@@ -29,28 +29,28 @@ public class BasementExtract extends FeatureExtract {
 		for (Block b : pl.getBlocks())
 			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
 					&& !b.getBuilding().getFloors().isEmpty()) {
-				
-				String balconylayerPattern = "BLK_" + b.getNumber() + "_LVL_-1_" + layerNames.getLayerName("LAYER_NAME_HEIGHT_FROM_GLEVEL");
-				boolean layerPresent = pl.getDoc().containsDXFLayer(balconylayerPattern);
-                List<String> balconyLayers = Util.getLayerNamesLike(pl.getDoc(), balconylayerPattern);
-                List<DXFDimension> chimneyDimensions = Util.getDimensionsByLayer( pl.getDoc(), balconylayerPattern);
-                
-                for (Object dxfEntity : chimneyDimensions) {
-					DXFDimension dimension = (DXFDimension) dxfEntity;
-					List<BigDecimal> values = new ArrayList<>();
-					Util.extractDimensionValue(pl, values, dimension, balconyLayers.get(0));
 
-					if (!values.isEmpty()) {
-						for (BigDecimal minDis : values) {
-							b.setHeightFromGroundLevel(minDis);
-//                        	doorWidth=minDis;
-//							door.setDoorWidth(minDis);
+				String layerPattern = "BLK_" + b.getNumber() + "_LVL_-1_"
+						+ layerNames.getLayerName("LAYER_NAME_HEIGHT_FROM_GLEVEL");
+				boolean layerPresent = pl.getDoc().containsDXFLayer(layerPattern);
+
+				if (layerPresent) {
+					List<String> basementLayers = Util.getLayerNamesLike(pl.getDoc(), layerPattern);
+					List<DXFDimension> basementHeightDimensions = Util.getDimensionsByLayer(pl.getDoc(), layerPattern);
+
+					for (Object dxfEntity : basementHeightDimensions) {
+						DXFDimension dimension = (DXFDimension) dxfEntity;
+						List<BigDecimal> values = new ArrayList<>();
+						Util.extractDimensionValue(pl, values, dimension, basementLayers.get(0));
+
+						if (!values.isEmpty()) {
+							for (BigDecimal minDis : values) {
+								b.setHeightFromGroundLevel(minDis);
+							}
 						}
-					} else {
-//						door.setDoorWidth(BigDecimal.ZERO);
 					}
 				}
-                
+
 				for (Floor f : b.getBuilding().getFloors())
 					if (f.getNumber() == -1) {
 						String basementFootPrint = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX")

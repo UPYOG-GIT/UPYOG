@@ -174,15 +174,21 @@ public class Basement extends FeatureProcess {
 
 					BigDecimal heightFromGLevel = b.getHeightFromGroundLevel();
 
-					scrutinyDetail1.setKey("Block_" + b.getNumber() + "_" + "Basement Height From Ground Level");
+					if (heightFromGLevel != null) {
+						scrutinyDetail1.setKey("Block_" + b.getNumber() + "_" + "Basement Height");
 
-					scrutinyDetail1.getDetail().add(details1);
-					details1.put(RULE_NO, RULE_73);
-					details1.put(DESCRIPTION, BASEMENT_HEIGHT_DESCRIPTION);
-					details1.put(MAX_PERMISSIBLE, "1.75");
-					details1.put(PROVIDED, heightFromGLevel.toString());
-					details1.put(STATUS, heightFromGLevel.compareTo(BigDecimal.valueOf(1.75)) >= 0 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
+						scrutinyDetail1.getDetail().add(details1);
+						details1.put(RULE_NO, RULE_73);
+						details1.put(DESCRIPTION, BASEMENT_HEIGHT_DESCRIPTION);
+						details1.put(MAX_PERMISSIBLE, "1.75");
+						details1.put(PROVIDED, heightFromGLevel.toString());
+						details1.put(STATUS,
+								heightFromGLevel.compareTo(BigDecimal.valueOf(1.75)) >= 0
+										? Result.Accepted.getResultVal()
+										: Result.Not_Accepted.getResultVal());
+						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
+					}
+
 				}
 			}
 		}
