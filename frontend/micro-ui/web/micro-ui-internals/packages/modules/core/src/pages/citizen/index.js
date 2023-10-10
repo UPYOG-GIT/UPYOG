@@ -368,7 +368,8 @@ const Home = ({
         style={
           location?.pathname === "/digit-ui/citizen/select-location" || location?.pathname === "/digit-ui/citizen/register/name" || location?.pathname === "/digit-ui/citizen/register/otp" || location?.pathname === "/digit-ui/citizen/select-language" || location?.pathname === "/digit-ui/citizen/login/otp" || location?.pathname === "/digit-ui/citizen/login"
             ? {
-              backgroundImage: `url("https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/background_pic1.png")`, width: '100%', backgroundRepeat: 'no-repeat', height: 'auto'
+             // backgroundImage: `url("https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/background_pic1.png")`, width: '100%', backgroundRepeat: 'no-repeat', height: 'auto'
+              backgroundImage: `url("https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/banner1.png")`, width: '100%', backgroundRepeat: 'no-repeat', height: 'auto'
             }
             : {}
         }
