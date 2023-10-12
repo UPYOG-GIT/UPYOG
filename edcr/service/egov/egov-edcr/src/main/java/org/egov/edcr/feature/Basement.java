@@ -183,7 +183,7 @@ public class Basement extends FeatureProcess {
 						details1.put(MAX_PERMISSIBLE, "1.75");
 						details1.put(PROVIDED, heightFromGLevel.toString());
 						details1.put(STATUS,
-								heightFromGLevel.compareTo(BigDecimal.valueOf(1.75)) >= 0
+								heightFromGLevel.compareTo(BigDecimal.valueOf(1.75)) <= 0
 										? Result.Accepted.getResultVal()
 										: Result.Not_Accepted.getResultVal());
 						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
