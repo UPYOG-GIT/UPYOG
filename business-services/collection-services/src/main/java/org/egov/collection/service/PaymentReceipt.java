@@ -138,7 +138,7 @@ public class PaymentReceipt {
 				table2.addCell(getCell10fLeft1(
 						paymentList.get(0).getPayerName() != null ? paymentList.get(0).getPayerName() : "", false));
 				table2.addCell(getCell10fLeft1("Payer Contact", true));
-				table2.addCell(getCell10fLeft1("Payer Status", true));
+				table2.addCell(getCell10fLeft1("Payment Status", true));
 				table2.addCell(getCell10fLeft1(
 						paymentList.get(0).getMobileNumber() != null ? paymentList.get(0).getMobileNumber() : "",
 						false));
@@ -260,7 +260,7 @@ public class PaymentReceipt {
 		String str = "";
 
 		if (Integer.parseInt(n[0]) != 0) {
-			if (Integer.parseInt(n[0]) >= 10) {
+			if (Integer.parseInt(n[0]) >= 20) {
 				str += b[Integer.parseInt(n[0].substring(0, 1))] + " " + a[Integer.parseInt(n[0].substring(1))]
 						+ "Crore ";
 			} else {
@@ -268,7 +268,7 @@ public class PaymentReceipt {
 			}
 		}
 		if (Integer.parseInt(n[1]) != 0) {
-			if (Integer.parseInt(n[1]) >= 10) {
+			if (Integer.parseInt(n[1]) >= 20) {
 				str += b[Integer.parseInt(n[1].substring(0, 1))] + " " + a[Integer.parseInt(n[1].substring(1))]
 						+ "Lakh ";
 			} else {
@@ -276,7 +276,7 @@ public class PaymentReceipt {
 			}
 		}
 		if (Integer.parseInt(n[2]) != 0) {
-			if (Integer.parseInt(n[2]) >= 10) {
+			if (Integer.parseInt(n[2]) >= 20) {
 				str += b[Integer.parseInt(n[2].substring(0, 1))] + " " + a[Integer.parseInt(n[2].substring(1))]
 						+ "Thousand ";
 			} else {
@@ -284,7 +284,7 @@ public class PaymentReceipt {
 			}
 		}
 		if (Integer.parseInt(n[3]) != 0) {
-			if (Integer.parseInt(n[3]) >= 10) {
+			if (Integer.parseInt(n[3]) >= 20) {
 				str += b[Integer.parseInt(n[3].substring(0, 1))] + " " + a[Integer.parseInt(n[3].substring(1))]
 						+ "Hundred ";
 			} else {
@@ -295,7 +295,7 @@ public class PaymentReceipt {
 //			if (str != "") {
 //				str += "and ";
 //			}
-			if (Integer.parseInt(n[4]) >= 10) {
+			if (Integer.parseInt(n[4]) >= 20) {
 				str += b[Integer.parseInt(n[4].substring(0, 1))] + " " + a[Integer.parseInt(n[4].substring(1))]
 						+ "Rupees ";
 			} else {
@@ -320,7 +320,7 @@ public class PaymentReceipt {
 
 		if (Integer.parseInt(n[0]) != 0) {
 			str += "and ";
-			if (Integer.parseInt(n[0]) >= 10) {
+			if (Integer.parseInt(n[0]) >= 20) {
 				str += b[Integer.parseInt(n[0].substring(0, 1))] + " " + a[Integer.parseInt(n[0].substring(1))]
 						+ "Paise ";
 			} else {
