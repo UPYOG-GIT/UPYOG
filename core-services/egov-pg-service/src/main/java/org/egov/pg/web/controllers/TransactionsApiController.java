@@ -1,6 +1,10 @@
 package org.egov.pg.web.controllers;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
+import org.egov.pg.constants.PgConstants;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.service.GatewayService;
 import org.egov.pg.service.TransactionService;
@@ -13,6 +17,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +33,8 @@ public class TransactionsApiController {
 
 	private final TransactionService transactionService;
 	private final GatewayService gatewayService;
+	private static RequestInfo requestInfo;
+	
 
 	@Autowired
 	public TransactionsApiController(TransactionService transactionService, GatewayService gatewayService) {
@@ -100,6 +108,24 @@ public class TransactionsApiController {
 				params);
 		ResponseInfo responseInfo = ResponseInfoFactory
 				.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+		TransactionResponse response = new TransactionResponse(responseInfo, transactions);
+//        log.info("response :"+response.getTransactions().get(0).getTxnId());
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	
+	@RequestMapping(value = "/transaction/v1/_manualupdate", method = { RequestMethod.POST, RequestMethod.GET })
+	public ResponseEntity<TransactionResponse> transactionsV1ManualUpdatePost(
+			@RequestParam String txnId) {
+		log.info("inside /transaction/v1/_manualupdate api......");
+		User userInfo = User.builder().uuid("c5ef71e8-eaf4-4faa-9b10-065e76162d0e").type("SYSTEM")
+				.roles(Collections.emptyList()).id(0L).build();
+
+		requestInfo = new RequestInfo("", "", 0L, "", "", "", "", "", "", userInfo);
+		List<Transaction> transactions = transactionService.updateTransaction(requestInfo,
+				Collections.singletonMap(PgConstants.PG_TXN_IN_LABEL, txnId));
+		ResponseInfo responseInfo = ResponseInfoFactory
+				.createResponseInfoFromRequestInfo(requestInfo, true);
 		TransactionResponse response = new TransactionResponse(responseInfo, transactions);
 //        log.info("response :"+response.getTransactions().get(0).getTxnId());
 		return new ResponseEntity<>(response, HttpStatus.OK);
