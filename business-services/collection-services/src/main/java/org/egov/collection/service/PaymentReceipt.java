@@ -270,25 +270,25 @@ public class PaymentReceipt {
 		if (Integer.parseInt(n[1]) != 0) {
 			if (Integer.parseInt(n[1]) >= 20) {
 				str += b[Integer.parseInt(n[1].substring(0, 1))] + " " + a[Integer.parseInt(n[1].substring(1))]
-						+ "Lakh ";
+						+ " Lakh";
 			} else {
-				str += a[Integer.parseInt(n[1])] + "Lakh ";
+				str += a[Integer.parseInt(n[1])] + " Lakh";
 			}
 		}
 		if (Integer.parseInt(n[2]) != 0) {
 			if (Integer.parseInt(n[2]) >= 20) {
 				str += b[Integer.parseInt(n[2].substring(0, 1))] + " " + a[Integer.parseInt(n[2].substring(1))]
-						+ "Thousand ";
+						+ " Thousand";
 			} else {
-				str += a[Integer.parseInt(n[2])] + "Thousand ";
+				str += a[Integer.parseInt(n[2])] + " Thousand";
 			}
 		}
 		if (Integer.parseInt(n[3]) != 0) {
 			if (Integer.parseInt(n[3]) >= 20) {
 				str += b[Integer.parseInt(n[3].substring(0, 1))] + " " + a[Integer.parseInt(n[3].substring(1))]
-						+ "Hundred ";
+						+ " Hundred";
 			} else {
-				str += a[Integer.parseInt(n[3])] + "Hundred ";
+				str += a[Integer.parseInt(n[3])] + " Hundred";
 			}
 		}
 		if (Integer.parseInt(n[4]) != 0) {
@@ -297,9 +297,9 @@ public class PaymentReceipt {
 //			}
 			if (Integer.parseInt(n[4]) >= 20) {
 				str += b[Integer.parseInt(n[4].substring(0, 1))] + " " + a[Integer.parseInt(n[4].substring(1))]
-						+ "Rupees ";
+						+ " Rupees";
 			} else {
-				str += a[Integer.parseInt(n[4])] + "Rupees ";
+				str += a[Integer.parseInt(n[4])] + " Rupees";
 			}
 		}
 
@@ -319,12 +319,12 @@ public class PaymentReceipt {
 		String str = "";
 
 		if (Integer.parseInt(n[0]) != 0) {
-			str += "and ";
+			str += " and";
 			if (Integer.parseInt(n[0]) >= 20) {
 				str += b[Integer.parseInt(n[0].substring(0, 1))] + " " + a[Integer.parseInt(n[0].substring(1))]
-						+ "Paise ";
+						+ " Paise";
 			} else {
-				str += a[Integer.parseInt(n[0])] + "Paise ";
+				str += a[Integer.parseInt(n[0])] + " Paise";
 			}
 		}
 
