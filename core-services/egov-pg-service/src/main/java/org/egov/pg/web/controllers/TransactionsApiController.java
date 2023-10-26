@@ -34,7 +34,6 @@ public class TransactionsApiController {
 	private final TransactionService transactionService;
 	private final GatewayService gatewayService;
 	private static RequestInfo requestInfo;
-	
 
 	@Autowired
 	public TransactionsApiController(TransactionService transactionService, GatewayService gatewayService) {
@@ -102,7 +101,7 @@ public class TransactionsApiController {
 		String encResp = transactionService.getResponse(txnId);
 		log.info("encResp: " + encResp);
 		params.put("encResp", encResp);
-		params.put("FromUpdateAPI","true");
+		params.put("FromUpdateAPI", "true");
 		log.info("params.toString(): " + params.toString());
 		List<Transaction> transactions = transactionService.updateTransaction(requestInfoWrapper.getRequestInfo(),
 				params);
@@ -112,11 +111,9 @@ public class TransactionsApiController {
 //        log.info("response :"+response.getTransactions().get(0).getTxnId());
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
-	
-	
+
 	@RequestMapping(value = "/transaction/v1/_manualupdate", method = { RequestMethod.POST, RequestMethod.GET })
-	public ResponseEntity<TransactionResponse> transactionsV1ManualUpdatePost(
-			@RequestParam String txnId) {
+	public ResponseEntity<TransactionResponse> transactionsV1ManualUpdatePost(@RequestParam String txnId) {
 		log.info("inside /transaction/v1/_manualupdate api......");
 		User userInfo = User.builder().uuid("c5ef71e8-eaf4-4faa-9b10-065e76162d0e").type("SYSTEM")
 				.roles(Collections.emptyList()).id(0L).build();
@@ -124,8 +121,7 @@ public class TransactionsApiController {
 		requestInfo = new RequestInfo("", "", 0L, "", "", "", "", "", "", userInfo);
 		List<Transaction> transactions = transactionService.updateTransaction(requestInfo,
 				Collections.singletonMap(PgConstants.PG_TXN_IN_LABEL, txnId));
-		ResponseInfo responseInfo = ResponseInfoFactory
-				.createResponseInfoFromRequestInfo(requestInfo, true);
+		ResponseInfo responseInfo = ResponseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true);
 		TransactionResponse response = new TransactionResponse(responseInfo, transactions);
 //        log.info("response :"+response.getTransactions().get(0).getTxnId());
 		return new ResponseEntity<>(response, HttpStatus.OK);
@@ -142,6 +138,23 @@ public class TransactionsApiController {
 		Set<String> gateways = gatewayService.getActiveGateways();
 		log.debug("Available gateways : " + gateways);
 		return new ResponseEntity<>(gateways, HttpStatus.OK);
+	}
+
+	@PostMapping(value = "/_searchtransactions")
+	public ResponseEntity<List<Map<String, Object>>> getTransactions(@RequestParam String applicationNumber) {
+		List<Map<String, Object>> sqlResponseList = transactionService.getTransactions(applicationNumber);
+		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
+	}
+
+	@PostMapping(value = "/_deleteTransaction")
+	public ResponseEntity<Object> deleteTransaction(@RequestParam int txnId) {
+		try {
+			int deleteResult = transactionService.deleteTransaction(txnId);
+			return new ResponseEntity<>(deleteResult, HttpStatus.OK);
+		} catch (Exception ex) {
+			log.error("Exception in deleteTransaction: " + ex);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+		}
 	}
 
 }

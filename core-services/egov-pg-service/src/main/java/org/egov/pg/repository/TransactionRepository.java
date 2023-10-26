@@ -61,8 +61,26 @@ public class TransactionRepository {
 	public Map<String, Object> getCcavenueDetails(String tenantId) {
 		String sqlQuery = "SELECT merchant_id,access_code,working_key FROM eg_pg_ccavenue_details WHERE tenant_id='"
 				+ tenantId + "'";
-		log.info("sqlQuery: "+sqlQuery);
+		log.info("sqlQuery: " + sqlQuery);
 //		return jdbcTemplate.queryForList(sql, new Object[] { tenantId });
 		return jdbcTemplate.queryForMap(sqlQuery);
+	}
+
+	public List<Map<String, Object>> getTransactions(String applicationNumber) {
+		String sqlQuery = "SELECT txn_id,txn_amount,txn_status,txn_status_msg,consumer_code,bill_id,"
+				+ "tenant_id,gateway_payment_mode,gateway_status_msg,created_time"
+				+ " FROM eg_pg_transactions WHERE consumer_code='"
+				+ applicationNumber + "' ORDER BY created_time DESC";
+		log.info("sqlQuery: " + sqlQuery);
+		return jdbcTemplate.queryForList(sqlQuery);
+
+	}
+	
+	public int deleteTransaction(int txnId) {
+		String deleteQuery = "DELETE FROM eg_pg_transactions WHERE txn_id ='" + txnId + "'";
+		int deleteResult = jdbcTemplate.update(deleteQuery);
+		log.info("BPARepository.deleteTransaction: " + deleteResult
+				+ " transaction deleted from eg_pg_transactions table of txn_id : " + txnId);
+		return deleteResult;
 	}
 }

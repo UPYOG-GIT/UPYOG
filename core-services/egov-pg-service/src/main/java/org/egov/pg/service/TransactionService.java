@@ -190,4 +190,11 @@ public class TransactionService {
 		return transactionRepository.getCcavenueDetails(tenantId);
 	}
 
+	public List<Map<String, Object>> getTransactions(String applicationNumber) {
+		return transactionRepository.getTransactions(applicationNumber);
+	}
+	
+	public int deleteTransaction(int txnID) {
+		return transactionRepository.deleteTransaction(txnID);
+	}
 }
