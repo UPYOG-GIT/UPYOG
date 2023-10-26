@@ -194,7 +194,7 @@ public class TransactionService {
 		return transactionRepository.getTransactions(applicationNumber);
 	}
 	
-	public int deleteTransaction(int txnID) {
+	public int deleteTransaction(String txnID) {
 		return transactionRepository.deleteTransaction(txnID);
 	}
 }

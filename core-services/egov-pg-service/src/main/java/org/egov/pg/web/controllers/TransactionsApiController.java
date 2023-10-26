@@ -147,7 +147,7 @@ public class TransactionsApiController {
 	}
 
 	@PostMapping(value = "/_deleteTransaction")
-	public ResponseEntity<Object> deleteTransaction(@RequestParam int txnId) {
+	public ResponseEntity<Object> deleteTransaction(@RequestParam String txnId) {
 		try {
 			int deleteResult = transactionService.deleteTransaction(txnId);
 			return new ResponseEntity<>(deleteResult, HttpStatus.OK);

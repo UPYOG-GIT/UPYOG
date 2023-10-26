@@ -76,7 +76,7 @@ public class TransactionRepository {
 
 	}
 	
-	public int deleteTransaction(int txnId) {
+	public int deleteTransaction(String txnId) {
 		String deleteQuery = "DELETE FROM eg_pg_transactions WHERE txn_id ='" + txnId + "'";
 		int deleteResult = jdbcTemplate.update(deleteQuery);
 		log.info("BPARepository.deleteTransaction: " + deleteResult
