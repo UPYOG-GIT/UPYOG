@@ -140,13 +140,13 @@ public class TransactionsApiController {
 		return new ResponseEntity<>(gateways, HttpStatus.OK);
 	}
 
-	@PostMapping(value = "/_searchtransactions")
+	@PostMapping(value = "/transaction/v1/_searchtransactions")
 	public ResponseEntity<List<Map<String, Object>>> getTransactions(@RequestParam String applicationNumber) {
 		List<Map<String, Object>> sqlResponseList = transactionService.getTransactions(applicationNumber);
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 	}
 
-	@PostMapping(value = "/_deleteTransaction")
+	@PostMapping(value = "/transaction/v1/_deleteTransaction")
 	public ResponseEntity<Object> deleteTransaction(@RequestParam String txnId) {
 		try {
 			int deleteResult = transactionService.deleteTransaction(txnId);
