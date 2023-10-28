@@ -622,10 +622,12 @@ public class Far_BhilaiCharoda extends Far {
 //		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getArea().add(surrenderRoadArea) : BigDecimal.ZERO;
 		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getPlotBndryArea() : BigDecimal.ZERO;
 //		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getNetPlotArea() : BigDecimal.ZERO;
-		BigDecimal netPlotArea = pl.getPlot().getNetPlotArea()
-				.add(pl.getPlot().getRoadArea().multiply(BigDecimal.valueOf(2)))
-				.add(pl.getPlot().getRoadWideningArea().multiply(BigDecimal.valueOf(2)));
-		if (plotArea.doubleValue() > 0)
+//		BigDecimal netPlotArea = pl.getPlot().getNetPlotArea()
+//				.add(pl.getPlot().getRoadArea().multiply(BigDecimal.valueOf(2)))
+//				.add(pl.getPlot().getRoadWideningArea().multiply(BigDecimal.valueOf(2)));
+		BigDecimal netPlotArea = pl.getPlot().getNetPlotArea();
+//		if (plotArea.doubleValue() > 0)
+		if (netPlotArea.doubleValue() > 0)
 //			providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(plotArea, DECIMALDIGITS_MEASUREMENTS,
 //					ROUNDMODE_MEASUREMENTS);
 			providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(netPlotArea, DECIMALDIGITS_MEASUREMENTS,
