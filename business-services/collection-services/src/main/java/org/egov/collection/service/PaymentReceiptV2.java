@@ -128,7 +128,7 @@ public class PaymentReceiptV2 {
 				table2.addCell(getCell10fLeft1(
 						paymentList.get(0).getPayerName() != null ? paymentList.get(0).getPayerName() : "", false));
 				table2.addCell(getCell10fLeft1("Payer Contact", true));
-				table2.addCell(getCell10fLeft1("Payer Status", true));
+				table2.addCell(getCell10fLeft1("Payment Status", true));
 				table2.addCell(getCell10fLeft1(
 						paymentList.get(0).getMobileNumber() != null ? paymentList.get(0).getMobileNumber() : "",
 						false));
@@ -167,10 +167,13 @@ public class PaymentReceiptV2 {
 
 				List<FeeDetail> feeDetailList = paymentDetails.get(0).getFeeDetail();
 
+				Integer srNo=1;
 				for (FeeDetail feeDetail : feeDetailList) {
 					grossAmount.add(feeDetail.getAmount());
+//					threeColTable2.addCell(
+//							new Cell().add(String.valueOf(feeDetail.getSrNo())).setTextAlignment(TextAlignment.CENTER));
 					threeColTable2.addCell(
-							new Cell().add(String.valueOf(feeDetail.getSrNo())).setTextAlignment(TextAlignment.CENTER));
+							new Cell().add(String.valueOf(srNo++)).setTextAlignment(TextAlignment.CENTER));
 					threeColTable2.addCell(new Cell().add(feeDetail.getChargesTypeName()))
 							.setTextAlignment(TextAlignment.CENTER);
 					threeColTable2.addCell(new Cell().add(String.valueOf(feeDetail.getAmount()))
@@ -250,7 +253,7 @@ public class PaymentReceiptV2 {
 		String str = "";
 
 		if (Integer.parseInt(n[0]) != 0) {
-			if (Integer.parseInt(n[0]) >= 10) {
+			if (Integer.parseInt(n[0]) >= 20) {
 				str += b[Integer.parseInt(n[0].substring(0, 1))] + " " + a[Integer.parseInt(n[0].substring(1))]
 						+ "Crore ";
 			} else {
@@ -258,38 +261,38 @@ public class PaymentReceiptV2 {
 			}
 		}
 		if (Integer.parseInt(n[1]) != 0) {
-			if (Integer.parseInt(n[1]) >= 10) {
+			if (Integer.parseInt(n[1]) >= 20) {
 				str += b[Integer.parseInt(n[1].substring(0, 1))] + " " + a[Integer.parseInt(n[1].substring(1))]
-						+ "Lakh ";
+						+ " Lakh";
 			} else {
-				str += a[Integer.parseInt(n[1])] + "Lakh ";
+				str += a[Integer.parseInt(n[1])] + " Lakh";
 			}
 		}
 		if (Integer.parseInt(n[2]) != 0) {
-			if (Integer.parseInt(n[2]) >= 10) {
+			if (Integer.parseInt(n[2]) >= 20) {
 				str += b[Integer.parseInt(n[2].substring(0, 1))] + " " + a[Integer.parseInt(n[2].substring(1))]
-						+ "Thousand ";
+						+ " Thousand";
 			} else {
-				str += a[Integer.parseInt(n[2])] + "Thousand ";
+				str += a[Integer.parseInt(n[2])] + " Thousand";
 			}
 		}
 		if (Integer.parseInt(n[3]) != 0) {
-			if (Integer.parseInt(n[3]) >= 10) {
+			if (Integer.parseInt(n[3]) >= 20) {
 				str += b[Integer.parseInt(n[3].substring(0, 1))] + " " + a[Integer.parseInt(n[3].substring(1))]
-						+ "Hundred ";
+						+ " Hundred";
 			} else {
-				str += a[Integer.parseInt(n[3])] + "Hundred ";
+				str += a[Integer.parseInt(n[3])] + " Hundred";
 			}
 		}
 		if (Integer.parseInt(n[4]) != 0) {
 //			if (str != "") {
 //				str += "and ";
 //			}
-			if (Integer.parseInt(n[4]) >= 10) {
+			if (Integer.parseInt(n[4]) >= 20) {
 				str += b[Integer.parseInt(n[4].substring(0, 1))] + " " + a[Integer.parseInt(n[4].substring(1))]
-						+ "Rupees ";
+						+ " Rupees";
 			} else {
-				str += a[Integer.parseInt(n[4])] + "Rupees ";
+				str += a[Integer.parseInt(n[4])] + " Rupees";
 			}
 		}
 
@@ -301,7 +304,7 @@ public class PaymentReceiptV2 {
 				"Ten ", "Eleven ", "Twelve ", "Thirteen ", "Fourteen ", "Fifteen ", "Sixteen ", "Seventeen ",
 				"Eighteen ", "Nineteen " };
 		final String[] b = { "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
-		if (Integer.toString(num).length() > 9) {
+		if (Integer.toString(num).length() > 2) {
 			return "overflow";
 		}
 		String numStr = String.format("%02d", num);
@@ -309,12 +312,12 @@ public class PaymentReceiptV2 {
 		String str = "";
 
 		if (Integer.parseInt(n[0]) != 0) {
-			str += "and ";
-			if (Integer.parseInt(n[0]) >= 10) {
+			str += " and";
+			if (Integer.parseInt(n[0]) >= 20) {
 				str += b[Integer.parseInt(n[0].substring(0, 1))] + " " + a[Integer.parseInt(n[0].substring(1))]
-						+ "Paise ";
+						+ " Paise";
 			} else {
-				str += a[Integer.parseInt(n[0])] + "Paise ";
+				str += a[Integer.parseInt(n[0])] + " Paise";
 			}
 		}
 
