@@ -279,8 +279,8 @@ public class Parking_Dhamtari extends FeatureProcess {
 //		OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding() != null
 //				? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
 //				: null;
-//		BigDecimal totalBuiltupArea = pl.getOccupancies().stream().map(Occupancy::getBuiltUpArea)
-//				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		BigDecimal totalBuiltupArea = pl.getOccupancies().stream().map(Occupancy::getBuiltUpArea)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 		BigDecimal coverParkingArea = BigDecimal.ZERO;
 //		BigDecimal basementParkingArea = BigDecimal.ZERO;
 		BigDecimal noOfBeds = BigDecimal.ZERO;
@@ -320,38 +320,42 @@ public class Parking_Dhamtari extends FeatureProcess {
 //						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
 //			}
 
-			/*if (occupancyTypeHelper == null || (occupancyTypeHelper != null
-					&& (occupancyTypeHelper.getType() == null || occupancyTypeHelper.getSubtype() == null))) {
-				Log.error("Occupany not defined properly");
-				pl.addError(OCCUPANCY, getLocaleMessage(OBJECTNOTDEFINED, OCCUPANCY + " not properly defined"));
+			/*
+			 * if (occupancyTypeHelper == null || (occupancyTypeHelper != null &&
+			 * (occupancyTypeHelper.getType() == null || occupancyTypeHelper.getSubtype() ==
+			 * null))) { Log.error("Occupany not defined properly"); pl.addError(OCCUPANCY,
+			 * getLocaleMessage(OBJECTNOTDEFINED, OCCUPANCY + " not properly defined")); }
+			 * else { BigDecimal floorBuiltUpArea =
+			 * block.getBuilding().getTotalBuitUpArea();
+			 * 
+			 * requiredCarParkArea += getRequiredCarParkArea(floorBuiltUpArea,
+			 * occupancyTypeHelper, coverParkingArea, basementParkingArea, openParkingArea,
+			 * stiltParkingArea, lowerGroungFloorParkingArea, noOfBeds, noOfSeats); }
+			 */
+			if (totalBuiltupArea.compareTo(BigDecimal.valueOf((50))) <= 0) {
+
 			} else {
-				BigDecimal floorBuiltUpArea = block.getBuilding().getTotalBuitUpArea();
 
-				requiredCarParkArea += getRequiredCarParkArea(floorBuiltUpArea, occupancyTypeHelper, coverParkingArea,
-						basementParkingArea, openParkingArea, stiltParkingArea, lowerGroungFloorParkingArea, noOfBeds,
-						noOfSeats);
-			}*/
-
-			for (Floor floor : block.getBuilding().getFloors()) {
-				coverParkingArea = coverParkingArea.add(floor.getParking().getCoverCars().stream()
-						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add)); //
+				for (Floor floor : block.getBuilding().getFloors()) {
+					coverParkingArea = coverParkingArea.add(floor.getParking().getCoverCars().stream()
+							.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add)); //
 //				basementParkingArea = basementParkingArea.add(floor.getParking().getBasementCars().stream() //
 //						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
 
-				occupancyTypeHelper = floor.getOccupancies().get(0).getTypeHelper();
-				if (occupancyTypeHelper == null || (occupancyTypeHelper != null
-						&& (occupancyTypeHelper.getType() == null || occupancyTypeHelper.getSubtype() == null))) {
-					Log.error("Occupany not defined properly");
-					pl.addError(OCCUPANCY, getLocaleMessage(OBJECTNOTDEFINED, OCCUPANCY + " not properly defined"));
-				} else {
-					BigDecimal floorBuiltUpArea = floor.getOccupancies().get(0).getBuiltUpArea();
+					occupancyTypeHelper = floor.getOccupancies().get(0).getTypeHelper();
+					if (occupancyTypeHelper == null || (occupancyTypeHelper != null
+							&& (occupancyTypeHelper.getType() == null || occupancyTypeHelper.getSubtype() == null))) {
+						Log.error("Occupany not defined properly");
+						pl.addError(OCCUPANCY, getLocaleMessage(OBJECTNOTDEFINED, OCCUPANCY + " not properly defined"));
+					} else {
+						BigDecimal floorBuiltUpArea = floor.getOccupancies().get(0).getBuiltUpArea();
 
-					requiredCarParkArea += getRequiredCarParkArea(floorBuiltUpArea, occupancyTypeHelper,
-							coverParkingArea, basementParkingArea, openParkingArea, stiltParkingArea,
-							lowerGroungFloorParkingArea, noOfBeds, noOfSeats);
+						requiredCarParkArea += getRequiredCarParkArea(floorBuiltUpArea, occupancyTypeHelper,
+								coverParkingArea, basementParkingArea, openParkingArea, stiltParkingArea,
+								lowerGroungFloorParkingArea, noOfBeds, noOfSeats);
+					}
 				}
 			}
-
 		}
 
 		if (occupancyTypeHelper != null
@@ -419,8 +423,9 @@ public class Parking_Dhamtari extends FeatureProcess {
 			// checkDimensionForTwoWheelerParking(pl, helper);
 			// checkAreaForLoadUnloadSpaces(pl);
 			boolean isSingleFamilyRes = false;
-			if (occupancyTypeHelper != null && occupancyTypeHelper.getSubtype() != null
-					&& A_R.equals(occupancyTypeHelper.getSubtype().getCode())) {
+			if ((occupancyTypeHelper != null && occupancyTypeHelper.getSubtype() != null
+					&& A_R.equals(occupancyTypeHelper.getSubtype().getCode()))
+					|| totalBuiltupArea.compareTo(BigDecimal.valueOf((50))) <= 0) {
 				isSingleFamilyRes = true;
 			}
 			if (totalProvidedCarParkArea.doubleValue() == 0 && !isSingleFamilyRes
