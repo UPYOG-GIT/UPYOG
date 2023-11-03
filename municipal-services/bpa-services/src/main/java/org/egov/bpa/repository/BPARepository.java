@@ -122,11 +122,11 @@ public class BPARepository {
 
 	public int createFeeDetail(PayTypeFeeDetailRequest payTypeFeeDetailRequest) {
 
-		String query = "SELECT COUNT(*) FROM fee_details WHERE feetype=? and ulb_tenantid=?";
+		String query = "SELECT COUNT(*) FROM fee_details WHERE feetype=? and application_no=?";
 		int count = jdbcTemplate.queryForObject(query,
-				new Object[] { payTypeFeeDetailRequest.getFeeType(), payTypeFeeDetailRequest.getTenantId() },
+				new Object[] { payTypeFeeDetailRequest.getFeeType(), payTypeFeeDetailRequest.getApplicationNo() },
 				Integer.class);
-		log.info("createPayTpRate count : " + count);
+		log.info("createFeeDetail count : " + count);
 		count = count + 1;
 
 		LocalDateTime date = LocalDateTime.now();
