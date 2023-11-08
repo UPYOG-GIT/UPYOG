@@ -266,7 +266,7 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
                 //File file = new File(System.getenv("JAVA_HOME")+"/lib/security/cacerts");
 //                File file = new File("E:\\msdgweb-mgov-gov-in.crt");
 //                File file = new File("https:\\try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb-mgov-gov-in.crt");
-				ClassPathResource resource = new ClassPathResource("msdgweb-mgov-gov-in11.cer");
+				ClassPathResource resource = new ClassPathResource("msdbweb-2023-2024.cer");
 //				File file = resource.getFile();
 				
 //				File file =new File("https:\\\\try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb-mgov-gov-in.crt");
@@ -275,7 +275,7 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
 //				File file = new File(getClass().getClassLoader().getResource("msdgweb-mgov-gov-in.crt").getFile());
 //                File file = new ClassPathResource("https:\\try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb-mgov-gov-in.crt").getFile();
                 
-				String fileUrl = "https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb-mgov-gov-in11.cer";
+				String fileUrl = "https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdbweb-2023-2024.cer";
 //		        String destinationFilePath = "C:/example/folder/msdgweb-mgov-gov-in.crt";
 
 		        URL url = new URL(fileUrl);
