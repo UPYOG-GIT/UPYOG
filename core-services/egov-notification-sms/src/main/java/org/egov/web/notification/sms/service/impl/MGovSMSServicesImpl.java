@@ -79,7 +79,7 @@ public class MGovSMSServicesImpl extends BaseSMSService {
 //            trustStore.load(is, "changeit".toCharArray());
 //            TrustManagerFactory trustFactory = TrustManagerFactory
 //                    .getInstance(TrustManagerFactory.getDefaultAlgorithm());
-			String fileUrl = "https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb-mgov-gov-in11.cer";
+			String fileUrl = "https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdbweb-2023-2024.cer";
 //	        String destinationFilePath = "C:/example/folder/msdgweb-mgov-gov-in.crt";
 
 	        URL url1 = new URL(fileUrl);
