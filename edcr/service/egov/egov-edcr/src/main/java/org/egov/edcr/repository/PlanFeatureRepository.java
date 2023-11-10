@@ -171,8 +171,8 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(GovtBuildingDistance.class);
         features.add(pf);
 
-        pf = new PlanFeature(LandUse.class);
-        features.add(pf);
+//        pf = new PlanFeature(LandUse.class);
+//        features.add(pf);
 
         pf = new PlanFeature(RiverDistance.class);
         features.add(pf);
