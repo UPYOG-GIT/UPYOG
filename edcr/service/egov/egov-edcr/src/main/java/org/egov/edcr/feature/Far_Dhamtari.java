@@ -930,29 +930,38 @@ public class Far_Dhamtari extends Far {
 		boolean isAccepted = false;
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
 		boolean isCenterArea = pl.getPlanInformation().isCenterArea();
+		BigDecimal farValue = BigDecimal.ZERO;
 
 		if (isCenterArea) {
-			pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
-			expectedResult = "<= 1.50";
+			farValue = BigDecimal.valueOf(1.5);
+//			pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
+//			expectedResult = "<= 1.50";
 		} else {
-			pl.getFarDetails().setPermissableFar(ONE_POINTTWOFIVE.doubleValue());
-			expectedResult = "<= 1.25";
+			farValue = BigDecimal.valueOf(1.25);
+//			pl.getFarDetails().setPermissableFar(ONE_POINTTWOFIVE.doubleValue());
+//			expectedResult = "<= 1.25";
 		}
 
 		if (roadWidth.compareTo(BigDecimal.valueOf(18)) <= 0) {
-			pl.getFarDetails().setPermissableFar(ONE_POINTTWOFIVE.doubleValue());
-			expectedResult = "<= 1.25";
+			farValue = BigDecimal.valueOf(1.25);
+//			pl.getFarDetails().setPermissableFar(ONE_POINTTWOFIVE.doubleValue());
+//			expectedResult = "<= 1.25";
 		} else if (roadWidth.compareTo(BigDecimal.valueOf(18)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(30)) <= 0) {
-			pl.getFarDetails().setPermissableFar(ONE_POINTSEVENFIVE.doubleValue());
-			expectedResult = "<= 1.75";
+			farValue = BigDecimal.valueOf(1.75);
+//			pl.getFarDetails().setPermissableFar(ONE_POINTSEVENFIVE.doubleValue());
+//			expectedResult = "<= 1.75";
 		} else if (roadWidth.compareTo(BigDecimal.valueOf(18)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(30)) > 0) {
-			pl.getFarDetails().setPermissableFar(ONE_POINTTWOFIVE.doubleValue());
-			expectedResult = "<= 1.25";
+			farValue = BigDecimal.valueOf(1.25);
+//			pl.getFarDetails().setPermissableFar(ONE_POINTTWOFIVE.doubleValue());
+//			expectedResult = "<= 1.25";
 		}
 
-		isAccepted = far.compareTo(ONE_POINTTWOFIVE) <= 0;
+		isAccepted = far.compareTo(farValue) <= 0;
+//		isAccepted = far.compareTo(ONE_POINTTWOFIVE) <= 0;
+		pl.getFarDetails().setPermissableFar(farValue.doubleValue());
+		expectedResult = "<= " + farValue;
 
 		String occupancyName = occupancyType.getType().getName();
 		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
@@ -967,16 +976,22 @@ public class Far_Dhamtari extends Far {
 		String expectedResult = StringUtils.EMPTY;
 		boolean isAccepted = false;
 		boolean isCenterArea = pl.getPlanInformation().isCenterArea();
+		BigDecimal farValue = BigDecimal.ZERO;
 
 		if (isCenterArea) {
-			pl.getFarDetails().setPermissableFar(TWO.doubleValue());
-			expectedResult = "<= 2.0";
+			farValue = BigDecimal.valueOf(2.0);
+//			pl.getFarDetails().setPermissableFar(TWO.doubleValue());
+//			expectedResult = "<= 2.0";
 		} else {
-			pl.getFarDetails().setPermissableFar(ONE_POINTEIGHT.doubleValue());
-			expectedResult = "<= 1.80";
+			farValue = BigDecimal.valueOf(1.8);
+//			pl.getFarDetails().setPermissableFar(ONE_POINTEIGHT.doubleValue());
+//			expectedResult = "<= 1.80";
 		}
 
-		isAccepted = far.compareTo(ONE_POINTTWOFIVE) <= 0;
+//		isAccepted = far.compareTo(ONE_POINTTWOFIVE) <= 0;
+		isAccepted = far.compareTo(farValue) <= 0;
+		pl.getFarDetails().setPermissableFar(farValue.doubleValue());
+		expectedResult = "<= " + farValue;
 
 		String occupancyName = occupancyType.getType().getName();
 		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
