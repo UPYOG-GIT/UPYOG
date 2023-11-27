@@ -197,7 +197,7 @@ public class PaymentReceiptV2 {
 						.setTextAlignment(TextAlignment.LEFT));
 				fullTable.addCell(new Cell().add("For " + ulbName + "\n\n Authorised Signatory  ")
 						.setTextAlignment(TextAlignment.RIGHT));
-				fullTable.addCell(new Cell().add("This is a Computer Generated Printout\r\n" + "")
+				fullTable.addCell(new Cell().add("This is a Computer Generated Receipt\r\n" + "")
 						.setTextAlignment(TextAlignment.CENTER));
 				document.add(fullTable);
 				document.close();
