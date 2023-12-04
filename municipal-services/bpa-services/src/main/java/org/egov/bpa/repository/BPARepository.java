@@ -624,5 +624,35 @@ public class BPARepository {
 
 		return jdbcTemplate.queryForList(query1, new Object[] {});
 	}
+	
+public List<Map<String, Object>> getIngestData() {
+		
+	    String query1 = "SELECT\n"
+	            + "    la.locality,\n"
+	            + "	la.tenantid,\n"
+	            + "    COUNT(CASE WHEN bp.status = 'APPROVED' THEN 1 END) AS ApprovedCount,\n"
+	            + "    COUNT(CASE WHEN bp.status = 'INITIATED' THEN 1 END) AS InitiatedCount,\n"
+	            + "	COUNT(CASE WHEN bp.businessservice = 'BPA_LOW' THEN 1 END) AS LOW,\n"
+	            + "	COUNT(CASE WHEN bp.businessservice = 'BPA' THEN 1 END) AS MEDHIGH,\n"
+	            + "	COUNT(CASE WHEN la.occupancy = 'Residential' THEN 1 END) AS Residential,\n"
+	            + "	COUNT(CASE WHEN la.occupancy = 'Mercantile / Commercial' THEN 1 END) AS Institutional,\n"
+	            + "	COUNT(CASE WHEN egpg.gateway_payment_mode = 'Debit Card' THEN 1 END) AS Debit_Card,\n"
+	            + "	COUNT(CASE WHEN egpg.gateway_payment_mode = 'Credit Card' THEN 1 END) AS Credit_Card,\n"
+	            + "	COUNT(CASE WHEN egpg.gateway_payment_mode = 'Bharat QR' AND egpg.gateway_payment_mode = 'Unified Payments' THEN 1 END) AS UPI\n"
+	            + "FROM\n"
+	            + "    eg_land_address AS la\n"
+	            + "LEFT JOIN\n"
+	            + "    eg_bpa_buildingplan AS bp ON bp.landid = la.landinfoid\n"
+	            + "LEFT JOIN\n"
+	            + "    eg_pg_transactions AS egpg ON bp.applicationno = egpg.consumer_code\n"
+	            + "\n"
+	            + "GROUP BY\n"
+	            + "    la.locality, la.tenantid";
+
+	   
+	    List<Map<String, Object>> resultList = jdbcTemplate.queryForList(query1);
+
+	    return resultList;
+	}
 
 }

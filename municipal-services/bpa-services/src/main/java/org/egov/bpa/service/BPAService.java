@@ -1087,4 +1087,11 @@ public class BPAService {
 		return resultList;
 	}
 	
+	public List<Map<String, Object>> getIngestData(){
+		 
+	    return  repository.getIngestData();
+			 
+			 
+		 }
+	
 }

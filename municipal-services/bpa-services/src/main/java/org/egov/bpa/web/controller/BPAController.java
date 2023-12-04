@@ -529,5 +529,13 @@ public class BPAController {
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 
 	}
+	
+	@PostMapping(value = "/ingestData")
+	public ResponseEntity<List<Map<String, Object>>> getListOfIngestData() {
+		List<Map<String, Object>> list = bpaService.getIngestData();
+		return new ResponseEntity<>(list, HttpStatus.OK);
+
+	}
+
 
 }
