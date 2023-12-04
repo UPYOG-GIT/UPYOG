@@ -1088,8 +1088,11 @@ public class BPAService {
 	}
 	
 	public List<Map<String, Object>> getIngestData(){
-		 
-	    return  repository.getIngestData();
+		
+		List<Map<String, Object>> ingestData =  repository.getIngestData();
+		log.info(ingestData.toString());
+		return ingestData;
+	    
 			 
 			 
 		 }
