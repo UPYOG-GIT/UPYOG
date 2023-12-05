@@ -651,7 +651,8 @@ public List<Map<String, Object>> getIngestData() {
 
 	   
 	    List<Map<String, Object>> resultList = jdbcTemplate.queryForList(query1);
-
+	    
+	    log.info("IngestData ResultList Size: "+resultList.size());
 	    return resultList;
 	}
 
