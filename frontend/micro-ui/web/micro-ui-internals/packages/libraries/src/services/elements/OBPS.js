@@ -575,9 +575,13 @@ export const OBPSService = {
       const validityDate = new Date(BPA?.additionalDetails?.validityDate);
       validityDate.setFullYear(validityDate.getFullYear() - 1);
       applicationDetailsInfo?.values?.push({ title: BPA?.businessService !== "BPA_OC" ? "BPA_PERMIT_NUMBER_LABEL" : "BPA_OC_PERMIT_NUMBER_LABEL", value: BPA?.approvalNo || "NA" });
+      // applicationDetailsInfo?.values?.push({
+      //   title: BPA?.businessService !== "BPA_OC" ? "BPA_PERMIT_VALIDITY" : "BPA_OC_PERMIT_VALIDITY",
+      //   value: BPA?.additionalDetails?.validityDate ? `${ConvertEpochToValidityDate(BPA?.additionalDetails?.validityDate)} - ${format(validityDate, 'dd/MM/yyyy')}` : "NA"
+      // });
       applicationDetailsInfo?.values?.push({
         title: BPA?.businessService !== "BPA_OC" ? "BPA_PERMIT_VALIDITY" : "BPA_OC_PERMIT_VALIDITY",
-        value: BPA?.additionalDetails?.validityDate ? `${ConvertEpochToValidityDate(BPA?.additionalDetails?.validityDate)} - ${format(validityDate, 'dd/MM/yyyy')}` : "NA"
+        value: BPA?.additionalDetails?.validityDate ? `${format(approvalDate, 'dd/MM/yyyy')} - ${format(validityDate, 'dd/MM/yyyy')}` : "NA"
       });
     }
     // console.log("date------------" + BPA?.additionalDetails?.validityDate)
