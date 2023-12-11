@@ -573,7 +573,8 @@ export const OBPSService = {
 
     if (BPA?.approvalNo) {
       const validityDate = new Date(BPA?.additionalDetails?.validityDate);
-      validityDate.setFullYear(validityDate.getFullYear() - 1);
+      const approvalDate = new Date(BPA?.approvalDate);
+      // validityDate.setFullYear(validityDate.getFullYear() - 1);
       applicationDetailsInfo?.values?.push({ title: BPA?.businessService !== "BPA_OC" ? "BPA_PERMIT_NUMBER_LABEL" : "BPA_OC_PERMIT_NUMBER_LABEL", value: BPA?.approvalNo || "NA" });
       // applicationDetailsInfo?.values?.push({
       //   title: BPA?.businessService !== "BPA_OC" ? "BPA_PERMIT_VALIDITY" : "BPA_OC_PERMIT_VALIDITY",
