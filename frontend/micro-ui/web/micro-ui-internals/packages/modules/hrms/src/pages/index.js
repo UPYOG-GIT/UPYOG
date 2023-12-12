@@ -20,6 +20,7 @@ const EmployeeApp = ({ path, url, userType }) => {
   const CreateEmployee = Digit?.ComponentRegistryService?.getComponent("HRCreateEmployee");
   const EditEmpolyee = Digit?.ComponentRegistryService?.getComponent("HREditEmpolyee");
   const PayTypeRate = Digit?.ComponentRegistryService?.getComponent("PayTypeRate");
+  const EdcrRuleEntry = Digit?.ComponentRegistryService?.getComponent("EdcrRuleEntry");
   const SlabEntry = Digit?.ComponentRegistryService?.getComponent("SlabEntry");
   const ProptymasterEntry = Digit?.ComponentRegistryService?.getComponent("ProptymasterEntry");
   const CateEntry = Digit?.ComponentRegistryService?.getComponent("CateEntry");
@@ -53,6 +54,7 @@ const EmployeeApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/cateEntry`} component={()=><CateEntry/>}/>
           <PrivateRoute path={`${path}/subcateEntry`} component={()=><SubCateEntry/>}/>
           <PrivateRoute path={`${path}/paytyEntry`} component={()=><PayTpEntry/>}/>
+          <PrivateRoute path={`${path}/edcrRuleEntry`} component={()=><EdcrRuleEntry/>} />
         </div>
       </React.Fragment>
     </Switch>
