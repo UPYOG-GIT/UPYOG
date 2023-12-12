@@ -23,6 +23,7 @@ import Inbox from "./pages/Inbox";
 import Response from "./pages/Response";
 import PayTypeRate from "./pages/PayTypeRateEntry";
 import SlabEntry from "./pages/SlabEntry";
+import EdcrRuleEntry from "./pages/EdcrRuleEntry";
 import ProptymasterEntry from "./pages/Proposaltymaster";
 import CateEntry from "./pages/CategoryEntry";
 import SubCateEntry from "./pages/SubCategoryEntry";
@@ -61,6 +62,7 @@ const componentsToRegister = {
   SelectDateofBirthEmployment,
   HRMSModule,
   PayTypeRate, 
+  EdcrRuleEntry,
   SlabEntry,
   ProptymasterEntry,
   CateEntry,
