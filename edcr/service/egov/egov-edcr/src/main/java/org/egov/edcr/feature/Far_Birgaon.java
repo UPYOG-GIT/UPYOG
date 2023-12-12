@@ -110,15 +110,20 @@ import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.service.EdcrRestService;
 import org.egov.edcr.service.ProcessPrintHelper;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.utils.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class Far_Birgaon extends Far {
 
 	private static final Logger LOG = LogManager.getLogger(Far_Birgaon.class);
+	@Autowired
+	EdcrRestService edcrRestService;
+	private String feature = "far";
 
 	private static final String VALIDATION_NEGATIVE_FLOOR_AREA = "msg.error.negative.floorarea.occupancy.floor";
 	private static final String VALIDATION_NEGATIVE_EXISTING_FLOOR_AREA = "msg.error.negative.existing.floorarea.occupancy.floor";
@@ -606,10 +611,10 @@ public class Far_Birgaon extends Far {
 //		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getArea().add(surrenderRoadArea) : BigDecimal.ZERO;
 		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getPlotBndryArea() : BigDecimal.ZERO;
 //		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getNetPlotArea() : BigDecimal.ZERO;
-		BigDecimal netPlotArea = pl.getPlot().getNetPlotArea();
-//				.add(pl.getPlot().getRoadArea().multiply(BigDecimal.valueOf(2)))
-//				.add(pl.getPlot().getRoadWideningArea().multiply(BigDecimal.valueOf(2)));
-		if (netPlotArea.doubleValue() > 0)
+		BigDecimal netPlotArea = pl.getPlot().getNetPlotArea()
+				.add(pl.getPlot().getRoadArea().multiply(BigDecimal.valueOf(2)))
+				.add(pl.getPlot().getRoadWideningArea().multiply(BigDecimal.valueOf(2)));
+		if (plotArea.doubleValue() > 0)
 //			providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(plotArea, DECIMALDIGITS_MEASUREMENTS,
 //					ROUNDMODE_MEASUREMENTS);
 			providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(netPlotArea, DECIMALDIGITS_MEASUREMENTS,
@@ -654,7 +659,7 @@ public class Far_Birgaon extends Far {
 					|| (mostRestrictiveOccupancyType.getSubtype() != null
 							&& (A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())
 									|| A_AF.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())))) {
-				processFarResidential(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs);
+				processFarResidential(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs, feature);
 			}
 			if (mostRestrictiveOccupancyType.getType() != null
 					&& (DxfFileConstants.G.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
@@ -920,21 +925,49 @@ public class Far_Birgaon extends Far {
 	}
 
 	// FAR values changed according to Residential
-	private void processFarResidential(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
-			BigDecimal roadWidth, HashMap<String, String> errors) {
+//	private void processFarResidential(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
+//			BigDecimal roadWidth, HashMap<String, String> errors, String feature) {
+//        System.out.println("under processFarResidentoal");
+//      Double farValue =  edcrRestService.getEdcrRule(feature);
+//		String expectedResult = StringUtils.EMPTY;
+//		boolean isAccepted = false;
+//
+//		isAccepted = far.compareTo(ONE_POINTTWOFIVE) <= 0;
+//		pl.getFarDetails().setPermissableFar(ONE_POINTTWOFIVE.doubleValue());
+//		expectedResult = "<= 1.25";
+//
+//		String occupancyName = occupancyType.getType().getName();
+//		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
+//			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+//		}
+//		
+//		
+//	}
 
+	private void processFarResidential(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
+			BigDecimal roadWidth, HashMap<String, String> errors, String feature) {
+		feature = "Far";
+		System.out.println("under processFarResidentoal");
+		String occupancyName = occupancyType.getType().getName();
+		BigDecimal plotArea = pl.getPlot().getArea();
+		BigDecimal to_value = plotArea;
+		BigDecimal from_value = plotArea;
+		BigDecimal farValue = edcrRestService.getEdcrRule(feature, occupancyName, to_value, from_value);
 		String expectedResult = StringUtils.EMPTY;
 		boolean isAccepted = false;
 
-		isAccepted = far.compareTo(ONE_POINTTWOFIVE) <= 0;
-		pl.getFarDetails().setPermissableFar(ONE_POINTTWOFIVE.doubleValue());
-		expectedResult = "<= 1.25";
-
-		String occupancyName = occupancyType.getType().getName();
+		isAccepted = far.compareTo(farValue) <= 0;
+		pl.getFarDetails().setPermissableFar(farValue.doubleValue());
+		expectedResult = "<= feature";
 		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
 			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
 		}
+
 	}
+	
+	
+	
+	
 
 	// FAR values changed according to Commercial
 	private void processFarCommercial(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
