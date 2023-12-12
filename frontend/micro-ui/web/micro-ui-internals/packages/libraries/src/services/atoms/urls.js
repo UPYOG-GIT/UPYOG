@@ -112,6 +112,7 @@ const Urls = {
   obps: {
     scrutinyDetails: "/edcr/rest/dcr/scrutinydetails",
     comparisionReport: "/edcr/rest/dcr/occomparison",
+    createEdcrRule: "/edcr/rest/dcr/createEdcrRule",
     create: "/bpa-services/v1/bpa/_create",
     nocSearch: "/noc-services/v1/noc/_search",
     updateNOC: "/noc-services/v1/noc/_update",
