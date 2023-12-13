@@ -213,6 +213,18 @@ export const OBPSService = {
       auth: true,
     }),
 
+    createEdcrRule: (details) =>
+    Request({
+      url: Urls.obps.createEdcrRule,
+      data: details,
+      useCache: false,
+      setTimeParam: false,
+      userService: true,
+      method: "POST",
+      params: {details},
+      auth: true,
+    }),
+
   LicenseDetails: async (tenantId, params) => {
     const response = await OBPSService.BPAREGSearch(tenantId, {}, params);
     if (!response?.Licenses?.length) {
