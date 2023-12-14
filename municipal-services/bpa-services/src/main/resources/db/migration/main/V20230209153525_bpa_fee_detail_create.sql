@@ -132,3 +132,6 @@ ADD COLUMN verifieddate timestamp without time zone;
 
 ALTER TABLE proposal_type_master
 ADD COLUMN srno integer;
+
+ALTER TABLE fee_details
+ADD COLUMN is_fdr character varying(2) DEFAULT 'N';

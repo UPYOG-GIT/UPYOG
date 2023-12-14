@@ -163,7 +163,7 @@ public class PaymentRepository {
 			Map<String, Bill> billMap = getBills(billIds);
 			for (Payment payment : payments) {
 				payment.getPaymentDetails().forEach(detail -> {
-					String feeDetailQuery = "SELECT srno, charges_type_name, amount FROM fee_details WHERE bill_id='"
+					String feeDetailQuery = "SELECT srno, charges_type_name, amount, is_fdr FROM fee_details WHERE bill_id='"
 							+ detail.getBillId() + "' ORDER BY srno ASC";
 					List<FeeDetail> feeDetails = jdbcTemplate.query(feeDetailQuery, feeDetailRowMapper);
 					detail.setFeeDetail(feeDetails);

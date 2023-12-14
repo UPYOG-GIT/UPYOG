@@ -324,7 +324,7 @@ public class PaymentQueryBuilder {
 	}
 
 	public String getFeeDetailSearchQuery(String billId) {
-		String query = "SELECT srno, charges_type_name, amount FROM fee_details WHERE bill_id='" + billId
+		String query = "SELECT srno, charges_type_name, amount, is_fdr FROM fee_details WHERE bill_id='" + billId
 				+ "' ORDER BY srno ASC";
 		return query;
 	}
