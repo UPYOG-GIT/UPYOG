@@ -139,19 +139,19 @@ const EdcrRuleEntry = () => {
       maxLimit: PyMaxLimit,
     };
 
-    const obj = { feature: PyBuildCat.value };
-    const prop1 = "occupancy";
-    const prop2 = "to_area";
-    const prop3 = "from_area";
-    const prop4 = "by_law";
-    const prop5 = "permissible_value";
-    obj[prop1] = PyPropCat.value;
-    obj[prop2] = PyToValue;
-    obj[prop3] = PyFromValue;
-    obj[prop4] = PyResRate;
-    obj[prop5] = PyCommRate;
+    // const obj = { feature: PyBuildCat.value };
+    // const prop1 = "occupancy";
+    // const prop2 = "to_area";
+    // const prop3 = "from_area";
+    // const prop4 = "by_law";
+    // const prop5 = "permissible_value";
+    // obj[prop1] = PyPropCat.value;
+    // obj[prop2] = PyToValue;
+    // obj[prop3] = PyFromValue;
+    // obj[prop4] = PyResRate;
+    // obj[prop5] = PyCommRate;
 
-    console.log(obj);
+    // console.log(obj);
     // {"name": "Ben", "prop name": "value 1", "prop-name": "value 2", "1prop-name": "value 3"}
 
 
@@ -160,7 +160,7 @@ const EdcrRuleEntry = () => {
       occupancy: PyPropCat.value,
       to_area: PyToValue,
       from_area: PyFromValue,
-      // tenant_id:tenantId.split(".").length>1?tenantId.split('.')[1]:tenantId,
+      tenant_id:tenantId.split(".").length>1?tenantId.split('.')[1]:tenantId,
       by_law: PyResRate,
       permissible_value: PyCommRate,
 
@@ -180,7 +180,7 @@ const EdcrRuleEntry = () => {
     setPyMultiplyValue(0);
     setPyMaxLimit(0);
 
-    const SlabMasterResp = await Digit.EDCRService.createEdcrRule(obj);
+    const SlabMasterResp = await Digit.EDCRService.createEdcrRule(params);
     // const SlabMasterResp = await Digit.OBPSAdminService.createEdcrRule(params);
 
     if (SlabMasterResp > 0) {
@@ -432,7 +432,7 @@ const EdcrRuleEntry = () => {
         >
           <div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <Header styles={{ marginLeft: "0px", paddingTop: "1px", fontSize: "25px" }}>{t("Slab Details")}</Header>
+              <Header styles={{ marginLeft: "0px", paddingTop: "1px", fontSize: "25px" }}>{t("EDCR Rule Entry")}</Header>
               <span onClick={closeModal}>
                 <CloseSvg />
               </span>
