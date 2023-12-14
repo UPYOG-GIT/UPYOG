@@ -147,6 +147,7 @@ public class Far_Birgaon extends Far {
 	private static final BigDecimal FIFTEEN = BigDecimal.valueOf(15);
 	private static final BigDecimal TWO = BigDecimal.valueOf(2); // for residential new
 	private static final BigDecimal ONE_POINTEIGHT = BigDecimal.valueOf(1.8);
+	private static final BigDecimal ONE_POINTSEVENFIVE = BigDecimal.valueOf(1.75);
 
 	private static final BigDecimal ROAD_WIDTH_TWO_POINTFOUR = BigDecimal.valueOf(2.4);
 	private static final BigDecimal ROAD_WIDTH_SIX_POINTONE = BigDecimal.valueOf(6.1);
@@ -681,6 +682,11 @@ public class Far_Birgaon extends Far {
 					&& DxfFileConstants.F.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
 				processFarCommercial(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs, developmentZone, area);
 			}
+			
+			if (mostRestrictiveOccupancyType.getType() != null
+					&& DxfFileConstants.J.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+				processFarGovernment(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs, developmentZone, area);
+			}
 		}
 		ProcessPrintHelper.print(pl);
 		return pl;
@@ -1112,10 +1118,92 @@ public class Far_Birgaon extends Far {
 		boolean isAccepted = false;
    
 		isAccepted = far.compareTo(ONE) <= 0;
-		if(developmentZone != "CA");
+		if(developmentZone != "CA") {
 		pl.getFarDetails().setPermissableFar(ONE.doubleValue());
+		}
 		expectedResult = "<= 1";
 
+		String occupancyName = occupancyType.getType().getName();
+		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
+			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+		}
+	}
+	
+	private void processFarGovernment(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
+			BigDecimal roadWidth, HashMap<String, String> errors, String developmentZone, BigDecimal area) {
+		
+		String expectedResult = StringUtils.EMPTY;
+		boolean isAccepted = false;
+		 BigDecimal permissibleFar = BigDecimal.ZERO;
+		
+
+		switch (developmentZone) {
+		case "CA" :
+			if (area.compareTo(BigDecimal.valueOf(500)) <= 0 )
+			{
+				 pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
+				 permissibleFar = BigDecimal.valueOf(1.5);
+			
+		
+			} else if ((area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0)) {
+				pl.getFarDetails().setPermissableFar(TWO.doubleValue());
+				permissibleFar = BigDecimal.valueOf(2);
+			} else if ((area.compareTo(BigDecimal.valueOf(1000)) > 0 )) {
+				pl.getFarDetails().setPermissableFar(TWO_POINTFIVE.doubleValue());
+				permissibleFar = BigDecimal.valueOf(2.5);
+			}
+			break;
+			
+		case "DA-01" : 
+			
+			if (area.compareTo(BigDecimal.valueOf(500)) <= 0 )
+			{
+				 pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
+				 permissibleFar = BigDecimal.valueOf(1.5);
+			
+		
+			} else if ((area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0)) {
+				pl.getFarDetails().setPermissableFar(TWO.doubleValue());
+				permissibleFar = BigDecimal.valueOf(2);
+			} else if ((area.compareTo(BigDecimal.valueOf(1000)) > 0 )) {
+				pl.getFarDetails().setPermissableFar(TWO_POINTFIVE.doubleValue());
+				permissibleFar = BigDecimal.valueOf(2.5);
+			}
+				break;
+				
+		case "DA-02" : 
+			
+			if (area.compareTo(BigDecimal.valueOf(500)) <= 0 )
+			{
+				 pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
+				 permissibleFar = BigDecimal.valueOf(1.5);
+			
+		
+			} else if ((area.compareTo(BigDecimal.valueOf(500)) > 0 )) {
+				pl.getFarDetails().setPermissableFar(ONE_POINTSEVENFIVE.doubleValue());
+				permissibleFar = BigDecimal.valueOf(1.75);
+			}
+				break;
+				
+				
+			case "DA-03" : 
+				
+				
+				if (area.compareTo(BigDecimal.valueOf(500)) <= 0 )
+				{
+					 pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
+					 permissibleFar = BigDecimal.valueOf(1.5);
+				
+			
+				} else if ((area.compareTo(BigDecimal.valueOf(500)) > 0 )) {
+					pl.getFarDetails().setPermissableFar(ONE_POINTSEVENFIVE.doubleValue());
+					permissibleFar = BigDecimal.valueOf(1.75);
+				}
+					break;
+		
+	}
+		isAccepted = far.compareTo(permissibleFar) <= 0;
+		expectedResult = "<= " + permissibleFar;
 		String occupancyName = occupancyType.getType().getName();
 		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
 			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
