@@ -36,6 +36,9 @@ public class FeeDetail {
     @NotNull
     @JsonProperty("amount")
     private BigDecimal amount;
+    
+    @JsonProperty("isFdr")
+    private String isFdr;
 
     
 

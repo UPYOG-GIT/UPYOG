@@ -167,13 +167,15 @@ public class PaymentReceiptV2 {
 
 				List<FeeDetail> feeDetailList = paymentDetails.get(0).getFeeDetail();
 
-				Integer srNo=1;
+				Integer srNo = 1;
 				for (FeeDetail feeDetail : feeDetailList) {
-					grossAmount.add(feeDetail.getAmount());
+					if (feeDetail.getIsFdr().equals("N")) {
+						grossAmount.add(feeDetail.getAmount());
+					}
 //					threeColTable2.addCell(
 //							new Cell().add(String.valueOf(feeDetail.getSrNo())).setTextAlignment(TextAlignment.CENTER));
-					threeColTable2.addCell(
-							new Cell().add(String.valueOf(srNo++)).setTextAlignment(TextAlignment.CENTER));
+					threeColTable2
+							.addCell(new Cell().add(String.valueOf(srNo++)).setTextAlignment(TextAlignment.CENTER));
 					threeColTable2.addCell(new Cell().add(feeDetail.getChargesTypeName()))
 							.setTextAlignment(TextAlignment.CENTER);
 					threeColTable2.addCell(new Cell().add(String.valueOf(feeDetail.getAmount()))
@@ -323,9 +325,9 @@ public class PaymentReceiptV2 {
 
 		return str;
 	}
-	
+
 	public void storeFile(ByteArrayInputStream byteArrayInputStream) {
-		
+
 	}
 
 }
