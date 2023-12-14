@@ -85,6 +85,7 @@ public class FrontYardService_Birgaon extends FrontYardService {
 	private static final String RULE_35 = "35 Table-8";
 	private static final String RULE_7_C_1 = "Table 7-C-1";
 	private static final String RULE_7_C_13 = "Table 7-C-13";
+	private static final String RULE_18_2 = "Table 18-2";
 //	private static final String RULE_36 = "36";
 	private static final String RULE_37_TWO_A = "37-2-A";
 //	private static final String RULE_37_TWO_B = "37-2-B";
@@ -97,7 +98,9 @@ public class FrontYardService_Birgaon extends FrontYardService {
 
 	private static final String MINIMUMLABEL = "Minimum distance ";
 
+	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_1 = BigDecimal.valueOf(1);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_1_5 = BigDecimal.valueOf(1.5);
+	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_1_25 = BigDecimal.valueOf(1.25);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_2_25 = BigDecimal.valueOf(2.25); // New var added
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_2_5 = BigDecimal.valueOf(2.5);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_3 = BigDecimal.valueOf(3);
@@ -299,20 +302,17 @@ public class FrontYardService_Birgaon extends FrontYardService {
 	private Boolean commercial(Integer level, String blockName, BigDecimal min, BigDecimal mean,
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot) {
-		if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_2_5;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) > 0
+		if (depthOfPlot.compareTo(BigDecimal.valueOf(6.10)) <= 0) {
+			meanVal = FRONTYARDMINIMUM_DISTANCE_1;
+		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(6.10)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_3;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_1_25;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(12.2)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_3;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12.2)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(15.25)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_3;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(15.25)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) {
 			meanVal = FRONTYARDMINIMUM_DISTANCE_4;
+		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12.2)) > 0
+				&& depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) {
+			meanVal = FRONTYARDMINIMUM_DISTANCE_4_5;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) <= 0) {
 			meanVal = FRONTYARDMINIMUM_DISTANCE_5;
@@ -336,7 +336,8 @@ public class FrontYardService_Birgaon extends FrontYardService {
 			String frontYardFieldName, BigDecimal min, BigDecimal mean, OccupancyTypeHelper mostRestrictiveOccupancy,
 			FrontYardResult frontYardResult, HashMap<String, String> errors) {
 		Boolean valid = false;
-		String subRule = RULE_7_C_1;
+//		String subRule = RULE_7_C_1;
+		String subRule = RULE_18_2;
 		String rule = FRONT_YARD_DESC;
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;
@@ -409,7 +410,7 @@ public class FrontYardService_Birgaon extends FrontYardService {
 			Plot plot, String frontYardFieldName, BigDecimal min, BigDecimal mean,
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult) {
 		Boolean valid = false;
-		String subRule = RULE_7_C_1;
+		String subRule = RULE_18_2;
 		String rule = FRONT_YARD_DESC;
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;
@@ -472,18 +473,15 @@ public class FrontYardService_Birgaon extends FrontYardService {
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot,
 			HashMap<String, String> errors, Plan pl) {
-		if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_1_5;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) > 0
+		if (depthOfPlot.compareTo(BigDecimal.valueOf(6.10)) <= 0) {
+			meanVal = FRONTYARDMINIMUM_DISTANCE_1;
+		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(6.10)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_1_5;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_1_25;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(12.2)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_1_5;
+			meanVal = FRONTYARDMINIMUM_DISTANCE_2_5;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12.2)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(15.25)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_2_25;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(15.25)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) {
 			meanVal = FRONTYARDMINIMUM_DISTANCE_3;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) > 0
