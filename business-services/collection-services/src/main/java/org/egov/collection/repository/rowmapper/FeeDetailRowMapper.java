@@ -36,11 +36,13 @@ public class FeeDetailRowMapper implements ResultSetExtractor<List<FeeDetail>> {
 			Integer srNo = rs.getInt("srno");
 			String chargesTypeName = rs.getString("charges_type_name");
 			BigDecimal amount = rs.getBigDecimal("amount");
+			String isFdr=rs.getString("is_fdr");
 			FeeDetail feeDetail = new FeeDetail();
 
 			feeDetail.setSrNo(srNo);
 			feeDetail.setChargesTypeName(chargesTypeName);
 			feeDetail.setAmount(amount);
+			feeDetail.setIsFdr(isFdr);
 			feeDetailList.add(feeDetail);
 
 		}
