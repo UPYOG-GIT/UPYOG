@@ -33,13 +33,13 @@ export const EDCRService = {
     createEdcrRule: (edcrRule) =>
     Request({
       url: Urls.edcr.createEdcrRule,
-      // data: data,
+      data: edcrRule,
       // multipartData: data,
       useCache: false,
       setTimeParam: false,
       userService: true,
       method: "POST",
-      params: { edcrRule },
+      params: { },
       auth: false,
       // multipartFormData: true
     })

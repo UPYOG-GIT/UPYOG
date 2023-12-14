@@ -91,6 +91,7 @@ public class RearYardService_Birgaon extends RearYardService {
 
 	private static final String RULE_35 = "35 Table-8";
 	private static final String RULE_7_C_1 = "Table 7-C-1";
+	private static final String RULE_18_2 = "Table 18-2";
 	private static final String RULE_7_C_13 = "Table 7-C-13";
 	private static final String RULE_36 = "36";
 	private static final String RULE_37_TWO_A = "37-2-A";
@@ -108,6 +109,7 @@ public class RearYardService_Birgaon extends RearYardService {
 	private static final BigDecimal REARYARDMINIMUM_DISTANCE_1_5 = BigDecimal.valueOf(1.5);
 	private static final BigDecimal REARYARDMINIMUM_DISTANCE_2 = BigDecimal.valueOf(2);
 	private static final BigDecimal REARYARDMINIMUM_DISTANCE_3 = BigDecimal.valueOf(3);
+	private static final BigDecimal REARYARDMINIMUM_DISTANCE_3_5 = BigDecimal.valueOf(3.5);
 	private static final BigDecimal REARYARDMINIMUM_DISTANCE_4 = BigDecimal.valueOf(4);
 	private static final BigDecimal REARYARDMINIMUM_DISTANCE_4_5 = BigDecimal.valueOf(4.5);
 	private static final BigDecimal REARYARDMINIMUM_DISTANCE_5 = BigDecimal.valueOf(5);
@@ -316,7 +318,8 @@ public class RearYardService_Birgaon extends RearYardService {
 			final String rearYardFieldName, final BigDecimal min, final BigDecimal mean,
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult,
 			BigDecimal buildingHeight) {
-		String subRule = RULE_7_C_1;
+//		String subRule = RULE_7_C_1;
+		String subRule = RULE_18_2;
 		String rule = REAR_YARD_DESC;
 		Boolean valid = false;
 		BigDecimal minVal = BigDecimal.valueOf(0);
@@ -348,19 +351,19 @@ public class RearYardService_Birgaon extends RearYardService {
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult, String subRule,
 			String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot, Boolean valid) {
 
-		if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) <= 0) {
+		if (depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) <= 0) {
 			meanVal = BigDecimal.ZERO;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) <= 0) {
-			meanVal = REARYARDMINIMUM_DISTANCE_1;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) {
+				&& depthOfPlot.compareTo(BigDecimal.valueOf(12.2)) <= 0) {
 			meanVal = REARYARDMINIMUM_DISTANCE_1_5;
+		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12.2)) > 0
+				&& depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) {
+			meanVal = REARYARDMINIMUM_DISTANCE_2;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) <= 0) {
 			meanVal = REARYARDMINIMUM_DISTANCE_3;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) > 0) {
-			meanVal = REARYARDMINIMUM_DISTANCE_5;
+			meanVal = REARYARDMINIMUM_DISTANCE_3_5;
 		}
 
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
@@ -488,15 +491,16 @@ public class RearYardService_Birgaon extends RearYardService {
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult,
 			BigDecimal buildingHeight) {
 		Boolean valid = false;
-		String subRule = RULE_37_TWO_A;
+//		String subRule = RULE_37_TWO_A;
+		String subRule = RULE_18_2;
 		String rule = REAR_YARD_DESC;
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
 
-		if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) <= 0) {
+		if (depthOfPlot.compareTo(BigDecimal.valueOf(6.10)) <= 0) {
 			meanVal = BigDecimal.ZERO;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) > 0
+		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(6.1)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) {
 			meanVal = REARYARDMINIMUM_DISTANCE_1_5;
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) > 0
