@@ -1158,8 +1158,8 @@ public class BPAService {
 			permits.put("buckets", riskTypeBuckets);
 			permitsIssued.add(permits);			
 			
-			
-			
+			data.add(dataIngest);
+			data.add(metrics);			
 			
 		
 			 
@@ -1168,8 +1168,8 @@ public class BPAService {
 			
 		}
 		
-		log.info(ingestData.toString());
-		return ingestData;
+		log.info(data.toString());
+		return data;
 	    
 			 
 			 
