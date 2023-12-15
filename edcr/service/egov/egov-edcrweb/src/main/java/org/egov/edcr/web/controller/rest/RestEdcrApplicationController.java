@@ -48,6 +48,7 @@
 package org.egov.edcr.web.controller.rest;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -589,5 +590,15 @@ public class RestEdcrApplicationController {
         return new ResponseEntity<>(edcrRes, HttpStatus.OK);
 
     }
+    
+    @PostMapping(value = "/createEdcrRule")
+    public void createEdcrRule(@RequestBody Map<String, Object> edcrRule){
+    	 edcrRestService.createEdcrRule(edcrRule);
+    	
+    }
+
+    
+    
+    
 
 }

@@ -58,7 +58,11 @@ const HRMSCard = () => {
             {
                 label: t("Sub Category Entry"),
                 link: `/digit-ui/employee/hrms/subcateEntry`
-            },       
+            },  
+            {
+                label: t("EDCR Rule Entry"),
+                link: `/digit-ui/employee/hrms/edcrRuleEntry`
+            },     
         ]
     }
 

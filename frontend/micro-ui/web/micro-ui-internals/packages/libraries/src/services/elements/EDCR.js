@@ -28,5 +28,19 @@ export const EDCRService = {
       params: { tenantId },
       auth: true,
       multipartFormData: true
+    }),
+
+    createEdcrRule: (edcrRule) =>
+    Request({
+      url: Urls.edcr.createEdcrRule,
+      data: edcrRule,
+      // multipartData: data,
+      useCache: false,
+      setTimeParam: false,
+      userService: true,
+      method: "POST",
+      params: { },
+      auth: false,
+      // multipartFormData: true
     })
 };

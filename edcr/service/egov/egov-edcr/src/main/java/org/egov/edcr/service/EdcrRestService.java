@@ -53,7 +53,9 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -109,12 +111,14 @@ import org.jfree.util.Log;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -1096,6 +1100,43 @@ public class EdcrRestService {
 		Log.info(deletedCount + "rejected scrutiny records deleted from edcr database");
 		return deletedCount;
 	}
+	
+	public void createEdcrRule(Map<String, Object> edcrRule) {
+
+		LocalDateTime date = LocalDateTime.now();
+		String feature = (String) edcrRule.get("feature");
+		Double permissibleValue = (Double) edcrRule.get("permissible_value");
+		String occupancy = (String) edcrRule.get("occupancy");
+		Double to_value = (Double) edcrRule.get("to_area");
+		Double from_value = (Double) edcrRule.get("from_area");
+		String by_law = (String) edcrRule.get("by_law");
+
+		String insertQuery = "INSERT INTO demo.edcr_rule_entry(feature, permissible_value, occupancy, to_area, from_area, by_law) VALUES ('"
+				+ feature + "','" + permissibleValue + "', '" + occupancy + "','" + to_value + "', '" + from_value
+				+ "', '" + by_law + "'  )";
+		System.out.println("insertQuery$$$$$$$$$$$$$$$$$$$$$$$$$$$" + insertQuery);
+		final Query query = getCurrentSession().createSQLQuery(insertQuery);
+		Integer result = query.executeUpdate();
+		System.out.println("******" + result);
+
+	}
+	
+	public BigDecimal getEdcrRule(String feature, String occupancy, BigDecimal to_value, BigDecimal from_value) {
+	    String farValue = "SELECT permissible_value FROM demo.edcr_rule_entry WHERE " +
+	            "feature = '" + feature + "' AND " +
+	            "occupancy = '" + occupancy + "' AND " +
+	            "to_area = " + to_value + " AND " +
+	            "from_area = " + from_value;
+
+	    final Query data = getCurrentSession().createSQLQuery(farValue);
+	    BigDecimal result = BigDecimal.valueOf(Double.valueOf(data.uniqueResult().toString()));
+	    System.out.println("******" + result);
+
+	    System.out.println("+++++++++" + feature + " " + farValue + " " +  occupancy + " " + to_value );
+
+	    return result;
+	}
+
 
 	public Date resetFromDateTimeStamp(final Date date) {
 		final Calendar cal1 = Calendar.getInstance();

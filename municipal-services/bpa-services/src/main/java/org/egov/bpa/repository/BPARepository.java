@@ -45,10 +45,9 @@ public class BPARepository {
 
 	@Autowired
 	private BPARowMapper rowMapper;
-	
+
 	@Autowired
 	private BPASearchDataRowMapper searchDataRowMapper;
-	
 
 	/**
 	 * Pushes the request on save topic through kafka
@@ -129,10 +128,17 @@ public class BPARepository {
 		log.info("createFeeDetail count : " + count);
 		count = count + 1;
 
+		String isFDR = "N";
+
+		if (payTypeFeeDetailRequest.getChargesTypeName().contains("Water")
+				|| payTypeFeeDetailRequest.getChargesTypeName().contains("water")) {
+			isFDR = "Y";
+		}
+
 		LocalDateTime date = LocalDateTime.now();
 		String insertQuery = "insert into fee_details(paytype_id,feetype,srno,ulb_tenantid,bill_id,application_no,"
-				+ "unit,charges_type_name,prop_plot_area,amount,rate,type,createdby,createddate)"
-				+ "values (?,?,?,?,?,?,?,?,?,?,?,?,?,'" + date + "')";
+				+ "unit,charges_type_name,prop_plot_area,amount,rate,type,is_fdr,createdby,createddate)"
+				+ "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,'" + date + "')";
 //		String insertQuery = "insert into pre_post_fee_details(paytype_id,ulb_tenantid,bill_id,application_no,"
 //				+ "unit_id,pay_id,charges_type_name,amount,status_type,propvalue,value,status,createdby,payment_type,tip_rate,createddate)"
 //				+ "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'" + date + "')";
@@ -146,7 +152,7 @@ public class BPARepository {
 				payTypeFeeDetailRequest.getApplicationNo(), payTypeFeeDetailRequest.getUnit(),
 				payTypeFeeDetailRequest.getChargesTypeName(), payTypeFeeDetailRequest.getPropPlotArea(),
 				payTypeFeeDetailRequest.getAmount(), payTypeFeeDetailRequest.getRate(),
-				payTypeFeeDetailRequest.getType(), payTypeFeeDetailRequest.getCreatedBy() });
+				payTypeFeeDetailRequest.getType(), isFDR, payTypeFeeDetailRequest.getCreatedBy() });
 //		}
 //		int[] insertResult = jdbcTemplate.batchUpdate(insertQuery, parameters);
 		int insertResult = jdbcTemplate.update(insertQuery, payTypeFeeDetailRequest.getPayTypeId(),
@@ -154,13 +160,13 @@ public class BPARepository {
 				payTypeFeeDetailRequest.getBillId(), payTypeFeeDetailRequest.getApplicationNo(),
 				payTypeFeeDetailRequest.getUnit(), payTypeFeeDetailRequest.getChargesTypeName(),
 				payTypeFeeDetailRequest.getPropPlotArea(), payTypeFeeDetailRequest.getAmount(),
-				payTypeFeeDetailRequest.getRate(), payTypeFeeDetailRequest.getType(),
+				payTypeFeeDetailRequest.getRate(), payTypeFeeDetailRequest.getType(), isFDR,
 				payTypeFeeDetailRequest.getCreatedBy());
 
-		log.info("BPARepository.createFeeDetail: " + insertResult + " data inserted into pre_post_fee_details table");
+		log.info("BPARepository.createFeeDetail: " + insertResult + " data inserted into fee_details table");
 		String totalAmountQuery = "SELECT SUM(amount) as amount from fee_details WHERE application_no='"
 				+ payTypeFeeDetailRequest.getApplicationNo() + "' and feetype='" + payTypeFeeDetailRequest.getFeeType()
-				+ "'";
+				+ "' and is_fdr='N'";
 		Map<String, Object> resultMap = jdbcTemplate.queryForMap(totalAmountQuery);
 		updateBillDetailAmount(payTypeFeeDetailRequest.getApplicationNo(),
 				Double.valueOf(resultMap.get("amount").toString()));
@@ -179,7 +185,7 @@ public class BPARepository {
 
 		String totalAmountQuery = "SELECT SUM(amount) as amount from fee_details WHERE application_no='"
 				+ payTypeFeeDetailRequest.getApplicationNo() + "' and feetype='" + payTypeFeeDetailRequest.getFeeType()
-				+ "'";
+				+ "' and is_fdr='N'";
 		Map<String, Object> resultMap = jdbcTemplate.queryForMap(totalAmountQuery);
 		updateBillDetailAmount(payTypeFeeDetailRequest.getApplicationNo(),
 				Double.valueOf(resultMap.get("amount").toString()));
@@ -188,7 +194,7 @@ public class BPARepository {
 	}
 
 	public List<Map<String, Object>> getFeeDetails(String applicationNo) {
-		String query = "select id,ulb_tenantid,paytype_id,feetype,srno,bill_id,unit,charges_type_name,prop_plot_area,amount,rate,type,verify from fee_details where application_no=? and feetype='Post'";
+		String query = "select id,ulb_tenantid,paytype_id,feetype,srno,bill_id,unit,charges_type_name,prop_plot_area,amount,rate,type,verify,is_fdr from fee_details where application_no=? and feetype='Post'";
 		return jdbcTemplate.queryForList(query, new Object[] { applicationNo });
 
 	}
@@ -202,7 +208,7 @@ public class BPARepository {
 		log.info("BPARepository.deletePayTpRateById: " + deleteResult
 				+ " data deleted from pay_tp_rate_master table of id(s) : " + ids.toString());
 		String totalAmountQuery = "SELECT SUM(amount) as amount from fee_details WHERE application_no='" + applicationNo
-				+ "' and feetype='" + feeType + "'";
+				+ "' and feetype='" + feeType + "' and is_fdr='N'";
 		Map<String, Object> resultMap = jdbcTemplate.queryForMap(totalAmountQuery);
 		updateBillDetailAmount(applicationNo, Double.valueOf(resultMap.get("amount").toString()));
 		return deleteResult;
@@ -624,35 +630,28 @@ public class BPARepository {
 
 		return jdbcTemplate.queryForList(query1, new Object[] {});
 	}
-	
-public List<Map<String, Object>> getIngestData() {
-		
-	    String query1 = "SELECT\n"
-	            + "    la.locality,\n"
-	            + "	la.tenantid,\n"
-	            + "    COUNT(CASE WHEN bp.status = 'APPROVED' THEN 1 END) AS ApprovedCount,\n"
-	            + "    COUNT(CASE WHEN bp.status = 'INITIATED' THEN 1 END) AS InitiatedCount,\n"
-	            + "	COUNT(CASE WHEN bp.businessservice = 'BPA_LOW' THEN 1 END) AS LOW,\n"
-	            + "	COUNT(CASE WHEN bp.businessservice = 'BPA' THEN 1 END) AS MEDHIGH,\n"
-	            + "	COUNT(CASE WHEN la.occupancy = 'Residential' THEN 1 END) AS Residential,\n"
-	            + "	COUNT(CASE WHEN la.occupancy = 'Mercantile / Commercial' THEN 1 END) AS Institutional,\n"
-	            + "	COUNT(CASE WHEN egpg.gateway_payment_mode = 'Debit Card' THEN 1 END) AS Debit_Card,\n"
-	            + "	COUNT(CASE WHEN egpg.gateway_payment_mode = 'Credit Card' THEN 1 END) AS Credit_Card,\n"
-	            + "	COUNT(CASE WHEN egpg.gateway_payment_mode = 'Bharat QR' AND egpg.gateway_payment_mode = 'Unified Payments' THEN 1 END) AS UPI\n"
-	            + "FROM\n"
-	            + "    eg_land_address AS la\n"
-	            + "LEFT JOIN\n"
-	            + "    eg_bpa_buildingplan AS bp ON bp.landid = la.landinfoid\n"
-	            + "LEFT JOIN\n"
-	            + "    eg_pg_transactions AS egpg ON bp.applicationno = egpg.consumer_code\n"
-	            + "\n"
-	            + "GROUP BY\n"
-	            + "    la.locality, la.tenantid";
 
-	   
-	    List<Map<String, Object>> resultList = jdbcTemplate.queryForList(query1);
+	public List<Map<String, Object>> getIngestData() {
 
-	    return resultList;
+		String query1 = "SELECT\n" + "    la.locality,\n" + "	la.tenantid,\n"
+				+ "    COUNT(CASE WHEN bp.status = 'APPROVED' THEN 1 END) AS ApprovedCount,\n"
+				+ "    COUNT(CASE WHEN bp.status = 'INITIATED' THEN 1 END) AS InitiatedCount,\n"
+				+ "	COUNT(CASE WHEN bp.businessservice = 'BPA_LOW' THEN 1 END) AS LOW,\n"
+				+ "	COUNT(CASE WHEN bp.businessservice = 'BPA' THEN 1 END) AS MEDHIGH,\n"
+				+ "	COUNT(CASE WHEN la.occupancy = 'Residential' THEN 1 END) AS Residential,\n"
+				+ "	COUNT(CASE WHEN la.occupancy = 'Mercantile / Commercial' THEN 1 END) AS Institutional,\n"
+				+ "	COUNT(CASE WHEN egpg.gateway_payment_mode = 'Debit Card' THEN 1 END) AS Debit_Card,\n"
+				+ "	COUNT(CASE WHEN egpg.gateway_payment_mode = 'Credit Card' THEN 1 END) AS Credit_Card,\n"
+				+ "	COUNT(CASE WHEN egpg.gateway_payment_mode = 'Bharat QR' AND egpg.gateway_payment_mode = 'Unified Payments' THEN 1 END) AS UPI\n"
+				+ "FROM\n" + "    eg_land_address AS la\n" + "LEFT JOIN\n"
+				+ "    eg_bpa_buildingplan AS bp ON bp.landid = la.landinfoid\n" + "LEFT JOIN\n"
+				+ "    eg_pg_transactions AS egpg ON bp.applicationno = egpg.consumer_code\n" + "\n" + "GROUP BY\n"
+				+ "    la.locality, la.tenantid";
+
+		List<Map<String, Object>> resultList = jdbcTemplate.queryForList(query1);
+
+		log.info("IngestData ResultList Size: " + resultList.size());
+		return resultList;
 	}
 
 }

@@ -85,10 +85,11 @@ const AddPayType = () => {
       // else{
       //   setverifyNote(false);
       // }
-      if(item.feetype == "Post"){
+      if(item.feetype == "Post" && item.is_fdr == "N"){
         sumofAmount +=item.amount;
-        setTotalAmount(sumofAmount);
-      }        
+        
+      }    
+      setTotalAmount(sumofAmount);    
     })
   },[modalData])
 

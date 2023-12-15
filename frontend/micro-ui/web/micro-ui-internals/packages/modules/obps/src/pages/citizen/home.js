@@ -22,6 +22,9 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
   const { data: homePageUrlLinks, isLoading: homePageUrlLinksLoading } = Digit.Hooks.obps.useMDMS(state, "BPA", ["homePageUrlLinks"]);
   const [showToast, setShowToast] = useState(null);
   const [totalCount, setTotalCount] = useState("-");
+  const [bpaCount, setBpaCount] = useState("-");
+  const [bpaLowCount, setBpaLowCount] = useState("-");
+  const [approvedCount, setApprovedCount] = useState("-");
   // console.log("userinfo: "+JSON.stringify(userInfo));
 
   const currentDate = new Date();
@@ -49,7 +52,7 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
   if (userRoles && tradeType !== null && validityDate < currentDate.getTime()) {
     // console.log("Hiiiiii");
     // console.log("validityDate: " + validityDate);
-    
+
     let payload = {
       "Licenses": [
         {
@@ -194,6 +197,36 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
       }
     }, [bpaInboxData]);
 
+    // console.log("bpaInboxData?.statusMap: " + JSON.stringify(bpaInboxData?.statuses));
+    // console.log("bpaInboxData?: " + JSON.stringify(bpaInboxData));
+    useEffect(() => {
+      if (!bpaLoading && bpaInboxData) {
+        // Initialize counts for BPA and BPA_LOW
+        let bpaMapCount = 0;
+        let bpaLowMapCount = 0;
+        let approvedMapCount=0;
+
+        // Iterate through the statusMap array
+        bpaInboxData?.statuses.forEach((status) => {
+          // Check the businessservice value and increment the corresponding count
+          if (status.businessservice === 'BPA') {
+            bpaMapCount += status.count;
+          } else if (status.businessservice === 'BPA_LOW') {
+            bpaLowMapCount += status.count;
+          }
+
+          if (status.applicationstatus === 'APPROVED') {
+            approvedMapCount+=status.count;
+          }
+        });
+
+        // Update state with the counts
+        setBpaCount(bpaMapCount);
+        setBpaLowCount(bpaLowMapCount);
+        setApprovedCount(approvedMapCount);
+      }
+    }, [bpaInboxData]);
+
     useEffect(() => {
       if (!stakeHolderDetailsLoading) {
         let roles = [];
@@ -246,18 +279,37 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
     if (stakeHolderDetailsLoading || !stakeHolderRoles || bpaLoading) {
       return <Loader />;
     } // || bparegLoading
-
+    // console.log("BPACount : " + bpaCount + ", " + "BPALowCount: " + bpaLowCount);
     const homeDetails = [
       {
         Icon: <BPAHomeIcon />,
         moduleName: t("ACTION_TEST_BPA_STAKE_HOLDER_HOME"),
         name: "employeeCard",
         isCitizen: true,
+        // kpis: [
+        //   {
+        //     count: !(bpaLoading || isEDCRInboxLoading) && totalCount && edcrCount ? totalCount + edcrCount : "-",
+        //     label: t("BPA_PDF_TOTAL"),
+        //     link: `/digit-ui/citizen/obps/bpa/inbox`,
+        //   },
+        // ],
         kpis: [
           {
-            count: !(bpaLoading || isEDCRInboxLoading) && totalCount && edcrCount ? totalCount + edcrCount : "-",
-            label: t("BPA_PDF_TOTAL"),
-            link: `/digit-ui/citizen/obps/bpa/inbox`,
+            label: t("Approved Applications"),
+            count: !(bpaLoading) && approvedCount ? approvedCount : "-",
+            link: `#`,
+            // i18nKey: t("High/Medium: " + bpaCount),
+          },
+          {
+            label: t("High/Medium Risk Applications"),
+            count: !(bpaLoading) && bpaCount ? bpaCount : "-",
+            link: `#`,
+            // i18nKey: t("High/Medium: " + bpaCount),
+          },
+          {
+            label: t("Low Risk Applications"),
+            count: !(bpaLoading) && bpaLowCount ? bpaLowCount : "-",
+            link: `#`,
           },
         ],
         links: [
@@ -297,12 +349,61 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
         styles: { minWidth: "90%", minHeight: "90%" }
       },
       // {
-      //   title: t("eDCR Regularisation Scrutiny"),
+      //   Icon: <BPAHomeIcon />,
+      //   moduleName: t("Applications"),
+      //   name: "employeeCard",
+      //   isCitizen: true,
+      //   kpis: [
+      //     {
+      //       label: t("Total Applications"),
+      //       count: !(bpaLoading) && totalCount ? totalCount : "-",
+      //       link: `#`,
+      //       // i18nKey: t("High/Medium: " + bpaCount),
+      //     },
+      //     {
+      //       label: t("Approved Applications"),
+      //       count: !(bpaLoading) && approvedCount ? approvedCount : "-",
+      //       link: `#`,
+      //       // i18nKey: t("High/Medium: " + bpaCount),
+      //     },
+      //     {
+      //       label: t("High/Medium Risk"),
+      //       count: !(bpaLoading) && bpaCount ? bpaCount : "-",
+      //       link: `#`,
+      //       // i18nKey: t("High/Medium: " + bpaCount),
+      //     },
+      //     {
+      //       label: t("Low Risk"),
+      //       count: !(bpaLoading) && bpaLowCount ? bpaLowCount : "-",
+      //       link: `#`,
+      //     },
+      //   ],
+      //   className: "CitizenHomeCard",
+      //   styles: { padding: "0px", minWidth: "90%", minHeight: "90%" }
+      // },
+      // {
+      //   title: t("Applications"),
       //   Icon: <EDCRIcon className="fill-path-primary-main" />,
+      //   // kpis: [
+      //   //   {
+      //   //     count: !bpaLoading ? bpaLowCount : "-",
+      //   //     label: t("Low Risk"),
+      //   //     link: `#`,
+      //   //   },
+      //   //   {
+      //   //     count: !bpaLoading ? bpaCount : "-",
+      //   //     label: t("Medium/High Risk"),
+      //   //     link: `#`,
+      //   //   },
+      //   // ],
       //   links: [
       //     {
-      //       link: `rga/edcrscrutiny/apply`,
-      //       i18nKey: t("Plan scrutiny for regularisation"),
+      //       link: `#`,
+      //       i18nKey: t("High/Medium: " + bpaCount),
+      //     },
+      //     {
+      //       link: `#`,
+      //       i18nKey: t("Low Risk : " + bpaLowCount),
       //     },
       //   ],
       //   styles: { minWidth: "90%", minHeight: "90%" }
