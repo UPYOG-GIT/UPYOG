@@ -1087,20 +1087,21 @@ public class BPAService {
 		return resultList;
 	}
 	
-	public List<Map<String, Object>> getIngestData(){
-		
-		List<Map<String, Object>> ingestData =  repository.getIngestData();
+	public List<Map<String, Object>> getIngestData() {
+
+		List<Map<String, Object>> ingestData = repository.getIngestData();
 		List<Map<String, Object>> data = new ArrayList<>();
-		
-		for(Map<String, Object> nationalData : ingestData) {
-			Map<String, Object> dataIngest = new HashMap<>();
-			dataIngest.put("date", "00-00-0000");
-			dataIngest.put("module", "OBPAS");
-			dataIngest.put("ward", nationalData.get("locality") );
-			dataIngest.put("ulb", nationalData.get("tenantid"));
-			dataIngest.put("region", nationalData.get("tenantid"));
-			dataIngest.put("state", "CG");
-			
+
+		Map<String, Object> dataIngest = new HashMap<>();
+		dataIngest.put("date", "00-00-0000");
+		dataIngest.put("module", "OBPAS");
+		dataIngest.put("ward", ingestData.get(0).get("locality"));
+		dataIngest.put("ulb", ingestData.get(0).get("tenantid"));
+		dataIngest.put("region", ingestData.get(0).get("tenantid"));
+		dataIngest.put("state", "CG");
+
+		for (Map<String, Object> nationalData : ingestData) {
+
 			Map<String, Object> metrics = new HashMap<>();
 			metrics.put("ocPlansScrutinized", 0);
 			metrics.put("plansScrutinized", 0);
@@ -1125,62 +1126,54 @@ public class BPAService {
 			metrics.put("todaysApprovedApplications", 0);
 			metrics.put("avgDaysForApplicationApproval", 0);
 			metrics.put("StipulatedDays", nationalData.get("tenantid"));
-			
+
 			List<Map<String, Object>> todaysCollection = new ArrayList<>();
 			Map<String, Object> collectionMode = new HashMap<>();
 			collectionMode.put("groupBy", "paymentMode");
-			
+
 			List<Map<String, Object>> buckets = new ArrayList<>();
-			
+
 			buckets.add(createBucket("UPI", 10000));
 			buckets.add(createBucket("DEBIT.CARD", 15000));
 			buckets.add(createBucket("CREDIT.CARD", 8500));
 			buckets.add(createBucket("CASH", 10000));
 			
-			collectionMode.put("buckets", buckets);
 			todaysCollection.add(collectionMode);
+			collectionMode.put("buckets", buckets);
 			
-			
+
 			Map<String, Object> occupancy = new HashMap<>();
 			occupancy.put("name", "Residential");
 			occupancy.put("name", "Institutional");
 			todaysCollection.add(occupancy);
 			buckets.add(occupancy);
-			
+
 			List<Map<String, Object>> permitsIssued = new ArrayList<>();
 			Map<String, Object> permits = new HashMap<>();
-			permits.put("groupBy",  "riskType");
+			permits.put("groupBy", "riskType");
 			permitsIssued.add(permits);
-		
+
 			List<Map<String, Object>> riskTypeBuckets = new ArrayList<>();
 			riskTypeBuckets.add(createBucket("LOW", 150));
 			riskTypeBuckets.add(createBucket("MEDIUM", 300));
 			riskTypeBuckets.add(createBucket("HIGH", 600));
 			
+			permitsIssued.add(permits);
 			permits.put("buckets", riskTypeBuckets);
-			permitsIssued.add(permits);			
 			
-			
-			dataIngest.put("metrics", metrics);	
-			dataIngest.put("todaysCollection", todaysCollection);
-			dataIngest.put("permitsIssued", permitsIssued);
 
-	        data.add(dataIngest);
-			
-			
-		
-			 
-			
-			
-			
+			metrics.put("todaysCollection", todaysCollection);
+			metrics.put("permitsIssued", permitsIssued);
+
+			data.add(dataIngest);
+			data.add(metrics);
+
 		}
-		
+
 		log.info(data.toString());
 		return data;
-	    
-			 
-			 
-		 }
+
+	}
 	private Map<String, Object> createBucket(String name, int value) {
 		Map<String, Object> bucket = new HashMap<>();
 		 bucket.put("name", name);
