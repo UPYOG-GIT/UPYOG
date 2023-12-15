@@ -530,7 +530,7 @@ public class BPAController {
 
 	}
 	
-	@PostMapping(value = "/ingestData")
+	@GetMapping	(value = "/ingestData")
 	public ResponseEntity<List<Map<String, Object>>> getListOfIngestData() {
 		List<Map<String, Object>> list = bpaService.getIngestData();
 		return new ResponseEntity<>(list, HttpStatus.OK);
