@@ -1139,6 +1139,8 @@ public class BPAService {
 			
 			collectionMode.put("buckets", buckets);
 			todaysCollection.add(collectionMode);
+			
+			
 			Map<String, Object> occupancy = new HashMap<>();
 			occupancy.put("name", "Residential");
 			occupancy.put("name", "Institutional");
@@ -1158,8 +1160,13 @@ public class BPAService {
 			permits.put("buckets", riskTypeBuckets);
 			permitsIssued.add(permits);			
 			
-			data.add(dataIngest);
-			data.add(metrics);			
+			
+			dataIngest.put("metrics", metrics);	
+			dataIngest.put("todaysCollection", todaysCollection);
+			dataIngest.put("permitsIssued", permitsIssued);
+
+	        data.add(dataIngest);
+			
 			
 		
 			 
