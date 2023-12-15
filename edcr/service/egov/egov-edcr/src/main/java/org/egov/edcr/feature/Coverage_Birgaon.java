@@ -72,6 +72,7 @@ import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.F;
+import static org.egov.edcr.constants.DxfFileConstants.J;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
 @Service
@@ -190,6 +191,8 @@ public class Coverage_Birgaon extends Coverage {
 				permissibleCoverageValue = getPermissibleCoverageForResidential(plotBoundaryArea, developmentZone, noOfFloors);
 			} else if (F.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
 				permissibleCoverageValue = getPermissibleCoverageForCommercial(plotBoundaryArea, developmentZone, noOfFloors);
+			} else if (J.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
+				permissibleCoverageValue = getPermissibleCoverageForGovernment(plotBoundaryArea, developmentZone, noOfFloors);
 			}
 		}
 
@@ -241,15 +244,29 @@ public class Coverage_Birgaon extends Coverage {
 		LOG.info("inside getPermissibleCoverageForCommercial()");
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
 	
-			 if (area.compareTo(BigDecimal.valueOf(500)) <= 0) {
+			 if (area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
 				permissibleCoverage = BigDecimal.valueOf(60);
-			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 & area.compareTo(BigDecimal.valueOf(1000)) <= 0 && noOfFloors > 1) {
-				permissibleCoverage = BigDecimal.valueOf(60);
-			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0 && noOfFloors > 1) {
+			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0 ) {
 				permissibleCoverage = BigDecimal.valueOf(50);
 			} 
-			
 		
+		return permissibleCoverage;
+	}
+	
+	
+	
+	private BigDecimal getPermissibleCoverageForGovernment(BigDecimal area, String developmentZone, int noOfFloors) {
+		LOG.info("inside getPermissibleCoverageForGovernment()");
+		BigDecimal permissibleCoverage = BigDecimal.ZERO;
+	   
+			if (area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(40);
+			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0 ) {
+				permissibleCoverage = BigDecimal.valueOf(30);
+			} 
+			
+	
+
 		return permissibleCoverage;
 	}
 
