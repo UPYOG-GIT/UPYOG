@@ -1111,7 +1111,7 @@ public class EdcrRestService {
 		Double from_value = (Double) edcrRule.get("from_area");
 		String by_law = (String) edcrRule.get("by_law");
 
-		String insertQuery = "INSERT INTO birgaon.edcr_rule_entry(feature, permissible_value, occupancy, to_area, from_area, by_law) VALUES ('"
+		String insertQuery = "INSERT INTO demo.edcr_rule_entry(feature, permissible_value, occupancy, to_area, from_area, by_law) VALUES ('"
 				+ feature + "','" + permissibleValue + "', '" + occupancy + "','" + to_value + "', '" + from_value
 				+ "', '" + by_law + "'  )";
 		System.out.println("insertQuery$$$$$$$$$$$$$$$$$$$$$$$$$$$" + insertQuery);
@@ -1122,14 +1122,14 @@ public class EdcrRestService {
 	}
 	
 	public BigDecimal getEdcrRule(String feature, String occupancy, BigDecimal to_value, BigDecimal from_value) {
-	    String farValue = "SELECT permissible_value FROM birgaon.edcr_rule_entry WHERE " +
+	    String farValue = "SELECT permissible_value FROM demo.edcr_rule_entry WHERE " +
 	            "feature = '" + feature + "' AND " +
 	            "occupancy = '" + occupancy + "' AND " +
 	            "to_area = " + to_value + " AND " +
 	            "from_area = " + from_value;
 
 	    final Query data = getCurrentSession().createSQLQuery(farValue);
-	    BigDecimal result = (BigDecimal) data.uniqueResult();
+	    BigDecimal result = BigDecimal.valueOf(Double.valueOf(data.uniqueResult().toString()));
 	    System.out.println("******" + result);
 
 	    System.out.println("+++++++++" + feature + " " + farValue + " " +  occupancy + " " + to_value );

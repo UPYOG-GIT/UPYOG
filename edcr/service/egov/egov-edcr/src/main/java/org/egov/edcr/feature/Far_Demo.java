@@ -659,7 +659,7 @@ public class Far_Demo extends Far {
 					|| (mostRestrictiveOccupancyType.getSubtype() != null
 							&& (A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())
 									|| A_AF.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())))) {
-				processFarResidential(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs);
+				processFarResidential(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs, feature);
 			}
 			if (mostRestrictiveOccupancyType.getType() != null
 					&& (DxfFileConstants.G.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
@@ -925,46 +925,54 @@ public class Far_Demo extends Far {
 	}
 
 	// FAR values changed according to Residential
-	private void processFarResidential(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
-			BigDecimal roadWidth, HashMap<String, String> errors) {
-        System.out.println("under processFarResidentoal");
-     
-		String expectedResult = StringUtils.EMPTY;
-		boolean isAccepted = false;
-
-		isAccepted = far.compareTo(ONE_POINTTWOFIVE) <= 0;
-		pl.getFarDetails().setPermissableFar(ONE_POINTTWOFIVE.doubleValue());
-		expectedResult = "<= 1.25";
-
-		String occupancyName = occupancyType.getType().getName();
-		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
-			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
-		}
-		
-		
-	}
-	
-
 //	private void processFarResidential(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
-//			BigDecimal roadWidth, HashMap<String, String> errors, String feature) {
-//		feature = "Far";
-//		System.out.println("under processFarResidentoal");
-//		String occupancyName = occupancyType.getType().getName();
-//		BigDecimal plotArea = pl.getPlot().getArea();
-//		BigDecimal to_value = plotArea;
-//		BigDecimal from_value = plotArea;
-//		BigDecimal farValue = edcrRestService.getEdcrRule(feature, occupancyName, to_value, from_value);
+//			BigDecimal roadWidth, HashMap<String, String> errors) {
+//        System.out.println("under processFarResidential");
+//     
 //		String expectedResult = StringUtils.EMPTY;
 //		boolean isAccepted = false;
 //
-//		isAccepted = far.compareTo(farValue) <= 0;
-//		pl.getFarDetails().setPermissableFar(farValue.doubleValue());
-//		expectedResult = "<= feature";
+//		isAccepted = far.compareTo(ONE_POINTTWOFIVE) <= 0;
+//		pl.getFarDetails().setPermissableFar(ONE_POINTTWOFIVE.doubleValue());
+//		expectedResult = "<= 1.25";
+//
+//		String occupancyName = occupancyType.getType().getName();
 //		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
 //			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
 //		}
+//		
+//		
+//	}
+	
 
-	//}
+
+	private void processFarResidential(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
+			BigDecimal roadWidth, HashMap<String, String> errors, String feature) {
+		feature = "Far";
+		System.out.println("under processFarResidentoal");
+		System.out.println("+++++" );
+		String occupancyName = occupancyType.getType().getName();
+		System.out.println("+++++" + pl.getPlot().getArea());
+		
+		BigDecimal plotArea = pl.getPlot().getArea();
+		System.out.println("plotarea" + plotArea);
+		BigDecimal to_value = plotArea;
+		BigDecimal from_value = plotArea;
+		BigDecimal farValue = edcrRestService.getEdcrRule(feature, occupancyName, to_value, from_value);
+		System.out.println("farValue" + edcrRestService.getEdcrRule(feature, occupancyName, to_value, from_value));
+		String expectedResult = StringUtils.EMPTY;
+		boolean isAccepted = false;
+		System.out.println("+++++" + occupancyName + plotArea + farValue);
+
+		isAccepted = far.compareTo(farValue) <= 0;
+		pl.getFarDetails().setPermissableFar(farValue.doubleValue());
+		expectedResult = "<= feature";
+		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
+			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+		}
+
+	}
+
 	
 	
 	
