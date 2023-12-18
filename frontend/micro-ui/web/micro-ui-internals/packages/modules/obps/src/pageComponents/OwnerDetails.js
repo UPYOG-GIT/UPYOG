@@ -302,7 +302,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.landInfo.address.occupancy = formData?.data?.edcrDetails?.planDetail?.planInformation?.occupancy;
                 payload.landInfo.address.plotArea = formData?.data?.edcrDetails?.planDetail?.planInformation?.plotArea;
                 payload.landInfo.address.patwariHN = formData?.data?.edcrDetails?.planDetail?.planInformation?.patwariHN;
-                payload.landInfo.address.patwariHN = formData?.data?.edcrDetails?.planDetail?.planInformation?.patwariHN;
+                payload.landInfo.address.builtUpArea = formData?.data?.edcrDetails?.planDetail?.virtualBuilding?.totalBuitUpArea;
                 payload.landInfo.address.additionDetails = formData?.data?.edcrDetails?.planDetail?.planInformation?.additionalDetails;
 
                 // console.log(formData?.data?.edcrDetails?.planDetail?.planInformation?.additionalDetails);
