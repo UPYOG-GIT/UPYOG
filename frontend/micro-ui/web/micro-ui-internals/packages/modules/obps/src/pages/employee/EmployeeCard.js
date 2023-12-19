@@ -5,119 +5,160 @@ import { showHidingLinksForStakeholder, showHidingLinksForBPA } from "../../util
 import { useLocation } from "react-router-dom";
 
 
+
 const OBPSEmployeeHomeCard = () => {
-  console.log("first")
+  // console.log("first")
 
   const [totalCount, setTotalCount] = useState(0);
-    const { t } = useTranslation();
-    const location = useLocation()
-    const [initiatedCount, setInitiatedCount] = useState(null);
-    const [citizenApprovalInProcessCount, setcitizenApprovalInProcessCount] = useState(null);
-    const [approvedCount, setapprovedCount] = useState(null);
-    const [rejectedCount, setrejectedCount] = useState(null);
-    const [departmentInProcessCount, setdepartmentInProcessCount] = useState(null);
-    const [reassignedCount, setReassignedCount] = useState(null);
-  
-  
-    // const tenantId1=Digit.ULBService.getCitizenCurrentTenant();
-    const tenantId1=Digit.ULBService.getCurrentUlb()?.code;
-    const stateCode = Digit.ULBService.getStateId();
+  const { t } = useTranslation();
+  const location = useLocation()
+  const [initiatedCount, setInitiatedCount] = useState(null);
+  const [citizenApprovalInProcessCount, setcitizenApprovalInProcessCount] = useState(null);
+  const [approvedCount, setapprovedCount] = useState(null);
+  const [rejectedCount, setrejectedCount] = useState(null);
+  const [departmentInProcessCount, setdepartmentInProcessCount] = useState(null);
+  const [reassignedCount, setReassignedCount] = useState(null);
+  const [applFeePending, setApplFeePending] = useState(0);
+  const [sancFeePending, setSancFeePending] = useState(0);
+  const [inprogressCount, setInprogressCount] = useState(0);
+  const [totalProposal, setTotalProposal] = useState(0);
+  const [directBhawanAnugya, setDirectBhawanAnugya] = useState(0);
+
+
+  // const tenantId1=Digit.ULBService.getCitizenCurrentTenant();
+  const tenantId1 = Digit.ULBService.getCurrentUlb()?.code;
+  const stateCode = Digit.ULBService.getStateId();
   //   const userType = window.sessionStorage.getItem("userType");
 
-    const stakeholderEmployeeRoles = [ { code: "BPAREG_DOC_VERIFIER", tenantId: stateCode }, { code: "BPAREG_APPROVER", tenantId: stateCode }];
-    const bpaEmployeeRoles = [ "BPA_FIELD_INSPECTOR", "BPA_NOC_VERIFIER", "BPA_APPROVER", "BPA_VERIFIER", "CEMP"];
+  const stakeholderEmployeeRoles = [{ code: "BPAREG_DOC_VERIFIER", tenantId: stateCode }, { code: "BPAREG_APPROVER", tenantId: stateCode }];
+  const bpaEmployeeRoles = ["BPA_FIELD_INSPECTOR", "BPA_NOC_VERIFIER", "BPA_APPROVER", "BPA_VERIFIER", "CEMP"];
 
-    const checkingForStakeholderRoles = showHidingLinksForStakeholder(stakeholderEmployeeRoles);
-    const checkingForBPARoles = showHidingLinksForBPA(bpaEmployeeRoles);
+  const checkingForStakeholderRoles = showHidingLinksForStakeholder(stakeholderEmployeeRoles);
+  const checkingForBPARoles = showHidingLinksForBPA(bpaEmployeeRoles);
 
-    const searchFormDefaultValues = {}
-    const tenantId = Digit.ULBService.getCurrentTenantId();
- 
-    const filterFormDefaultValues = {
-      moduleName: "bpa-services",
-      applicationStatus: "",
-      locality: [],
-      assignee: "ASSIGNED_TO_ALL",
-      applicationType: []
-    }
-    const tableOrderFormDefaultValues = {
-      sortBy: "",
-      limit: 10,
-      offset: 0,
-      sortOrder: "DESC"
-    }
-  
-    const formInitValue = {
-      filterForm: filterFormDefaultValues,
-      searchForm: searchFormDefaultValues,
-      tableForm: tableOrderFormDefaultValues
-    }
+  const searchFormDefaultValues = {}
+  const tenantId = Digit.ULBService.getCurrentTenantId();
 
-    const searchFormDefaultValuesOfStakeholder = {}
+  const filterFormDefaultValues = {
+    moduleName: "bpa-services",
+    applicationStatus: "",
+    locality: [],
+    assignee: "ASSIGNED_TO_ALL",
+    applicationType: []
+  }
+  const tableOrderFormDefaultValues = {
+    sortBy: "",
+    limit: 10,
+    offset: 0,
+    sortOrder: "DESC"
+  }
 
-    const filterFormDefaultValuesOfStakeholder = {
-      moduleName: "BPAREG",
-      // businessService: {code: "BPAREG", name:t("BPAREG")},
-      applicationStatus: "",
-      locality: [],
-      assignee: "ASSIGNED_TO_ALL"
-    }
-    const tableOrderFormDefaultValuesOfStakeholder = {
-      sortBy: "",
-      limit: 10,
-      offset: 0,
-      sortOrder: "DESC"
-    }
-  
-    const formInitValueOfStakeholder = {
-      filterForm: filterFormDefaultValuesOfStakeholder,
-      searchForm: searchFormDefaultValuesOfStakeholder,
-      tableForm: tableOrderFormDefaultValuesOfStakeholder
-    }
-  
-    const { isLoading: isInboxLoadingOfStakeholder, data: dataOfStakeholder } = Digit.Hooks.obps.useBPAInbox({
-      tenantId,
-      // tenantId1,
-      filters: { ...formInitValueOfStakeholder },
-      config:{ enabled: !!checkingForStakeholderRoles }
-    });
+  const formInitValue = {
+    filterForm: filterFormDefaultValues,
+    searchForm: searchFormDefaultValues,
+    tableForm: tableOrderFormDefaultValues
+  }
 
-    const { isLoading: isInboxLoading, data : dataOfBPA } = Digit.Hooks.obps.useBPAInbox({
-      tenantId,
-      // tenantId1,
-      filters: { ...formInitValue },
-      config:{ enabled: !!checkingForBPARoles }
-    });
-   
-    useEffect(async () => {
-      const getDashboardCount = await Digit.OBPSAdminService.getDashboardCount(tenantId);
+  const searchFormDefaultValuesOfStakeholder = {}
 
+  const filterFormDefaultValuesOfStakeholder = {
+    moduleName: "BPAREG",
+    // businessService: {code: "BPAREG", name:t("BPAREG")},
+    applicationStatus: "",
+    locality: [],
+    assignee: "ASSIGNED_TO_ALL"
+  }
+  const tableOrderFormDefaultValuesOfStakeholder = {
+    sortBy: "",
+    limit: 10,
+    offset: 0,
+    sortOrder: "DESC"
+  }
 
-        getDashboardCount.forEach((dashboardData) => {
+  const formInitValueOfStakeholder = {
+    filterForm: filterFormDefaultValuesOfStakeholder,
+    searchForm: searchFormDefaultValuesOfStakeholder,
+    tableForm: tableOrderFormDefaultValuesOfStakeholder
+  }
+
+  const { isLoading: isInboxLoadingOfStakeholder, data: dataOfStakeholder } = Digit.Hooks.obps.useBPAInbox({
+    tenantId,
+    // tenantId1,
+    filters: { ...formInitValueOfStakeholder },
+    config: { enabled: !!checkingForStakeholderRoles }
+  });
+
+  const { isLoading: isInboxLoading, data: dataOfBPA } = Digit.Hooks.obps.useBPAInbox({
+    tenantId,
+    // tenantId1,
+    filters: { ...formInitValue },
+    config: { enabled: !!checkingForBPARoles }
+  });
+
+  useEffect(async () => {
+    const getDashboardCount = await Digit.OBPSAdminService.getDashboardCount(tenantId);
+    // console.log("getDashboardCount--" + JSON.stringify(getDashboardCount))
+
+    getDashboardCount.forEach((dashboardData) => {
+      if (dashboardData.initiated !== undefined) {
         const initiatedCount = dashboardData.initiated;
         setInitiatedCount(initiatedCount);
-     
+        // console.log("initiatedCount" + initiatedCount);
+      }
 
+      if (dashboardData.citizen_approval_inprocess !== undefined) {
         const citizenApprovalInProcessCount = dashboardData.citizen_approval_inprocess;
-        setcitizenApprovalInProcessCount(citizenApprovalInProcessCount);
-    
+        setCitizenApprovalInProcessCount(citizenApprovalInProcessCount);
+      }
 
+      if (dashboardData.approved !== undefined) {
         const approvedCount = dashboardData.approved;
-        setapprovedCount(approvedCount);
+        setApprovedCount(approvedCount);
+      }
 
+      if (dashboardData.rejected !== undefined) {
         const rejectedCount = dashboardData.rejected;
-        setrejectedCount(rejectedCount);
+        setRejectedCount(rejectedCount);
+      }
 
+      if (dashboardData.direct_bhawan_anugya !== undefined) {
+        const directBhawanAnugya = dashboardData.direct_bhawan_anugya;
+        setDirectBhawanAnugya(directBhawanAnugya);
+      }
+
+      if (dashboardData.department_inprocess !== undefined) {
         const departmentInProcessCount = dashboardData.department_inprocess;
-        setdepartmentInProcessCount(departmentInProcessCount);
+        setDepartmentInProcessCount(departmentInProcessCount);
+      }
 
+      if (dashboardData.reassign !== undefined) {
         const reassignedCount = dashboardData.reassign;
         setReassignedCount(reassignedCount);
+      }
 
-      });
-  
-      
-    }, []);
+      if (dashboardData.appl_fee !== undefined) {
+        const applFeePending = dashboardData.appl_fee;
+        setApplFeePending(applFeePending);
+      }
+
+      if (dashboardData.sanc_fee_pending !== undefined) {
+        const sancFeePending = dashboardData.sanc_fee_pending;
+        setSancFeePending(sancFeePending);
+      }
+
+      if (dashboardData.inprogress !== undefined) {
+        const inprogressCount = dashboardData.inprogress;
+        setInprogressCount(inprogressCount);
+      }
+
+      if (dashboardData.total !== undefined) {
+        const totalProposal = dashboardData.total;
+        setTotalProposal(totalProposal);
+      }
+
+    });
+
+  }, []);
   useEffect(() => {
     if (!isInboxLoading && !isInboxLoadingOfStakeholder) {
       const bpaCount = dataOfBPA?.totalCount ? dataOfBPA?.totalCount : 0;
@@ -126,61 +167,64 @@ const OBPSEmployeeHomeCard = () => {
     }
   }, [dataOfBPA, dataOfStakeholder]);
 
-  useEffect(()=>{
-    if (location.pathname === "/digit-ui/employee"){
+  useEffect(() => {
+    if (location.pathname === "/digit-ui/employee") {
       Digit.SessionStorage.del("OBPS.INBOX")
       Digit.SessionStorage.del("STAKEHOLDER.INBOX")
     }
-  },[location.pathname])
-    const propsForModuleCard = useMemo(()=>({
-      Icon: <OBPSIconSolidBg />,
-      moduleName: t("MODULE_OBPS"),
-      kpis:[
-        {
-            count: !isInboxLoading && !isInboxLoadingOfStakeholder ? totalCount : "",
-            label: t("TOTAL_FSM"),
-            link: `/digit-ui/employee/obps/inbox`
-        },
-        {   count:"-",
-            label: t("TOTAL_NEARING_SLA"),
-            link: `/digit-ui/employee/obps/inbox`
-        }  
-      ],
-      links: [
-        {
-          count: isInboxLoadingOfStakeholder ? "" : dataOfStakeholder?.totalCount ,
-          label: t("ES_COMMON_STAKEHOLDER_INBOX_LABEL"),
-          link: `/digit-ui/employee/obps/stakeholder-inbox`,
-          field: "STAKEHOLDER"
-        },
-        {
-          count: isInboxLoading ? "" : dataOfBPA?.totalCount ,
-          label: t("ES_COMMON_OBPS_INBOX_LABEL"),
-          link: `/digit-ui/employee/obps/inbox`,
-          field: "BPA"
-        },
-        {
-          label: t("ES_COMMON_SEARCH_APPLICATION"),
-          link: `/digit-ui/employee/obps/search/application`
-        },
-      ]
-    }),[isInboxLoading, isInboxLoadingOfStakeholder, dataOfStakeholder, dataOfBPA, totalCount]);
+  }, [location.pathname])
+  const propsForModuleCard = useMemo(() => ({
+    Icon: <OBPSIconSolidBg />,
+    moduleName: t("MODULE_OBPS"),
+    kpis: [
+      {
+        count: !isInboxLoading && !isInboxLoadingOfStakeholder ? totalCount : "",
+        label: t("TOTAL_FSM"),
+        link: `/digit-ui/employee/obps/inbox`
+      },
+      {
+        count: "-",
+        label: t("TOTAL_NEARING_SLA"),
+        link: `/digit-ui/employee/obps/inbox`
+      }
+    ],
+    links: [
+      {
+        count: isInboxLoadingOfStakeholder ? "" : dataOfStakeholder?.totalCount,
+        label: t("ES_COMMON_STAKEHOLDER_INBOX_LABEL"),
+        link: `/digit-ui/employee/obps/stakeholder-inbox`,
+        field: "STAKEHOLDER"
+      },
+      {
+        count: isInboxLoading ? "" : dataOfBPA?.totalCount,
+        label: t("ES_COMMON_OBPS_INBOX_LABEL"),
+        link: `/digit-ui/employee/obps/inbox`,
+        field: "BPA"
+      },
+      {
+        label: t("ES_COMMON_SEARCH_APPLICATION"),
+        link: `/digit-ui/employee/obps/search/application`
+      },
+    ]
+  }), [isInboxLoading, isInboxLoadingOfStakeholder, dataOfStakeholder, dataOfBPA, totalCount]);
 
-    if (!checkingForStakeholderRoles) {
-      propsForModuleCard.links = propsForModuleCard.links.filter(obj => {
-        return obj.field !== 'STAKEHOLDER';
-      });
-    }
-
-    if (!checkingForBPARoles) {
-      propsForModuleCard.links = propsForModuleCard.links.filter(obj => {
-        return obj.field !== 'BPA';
-      });
-    }
-
-   
-  
-    return checkingForBPARoles || checkingForStakeholderRoles ? <EmployeeModuleCard {...propsForModuleCard} /> : null
+  if (!checkingForStakeholderRoles) {
+    propsForModuleCard.links = propsForModuleCard.links.filter(obj => {
+      return obj.field !== 'STAKEHOLDER';
+    });
   }
 
-  export default OBPSEmployeeHomeCard
+  if (!checkingForBPARoles) {
+    propsForModuleCard.links = propsForModuleCard.links.filter(obj => {
+      return obj.field !== 'BPA';
+    });
+  }
+
+
+
+  return checkingForBPARoles || checkingForStakeholderRoles ? <EmployeeModuleCard {...propsForModuleCard} /> : null
+
+  
+}
+
+export default OBPSEmployeeHomeCard
