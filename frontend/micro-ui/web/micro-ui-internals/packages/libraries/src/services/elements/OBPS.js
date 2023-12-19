@@ -635,7 +635,6 @@ export const OBPSService = {
         
       ]
     };
-
     const scrutinyDetails = {
       title: "BPA_STEPPER_SCRUTINY_DETAILS_HEADER",
       isScrutinyDetails: true,
@@ -646,11 +645,19 @@ export const OBPSService = {
           { title: BPA?.businessService !== "BPA_OC" ? "BPA_EDCR_NO_LABEL" : "BPA_OC_EDCR_NO_LABEL", value: BPA?.edcrNumber || "NA" },
         ],
         scruntinyDetails: [
-          { title: "BPA_UPLOADED_PLAN_DIAGRAM", value: edcr?.updatedDxfFile, text: "BPA_UPLOADED_PLAN_PDF" },
+          // { title: "BPA_UPLOADED_PLAN_DIAGRAM", value: edcr?.updatedDxfFile, text: "BPA_UPLOADED_PLAN_PDF" },
           { title: "BPA_SCRUNTINY_REPORT_OUTPUT", value: edcr?.planReport, text: "BPA_SCRUTINY_REPORT_PDF" },
         ]
       }
     };
+
+    if (BPA.status === 'APPROVED') {
+      scrutinyDetails.additionalDetails.scruntinyDetails.push({
+        title: "BPA_UPLOADED_PLAN_DIAGRAM",
+        value: edcr?.updatedDxfFile,
+        text: "BPA_UPLOADED_PLAN_PDF"
+      });
+    }
 
     const buildingExtractionDetails = {
       title: "",
