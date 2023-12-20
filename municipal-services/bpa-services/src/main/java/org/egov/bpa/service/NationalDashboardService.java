@@ -5,6 +5,7 @@ package org.egov.bpa.service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -119,7 +120,8 @@ public class NationalDashboardService {
 	            permits.put("buckets", riskTypeBuckets);
 
 			metrics.put("todaysCollection", todaysCollection);
-			metrics.put("permitIssued", List.of(occupancy, permits));
+			metrics.put("permitIssued", Arrays.asList(occupancy, permits));
+
 
 			data.setMetrics(metrics);
 			 dataList.add(data);
