@@ -338,6 +338,10 @@ export const OBPSService = {
     }
   },
   BPADetailsPage: async (tenantId, filters) => {
+    // const userInfo = Digit.UserService.getUser();
+    // console.log("userInfo: "+JSON.stringify(userInfo));
+    // const userType=userInfo?.info?.type;
+    // console.log("object: "+userInfo?.info?.type);
     const response = await OBPSService.BPASearch(tenantId, filters);
     let appDocumentFileStoreIds = response?.BPA?.[0]?.documents?.map(docId => docId.fileStoreId);
     if (!appDocumentFileStoreIds) appDocumentFileStoreIds = [];

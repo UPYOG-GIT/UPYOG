@@ -11,18 +11,19 @@ const OBPSEmployeeHomeCard = () => {
 
   const [totalCount, setTotalCount] = useState(0);
   const { t } = useTranslation();
-  const location = useLocation()
+  const location = useLocation();
   const [initiatedCount, setInitiatedCount] = useState(null);
-  const [citizenApprovalInProcessCount, setcitizenApprovalInProcessCount] = useState(null);
-  const [approvedCount, setapprovedCount] = useState(null);
-  const [rejectedCount, setrejectedCount] = useState(null);
-  const [departmentInProcessCount, setdepartmentInProcessCount] = useState(null);
+  const [citizenApprovalInProcessCount, setCitizenApprovalInProcessCount] = useState(null);
+  const [approvedCount, setApprovedCount] = useState(null);
+  const [rejectedCount, setRejectedCount] = useState(null);
+  const [departmentInProcessCount, setDepartmentInProcessCount] = useState(null);
   const [reassignedCount, setReassignedCount] = useState(null);
   const [applFeePending, setApplFeePending] = useState(0);
   const [sancFeePending, setSancFeePending] = useState(0);
   const [inprogressCount, setInprogressCount] = useState(0);
   const [totalProposal, setTotalProposal] = useState(0);
   const [directBhawanAnugya, setDirectBhawanAnugya] = useState(0);
+  
 
 
   // const tenantId1=Digit.ULBService.getCitizenCurrentTenant();
