@@ -264,13 +264,13 @@ public class RearYardService_Birgaon extends RearYardService {
 						} else {
 							if (pl.getPlanInformation() != null && occupancy.getTypeHelper().getType() != null) {
 								if ((A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
-										|| J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))
-										&& pl.getPlanInformation().getDepthOfPlot()
-												.compareTo(BigDecimal.valueOf(7.62)) <= 0) {
-									exemptRearYard(pl, block, rearYardResult);
-								} else if (F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
+										|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))
 										&& pl.getPlanInformation().getDepthOfPlot()
 												.compareTo(BigDecimal.valueOf(9.15)) <= 0) {
+									exemptRearYard(pl, block, rearYardResult);
+								} else if (J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
+										&& pl.getPlanInformation().getDepthOfPlot()
+												.compareTo(BigDecimal.valueOf(6.10)) <= 0) {
 									exemptRearYard(pl, block, rearYardResult);
 								}
 							}
@@ -332,8 +332,8 @@ public class RearYardService_Birgaon extends RearYardService {
 					&& DxfFileConstants.COMMERCIAL.equalsIgnoreCase(pl.getPlanInformation().getLandUseZone())
 //					&& pl.getPlanInformation().getRoadWidth().compareTo(ROAD_WIDTH_TWELVE_POINTTWO) < 0
 			) {
-				valid = commercial(block, level, min, mean, mostRestrictiveOccupancy, rearYardResult,
-						subRule, rule, minVal, meanVal, depthOfPlot, valid);
+				valid = commercial(block, level, min, mean, mostRestrictiveOccupancy, rearYardResult, subRule, rule,
+						minVal, meanVal, depthOfPlot, valid);
 			} else {
 				valid = residential(block, level, min, mean, mostRestrictiveOccupancy, rearYardResult, subRule, rule,
 						minVal, meanVal, depthOfPlot, valid);
