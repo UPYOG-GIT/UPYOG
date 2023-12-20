@@ -553,7 +553,7 @@ public class BPARepository {
 				+ "        COUNT(CASE WHEN bp.status = 'PENDING_APPL_FEE' THEN 1 END) AS appl_fee,\n"
 				+ "        COUNT(CASE WHEN bp.status = 'PENDING_SANC_FEE_PAYMENT' THEN 1 END) AS sanc_fee_pending,\n"
 				+ "        COUNT(CASE WHEN bp.status IN ('DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'DOC_VERIFICATION_INPROGRESS_BY_BUILDER', 'POST_FEE_APPROVAL_INPROGRESS', 'APPROVAL_INPROGRESS') THEN 1 END) AS department_inprocess\n"
-				+ "    FROM eg_bpa_buildingplan bp\n" + ") AS counts";
+				+ "    FROM eg_bpa_buildingplan bp\n";
 
 		String query2 = "SELECT "
 				+ "COUNT(CASE WHEN (bp.status != 'INITIATED' AND bp.status != 'PENDING_APPL_FEE' AND bp.status != 'CITIZEN_APPROVAL_INPROCESS' AND txn_status = 'SUCCESS' AND txn_amount = 1.00) THEN 1 END) AS direct_bhawan_anugya "
@@ -563,6 +563,7 @@ public class BPARepository {
 			query1 += " WHERE bp.tenantid = '" + tenantId + "'";
 			query2 += " AND bp.tenantid = '" + tenantId + "'";
 		}
+		query1 += ") AS counts";
 
 		log.info("query1---" + query1);
 		log.info("query2---" + query2);
