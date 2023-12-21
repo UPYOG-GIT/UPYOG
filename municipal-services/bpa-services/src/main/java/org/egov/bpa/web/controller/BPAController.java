@@ -551,6 +551,7 @@ public class BPAController {
 	public ResponseEntity<Map<String, Object>> pushDataToApi(RequestInfoWrapper requestInfoWrapper) {
 		
 		System.out.println("request----" + requestInfoWrapper.getRequestInfo());
+		log.info("request----" + requestInfoWrapper.getRequestInfo());
 		String apiUrl = "https://upyog-test.niua.org/national-dashboard/metric/_ingest";
 	    try {
 	        Map<String, Object> response = nationalDashboardService.pushDataToApi(apiUrl, requestInfoWrapper.getRequestInfo());
