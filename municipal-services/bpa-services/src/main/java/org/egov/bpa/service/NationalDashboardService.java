@@ -5,6 +5,7 @@ package org.egov.bpa.service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.egov.bpa.web.model.IngestRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -29,7 +31,8 @@ public class NationalDashboardService {
 	NationalDashboardRepository repository;
 	
 	IngestRequest ingestRequest = new IngestRequest();
-
+   
+	@Primary
 	@Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
@@ -119,7 +122,8 @@ public class NationalDashboardService {
 	            permits.put("buckets", riskTypeBuckets);
 
 			metrics.put("todaysCollection", todaysCollection);
-			metrics.put("permitIssued", List.of(occupancy, permits));
+			metrics.put("permitIssued", Arrays.asList(occupancy, permits));
+
 
 			data.setMetrics(metrics);
 			 dataList.add(data);
