@@ -39,9 +39,9 @@ public class NationalDashboardService {
     }
 
 	
-	public IngestRequest getIngestData( RequestInfo requestInfo) {
+	public IngestRequest getIngestData() {
 		
-	
+		
 		List<Data> dataList = new ArrayList<>();
 
 		LocalDate currentDate = LocalDate.now();
@@ -52,7 +52,7 @@ public class NationalDashboardService {
 		
 		for (Map<String, Object> nationalData : ingestData) {
 
-			System.out.println("nationalData--" + nationalData);
+			//System.out.println("nationalData--" + nationalData);
 
 			data.setDate(formattedDate);
 			data.setModule("OBPAS");
@@ -122,13 +122,12 @@ public class NationalDashboardService {
 	            permits.put("buckets", riskTypeBuckets);
 
 			metrics.put("todaysCollection", todaysCollection);
-			metrics.put("permitIssued", Arrays.asList(occupancy, permits));
-
+			metrics.put("permitIssued", List.of(occupancy, permits));
 
 			data.setMetrics(metrics);
 			 dataList.add(data);
 			ingestRequest.setIngestData(dataList);
-		    ingestRequest.setRequestInfo(requestInfo);
+		    //ingestRequest.setRequestInfo(requestInfo);
 			
 			//pushDataToApi(apiUrl, ingestRequest);
 
@@ -148,9 +147,12 @@ public class NationalDashboardService {
 		    
 		    
 		
+
 		    public Map<String, Object> pushDataToApi(String apiUrl, RequestInfo requestInfo){
 		                    
-		    	IngestRequest body = getIngestData(requestInfo);
+		    	IngestRequest body = getIngestData();
+		    	System.out.println("bodyy---====" + body);
+		    	ingestRequest.setRequestInfo(requestInfo);
 		    	
 		    	 HttpHeaders headers = new HttpHeaders();
 		    	    headers.setContentType(MediaType.APPLICATION_JSON);
