@@ -15,6 +15,7 @@ import org.egov.bpa.repository.NationalDashboardRepository;
 import org.egov.bpa.web.model.Data;
 import org.egov.bpa.web.model.IngestRequest;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -24,7 +25,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import io.jaegertracing.thriftjava.Log;
 @Service
 public class NationalDashboardService {
 	@Autowired
@@ -148,24 +153,92 @@ public class NationalDashboardService {
 		    
 		
 
-		    public Map<String, Object> pushDataToApi(String apiUrl, RequestInfo requestInfo){
-		                    
-		    	IngestRequest body = getIngestData();
-		    	System.out.println("bodyy---====" + body);
-		    	ingestRequest.setRequestInfo(requestInfo);
-		    	
-		    	 HttpHeaders headers = new HttpHeaders();
-		    	    headers.setContentType(MediaType.APPLICATION_JSON);
-		    	    
-		    	    HttpEntity<IngestRequest> requestEntity = new HttpEntity<IngestRequest>(body, headers);
-		    	    
-		    	    ResponseEntity<Map> responseEntity = this.restTemplate().exchange(apiUrl, HttpMethod.POST, requestEntity, Map.class);
-		    	    
-		    	    Map<String, Object> responseBody = responseEntity.getBody();
-		    	    return responseBody;
-		        
-		       
-		    	
-		    	
-		    }
+			public Map<String, Object> pushDataToApi(String apiUrl, RequestInfo requestInfo) {
+
+				IngestRequest body = getIngestData();
+				log.info("bodyy---====" + body);
+
+				Map<String, Object> requestInfoData = getAuthToken("CH_NDA_USER", "upyogTest@123", "password", "read",
+						"pg", "SYSTEM");
+
+				log.info("requestInfoData-----------" + requestInfoData);
+
+				Map<String, Object> requestData = new HashMap<>();
+
+				
+
+				Map<String, Object> userRequest = (Map<String, Object>) requestInfoData.get("UserRequest");
+				
+			
+				
+				String access_token = (String) requestInfoData.get("access_token");
+				String apiId = (String) requestInfoData.get("apiId");
+				String ver = (String) requestInfoData.get("ver");
+				Long ts = (Long) requestInfoData.get("ts");
+				String action = (String) requestInfoData.get("action");
+				String did = (String) requestInfoData.get("did");
+				String key = (String) requestInfoData.get("key");
+				String msgId = (String) requestInfoData.get("msgId");
+
+				requestInfo.setAuthToken(access_token);
+				requestInfo.setUserInfo((User) userRequest);
+				requestInfo.setApiId(apiId);
+				requestInfo.setVer(ver);
+				requestInfo.setTs(ts);
+				requestInfo.setAction(action);
+				requestInfo.setDid(did);
+				requestInfo.setKey(key);
+				requestInfo.setMsgId(msgId);
+				
+		
+				ingestRequest.setRequestInfo(requestInfo);
+				
+			
+
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_JSON);
+
+				HttpEntity<IngestRequest> requestEntity = new HttpEntity<IngestRequest>(body, headers);
+
+				ResponseEntity<Map> responseEntity = this.restTemplate().exchange(apiUrl, HttpMethod.POST,
+						requestEntity, Map.class);
+
+				Map<String, Object> responseBody = responseEntity.getBody();
+				return responseBody;
+
+			}
+		    
+		    public Map<String, Object> getAuthToken(String username, String password, String grantType, String scope,
+					String tenantId, String userType) {
+
+				String apiUrl = "https://upyog-test.niua.org/user/oauth/token";
+
+				MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<String, String>();
+
+				requestBody.add("username", username);
+				requestBody.add("password", password);
+				requestBody.add("grant_type", grantType);
+				requestBody.add("scope", scope);
+				requestBody.add("tenantId", tenantId);
+				requestBody.add("userType", userType);
+
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+				headers.add("Authorization", "Basic ZWdvdi11c2VyLWNsaWVudDo=");
+
+				HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+				System.out.println("requestEntity" + requestEntity);
+
+				ResponseEntity<Map> responseEntity = this.restTemplate().exchange(apiUrl, HttpMethod.POST, requestEntity,
+						Map.class);
+
+				
+				log.info("Response Body: " + responseEntity.getBody());
+				log.info("Response Headers: " + responseEntity.getHeaders());
+
+				return responseEntity.getBody();
+
+			}
 }

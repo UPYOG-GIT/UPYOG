@@ -541,6 +541,7 @@ public class BPAController {
 	@GetMapping(value = "/ingestData")	
 	public ResponseEntity <IngestRequest> getListOfIngestData() {
 		
+		
 		IngestRequest list = nationalDashboardService.getIngestData();
 	
 		return new ResponseEntity(list,HttpStatus.OK);
@@ -550,7 +551,7 @@ public class BPAController {
 	@PostMapping(value = "/pushData")
 	public ResponseEntity<Map<String, Object>> pushDataToApi(RequestInfoWrapper requestInfoWrapper) {
 		
-		System.out.println("request----" + requestInfoWrapper.getRequestInfo());
+		
 		log.info("request----" + requestInfoWrapper.getRequestInfo());
 		String apiUrl = "https://upyog-test.niua.org/national-dashboard/metric/_ingest";
 	    try {
