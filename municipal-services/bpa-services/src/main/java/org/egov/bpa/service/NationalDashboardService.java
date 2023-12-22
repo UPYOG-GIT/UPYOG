@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.bpa.repository.NationalDashboardRepository;
-import org.egov.bpa.web.controller.BPAController;
 import org.egov.bpa.web.model.Data;
 import org.egov.bpa.web.model.IngestRequest;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +30,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import io.jaegertracing.thriftjava.Log;
 import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
@@ -185,14 +184,36 @@ public class NationalDashboardService {
 
 				requestInfo.setAuthToken(access_token);
 				requestInfo.setUserInfo((User) userRequest);
-//				requestInfo.setApiId(apiId);
-//				requestInfo.setVer(ver);
-//				requestInfo.setTs(ts);
-//				requestInfo.setAction(action);
-//				requestInfo.setDid(did);
-//				requestInfo.setKey(key);
-//				requestInfo.setMsgId(msgId);
 				
+					User userInfo = new User();
+					userInfo.setUserName((String) userRequest.get("userName"));
+					userInfo.setId((Long) userRequest.get("id"));
+					userInfo.setUuid((String) userRequest.get("uuid"));
+					userInfo.setName((String) userRequest.get("name"));
+					userInfo.setMobileNumber((String) userRequest.get("mobileNumber"));
+					userInfo.setType((String) userRequest.get("type"));
+					userInfo.setMobileNumber((String) userRequest.get("mobileNumber"));
+					
+					  List<Map<String, Object>> roles = (List<Map<String, Object>>) userRequest.get("roles");
+					  
+					  List<Role> userRole = new ArrayList<>();
+					    
+					    for (Map<String, Object> role : roles) {
+					    	
+					    	Role rolee = new Role();
+					    	rolee.setName((String) role.get("name"));
+					    	rolee.setCode((String) role.get("code"));
+					    	rolee.setTenantId((String) role.get("tenantId"));
+					    	
+				
+				           
+				        	userRole.add(rolee);
+					    }
+				
+	
+				userInfo.setRoles(userRole);
+	
+					
 		
 				ingestRequest.setRequestInfo(requestInfo);
 				
