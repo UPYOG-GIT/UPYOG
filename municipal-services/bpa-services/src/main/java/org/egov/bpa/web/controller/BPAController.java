@@ -555,7 +555,7 @@ public class BPAController {
 		log.info("request----" + requestInfoWrapper.getRequestInfo());
 		String apiUrl = "https://upyog-test.niua.org/national-dashboard/metric/_ingest";
 	    try {
-	        Map<String, Object> response = nationalDashboardService.pushDataToApi(apiUrl, requestInfoWrapper.getRequestInfo());
+	        Map<String, Object> response = nationalDashboardService.pushDataToApi(apiUrl);
 	        return new ResponseEntity<>(response, HttpStatus.OK);
 	    } catch (Exception e) {
 	       
