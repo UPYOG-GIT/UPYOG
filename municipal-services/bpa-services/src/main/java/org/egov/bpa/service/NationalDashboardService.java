@@ -167,12 +167,8 @@ public class NationalDashboardService {
 
 				Map<String, Object> requestData = new HashMap<>();
 
-				
-
 				Map<String, Object> userRequest = (Map<String, Object>) requestInfoData.get("UserRequest");
-				
-			
-				
+
 				String access_token = (String) requestInfoData.get("access_token");
 //				String apiId = (String) requestInfoData.get("apiId");
 //				String ver = (String) requestInfoData.get("ver");
@@ -184,40 +180,41 @@ public class NationalDashboardService {
 
 				requestInfo.setAuthToken(access_token);
 				requestInfo.setUserInfo((User) userRequest);
+
+				User userInfo = new User();
+				userInfo.setUserName((String) userRequest.get("userName"));
+				userInfo.setId((Long) userRequest.get("id"));
+				userInfo.setUuid((String) userRequest.get("uuid"));
+				userInfo.setName((String) userRequest.get("name"));
+				userInfo.setMobileNumber((String) userRequest.get("mobileNumber"));
+				userInfo.setType((String) userRequest.get("type"));
 				
-					User userInfo = new User();
-					userInfo.setUserName((String) userRequest.get("userName"));
-					userInfo.setId((Long) userRequest.get("id"));
-					userInfo.setUuid((String) userRequest.get("uuid"));
-					userInfo.setName((String) userRequest.get("name"));
-					userInfo.setMobileNumber((String) userRequest.get("mobileNumber"));
-					userInfo.setType((String) userRequest.get("type"));
-					userInfo.setMobileNumber((String) userRequest.get("mobileNumber"));
-					
-					  List<Map<String, Object>> roles = (List<Map<String, Object>>) userRequest.get("roles");
-					  
-					  List<Role> userRole = new ArrayList<>();
-					    
-					    for (Map<String, Object> role : roles) {
-					    	
-					    	Role rolee = new Role();
-					    	rolee.setName((String) role.get("name"));
-					    	rolee.setCode((String) role.get("code"));
-					    	rolee.setTenantId((String) role.get("tenantId"));
-					    	
 				
-				           
-				        	userRole.add(rolee);
-					    }
+				log.info("accerr " + access_token);
+				log.info("userName" + (String) userRequest.get("userName"));
+				log.info("name" + (String) userRequest.get("name"));
+				log.info("mobileNumber" + (String) userRequest.get("mobileNumber"));
+			//	log.info("userName" + (String) userRequest.get("userName"));
+				log.info("type" + (String) userRequest.get("type"));
 				
-	
+
+				List<Map<String, Object>> roles = (List<Map<String, Object>>) userRequest.get("roles");
+
+				List<Role> userRole = new ArrayList<>();
+
+				for (Map<String, Object> role : roles) {
+
+					Role rolee = new Role();
+					rolee.setName((String) role.get("name"));
+					rolee.setCode((String) role.get("code"));
+					rolee.setTenantId((String) role.get("tenantId"));
+
+					userRole.add(rolee);
+				}
+
 				userInfo.setRoles(userRole);
-	
-					
-		
+
 				ingestRequest.setRequestInfo(requestInfo);
-				
-			
 
 				HttpHeaders headers = new HttpHeaders();
 				headers.setContentType(MediaType.APPLICATION_JSON);
