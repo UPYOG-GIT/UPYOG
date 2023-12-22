@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.bpa.repository.NationalDashboardRepository;
+import org.egov.bpa.web.controller.BPAController;
 import org.egov.bpa.web.model.Data;
 import org.egov.bpa.web.model.IngestRequest;
 import org.egov.common.contract.request.RequestInfo;
@@ -30,7 +31,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import io.jaegertracing.thriftjava.Log;
+import lombok.extern.slf4j.Slf4j;
 @Service
+@Slf4j
 public class NationalDashboardService {
 	@Autowired
 	NationalDashboardRepository repository;
@@ -172,23 +175,23 @@ public class NationalDashboardService {
 			
 				
 				String access_token = (String) requestInfoData.get("access_token");
-				String apiId = (String) requestInfoData.get("apiId");
-				String ver = (String) requestInfoData.get("ver");
-				Long ts = (Long) requestInfoData.get("ts");
-				String action = (String) requestInfoData.get("action");
-				String did = (String) requestInfoData.get("did");
-				String key = (String) requestInfoData.get("key");
-				String msgId = (String) requestInfoData.get("msgId");
+//				String apiId = (String) requestInfoData.get("apiId");
+//				String ver = (String) requestInfoData.get("ver");
+//				Long ts = (Long) requestInfoData.get("ts");
+//				String action = (String) requestInfoData.get("action");
+//				String did = (String) requestInfoData.get("did");
+//				String key = (String) requestInfoData.get("key");
+//				String msgId = (String) requestInfoData.get("msgId");
 
 				requestInfo.setAuthToken(access_token);
 				requestInfo.setUserInfo((User) userRequest);
-				requestInfo.setApiId(apiId);
-				requestInfo.setVer(ver);
-				requestInfo.setTs(ts);
-				requestInfo.setAction(action);
-				requestInfo.setDid(did);
-				requestInfo.setKey(key);
-				requestInfo.setMsgId(msgId);
+//				requestInfo.setApiId(apiId);
+//				requestInfo.setVer(ver);
+//				requestInfo.setTs(ts);
+//				requestInfo.setAction(action);
+//				requestInfo.setDid(did);
+//				requestInfo.setKey(key);
+//				requestInfo.setMsgId(msgId);
 				
 		
 				ingestRequest.setRequestInfo(requestInfo);
