@@ -177,6 +177,13 @@ public class NationalDashboardService {
 //				String did = (String) requestInfoData.get("did");
 //				String key = (String) requestInfoData.get("key");
 //				String msgId = (String) requestInfoData.get("msgId");
+				
+				log.info("accerr " + access_token);
+				log.info("userName" + (String) userRequest.get("userName"));
+				log.info("name" + (String) userRequest.get("name"));
+				log.info("mobileNumber" + (String) userRequest.get("mobileNumber"));
+			//	log.info("userName" + (String) userRequest.get("userName"));
+				log.info("type" + (String) userRequest.get("type"));
 
 				requestInfo.setAuthToken(access_token);
 				requestInfo.setUserInfo((User) userRequest);
