@@ -184,9 +184,12 @@ public class NationalDashboardService {
 				
 
 				requestInfo.setAuthToken(access_token);
-				requestInfo.setUserInfo((User) userRequest);
+				
+				
 
 				User userInfo = new User();
+				
+			
 				userInfo.setUserName((String) userRequest.get("userName"));
 				userInfo.setId((Long) userRequest.get("id"));
 				userInfo.setUuid((String) userRequest.get("uuid"));
@@ -202,7 +205,8 @@ public class NationalDashboardService {
 			//	log.info("userName" + (String) userRequest.get("userName"));
 				log.info("type" + (String) userRequest.get("type"));
 				
-
+				requestInfo.setUserInfo(userInfo);
+				
 				List<Map<String, Object>> roles = (List<Map<String, Object>>) userRequest.get("roles");
 
 				List<Role> userRole = new ArrayList<>();
