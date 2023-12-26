@@ -23,7 +23,7 @@ const OBPSEmployeeHomeCard = () => {
   const [inprogressCount, setInprogressCount] = useState(0);
   const [totalProposal, setTotalProposal] = useState(0);
   const [directBhawanAnugya, setDirectBhawanAnugya] = useState(0);
-  
+
 
 
   // const tenantId1=Digit.ULBService.getCitizenCurrentTenant();
@@ -187,7 +187,32 @@ const OBPSEmployeeHomeCard = () => {
         count: "-",
         label: t("TOTAL_NEARING_SLA"),
         link: `/digit-ui/employee/obps/inbox`
-      }
+      },
+      // {
+      //   count: !isInboxLoading && !isInboxLoadingOfStakeholder ? directBhawanAnugya:"",
+      //   label: t("Direct Bhawan Anugya"),
+      //   link: `#`
+      // },
+      // {
+      //   count: !isInboxLoading && !isInboxLoadingOfStakeholder ? approvedCount:"",
+      //   label: t("Approved Applications"),
+      //   link: `#`
+      // },
+      // {
+      //   count: !isInboxLoading && !isInboxLoadingOfStakeholder ? departmentInProcessCount:"",
+      //   label: t("Department Inprocess"),
+      //   link: `#`
+      // },
+      // {
+      //   count: !isInboxLoading && !isInboxLoadingOfStakeholder ? sancFeePending:"",
+      //   label: t("Post Fee Pending"),
+      //   link: `#`
+      // },
+      // {
+      //   count: !isInboxLoading && !isInboxLoadingOfStakeholder ? rejectedCount:"",
+      //   label: t("Rejected Cases"),
+      //   link: `#`
+      // }
     ],
     links: [
       {
@@ -206,6 +231,36 @@ const OBPSEmployeeHomeCard = () => {
         label: t("ES_COMMON_SEARCH_APPLICATION"),
         link: `/digit-ui/employee/obps/search/application`
       },
+      {
+        count: isInboxLoading && isInboxLoadingOfStakeholder ? "" : directBhawanAnugya,
+        label: t("Direct Bhawan Anugya"),
+        link: `#`,
+        field: "BPA"
+      },
+      {
+        count: isInboxLoading && isInboxLoadingOfStakeholder ? "" : approvedCount,
+        label: t("Approved Applications"),
+        link: `#`,
+        field: "BPA"
+      },
+      {
+        count: isInboxLoading && isInboxLoadingOfStakeholder ? "" : departmentInProcessCount,
+        label: t("Department Inprocess"),
+        link: `#`,
+        field: "BPA"
+      },
+      {
+        count: isInboxLoading && isInboxLoadingOfStakeholder ? "" : sancFeePending,
+        label: t("Post Fee Pending"),
+        link: `#`,
+        field: "BPA"
+      },
+      {
+        count: isInboxLoading && isInboxLoadingOfStakeholder ? "" : rejectedCount,
+        label: t("Rejected Cases"),
+        link: `#`,
+        field: "BPA"
+      },
     ]
   }), [isInboxLoading, isInboxLoadingOfStakeholder, dataOfStakeholder, dataOfBPA, totalCount]);
 
@@ -221,11 +276,148 @@ const OBPSEmployeeHomeCard = () => {
     });
   }
 
+  const homeDetails = [
+    {
+      Icon: <OBPSIconSolidBg />,
+      moduleName: t("Apllications Details"),
+
+      kpis: [
+        {
+          count: !isInboxLoading && !isInboxLoadingOfStakeholder ? directBhawanAnugya : "",
+          label: t("Direct Bhawan Anugya"),
+          link: `#`
+        },
+        {
+          count: !isInboxLoading && !isInboxLoadingOfStakeholder ? approvedCount : "",
+          label: t("Approved Applications"),
+          link: `#`
+        },
+        {
+          count: !isInboxLoading && !isInboxLoadingOfStakeholder ? departmentInProcessCount : "",
+          label: t("Department Inprocess"),
+          link: `#`
+        },
+        {
+          count: !isInboxLoading && !isInboxLoadingOfStakeholder ? sancFeePending : "",
+          label: t("Post Fee Pending"),
+          link: `#`
+        },
+        {
+          count: !isInboxLoading && !isInboxLoadingOfStakeholder ? rejectedCount : "",
+          label: t("Rejected Cases"),
+          link: `#`
+        }
+      ],
+
+      // links: [
+      //   {
+      //     count: isInboxLoading && isInboxLoadingOfStakeholder ? "" : directBhawanAnugya,
+      //     label: t("Direct Bhawan Anugya"),
+      //     link: `#`,
+      //     field: "BPA"
+      //   },
+      //   {
+      //     count: isInboxLoading && isInboxLoadingOfStakeholder ? "" : approvedCount,
+      //     label: t("Approved Applications"),
+      //     link: `#`,
+      //     field: "BPA"
+      //   },
+      //   {
+      //     count: isInboxLoading && isInboxLoadingOfStakeholder ? "" : departmentInProcessCount,
+      //     label: t("Department Inprocess"),
+      //     link: `#`,
+      //     field: "BPA"
+      //   },
+      //   {
+      //     count: isInboxLoading && isInboxLoadingOfStakeholder ? "" : sancFeePending,
+      //     label: t("Post Fee Pending"),
+      //     link: `#`,
+      //     field: "BPA"
+      //   },
+      //   {
+      //     count: isInboxLoading && isInboxLoadingOfStakeholder ? "" : rejectedCount,
+      //     label: t("Rejected Cases"),
+      //     link: `#`,
+      //     field: "BPA"
+      //   },
+      // ],
+      className: "CitizenHomeCard",
+      styles: { padding: "0px", minWidth: "90%", minHeight: "90%" }
+    },
+    {
+      Icon: <OBPSIconSolidBg />,
+      moduleName: t("MODULE_OBPS"),
+      kpis: [
+        // {
+        //   count: !isInboxLoading && !isInboxLoadingOfStakeholder ? totalCount : "",
+        //   label: t("TOTAL_FSM"),
+        //   link: `/digit-ui/employee/obps/inbox`
+        // },
+        {
+          count: !isInboxLoading && !isInboxLoadingOfStakeholder ? totalProposal : "",
+          label: t("Total Applications"),
+          link: `#`
+        },
+        {
+          count: "-",
+          label: t("TOTAL_NEARING_SLA"),
+          link: `/digit-ui/employee/obps/inbox`
+        }
+      ],
+      links: [
+        {
+          count: isInboxLoadingOfStakeholder ? "" : dataOfStakeholder?.totalCount,
+          label: t("ES_COMMON_STAKEHOLDER_INBOX_LABEL"),
+          link: `/digit-ui/employee/obps/stakeholder-inbox`,
+          field: "STAKEHOLDER"
+        },
+        {
+          count: isInboxLoading ? "" : dataOfBPA?.totalCount,
+          label: t("ES_COMMON_OBPS_INBOX_LABEL"),
+          link: `/digit-ui/employee/obps/inbox`,
+          field: "BPA"
+        },
+        {
+          label: t("ES_COMMON_SEARCH_APPLICATION"),
+          link: `/digit-ui/employee/obps/search/application`
+        },
+      ],
+      // className: "CitizenHomeCard",
+      // styles: { padding: "0px", minWidth: "90%", minHeight: "90%" }
+    },
+    
+
+  ];
+
+  if (!checkingForStakeholderRoles) {
+    homeDetails[1].links = homeDetails[1].links.filter(obj => {
+      return obj.field !== 'STAKEHOLDER';
+    });
+  }
+
+  if (!checkingForBPARoles) {
+    homeDetails[1].links = homeDetails[1].links.filter(obj => {
+      return obj.field !== 'BPA';
+    });
+  }
+
+  const homeScreen = (
+    <div className="mainContent citizenAllServiceGrid">
+      {homeDetails.map((data) => {
+        return (
+          <div>
+            {checkingForBPARoles || checkingForStakeholderRoles ? <EmployeeModuleCard {...data} /> : null}
+            
+          </div>
+        )
+      })}
+    </div>
+  )
+
+  return homeScreen;
+  // return checkingForBPARoles || checkingForStakeholderRoles ? <EmployeeModuleCard {...propsForModuleCard} /> : null
 
 
-  return checkingForBPARoles || checkingForStakeholderRoles ? <EmployeeModuleCard {...propsForModuleCard} /> : null
-
-  
 }
 
 export default OBPSEmployeeHomeCard
