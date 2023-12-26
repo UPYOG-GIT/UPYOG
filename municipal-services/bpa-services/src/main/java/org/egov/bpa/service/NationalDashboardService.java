@@ -59,12 +59,18 @@ public class NationalDashboardService {
 		
 		for (Map<String, Object> nationalData : ingestData) {
 
-			//System.out.println("nationalData--" + nationalData);
-
+			
+			String ulbName = (String) nationalData.get("ulb_name");
+			log.info("ulbName" + ulbName);
+			
+			String ulb = "ch." + ulbName.trim().toLowerCase().replaceAll("\\s", "").replaceAll("-", "");
+			log.info("ulb---" + ulb);
+			System.out.println("ulb---" + ulb);
+			
+			data.setUlb(ulb);
 			data.setDate(formattedDate);
 			data.setModule("OBPAS");
 			data.setWard((String) nationalData.get("locality"));
-			data.setUlb((String) nationalData.get("tenantid"));
 			data.setRegion((String) nationalData.get("tenantId"));
 			data.setState("Chhattisgarh");
 
@@ -158,9 +164,9 @@ public class NationalDashboardService {
 			public Map<String, Object> pushDataToApi(String apiUrl) {
 
 				IngestRequest body = getIngestData();
-				
+
 				RequestInfo requestInfo = new RequestInfo();
-				log.info("bodyy---====" + body);
+				// log.info("bodyy---====" + body);
 
 				Map<String, Object> requestInfoData = getAuthToken("CH_NDA_USER", "upyogTest@123", "password", "read",
 						"pg", "SYSTEM");
@@ -172,41 +178,27 @@ public class NationalDashboardService {
 				Map<String, Object> userRequest = (Map<String, Object>) requestInfoData.get("UserRequest");
 
 				String access_token = (String) requestInfoData.get("access_token");
-//				String apiId = (String) requestInfoData.get("apiId");
-//				String ver = (String) requestInfoData.get("ver");
-//				Long ts = (Long) requestInfoData.get("ts");
-//				String action = (String) requestInfoData.get("action");
-//				String did = (String) requestInfoData.get("did");
-//				String key = (String) requestInfoData.get("key");
-//				String msgId = (String) requestInfoData.get("msgId");
-				
-			
-				
 
 				requestInfo.setAuthToken(access_token);
-				
-				
 
 				User userInfo = new User();
-				
-			
+
 				userInfo.setUserName((String) userRequest.get("userName"));
-				userInfo.setId((Long) userRequest.get("id"));
+			//	userInfo.setId((Long) userRequest.get("id"));
 				userInfo.setUuid((String) userRequest.get("uuid"));
 				userInfo.setName((String) userRequest.get("name"));
 				userInfo.setMobileNumber((String) userRequest.get("mobileNumber"));
 				userInfo.setType((String) userRequest.get("type"));
-				
-				
+
 				log.info("accerr " + access_token);
 				log.info("userName" + (String) userRequest.get("userName"));
 				log.info("name" + (String) userRequest.get("name"));
 				log.info("mobileNumber" + (String) userRequest.get("mobileNumber"));
-			//	log.info("userName" + (String) userRequest.get("userName"));
+				// log.info("userName" + (String) userRequest.get("userName"));
 				log.info("type" + (String) userRequest.get("type"));
-				
+
 				requestInfo.setUserInfo(userInfo);
-				
+
 				List<Map<String, Object>> roles = (List<Map<String, Object>>) userRequest.get("roles");
 
 				List<Role> userRole = new ArrayList<>();
@@ -225,6 +217,8 @@ public class NationalDashboardService {
 
 				ingestRequest.setRequestInfo(requestInfo);
 
+				log.info("requestInfo-----------" + requestInfo);
+				log.info("ingestRequest {{{{{" + ingestRequest);
 				HttpHeaders headers = new HttpHeaders();
 				headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -232,6 +226,8 @@ public class NationalDashboardService {
 
 				ResponseEntity<Map> responseEntity = this.restTemplate().exchange(apiUrl, HttpMethod.POST,
 						requestEntity, Map.class);
+
+				log.info("responseENtity+++++++" + responseEntity.getBody());
 
 				Map<String, Object> responseBody = responseEntity.getBody();
 				return responseBody;
@@ -260,7 +256,8 @@ public class NationalDashboardService {
 				HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
 
 				System.out.println("requestEntity" + requestEntity);
-
+                  
+				log.info("after request entiry " );
 				ResponseEntity<Map> responseEntity = this.restTemplate().exchange(apiUrl, HttpMethod.POST, requestEntity,
 						Map.class);
 
