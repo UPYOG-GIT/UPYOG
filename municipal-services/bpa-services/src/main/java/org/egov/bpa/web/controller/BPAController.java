@@ -541,7 +541,6 @@ public class BPAController {
 	@GetMapping(value = "/ingestData")	
 	public ResponseEntity <IngestRequest> getListOfIngestData() {
 		
-		
 		IngestRequest list = nationalDashboardService.getIngestData();
 	
 		return new ResponseEntity(list,HttpStatus.OK);
@@ -549,10 +548,9 @@ public class BPAController {
 	}
 	
 	@PostMapping(value = "/pushData")
-	public ResponseEntity<Map<String, Object>> pushDataToApi(RequestInfoWrapper requestInfoWrapper) {
+	public ResponseEntity<Map<String, Object>> pushDataToApi() {
 		
-		
-		log.info("request----" + requestInfoWrapper.getRequestInfo());
+		//System.out.println("request----" + requestInfoWrapper.getRequestInfo());
 		String apiUrl = "https://upyog-test.niua.org/national-dashboard/metric/_ingest";
 	    try {
 	        Map<String, Object> response = nationalDashboardService.pushDataToApi(apiUrl);
@@ -560,7 +558,8 @@ public class BPAController {
 	    } catch (Exception e) {
 	       
 	        e.printStackTrace();
-	        return new ResponseEntity<>(Collections.singletonMap("error", "Failed to push data"), HttpStatus.INTERNAL_SERVER_ERROR);
+	        return new ResponseEntity<>(Collections.singletonMap("error", "Failed to push data: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+
 	    }
 	}
 }

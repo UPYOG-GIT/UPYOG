@@ -25,6 +25,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -162,6 +163,7 @@ public class NationalDashboardService {
 		
 
 			public Map<String, Object> pushDataToApi(String apiUrl) {
+				 log.info("Pushing data to API...");
 
 				IngestRequest body = getIngestData();
 
@@ -264,8 +266,22 @@ public class NationalDashboardService {
 				
 				log.info("Response Body: " + responseEntity.getBody());
 				log.info("Response Headers: " + responseEntity.getHeaders());
+				
+				 log.info("Data pushed to API successfully.");
 
 				return responseEntity.getBody();
 
 			}
+		    
+		    @Scheduled (cron = "0 * * * * ?")
+			public void scheduleDataPush() {
+		    	
+		    	log.info("Scheduled task started...");
+				String apiUrl = "https://upyog-test.niua.org/national-dashboard/metric/_ingest";
+				pushDataToApi(apiUrl);
+				log.info("Scheduled task completed.");
+		    	
+		    }
+		    
+		    
 }
