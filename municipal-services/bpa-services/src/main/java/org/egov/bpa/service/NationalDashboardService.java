@@ -273,7 +273,7 @@ public class NationalDashboardService {
 
 			}
 		    
-		    @Scheduled (cron = "0 * * * * ?")
+		    @Scheduled (cron = "0 0 0 * * ?")
 			public void scheduleDataPush() {
 		    	
 		    	log.info("Scheduled task started...");
