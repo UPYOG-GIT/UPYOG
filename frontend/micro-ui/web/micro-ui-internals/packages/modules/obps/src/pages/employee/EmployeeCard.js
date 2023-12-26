@@ -279,7 +279,7 @@ const OBPSEmployeeHomeCard = () => {
   const homeDetails = [
     {
       Icon: <OBPSIconSolidBg />,
-      moduleName: t("Apllications Details"),
+      moduleName: t("Applications Details"),
 
       kpis: [
         {
