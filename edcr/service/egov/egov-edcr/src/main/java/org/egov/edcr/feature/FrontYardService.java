@@ -112,6 +112,7 @@ public class FrontYardService extends GeneralRule {
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_13 = BigDecimal.valueOf(13);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_14 = BigDecimal.valueOf(14);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_15 = BigDecimal.valueOf(15);
+	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_18 = BigDecimal.valueOf(18);
 	public static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
 
 	public static final String BSMT_FRONT_YARD_DESC = "Basement Front Yard";

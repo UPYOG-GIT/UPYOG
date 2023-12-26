@@ -102,6 +102,7 @@ public class SideYardService_Birgaon extends SideYardService {
 	private static final BigDecimal SIDEVALUE_SIX = BigDecimal.valueOf(6);
 	private static final BigDecimal SIDEVALUE_NINE = BigDecimal.valueOf(9);
 	private static final BigDecimal SIDEVALUE_TEN = BigDecimal.valueOf(10);
+	private static final BigDecimal SIDEVALUE_TWELVE = BigDecimal.valueOf(12);
 
 	private static final String SIDENUMBER = "Side Number";
 	private static final String MINIMUMLABEL = "Minimum distance ";
@@ -574,38 +575,20 @@ public class SideYardService_Birgaon extends SideYardService {
 		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
 		BigDecimal plotArea = pl.getPlot().getArea();
 
-		if (plotArea.compareTo(BigDecimal.valueOf(550)) < 0) {
-			if (widthOfPlot.compareTo(BigDecimal.valueOf(10)) <= 0) {
-				side2val = SIDEVALUE_ONEPOINTFIVE;
-				side1val = SIDEVALUE_ONEPOINTFIVE;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(12)) <= 0) {
-				side2val = SIDEVALUE_TWO;
-				side1val = SIDEVALUE_TWO;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
+		if (plotArea.compareTo(BigDecimal.valueOf(1000)) < 0) {
 				side2val = SIDEVALUE_THREE;
 				side1val = SIDEVALUE_THREE;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) {
-				side2val = SIDEVALUE_FOUR;
-				side1val = SIDEVALUE_FOUR;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(18)) > 0) {
-				side2val = SIDEVALUE_FOURPOINTFIVE;
-				side1val = SIDEVALUE_FOURPOINTFIVE;
-			}
-		} else if (plotArea.compareTo(BigDecimal.valueOf(550)) > 0
-				&& plotArea.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-			side2val = SIDEVALUE_FOURPOINTFIVE;
-			side1val = SIDEVALUE_FOURPOINTFIVE;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(1000)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(5000)) <= 0) {
-			side2val = SIDEVALUE_SIX;
-			side1val = SIDEVALUE_SIX;
+			side2val = SIDEVALUE_FOURPOINTFIVE;
+			side1val = SIDEVALUE_FOURPOINTFIVE;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(5000)) > 0
-				&& plotArea.compareTo(BigDecimal.valueOf(30000)) <= 0) {
+				&& plotArea.compareTo(BigDecimal.valueOf(20000)) <= 0) {
 			side2val = SIDEVALUE_NINE;
 			side1val = SIDEVALUE_NINE;
-		} else if (plotArea.compareTo(BigDecimal.valueOf(30000)) > 0) {
-			side2val = SIDEVALUE_TEN;
-			side1val = SIDEVALUE_TEN;
+		} else if (plotArea.compareTo(BigDecimal.valueOf(20000)) > 0) {
+			side2val = SIDEVALUE_TWELVE;
+			side1val = SIDEVALUE_TWELVE;
 		}
 
 		if (max >= side1val.doubleValue())
