@@ -47,8 +47,9 @@
 
 package org.egov.edcr.web.controller.rest;
 
+
+
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -109,6 +110,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
 
 @RestController
 @RequestMapping(value = "/rest/dcr")
@@ -592,20 +594,24 @@ public class RestEdcrApplicationController {
     }
     
     @PostMapping(value = "/createEdcrRule")
-    public ResponseEntity<Map<String, Object>> createEdcrRule(@RequestBody Map<String, Object> edcrRule) {
+    public ResponseEntity<Object> createEdcrRule(@RequestBody Map<String, Object> edcrRule) {
         try {
            
-            Map<String, Object> result = edcrRestService.createEdcrRule(edcrRule);
+            Integer result = edcrRestService.createEdcrRule(edcrRule);
+            if(result > 0) {
+            	return new ResponseEntity<>(result, HttpStatus.OK);
+            }else {
+				return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+		
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+		}
          
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-          
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("message", "An error occurred while creating Edcr rule");
-            errorResponse.put("errorDetails", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
+         //   return ResponseEntity.ok(result);
+        
     }
+
     
     
     
