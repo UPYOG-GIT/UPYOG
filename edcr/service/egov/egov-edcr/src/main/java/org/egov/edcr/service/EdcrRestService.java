@@ -1102,7 +1102,7 @@ public class EdcrRestService {
 	}
 	
 	public Integer createEdcrRule(Map<String, Object> edcrRule) {
-		System.out.println("inside createedcrrule");
+		Log.info("inside createedcrrule");
 
 		LocalDateTime date = LocalDateTime.now();
 		String feature =  edcrRule.get("feature").toString();
@@ -1118,7 +1118,7 @@ public class EdcrRestService {
 
 		final Query query = getCurrentSession().createSQLQuery(insertQuery);
 		Integer result = query.executeUpdate();
-		System.out.println("******" + result);
+		Log.info(result +" data inserted in edcr_rule_entry table");
 		return result;
 
 	}
