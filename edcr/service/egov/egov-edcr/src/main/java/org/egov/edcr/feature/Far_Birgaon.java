@@ -672,7 +672,7 @@ public class Far_Birgaon extends Far {
 					&& (DxfFileConstants.G.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
 							|| DxfFileConstants.B.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
 							|| DxfFileConstants.D.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode()))) {
-				processFarIndustrial(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs, developmentZone);
+				processFarIndustrial(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs, developmentZone, area);
 			}
 //            if (mostRestrictiveOccupancyType.getType() != null
 //                    && DxfFileConstants.I.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
@@ -1112,16 +1112,23 @@ public class Far_Birgaon extends Far {
 
 	// FAR values changed according to Industrial
 	private void processFarIndustrial(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
-			BigDecimal roadWidth, HashMap<String, String> errors, String developmentZone) {
+			BigDecimal roadWidth, HashMap<String, String> errors, String developmentZone, BigDecimal area) {
 
 		String expectedResult = StringUtils.EMPTY;
 		boolean isAccepted = false;
-   
-		isAccepted = far.compareTo(ONE) <= 0;
-		if(developmentZone != "CA") {
-		pl.getFarDetails().setPermissableFar(ONE.doubleValue());
+		BigDecimal permissibleFar = BigDecimal.ZERO;
+
+		if (area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+			pl.getFarDetails().setPermissableFar(ONE_POINTTWOFIVE.doubleValue());
+			permissibleFar = BigDecimal.valueOf(1.25);
+
+		} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
+			pl.getFarDetails().setPermissableFar(ONE.doubleValue());
+			permissibleFar = BigDecimal.valueOf(1.0);
 		}
-		expectedResult = "<= 1";
+		isAccepted = far.compareTo(permissibleFar) <= 0;
+
+		expectedResult = "<= " + permissibleFar;
 
 		String occupancyName = occupancyType.getType().getName();
 		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {

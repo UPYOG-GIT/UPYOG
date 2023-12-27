@@ -73,6 +73,7 @@ import org.springframework.stereotype.Service;
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.constants.DxfFileConstants.J;
+import static org.egov.edcr.constants.DxfFileConstants.G;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
 @Service
@@ -193,6 +194,8 @@ public class Coverage_Birgaon extends Coverage {
 				permissibleCoverageValue = getPermissibleCoverageForCommercial(plotBoundaryArea, developmentZone, noOfFloors);
 			} else if (J.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
 				permissibleCoverageValue = getPermissibleCoverageForGovernment(plotBoundaryArea, developmentZone, noOfFloors);
+			}  else if (G.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
+				permissibleCoverageValue = getPermissibleCoverageForIndustrial();
 			}
 		}
 
@@ -250,6 +253,15 @@ public class Coverage_Birgaon extends Coverage {
 				permissibleCoverage = BigDecimal.valueOf(50);
 			} 
 		
+		return permissibleCoverage;
+	}
+	
+	private BigDecimal getPermissibleCoverageForIndustrial() {
+		LOG.info("inside getPermissibleCoverageForIndustrial()");
+		
+		BigDecimal permissibleCoverage = BigDecimal.ZERO;
+		permissibleCoverage = BigDecimal.valueOf(60);
+			
 		return permissibleCoverage;
 	}
 	
