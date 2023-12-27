@@ -71,7 +71,7 @@ const Home = ({
   useEffect(async () => {
     const getDashboardCount = await Digit.OBPSAdminService.getDashboardCount();
 
-    console.log("getDashboardCount--" + JSON.stringify(getDashboardCount))
+    // console.log("getDashboardCount--" + JSON.stringify(getDashboardCount))
 
 
 
@@ -83,7 +83,7 @@ const Home = ({
       if (dashboardData.initiated !== undefined) {
         const initiatedCount = dashboardData.initiated;
         setInitiatedCount(initiatedCount);
-        console.log("initiatedCount" + initiatedCount);
+        // console.log("initiatedCount" + initiatedCount);
       }
 
       if (dashboardData.citizen_approval_inprocess !== undefined) {
@@ -130,7 +130,6 @@ const Home = ({
         const inprogressCount = dashboardData.inprogress;
         setInprogressCount(inprogressCount);
       }
-
 
       if (dashboardData.total !== undefined) {
         const totalProposal = dashboardData.total;

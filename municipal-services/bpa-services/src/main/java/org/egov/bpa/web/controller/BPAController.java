@@ -3,12 +3,14 @@ package org.egov.bpa.web.controller;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.egov.bpa.service.BPAService;
+import org.egov.bpa.service.NationalDashboardService;
 import org.egov.bpa.util.BPAConstants;
 import org.egov.bpa.util.BPAErrorConstants;
 import org.egov.bpa.util.BPAUtil;
@@ -21,6 +23,7 @@ import org.egov.bpa.web.model.BPAResponse;
 import org.egov.bpa.web.model.BPASearchCriteria;
 import org.egov.bpa.web.model.BSCategoryRequest;
 import org.egov.bpa.web.model.BSCategoryRequestWrapper;
+import org.egov.bpa.web.model.IngestRequest;
 import org.egov.bpa.web.model.PayTpRateRequest;
 import org.egov.bpa.web.model.PayTpRateRequestWrapper;
 import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
@@ -56,6 +59,9 @@ public class BPAController {
 
 	@Autowired
 	private BPAService bpaService;
+	
+	@Autowired
+	private NationalDashboardService nationalDashboardService; 
 
 	@Autowired
 	private BPAUtil bpaUtil;
@@ -529,13 +535,31 @@ public class BPAController {
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 
 	}
+
+
 	
-	@PostMapping(value = "/ingestData")
-	public ResponseEntity<List<Map<String, Object>>> getListOfIngestData() {
-		List<Map<String, Object>> list = bpaService.getIngestData();
-		return new ResponseEntity<>(list, HttpStatus.OK);
+	@GetMapping(value = "/ingestData")	
+	public ResponseEntity <IngestRequest> getListOfIngestData() {
+		
+		IngestRequest list = nationalDashboardService.getIngestData();
+	
+		return new ResponseEntity(list,HttpStatus.OK);
 
 	}
+	
+	@PostMapping(value = "/pushData")
+	public ResponseEntity<Map<String, Object>> pushDataToApi() {
+		
+		//System.out.println("request----" + requestInfoWrapper.getRequestInfo());
+		String apiUrl = "https://upyog-test.niua.org/national-dashboard/metric/_ingest";
+	    try {
+	        Map<String, Object> response = nationalDashboardService.pushDataToApi(apiUrl);
+	        return new ResponseEntity<>(response, HttpStatus.OK);
+	    } catch (Exception e) {
+	       
+	        e.printStackTrace();
+	        return new ResponseEntity<>(Collections.singletonMap("error", "Failed to push data: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 
-
+	    }
+	}
 }

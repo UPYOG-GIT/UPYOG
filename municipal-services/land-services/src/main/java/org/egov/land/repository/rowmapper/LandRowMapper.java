@@ -71,7 +71,7 @@ public class LandRowMapper implements ResultSetExtractor<List<LandInfo>> {
 						.wardNo(rs.getString("wardNo")).patwariHN(rs.getString("patwariHN")).tenantId(tenantId)
 						.address(rs.getString("address")).locality(locality)
 						.occupancy(rs.getString("occupancy"))
-						.plotArea(rs.getString("plotarea")).khataNo(rs.getString("khatano")).build();
+						.plotArea(rs.getString("plotarea")).khataNo(rs.getString("khatano")).builtUpArea(rs.getString("builtuparea")).build();
 				     
 
 				currentLandInfo = LandInfo.builder().id(id).landUId(rs.getString("landuid"))

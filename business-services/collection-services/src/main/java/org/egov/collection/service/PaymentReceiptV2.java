@@ -162,6 +162,7 @@ public class PaymentReceiptV2 {
 				document.add(threeColTable1);
 
 				Table threeColTable2 = new Table(threeColumnWidth);
+				Table threeColTableRWH = new Table(threeColumnWidth);
 				responsePayment = paymentList.get(0);
 				List<PaymentDetail> paymentDetails = responsePayment.getPaymentDetails();
 
@@ -171,15 +172,23 @@ public class PaymentReceiptV2 {
 				for (FeeDetail feeDetail : feeDetailList) {
 					if (feeDetail.getIsFdr().equals("N")) {
 						grossAmount.add(feeDetail.getAmount());
+						threeColTable2
+								.addCell(new Cell().add(String.valueOf(srNo++)).setTextAlignment(TextAlignment.CENTER));
+						threeColTable2.addCell(new Cell().add(feeDetail.getChargesTypeName()))
+								.setTextAlignment(TextAlignment.CENTER);
+						threeColTable2.addCell(new Cell().add(String.valueOf(feeDetail.getAmount()))
+								.setTextAlignment(TextAlignment.RIGHT));
+					} else {
+						threeColTableRWH
+								.addCell(new Cell().add(String.valueOf(1)).setTextAlignment(TextAlignment.CENTER));
+						threeColTableRWH.addCell(new Cell().add(feeDetail.getChargesTypeName()))
+								.setTextAlignment(TextAlignment.CENTER);
+						threeColTableRWH.addCell(new Cell().add(String.valueOf(feeDetail.getAmount()))
+								.setTextAlignment(TextAlignment.RIGHT));
 					}
 //					threeColTable2.addCell(
 //							new Cell().add(String.valueOf(feeDetail.getSrNo())).setTextAlignment(TextAlignment.CENTER));
-					threeColTable2
-							.addCell(new Cell().add(String.valueOf(srNo++)).setTextAlignment(TextAlignment.CENTER));
-					threeColTable2.addCell(new Cell().add(feeDetail.getChargesTypeName()))
-							.setTextAlignment(TextAlignment.CENTER);
-					threeColTable2.addCell(new Cell().add(String.valueOf(feeDetail.getAmount()))
-							.setTextAlignment(TextAlignment.RIGHT));
+
 				}
 				Table threeColTable31 = new Table(threeColumnWidth1);
 				threeColTable31.addCell(new Cell().add("Gross Amount\r").setTextAlignment(TextAlignment.RIGHT));
@@ -194,6 +203,7 @@ public class PaymentReceiptV2 {
 						.addCell(new Cell().add(String.valueOf(totalAmount)).setTextAlignment(TextAlignment.RIGHT));
 				document.add(threeColTable2);
 				document.add(threeColTable31);
+				document.add(threeColTableRWH);
 				Table fullTable = new Table(fullwidth);
 				fullTable.addCell(new Cell().add("Total Amount(in words) : " + amountInwordString)
 						.setTextAlignment(TextAlignment.LEFT));

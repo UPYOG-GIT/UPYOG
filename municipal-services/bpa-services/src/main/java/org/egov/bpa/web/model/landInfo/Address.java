@@ -104,6 +104,10 @@ public class Address {
 	@SafeHtml
 	@JsonProperty("patwariHN")
 	private String patwariHN = null;
+	
+	@SafeHtml
+	@JsonProperty("builtUpArea")
+	private String builtUpArea = null;
 
 	@SafeHtml
 	@JsonProperty("plotArea")
@@ -535,6 +539,7 @@ public class Address {
 		sb.append("    plotArea: ").append(toIndentedString(plotArea)).append("\n");
 		sb.append("    wardNo: ").append(toIndentedString(wardNo)).append("\n");
 		sb.append("    patwariHN: ").append(toIndentedString(patwariHN)).append("\n");
+		sb.append("    builtUpArea: ").append(toIndentedString(builtUpArea)).append("\n");
 		sb.append("    address: ").append(toIndentedString(address)).append("\n");
 		sb.append("}");
 		return sb.toString();
@@ -605,6 +610,14 @@ public class Address {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public String getBuiltUpArea() {
+		return builtUpArea;
+	}
+
+	public void setBuiltUpArea(String builtUpArea) {
+		this.builtUpArea = builtUpArea;
 	}
 	
 	

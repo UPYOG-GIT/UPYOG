@@ -39,7 +39,7 @@ public class Address {
 	@SafeHtml
 	@JsonProperty("plotNo")
 	private String plotNo = null;
-	
+
 	@SafeHtml
 	@JsonProperty("wardNo")
 	private String wardNo = null;
@@ -99,10 +99,14 @@ public class Address {
 	@SafeHtml
 	@JsonProperty("occupancy")
 	private String occupancy = null;
-	
+
 	@SafeHtml
 	@JsonProperty("patwariHN")
 	private String patwariHN = null;
+
+	@SafeHtml
+	@JsonProperty("builtUpArea")
+	private String builtUpArea = null;
 
 	@SafeHtml
 	@JsonProperty("plotArea")
@@ -116,7 +120,7 @@ public class Address {
 
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails = null;
-	
+
 	@JsonProperty("address")
 	private String address = null;
 
@@ -264,14 +268,14 @@ public class Address {
 		this.region = region;
 		return this;
 	}
-	
+
 	public Address wardNo(String wardNo) {
-		this.wardNo=wardNo;
+		this.wardNo = wardNo;
 		return this;
 	}
-	
+
 	public Address patwariHN(String patwariHN) {
-		this.patwariHN=patwariHN;
+		this.patwariHN = patwariHN;
 		return this;
 	}
 
@@ -495,13 +499,15 @@ public class Address {
 				&& Objects.equals(this.buildingName, address.buildingName)
 				&& Objects.equals(this.street, address.street) && Objects.equals(this.locality, address.locality)
 				&& Objects.equals(this.geoLocation, address.geoLocation) && Objects.equals(this.wardNo, address.wardNo)
-				&& Objects.equals(this.patwariHN, address.patwariHN) && Objects.equals(this.auditDetails, address.auditDetails);
+				&& Objects.equals(this.patwariHN, address.patwariHN)
+				&& Objects.equals(this.builtUpArea, address.builtUpArea)
+				&& Objects.equals(this.auditDetails, address.auditDetails);
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(tenantId, doorNo, plotNo, id, landmark, city, district, region, state, country, pincode,
-				additionDetails, buildingName, street, locality, geoLocation, auditDetails, wardNo, patwariHN);
+				additionDetails, buildingName, street, locality, geoLocation, auditDetails, wardNo, patwariHN, builtUpArea);
 	}
 
 	@Override
@@ -532,6 +538,7 @@ public class Address {
 		sb.append("    plotArea: ").append(toIndentedString(plotArea)).append("\n");
 		sb.append("    wardNo: ").append(toIndentedString(wardNo)).append("\n");
 		sb.append("    patwariHN: ").append(toIndentedString(patwariHN)).append("\n");
+		sb.append("    builtUpArea: ").append(toIndentedString(builtUpArea)).append("\n");
 		sb.append("    address: ").append(toIndentedString(address)).append("\n");
 		sb.append("}");
 		return sb.toString();
@@ -603,6 +610,13 @@ public class Address {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-	
-	
+
+	public String getBuiltUpArea() {
+		return builtUpArea;
+	}
+
+	public void setBuiltUpArea(String builtUpArea) {
+		this.builtUpArea = builtUpArea;
+	}
+
 }

@@ -53,6 +53,7 @@ import static org.egov.edcr.constants.DxfFileConstants.A_PO;
 import static org.egov.edcr.constants.DxfFileConstants.A_R;
 import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.constants.DxfFileConstants.J;
+import static org.egov.edcr.constants.DxfFileConstants.G;
 import static org.egov.edcr.utility.DcrConstants.FRONT_YARD_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
@@ -86,6 +87,7 @@ public class FrontYardService_Birgaon extends FrontYardService {
 	private static final String RULE_7_C_1 = "Table 7-C-1";
 	private static final String RULE_7_C_13 = "Table 7-C-13";
 	private static final String RULE_18_2 = "Table 18-2";
+	private static final String RULE_18_18 = "Table 18-18";
 //	private static final String RULE_36 = "36";
 	private static final String RULE_37_TWO_A = "37-2-A";
 //	private static final String RULE_37_TWO_B = "37-2-B";
@@ -108,10 +110,12 @@ public class FrontYardService_Birgaon extends FrontYardService {
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_4_5 = BigDecimal.valueOf(4.5);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_5 = BigDecimal.valueOf(5);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_6 = BigDecimal.valueOf(6);
+	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_7_5 = BigDecimal.valueOf(7.5);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_9 = BigDecimal.valueOf(9);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_10 = BigDecimal.valueOf(10);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_12 = BigDecimal.valueOf(12);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_15 = BigDecimal.valueOf(15);
+	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_18 = BigDecimal.valueOf(18);
 	public static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
 
 	public static final String BSMT_FRONT_YARD_DESC = "Basement Front Yard";
@@ -205,17 +209,17 @@ public class FrontYardService_Birgaon extends FrontYardService {
 
 						if (buildingHeight != null && (min.doubleValue() > 0 || mean.doubleValue() > 0)) {
 //							for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
-								final Occupancy occupancy = block.getBuilding().getTotalArea().get(0);
-								scrutinyDetail.setKey("Block_" + block.getName() + "_" + FRONT_YARD_DESC);
+							final Occupancy occupancy = block.getBuilding().getTotalArea().get(0);
+							scrutinyDetail.setKey("Block_" + block.getName() + "_" + FRONT_YARD_DESC);
 
-								/*
-								 * if (setback.getLevel() < 0) { scrutinyDetail.setKey("Block_" +
-								 * block.getName() + "_" + "Basement Front Yard"); checkFrontYardBasement(pl,
-								 * block.getBuilding(), block.getName(), setback.getLevel(), plot,
-								 * BSMT_FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(), frontYardResult);
-								 * 
-								 * }
-								 */
+							/*
+							 * if (setback.getLevel() < 0) { scrutinyDetail.setKey("Block_" +
+							 * block.getName() + "_" + "Basement Front Yard"); checkFrontYardBasement(pl,
+							 * block.getBuilding(), block.getName(), setback.getLevel(), plot,
+							 * BSMT_FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(), frontYardResult);
+							 * 
+							 * }
+							 */
 
 //								if ((occupancy.getTypeHelper().getSubtype() != null
 //										&& (A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
@@ -225,26 +229,22 @@ public class FrontYardService_Birgaon extends FrontYardService {
 //												|| A_PO.equalsIgnoreCase(
 //														occupancy.getTypeHelper().getSubtype().getCode()))
 //										|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
-								if (occupancy.getTypeHelper().getType() != null
-										&& (A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
-												|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
-									checkFrontYard(pl, block.getBuilding(), block.getName(), setback.getLevel(), plot,
-											FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(), frontYardResult,
-											errors);
+							if (occupancy.getTypeHelper().getType() != null
+									&& (A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
+											|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
+								checkFrontYard(pl, block.getBuilding(), block.getName(), setback.getLevel(), plot,
+										FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(), frontYardResult, errors);
 
-								}
-								/*
-								 * else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
-								 * checkFrontYardForIndustrial(pl, block.getBuilding(), block.getName(),
-								 * setback.getLevel(), plot, FRONT_YARD_DESC, min, mean,
-								 * occupancy.getTypeHelper(), frontYardResult); }
-								 */
-								else if (occupancy.getTypeHelper().getType() != null
-										&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
-									processFrontYardGovtOccupancies(pl, block.getBuilding(), block.getName(),
-											setback.getLevel(), plot, FRONT_YARD_DESC, min, mean,
-											occupancy.getTypeHelper(), frontYardResult);
-								}
+							} else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+								checkFrontYardForIndustrial(pl, block.getBuilding(), block.getName(),
+										setback.getLevel(), plot, FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(),
+										frontYardResult);
+							} else if (occupancy.getTypeHelper().getType() != null
+									&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+								processFrontYardGovtOccupancies(pl, block.getBuilding(), block.getName(),
+										setback.getLevel(), plot, FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(),
+										frontYardResult);
+							}
 
 //							} // for end
 
@@ -396,7 +396,7 @@ public class FrontYardService_Birgaon extends FrontYardService {
 			String frontYardFieldName, BigDecimal min, BigDecimal mean, OccupancyTypeHelper mostRestrictiveOccupancy,
 			FrontYardResult frontYardResult) {
 		Boolean valid = false;
-		String subRule = RULE_35;
+		String subRule = RULE_18_18;
 		String rule = FRONT_YARD_DESC;
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;
@@ -507,32 +507,25 @@ public class FrontYardService_Birgaon extends FrontYardService {
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal plotArea,
 			BigDecimal widthOfPlot) {
-		if (plotArea.compareTo(BigDecimal.valueOf(550)) < 0) {
-			if (widthOfPlot.compareTo(BigDecimal.valueOf(10)) <= 0) {
-				meanVal = FRONTYARDMINIMUM_DISTANCE_3;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(12)) <= 0) {
-				meanVal = FRONTYARDMINIMUM_DISTANCE_4;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
-				meanVal = FRONTYARDMINIMUM_DISTANCE_5;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) {
-				meanVal = FRONTYARDMINIMUM_DISTANCE_6;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(18)) > 0) {
-				meanVal = FRONTYARDMINIMUM_DISTANCE_6;
-			}
-		} else if (plotArea.compareTo(BigDecimal.valueOf(550)) > 0
+		if (plotArea.compareTo(BigDecimal.valueOf(500)) < 0) {
+			meanVal = FRONTYARDMINIMUM_DISTANCE_3;
+		} else if (plotArea.compareTo(BigDecimal.valueOf(500)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_9;
-
+			meanVal = FRONTYARDMINIMUM_DISTANCE_4_5;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(1000)) > 0
+				&& plotArea.compareTo(BigDecimal.valueOf(2000)) <= 0) {
+			meanVal = FRONTYARDMINIMUM_DISTANCE_6;
+		} else if (plotArea.compareTo(BigDecimal.valueOf(2000)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(5000)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_10;
-
+			meanVal = FRONTYARDMINIMUM_DISTANCE_7_5;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(5000)) > 0
-				&& plotArea.compareTo(BigDecimal.valueOf(30000)) <= 0) {
+				&& plotArea.compareTo(BigDecimal.valueOf(10000)) <= 0) {
+			meanVal = FRONTYARDMINIMUM_DISTANCE_10;
+		} else if (plotArea.compareTo(BigDecimal.valueOf(10000)) > 0
+				&& plotArea.compareTo(BigDecimal.valueOf(20000)) <= 0) {
 			meanVal = FRONTYARDMINIMUM_DISTANCE_12;
-
-		} else if (plotArea.compareTo(BigDecimal.valueOf(30000)) > 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_15;
+		} else if (plotArea.compareTo(BigDecimal.valueOf(20000)) > 0) {
+			meanVal = FRONTYARDMINIMUM_DISTANCE_18;
 
 		}
 
