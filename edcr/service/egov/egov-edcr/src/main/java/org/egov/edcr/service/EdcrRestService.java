@@ -1102,19 +1102,20 @@ public class EdcrRestService {
 	}
 	
 	public void createEdcrRule(Map<String, Object> edcrRule) {
+		System.out.println("inside createedcrrule");
 
 		LocalDateTime date = LocalDateTime.now();
-		String feature = (String) edcrRule.get("feature");
-		Double permissibleValue = (Double) edcrRule.get("permissible_value");
-		String occupancy = (String) edcrRule.get("occupancy");
-		Double to_value = (Double) edcrRule.get("to_area");
-		Double from_value = (Double) edcrRule.get("from_area");
-		String by_law = (String) edcrRule.get("by_law");
+		String feature =  edcrRule.get("feature").toString();
+		Double permissibleValue = Double.valueOf(edcrRule.get("permissible_value").toString());
+		String occupancy = edcrRule.get("occupancy").toString();
+		Double to_value =  Double.valueOf(edcrRule.get("to_area").toString()) ;
+		Double from_value = Double.valueOf(edcrRule.get("from_area").toString()) ;
+		String by_law =  edcrRule.get("by_law").toString();
 
 		String insertQuery = "INSERT INTO demo.edcr_rule_entry(feature, permissible_value, occupancy, to_area, from_area, by_law) VALUES ('"
 				+ feature + "','" + permissibleValue + "', '" + occupancy + "','" + to_value + "', '" + from_value
 				+ "', '" + by_law + "'  )";
-		System.out.println("insertQuery$$$$$$$$$$$$$$$$$$$$$$$$$$$" + insertQuery);
+
 		final Query query = getCurrentSession().createSQLQuery(insertQuery);
 		Integer result = query.executeUpdate();
 		System.out.println("******" + result);
