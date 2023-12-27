@@ -1101,7 +1101,7 @@ public class EdcrRestService {
 		return deletedCount;
 	}
 	
-	public void createEdcrRule(Map<String, Object> edcrRule) {
+	public Map<String, Object> createEdcrRule(Map<String, Object> edcrRule) {
 		System.out.println("inside createedcrrule");
 
 		LocalDateTime date = LocalDateTime.now();
@@ -1119,6 +1119,7 @@ public class EdcrRestService {
 		final Query query = getCurrentSession().createSQLQuery(insertQuery);
 		Integer result = query.executeUpdate();
 		System.out.println("******" + result);
+		return edcrRule;
 
 	}
 	

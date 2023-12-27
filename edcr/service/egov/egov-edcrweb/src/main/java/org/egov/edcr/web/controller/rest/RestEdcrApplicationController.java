@@ -592,11 +592,20 @@ public class RestEdcrApplicationController {
     }
     
     @PostMapping(value = "/createEdcrRule")
-    public void createEdcrRule(@RequestBody Map<String, Object> edcrRule){
-    	 edcrRestService.createEdcrRule(edcrRule);
-    	
+    public ResponseEntity<Map<String, Object>> createEdcrRule(@RequestBody Map<String, Object> edcrRule) {
+        try {
+           
+            Map<String, Object> result = edcrRestService.createEdcrRule(edcrRule);
+         
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+          
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "An error occurred while creating Edcr rule");
+            errorResponse.put("errorDetails", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
-
     
     
     
