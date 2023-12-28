@@ -92,6 +92,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -607,6 +608,18 @@ public class RestEdcrApplicationController {
 		
 			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
+         
+         //   return ResponseEntity.ok(result);
+        
+    }
+    
+    @GetMapping(value = "/getEdcrRule" )
+    public ResponseEntity<List<Map<String, Object>>> getEdcrRule( String tenantId) {
+         System.out.println("tenantId" + tenantId);
+           
+            List<Map<String, Object>> result = edcrRestService.getEdcrRule(tenantId);
+         			return new ResponseEntity<>(result, HttpStatus.OK);
+	
          
          //   return ResponseEntity.ok(result);
         

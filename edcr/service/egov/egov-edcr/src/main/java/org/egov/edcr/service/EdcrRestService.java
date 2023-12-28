@@ -71,10 +71,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.StringUtils;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.dcr.helper.ErrorDetail;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.PlanInformation;
@@ -107,18 +106,17 @@ import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.jfree.util.Log;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -1123,7 +1121,7 @@ public class EdcrRestService {
 
 	}
 	
-	public BigDecimal getEdcrRule(String feature, String occupancy, BigDecimal to_value, BigDecimal from_value) {
+	public BigDecimal getPermissibleValue(String feature, String occupancy, BigDecimal to_value, BigDecimal from_value) {
 	    String farValue = "SELECT permissible_value FROM demo.edcr_rule_entry WHERE " +
 	            "feature = '" + feature + "' AND " +
 	            "occupancy = '" + occupancy + "' AND " +
@@ -1138,6 +1136,20 @@ public class EdcrRestService {
 
 	    return result;
 	}
+	
+	public List<Map<String, Object>> getEdcrRule(String tenantId) {
+	    String queryString = "SELECT id,feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, tenant_id FROM demo.edcr_rule_entry";
+	    
+	    final Query data = getCurrentSession().createSQLQuery(queryString);
+	  //  data.setParameter("tenantId", tenantId);
+
+	    List<Map<String, Object>> rulesList = data.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
+
+	    System.out.println("******" + rulesList);
+
+	    return rulesList;
+	}
+
 
 
 	public Date resetFromDateTimeStamp(final Date date) {
