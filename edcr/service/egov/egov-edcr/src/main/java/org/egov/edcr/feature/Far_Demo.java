@@ -946,39 +946,46 @@ public class Far_Demo extends Far {
 	
 
 
-	private void processFarResidential(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
-			BigDecimal roadWidth, HashMap<String, String> errors, String feature) {
-		feature = "Far";
-		System.out.println("under processFarResidentoal");
-		System.out.println("+++++" );
-		String occupancyName = occupancyType.getType().getName();
-		System.out.println("+++++" + pl.getPlot().getArea());
-		
-		BigDecimal plotArea = pl.getPlot().getArea();
-		System.out.println("plotarea" + plotArea);
-		BigDecimal to_value = plotArea;
-		BigDecimal from_value = plotArea;
-		BigDecimal farValue = edcrRestService.getEdcrRule(feature, occupancyName, to_value, from_value);
-		System.out.println("farValue" + edcrRestService.getEdcrRule(feature, occupancyName, to_value, from_value));
-		String expectedResult = StringUtils.EMPTY;
-		boolean isAccepted = false;
-		System.out.println("+++++" + occupancyName + plotArea + farValue);
-
-		isAccepted = far.compareTo(farValue) <= 0;
-		pl.getFarDetails().setPermissableFar(farValue.doubleValue());
-		expectedResult = "<= feature";
-		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
-			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+		private void processFarResidential(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
+				BigDecimal roadWidth, HashMap<String, String> errors, String feature) {
+			
+			
+			feature = "Far";
+			System.out.println("under processFarResidentoal");
+			System.out.println("+++++" );
+			String occupancyName = occupancyType.getType().getName();
+			System.out.println("+++++" + pl.getPlot().getArea());
+			
+			BigDecimal plotArea = pl.getPlot().getArea();
+			System.out.println("plotarea" + plotArea);
+			BigDecimal to_value = plotArea;
+			BigDecimal from_value = plotArea;
+			
+			Map<String, Object> params = new HashMap<>();
+			
+			params.put("feature", feature);
+			params.put("occupancy", occupancyName);
+			params.put("to_value", to_value);
+			params.put("from_value", from_value);
+			
+			
+			
+			BigDecimal farValue = edcrRestService.getPermissibleValue(params);
+			System.out.println("farValue" + edcrRestService.getPermissibleValue(params));
+			String expectedResult = StringUtils.EMPTY;
+			boolean isAccepted = false;
+			System.out.println("+++++" + occupancyName + plotArea + farValue);
+	
+			isAccepted = far.compareTo(farValue) <= 0;
+			pl.getFarDetails().setPermissableFar(farValue.doubleValue());
+			expectedResult = "<= feature";
+			if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
+				buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+			}
+	
 		}
 
-	}
-
-	
-	
-	
-	
-
-	// FAR values changed according to Commercial
+		// FAR values changed according to Commercial
 	private void processFarCommercial(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
 			BigDecimal roadWidth, HashMap<String, String> errors) {
 
