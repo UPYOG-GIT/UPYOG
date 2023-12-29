@@ -971,7 +971,7 @@ public class Far_Demo extends Far {
 			
 			
 			BigDecimal farValue = edcrRestService.getPermissibleValue(params);
-			System.out.println("farValue" + edcrRestService.getPermissibleValue(params));
+			LOG.info("farValue" + farValue);
 			String expectedResult = StringUtils.EMPTY;
 			boolean isAccepted = false;
 			System.out.println("+++++" + occupancyName + plotArea + farValue);
