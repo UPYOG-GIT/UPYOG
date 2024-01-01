@@ -8,16 +8,16 @@ const EdcrRuleEntry = () => {
 
   const { t } = useTranslation();
   const [modalData, setModalData] = useState(false);
-  const [SlabPyType, setSlabPyType] = useState({ code: 'Building Permission Fee(nhnew)', value: 1 });
-  const [PyPropCat, setPyPropCat] = useState("");
-  const [PyBuildCat, setPyBuildCat] = useState({ code: "", value: "null" });
+  const [SlabPyType, setSlabPyType] = useState({ code: 'Far', value: 1 });
+  const [occupancy, setOccupancy] = useState("");
+  const [featureName, setFeatureName] = useState({ code: "", value: "null" });
   // const [PyBuildCat,setPyBuildCat] = useState("");
   const [PySubCat, setPySubCat] = useState({ code: "", value: "null" });
-  const [PyFromValue, setPyFromValue] = useState(0);
-  const [PyToValue, setPyToValue] = useState(0);
+  const [fromArea, setFromArea] = useState(0);
+  const [toArea, setToArea] = useState(0);
   const [PyOperation, setPyOperation] = useState("");
-  const [PyResRate, setPyResRate] = useState(0);
-  const [PyCommRate, setPyCommRate] = useState(0);
+  const [byLaw, setByLaw] = useState(0);
+  const [permissibleValue, setPermissibleValue] = useState(0);
   const [PyIndRate, setPyIndRate] = useState(0);
   const [PyMultiplyValue, setPyMultiplyValue] = useState(0);
   const [PyMaxLimit, setPyMaxLimit] = useState(0);
@@ -41,8 +41,8 @@ const EdcrRuleEntry = () => {
   const [rowid, setRowid] = useState([]);
 
   const setSlabPaytype = (value) => setSlabPyType(value);
-  const setPayPropCat = (value) => setPyPropCat(value);
-  const setPayBuildCat = (value) => setPyBuildCat(value);
+  const setPayPropCat = (value) => setOccupancy(value);
+  const setPayBuildCat = (value) => setFeatureName(value);
   const setPaySubCat = (value) => setPySubCat(value);
   const setPayOperation = (value) => setPyOperation(value);
 
@@ -111,28 +111,28 @@ const EdcrRuleEntry = () => {
   // },[PyBuildCat])
 
 
-  // let typevalid=SlabPyType.value;
-  // useEffect( async ()=>{
-  //   let getslab = await Digit.OBPSAdminService.getSlab(tenantId,typevalid);
-  //   setSlabtblval(getslab);
-  // },[SlabPyType])
+  let typevalid=SlabPyType.value;
+  useEffect( async ()=>{
+    let getslab = await Digit.EDCRService.getEdcrRule(tenantId);
+    setSlabtblval(getslab);
+  },[])
 
 
 
-  const addSlab = async (e) => {
+  const addEdcrRule = async (e) => {
     e.preventDefault();
 
     const SlabMasterRequest = {
       tenantId: tenantId,
       payTypeId: SlabPyType.value,
-      fromVal: PyFromValue,
-      toVal: PyToValue,
+      fromVal: fromArea,
+      toVal: toArea,
       operation: PyOperation.value,
-      pCategory: PyPropCat.value,
-      bCategory: PyBuildCat.value,
+      pCategory: occupancy.value,
+      bCategory: featureName.value,
       sCategory: PySubCat.value,
-      rateRes: PyResRate,
-      rateComm: PyCommRate,
+      rateRes: byLaw,
+      rateComm: permissibleValue,
       rateInd: PyIndRate,
       createdBy: uuid,
       multpVal: PyMultiplyValue,
@@ -156,34 +156,35 @@ const EdcrRuleEntry = () => {
 
 
     const params = {
-      feature: PyBuildCat.value,
-      occupancy: PyPropCat.value,
-      to_area: PyToValue,
-      from_area: PyFromValue,
+      feature: featureName.value,
+      occupancy: occupancy.value,
+      to_area: toArea,
+      from_area: fromArea,
       tenant_id:tenantId.split(".").length>1?tenantId.split('.')[1]:tenantId,
-      by_law: PyResRate,
-      permissible_value: PyCommRate,
+      by_law: byLaw,
+      permissible_value: permissibleValue,
 
     };
 
 
     closeModal();
-    setPyFromValue(0);
-    setPyToValue(0);
+    setFromArea(0);
+    setToArea(0);
     setPyOperation("");
-    setPyPropCat("");
-    setPyBuildCat({ code: "", value: "null" });
+    setOccupancy("");
+    setFeatureName({ code: "", value: "null" });
     setPySubCat("");
-    setPyResRate(0);
-    setPyCommRate(0);
+    setByLaw(0);
+    setPermissibleValue(0);
     setPyIndRate(0);
     setPyMultiplyValue(0);
     setPyMaxLimit(0);
 
-    const SlabMasterResp = await Digit.EDCRService.createEdcrRule(params);
+    const edcrRuleResponse = await Digit.EDCRService.createEdcrRule(params);
     // const SlabMasterResp = await Digit.OBPSAdminService.createEdcrRule(params);
-
-    if (SlabMasterResp > 0) {
+    console.log("edcrRuleResponse: "+JSON.stringify(edcrRuleResponse));
+    console.log("edcrRuleResponse11 "+edcrRuleResponse);
+    if (edcrRuleResponse > 0) {
       setShowToast({ key: false, label: "Successfully Added ", bgcolor: "#4BB543" });
       location.reload();
     }
@@ -220,80 +221,52 @@ const EdcrRuleEntry = () => {
         },
       },
       {
-        Header: t("From Value"),
+        Header: t("Feature"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.from_val}`);
+          return GetCell(`${row.original?.feature}`);
         },
       },
       {
-        Header: t("To Value"),
+        Header: t("From Area"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.to_val}`);
+          return GetCell(`${row.original?.from_area}`);
         },
       },
       {
-        Header: t("Operation"),
+        Header: t("To Area"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.operation}`);
+          return GetCell(`${row.original?.to_area}`);
         },
       },
       {
-        Header: t("Res. Rate"),
+        Header: t("Occupancy"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.rate_res}`);
+          return GetCell(`${row.original?.occupancy}`);
         },
       },
       {
-        Header: t("Comm. Rate"),
+        Header: t("Sub Occupancy"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.rate_comm}`);
+          return GetCell(`${row.original?.sub_occupancy}`);
         },
       },
       {
-        Header: t("Ind. Rate"),
+        Header: t("Permissible Value"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.rate_ind}`);
+          return GetCell(`${row.original?.permissible_value}`);
         },
       },
       {
-        Header: t("Proposal Category"),
+        Header: t("Rule"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.p_category}`);
-        },
-      },
-      {
-        Header: t("Building Category"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.b_category}`);
-        },
-      },
-      {
-        Header: t("Sub Category"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.s_category}`);
-        },
-      },
-      {
-        Header: t("Multiply Value"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.multp_val}`);
-        },
-      },
-      {
-        Header: t("Max Limit"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.max_limit}`);
+          return GetCell(`${row.original?.by_law}`);
         },
       },
     ];
@@ -446,10 +419,10 @@ const EdcrRuleEntry = () => {
                   <Dropdown
                     style={{ width: "100%", height: "2rem" }}
                     className="form-field"
-                    selected={PyBuildCat}
+                    selected={featureName}
                     option={FeatureNameDropdown}
                     select={setPayBuildCat}
-                    value={PyBuildCat}
+                    value={featureName}
                     optionKey="code"
                     placeholder="Select Feature Name"
                     name="PyBuildCat"
@@ -461,10 +434,10 @@ const EdcrRuleEntry = () => {
                   <Dropdown
                     style={{ width: "100%", height: "2rem" }}
                     className="form-field"
-                    selected={PyPropCat}
+                    selected={occupancy}
                     option={OccupancyDropdown}
                     select={setPayPropCat}
-                    value={PyPropCat}
+                    value={occupancy}
                     optionKey="code"
                     placeholder="Select Occupancy Type"
                     name="PyPropCat"
@@ -482,8 +455,8 @@ const EdcrRuleEntry = () => {
                   <TextInput
                     isMandatory={true}
                     name="fromvalue"
-                    onChange={(e) => setPyFromValue(e.target.value)}
-                    value={PyFromValue}
+                    onChange={(e) => setFromArea(e.target.value)}
+                    value={fromArea}
                     placeholder="Enter From Plot Value"
                     type="number"
                   />
@@ -494,8 +467,8 @@ const EdcrRuleEntry = () => {
                     isMandatory={true}
                     name="tovalue"
                     placeholder="Enter To Plot Value"
-                    onChange={(e) => setPyToValue(e.target.value)}
-                    value={PyToValue}
+                    onChange={(e) => setToArea(e.target.value)}
+                    value={toArea}
                     type="number"
                   />
                 </LabelFieldPair>
@@ -506,8 +479,8 @@ const EdcrRuleEntry = () => {
                     isMandatory={true}
                     name="resrate"
                     placeholder="Enter Rule Number"
-                    onChange={(e) => setPyResRate(e.target.value)}
-                    value={PyResRate}
+                    onChange={(e) => setByLaw(e.target.value)}
+                    value={byLaw}
                     type="number"
                   />
                 </LabelFieldPair>
@@ -517,14 +490,14 @@ const EdcrRuleEntry = () => {
                     isMandatory={true}
                     name="commrate"
                     placeholder="Enter Value"
-                    onChange={(e) => setPyCommRate(e.target.value)}
-                    value={PyCommRate}
+                    onChange={(e) => setPermissibleValue(e.target.value)}
+                    value={permissibleValue}
                     type="number"
                   />
                 </LabelFieldPair>
                 <div style={{ display: "flex", justifyContent: "center" }}>
                   <button
-                    onClick={addSlab}
+                    onClick={addEdcrRule}
                     style={{
                       margin: "24px",
                       backgroundColor: "#F47738",
