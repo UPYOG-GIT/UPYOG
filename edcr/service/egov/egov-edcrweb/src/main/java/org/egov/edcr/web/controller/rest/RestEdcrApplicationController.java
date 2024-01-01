@@ -88,6 +88,7 @@ import org.egov.regularisation.contract.RegEdcrRequest;
 import org.egov.regularisation.contract.RegEdcrResponse;
 import org.egov.regularisation.service.RegularisationRestService;
 import org.egov.regularisation.service.RegularisationValidator;
+import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -599,14 +600,19 @@ public class RestEdcrApplicationController {
         try {
            
             Integer result = edcrRestService.createEdcrRule(edcrRule);
+            Log.info("resullttt" + result);
             if(result > 0) {
             	return new ResponseEntity<>(result, HttpStatus.OK);
             }else {
-				return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(result, HttpStatus.OK);
 			}
 		} catch (Exception ex) {
 		
+			
+			Log.info("errorrr--" + ex); 
 			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+			
+			
 		}
          
          //   return ResponseEntity.ok(result);
