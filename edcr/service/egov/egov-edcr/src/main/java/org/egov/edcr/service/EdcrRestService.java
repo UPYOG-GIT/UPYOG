@@ -1121,18 +1121,26 @@ public class EdcrRestService {
 
 	}
 	
-	public BigDecimal getPermissibleValue(String feature, String occupancy, BigDecimal to_value, BigDecimal from_value) {
-	    String farValue = "SELECT permissible_value FROM demo.edcr_rule_entry WHERE " +
-	            "feature = '" + feature + "' AND " +
-	            "occupancy = '" + occupancy + "' AND " +
-	            "to_area = " + to_value + " AND " +
-	            "from_area = " + from_value;
-
+	public BigDecimal getPermissibleValue(Map<String, Object> params) {
+	    String farValue = "SELECT permissible_value FROM demo.edcr_rule_entry WHERE feature = '"+ params.get("feature") + "'";
+         if(params.containsKey("to_value")) {
+        	 farValue += " AND to_value = '" + params.get("to_value") + "'";
+         }	
+         if(params.containsKey("from_value")) {
+        	 farValue += " AND from_value = '" + params.get("from_value") + "'";
+         }	
+         
+         if(params.containsKey("occupancy")) {
+        	 farValue += " AND occupancy = '" + params.get("occupancy") + "'";
+         }	
+   
+ 
 	    final Query data = getCurrentSession().createSQLQuery(farValue);
-	    BigDecimal result = BigDecimal.valueOf(Double.valueOf(data.uniqueResult().toString()));
+	     BigDecimal result = (BigDecimal) data.uniqueResult();
+
 	    System.out.println("******" + result);
 
-	    System.out.println("+++++++++" + feature + " " + farValue + " " +  occupancy + " " + to_value );
+	 //   System.out.println("+++++++++" + feature + " " + farValue + " " +  occupancy + " " + to_value );
 
 	    return result;
 	}
