@@ -613,11 +613,11 @@ public class RestEdcrApplicationController {
         
     }
     
-    @GetMapping(value = "/getEdcrRule" )
-    public ResponseEntity<List<Map<String, Object>>> getEdcrRule( String tenantId) {
+    @PostMapping(value = "/getEdcrRule" )
+    public ResponseEntity<List<Map<String, Object>>> getEdcrRule(String tenantId, String feature) {
          System.out.println("tenantId" + tenantId);
            
-            List<Map<String, Object>> result = edcrRestService.getEdcrRule(tenantId);
+            List<Map<String, Object>> result = edcrRestService.getEdcrRule(tenantId, feature);
          			return new ResponseEntity<>(result, HttpStatus.OK);
 	
          

@@ -1103,40 +1103,51 @@ public class EdcrRestService {
 		Log.info("inside createedcrrule");
 
 		LocalDateTime date = LocalDateTime.now();
-		String feature =  edcrRule.get("feature").toString();
+		String feature = edcrRule.get("feature").toString();
+		String tenantId = edcrRule.get("tenant_id").toString();
+		String developmentZone = edcrRule.get("development_zone").toString();
+		Integer noOfFloors = (Integer) edcrRule.get("no_of_floors");
+		Double depthWidth = Double.valueOf(edcrRule.get("depth_width").toString());
+		Double roadWidth = Double.valueOf(edcrRule.get("road_width").toString());
 		Double permissibleValue = Double.valueOf(edcrRule.get("permissible_value").toString());
 		String occupancy = edcrRule.get("occupancy").toString();
-		Double to_value =  Double.valueOf(edcrRule.get("to_area").toString()) ;
-		Double from_value = Double.valueOf(edcrRule.get("from_area").toString()) ;
-		String by_law =  edcrRule.get("by_law").toString();
+		String subOccupancy = edcrRule.get("sub_occupancy").toString();
+		Double to_value = Double.valueOf(edcrRule.get("to_area").toString());
+		Double from_value = Double.valueOf(edcrRule.get("from_area").toString());
+		String by_law = edcrRule.get("by_law").toString();
 
-		String insertQuery = "INSERT INTO demo.edcr_rule_entry(feature, permissible_value, occupancy, to_area, from_area, by_law) VALUES ('"
+		String insertQuery = "INSERT INTO demo.edcr_rule_entry(feature, permissible_value, occupancy, to_area, from_area, by_law, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, depth_width) VALUES ('"
 				+ feature + "','" + permissibleValue + "', '" + occupancy + "','" + to_value + "', '" + from_value
-				+ "', '" + by_law + "'  )";
+				+ "', '" + by_law + "', '" + subOccupancy + "', '" + tenantId + "', '" + developmentZone + "', '" + roadWidth + "', '" + noOfFloors + "', '" + depthWidth + "'  )";
 
 		final Query query = getCurrentSession().createSQLQuery(insertQuery);
 		Integer result = query.executeUpdate();
-		Log.info(result +" data inserted in edcr_rule_entry table");
+		Log.info(result + " data inserted in edcr_rule_entry table");
 		return result;
 
 	}
 	
 	public BigDecimal getPermissibleValue(Map<String, Object> params) {
+		
+		System.out.println("inside getPermissibleValue method");
+		
 	    String farValue = "SELECT permissible_value FROM demo.edcr_rule_entry WHERE feature = '"+ params.get("feature") + "'";
          if(params.containsKey("to_value")) {
-        	 farValue += " AND to_value = '" + params.get("to_value") + "'";
+        	 farValue += " AND to_area = '" + params.get("to_value") + "'";
          }	
          if(params.containsKey("from_value")) {
-        	 farValue += " AND from_value = '" + params.get("from_value") + "'";
+        	 farValue += " AND from_area = '" + params.get("from_value") + "'";
          }	
          
          if(params.containsKey("occupancy")) {
         	 farValue += " AND occupancy = '" + params.get("occupancy") + "'";
          }	
-   
+    System.out.println("farValue ++" + farValue);
  
 	    final Query data = getCurrentSession().createSQLQuery(farValue);
-	     BigDecimal result = (BigDecimal) data.uniqueResult();
+	    System.out.println("data--" + data);
+	    
+	     BigDecimal result = (BigDecimal.valueOf(Double.valueOf(data.uniqueResult().toString()))) ;
 
 	    System.out.println("******" + result);
 
@@ -1145,8 +1156,8 @@ public class EdcrRestService {
 	    return result;
 	}
 	
-	public List<Map<String, Object>> getEdcrRule(String tenantId) {
-	    String queryString = "SELECT id,feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, tenant_id FROM demo.edcr_rule_entry";
+	public List<Map<String, Object>> getEdcrRule(String tenantId, String feature) {
+	    String queryString = "SELECT id,feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, depth_width FROM demo.edcr_rule_entry where tenant_id = '" + tenantId + "' ";
 	    
 	    final Query data = getCurrentSession().createSQLQuery(queryString);
 	  //  data.setParameter("tenantId", tenantId);
