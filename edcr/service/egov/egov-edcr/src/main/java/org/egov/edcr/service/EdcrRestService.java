@@ -1157,7 +1157,7 @@ public class EdcrRestService {
 	}
 	
 	public List<Map<String, Object>> getEdcrRule(String tenantId, String feature) {
-	    String queryString = "SELECT id,feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, depth_width FROM demo.edcr_rule_entry where tenant_id = '" + tenantId + "' ";
+	    String queryString = "SELECT id,feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, depth_width FROM demo.edcr_rule_entry where feature = '" + feature + "' ";
 	    
 	    final Query data = getCurrentSession().createSQLQuery(queryString);
 	  //  data.setParameter("tenantId", tenantId);
