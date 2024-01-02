@@ -595,6 +595,7 @@ public class RestEdcrApplicationController {
 		} catch (Exception ex) {
 
 			Log.info("errorrr--" + ex);
+			System.out.println("errorr===" + ex);
 			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 
 		}
