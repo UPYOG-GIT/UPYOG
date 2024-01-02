@@ -66,8 +66,10 @@ import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.edcr.service.EdcrRestService;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.utils.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.DxfFileConstants.A;
@@ -77,6 +79,9 @@ import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 @Service
 public class Coverage_Demo extends Coverage {
 	// private static final String OCCUPANCY2 = "OCCUPANCY";
+	
+	@Autowired
+	EdcrRestService edcrRestService;
 
 	private static final Logger LOG = LogManager.getLogger(Coverage_Demo.class);
 
@@ -176,17 +181,24 @@ public class Coverage_Demo extends Coverage {
 			pl.addError(DEVELOPMENT_ZONE,
 					getLocaleMessage(OBJECTNOTDEFINED, DEVELOPMENT_ZONE + " of PLAN_INFO layer"));
 		}
-//		String occupancyType;
+		String occupancyName = "";
+		String feature = "Coverage";
+		//String developmentZone = pl.getPlanInformation().getDevelopmentZone();
 
 		// get coverage permissible value from method and store in
 		// permissibleCoverageValue
 		if (plotBoundaryArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null && developmentZone != null) {
 //			occupancyType = mostRestrictiveOccupancy.getType().getCode();
 			if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForResidential(plotBoundaryArea, developmentZone);
+				occupancyName = "Residential";
+			
 			} else if (F.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForCommercial(plotBoundaryArea, developmentZone);
+				
+				occupancyName = "Commercial";
+				
 			}
+			
+			permissibleCoverageValue = getPermissibleCoverage(plotBoundaryArea, developmentZone, feature, occupancyName);
 		}
 
 		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0) {
@@ -199,6 +211,7 @@ public class Coverage_Demo extends Coverage {
 //			processCoverage(pl, StringUtils.EMPTY, totalCoverage, permissibleCoverageValue);
 //		}
 
+		
 		return pl;
 	}
 
@@ -207,134 +220,34 @@ public class Coverage_Demo extends Coverage {
 	/*
 	 * to get coverage permissible value for Residential
 	 */
-	private BigDecimal getPermissibleCoverageForResidential(BigDecimal area, String developmentZone) {
-		LOG.info("inside getPermissibleCoverageForResidential()");
-		BigDecimal permissibleCoverage = BigDecimal.ZERO;
-
-		switch (developmentZone) {
-
-		case "CA":
-			if (area.compareTo(BigDecimal.valueOf(150)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(75);
-			} else if (area.compareTo(BigDecimal.valueOf(150)) > 0 && area.compareTo(BigDecimal.valueOf(240)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(55);
-			} else if (area.compareTo(BigDecimal.valueOf(240)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(60);
-			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(750)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(50);
-			} else if (area.compareTo(BigDecimal.valueOf(750)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(40);
-			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
-				permissibleCoverage = BigDecimal.valueOf(35);
-			}
-			break;
-		case "DA-01":
-			if (area.compareTo(BigDecimal.valueOf(180)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(60);
-			} else if (area.compareTo(BigDecimal.valueOf(180)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(50);
-			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(40);
-			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
-				permissibleCoverage = BigDecimal.valueOf(35);
-			}
-			break;
-		case "DA-02":
-			if (area.compareTo(BigDecimal.valueOf(180)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(60);
-			} else if (area.compareTo(BigDecimal.valueOf(180)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(50);
-			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(40);
-			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
-				permissibleCoverage = BigDecimal.valueOf(35);
-			}
-			break;
-		case "DA-03":
-			if (area.compareTo(BigDecimal.valueOf(180)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(60);
-			} else if (area.compareTo(BigDecimal.valueOf(180)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(50);
-			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(40);
-			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0 && area.compareTo(BigDecimal.valueOf(15000)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(35);
-			} else if (area.compareTo(BigDecimal.valueOf(15000)) > 0) {
-				permissibleCoverage = BigDecimal.valueOf(30);
-			}
-
-			break;
-		}
-
-		return permissibleCoverage;
+	private BigDecimal getPermissibleCoverage(BigDecimal area, String developmentZone, String feature, String occupancyName){
+		LOG.info("inside getPermissibleCoverage()");
+	
+		BigDecimal to_value = area;
+		BigDecimal from_value = area;
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("feature", feature);
+		params.put("occupancy", occupancyName);
+		params.put("to_value", to_value);
+		params.put("from_value", from_value);
+		params.put("developmentZone", developmentZone);
+		  try {
+		        BigDecimal permissibleCoverage = edcrRestService.getPermissibleValue(params);
+		      
+		        return permissibleCoverage;
+		    } catch (NullPointerException e) {
+		        LOG.error("Permissible Coverage not found--------", e);
+		       
+		        return null;
+		    }
+		
 	}
 
 	/*
 	 * to get coverage permissible value for Commercial
 	 */
 
-	private BigDecimal getPermissibleCoverageForCommercial(BigDecimal area, String developmentZone) {
-		LOG.info("inside getPermissibleCoverageForCommercial()");
-		BigDecimal permissibleCoverage = BigDecimal.ZERO;
-
-		switch (developmentZone) {
-
-		case "CA":
-			if (area.compareTo(BigDecimal.valueOf(150)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(80);
-			} else if (area.compareTo(BigDecimal.valueOf(150)) > 0 && area.compareTo(BigDecimal.valueOf(240)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(75);
-			} else if (area.compareTo(BigDecimal.valueOf(240)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(60);
-			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0) {
-				permissibleCoverage = BigDecimal.valueOf(50);
-			}
-			break;
-		case "DA-01":
-			if (area.compareTo(BigDecimal.valueOf(180)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(60);
-			} else if (area.compareTo(BigDecimal.valueOf(180)) > 0 && area.compareTo(BigDecimal.valueOf(240)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(55);
-			} else if (area.compareTo(BigDecimal.valueOf(240)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(50);
-			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0) {
-				permissibleCoverage = BigDecimal.valueOf(45);
-			}
-			break;
-		case "DA-02":
-			if (area.compareTo(BigDecimal.valueOf(150)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(60);
-			} else if (area.compareTo(BigDecimal.valueOf(150)) > 0 && area.compareTo(BigDecimal.valueOf(180)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(55);
-			} else if (area.compareTo(BigDecimal.valueOf(180)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(50);
-			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(40);
-			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0 && area.compareTo(BigDecimal.valueOf(15000)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(35);
-			} else if (area.compareTo(BigDecimal.valueOf(15000)) > 0) {
-				permissibleCoverage = BigDecimal.valueOf(30);
-			}
-			break;
-		case "DA-03":
-			if (area.compareTo(BigDecimal.valueOf(150)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(60);
-			} else if (area.compareTo(BigDecimal.valueOf(150)) > 0 && area.compareTo(BigDecimal.valueOf(180)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(55);
-			} else if (area.compareTo(BigDecimal.valueOf(180)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(50);
-			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(40);
-			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0 && area.compareTo(BigDecimal.valueOf(15000)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(35);
-			} else if (area.compareTo(BigDecimal.valueOf(15000)) > 0) {
-				permissibleCoverage = BigDecimal.valueOf(30);
-			}
-			break;
-		}
-
-		return permissibleCoverage;
-	}
 
 	private void processCoverage(Plan pl, String occupancy, BigDecimal coverage, BigDecimal upperLimit, String developmentZone) {
 		LOG.info("inside processCoverage()");

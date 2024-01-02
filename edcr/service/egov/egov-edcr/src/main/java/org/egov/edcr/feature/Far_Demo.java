@@ -650,6 +650,11 @@ public class Far_Demo extends Far {
 		pl.getFarDetails().setProvidedFar(providedFar.doubleValue());
 		String typeOfArea = pl.getPlanInformation().getTypeOfArea();
 		BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
+		
+		
+		String occupancyName = "";
+		
+		System.out.println();
 
 		if (mostRestrictiveOccupancyType != null && StringUtils.isNotBlank(typeOfArea) && roadWidth != null
 //                && !processFarForSpecialOccupancy(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs)
@@ -659,13 +664,16 @@ public class Far_Demo extends Far {
 					|| (mostRestrictiveOccupancyType.getSubtype() != null
 							&& (A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())
 									|| A_AF.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())))) {
-				processFarResidential(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs, feature);
+				occupancyName = "Residential";
+			
 			}
 			if (mostRestrictiveOccupancyType.getType() != null
 					&& (DxfFileConstants.G.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
 							|| DxfFileConstants.B.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
 							|| DxfFileConstants.D.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode()))) {
-				processFarIndustrial(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs);
+				
+				occupancyName = "Industrial";
+			//	processFarIndustrial(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs);
 			}
 //            if (mostRestrictiveOccupancyType.getType() != null
 //                    && DxfFileConstants.I.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
@@ -673,9 +681,12 @@ public class Far_Demo extends Far {
 //            }
 			if (mostRestrictiveOccupancyType.getType() != null
 					&& DxfFileConstants.F.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-				processFarCommercial(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs);
+				
+				occupancyName = "Commercial";
+//				processFarCommercial(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs);
 			}
 		}
+		processFar(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs, feature, occupancyName);
 		ProcessPrintHelper.print(pl);
 		return pl;
 	}
@@ -924,36 +935,14 @@ public class Far_Demo extends Far {
 		return false;
 	}
 
-	// FAR values changed according to Residential
-//	private void processFarResidential(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
-//			BigDecimal roadWidth, HashMap<String, String> errors) {
-//        System.out.println("under processFarResidential");
-//     
-//		String expectedResult = StringUtils.EMPTY;
-//		boolean isAccepted = false;
-//
-//		isAccepted = far.compareTo(ONE_POINTTWOFIVE) <= 0;
-//		pl.getFarDetails().setPermissableFar(ONE_POINTTWOFIVE.doubleValue());
-//		expectedResult = "<= 1.25";
-//
-//		String occupancyName = occupancyType.getType().getName();
-//		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
-//			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
-//		}
-//		
-//		
-//	}
-	
-
-
-		private void processFarResidential(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
-				BigDecimal roadWidth, HashMap<String, String> errors, String feature) {
+		private void processFar(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
+				BigDecimal roadWidth, HashMap<String, String> errors, String feature, String occupancyName) {
 			
 			
 			feature = "Far";
 			System.out.println("under processFarResidentoal");
 			System.out.println("+++++" );
-			String occupancyName = occupancyType.getType().getName();
+			// occupancyName = occupancyType.getType().getName();
 			System.out.println("+++++" + pl.getPlot().getArea());
 			
 			BigDecimal plotArea = pl.getPlot().getArea();
@@ -967,17 +956,20 @@ public class Far_Demo extends Far {
 			params.put("occupancy", occupancyName);
 			params.put("to_value", to_value);
 			params.put("from_value", from_value);
+			BigDecimal permissibleFar = BigDecimal.ZERO;
+			try {
+				 permissibleFar = edcrRestService.getPermissibleValue(params);
+				LOG.info("permissibleFar" + permissibleFar);
+			} catch (NullPointerException e) {
+				 LOG.error("Permissible Far not found--------", e);
+			}
 			
-			
-			
-			BigDecimal farValue = edcrRestService.getPermissibleValue(params);
-			LOG.info("farValue" + farValue);
 			String expectedResult = StringUtils.EMPTY;
 			boolean isAccepted = false;
-			System.out.println("+++++" + occupancyName + plotArea + farValue);
+			System.out.println("+++++" + occupancyName + plotArea + permissibleFar);
 	
-			isAccepted = far.compareTo(farValue) <= 0;
-			pl.getFarDetails().setPermissableFar(farValue.doubleValue());
+			isAccepted = far.compareTo(permissibleFar) <= 0;
+			pl.getFarDetails().setPermissableFar(permissibleFar.doubleValue());
 			expectedResult = "<= feature";
 			if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
 				buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
