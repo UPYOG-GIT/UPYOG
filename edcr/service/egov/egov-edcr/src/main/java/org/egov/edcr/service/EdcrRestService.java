@@ -1098,7 +1098,7 @@ public class EdcrRestService {
 		Log.info(deletedCount + "rejected scrutiny records deleted from edcr database");
 		return deletedCount;
 	}
-	
+
 	public Integer createEdcrRule(Map<String, Object> edcrRule) {
 		Log.info("inside createedcrrule");
 
@@ -1118,7 +1118,8 @@ public class EdcrRestService {
 
 		String insertQuery = "INSERT INTO demo.edcr_rule_entry(feature, permissible_value, occupancy, to_area, from_area, by_law, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, depth_width) VALUES ('"
 				+ feature + "','" + permissibleValue + "', '" + occupancy + "','" + to_value + "', '" + from_value
-				+ "', '" + by_law + "', '" + subOccupancy + "', '" + tenantId + "', '" + developmentZone + "', '" + roadWidth + "', '" + noOfFloors + "', '" + depthWidth + "'  )";
+				+ "', '" + by_law + "', '" + subOccupancy + "', '" + tenantId + "', '" + developmentZone + "', '"
+				+ roadWidth + "', '" + noOfFloors + "', '" + depthWidth + "'  )";
 
 		final Query query = getCurrentSession().createSQLQuery(insertQuery);
 		Integer result = query.executeUpdate();
@@ -1126,50 +1127,76 @@ public class EdcrRestService {
 		return result;
 
 	}
-	
+
 	public BigDecimal getPermissibleValue(Map<String, Object> params) {
-		
+
 		System.out.println("inside getPermissibleValue method");
-		
-	    String farValue = "SELECT permissible_value FROM demo.edcr_rule_entry WHERE feature = '"+ params.get("feature") + "'";
-         if(params.containsKey("to_value")) {
-        	 farValue += " AND to_area = '" + params.get("to_value") + "'";
-         }	
-         if(params.containsKey("from_value")) {
-        	 farValue += " AND from_area = '" + params.get("from_value") + "'";
-         }	
-         
-         if(params.containsKey("occupancy")) {
-        	 farValue += " AND occupancy = '" + params.get("occupancy") + "'";
-         }	
-    System.out.println("farValue ++" + farValue);
- 
-	    final Query data = getCurrentSession().createSQLQuery(farValue);
-	    System.out.println("data--" + data);
-	    
-	     BigDecimal result = (BigDecimal.valueOf(Double.valueOf(data.uniqueResult().toString()))) ;
 
-	    System.out.println("******" + result);
+		String farValue = "SELECT permissible_value FROM demo.edcr_rule_entry WHERE feature = '" + params.get("feature")
+				+ "'";
+		if (params.containsKey("to_value")) {
+			farValue += " AND to_area = '" + params.get("to_value") + "'";
+		}
+		if (params.containsKey("from_value")) {
+			farValue += " AND from_area = '" + params.get("from_value") + "'";
+		}
 
-	 //   System.out.println("+++++++++" + feature + " " + farValue + " " +  occupancy + " " + to_value );
+		if (params.containsKey("occupancy")) {
+			farValue += " AND occupancy = '" + params.get("occupancy") + "'";
+		}
+		System.out.println("farValue ++" + farValue);
 
-	    return result;
+		final Query data = getCurrentSession().createSQLQuery(farValue);
+		System.out.println("data--" + data);
+
+		BigDecimal result = (BigDecimal.valueOf(Double.valueOf(data.uniqueResult().toString())));
+
+		System.out.println("******" + result);
+
+		// System.out.println("+++++++++" + feature + " " + farValue + " " + occupancy +
+		// " " + to_value );
+
+		return result;
 	}
-	
+
 	public List<Map<String, Object>> getEdcrRule(String tenantId, String feature) {
-	    String queryString = "SELECT id,feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, depth_width FROM demo.edcr_rule_entry where feature = '" + feature + "' ";
-	    
-	    final Query data = getCurrentSession().createSQLQuery(queryString);
-	  //  data.setParameter("tenantId", tenantId);
+		String queryString = "SELECT id,feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, depth_width FROM demo.edcr_rule_entry where feature = '"
+				+ feature + "' ";
 
-	    List<Map<String, Object>> rulesList = data.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
+		final Query data = getCurrentSession().createSQLQuery(queryString);
+		// data.setParameter("tenantId", tenantId);
 
-	    System.out.println("******" + rulesList);
+		List<Map<String, Object>> rulesList = data.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
 
-	    return rulesList;
+		System.out.println("******" + rulesList);
+
+		return rulesList;
 	}
 
+	public List<Map<String, Object>> getOccupancy() {
+		String queryString = "SELECT code, name from state.egbpa_occupancy";
 
+		final Query query = getCurrentSession().createSQLQuery(queryString);
+
+		List<Map<String, Object>> occupancyList = query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
+
+		LOG.info("getOccupancy size : " + occupancyList.size());
+
+		return occupancyList;
+	}
+
+	public List<Map<String, Object>> getSubOccupancy() {
+		String queryString = "SELECT code, name from state.egbpa_sub_occupancy";
+
+		final Query query = getCurrentSession().createSQLQuery(queryString);
+
+		List<Map<String, Object>> subOccupancyList = query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
+				.list();
+
+		LOG.info("getSubOccupancy size : " + subOccupancyList.size());
+
+		return subOccupancyList;
+	}
 
 	public Date resetFromDateTimeStamp(final Date date) {
 		final Calendar cal1 = Calendar.getInstance();
