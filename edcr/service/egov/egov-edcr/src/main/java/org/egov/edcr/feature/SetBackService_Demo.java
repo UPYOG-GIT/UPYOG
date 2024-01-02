@@ -72,13 +72,13 @@ public class SetBackService_Demo extends SetBackService {
 	private static final Logger LOG = LogManager.getLogger(SetBackService_Demo.class);
 
     @Autowired
-    private FrontYardService_Birgaon frontYardService;
+    private FrontYardService_Demo frontYardService;
 
     @Autowired
-    private SideYardService_Birgaon sideYardService;
+    private SideYardService_Demo sideYardService;
 
     @Autowired
-    private RearYardService_Birgaon rearYardService;
+    private RearYardService_Demo rearYardService;
 
     @Override
     public Plan validate(Plan pl) {
