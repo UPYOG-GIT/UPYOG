@@ -623,9 +623,9 @@ public class RestEdcrApplicationController {
 	}
 	
 	@PostMapping(value = "/getSubOccupancy")
-	public ResponseEntity<List<Map<String, Object>>> getSubOccupancy() {
+	public ResponseEntity<List<Map<String, Object>>> getSubOccupancy(int occupancyCode) {
 
-		List<Map<String, Object>> subOccupancyList = edcrRestService.getSubOccupancy();
+		List<Map<String, Object>> subOccupancyList = edcrRestService.getSubOccupancy(occupancyCode);
 		
 		return new ResponseEntity<>(subOccupancyList, HttpStatus.OK);
 	}

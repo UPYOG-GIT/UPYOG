@@ -1219,6 +1219,10 @@ public class EdcrRestService {
 
 		return subOccupancyList;
 	}
+	
+	public void getFeatureName() {
+		
+	}
 
 	public Date resetFromDateTimeStamp(final Date date) {
 		final Calendar cal1 = Calendar.getInstance();
