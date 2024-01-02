@@ -52,6 +52,7 @@ import static org.egov.edcr.constants.DxfFileConstants.A_AF;
 import static org.egov.edcr.constants.DxfFileConstants.A_PO;
 import static org.egov.edcr.constants.DxfFileConstants.A_R;
 import static org.egov.edcr.constants.DxfFileConstants.F;
+import static org.egov.edcr.constants.DxfFileConstants.G;
 import static org.egov.edcr.constants.DxfFileConstants.J;
 import static org.egov.edcr.utility.DcrConstants.FRONT_YARD_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
@@ -74,11 +75,16 @@ import org.egov.common.entity.edcr.Road;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.SetBack;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.service.EdcrRestService;
 import org.egov.infra.utils.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FrontYardService_Demo extends FrontYardService {
+	
+	@Autowired
+	EdcrRestService edcrRestService;
 
 	private static final Logger LOG = LogManager.getLogger(FrontYardService_Demo.class);
 
@@ -110,6 +116,8 @@ public class FrontYardService_Demo extends FrontYardService {
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_12 = BigDecimal.valueOf(12);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_15 = BigDecimal.valueOf(15);
 	public static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
+	
+	String occupancyName = "";
 
 	public static final String BSMT_FRONT_YARD_DESC = "Basement Front Yard";
 	private static final int PLOTAREA_300 = 300;
@@ -222,26 +230,22 @@ public class FrontYardService_Demo extends FrontYardService {
 //												|| A_PO.equalsIgnoreCase(
 //														occupancy.getTypeHelper().getSubtype().getCode()))
 //										|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
-								if (occupancy.getTypeHelper().getType() != null
-										&& (A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
-												|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
+//								if (occupancy.getTypeHelper().getType() != null
+//										&& (A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
+//												|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
 									checkFrontYard(pl, block.getBuilding(), block.getName(), setback.getLevel(), plot,
-											FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(), frontYardResult,
-											errors);
+											FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(), frontYardResult, errors);
 
-								}
-								/*
-								 * else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
-								 * checkFrontYardForIndustrial(pl, block.getBuilding(), block.getName(),
-								 * setback.getLevel(), plot, FRONT_YARD_DESC, min, mean,
-								 * occupancy.getTypeHelper(), frontYardResult); }
-								 */
-								else if (occupancy.getTypeHelper().getType() != null
-										&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
-									processFrontYardGovtOccupancies(pl, block.getBuilding(), block.getName(),
-											setback.getLevel(), plot, FRONT_YARD_DESC, min, mean,
-											occupancy.getTypeHelper(), frontYardResult);
-								}
+//								} else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+//									checkFrontYardForIndustrial(pl, block.getBuilding(), block.getName(),
+//											setback.getLevel(), plot, FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(),
+//											frontYardResult);
+//								} else if (occupancy.getTypeHelper().getType() != null
+//										&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+//									processFrontYardGovtOccupancies(pl, block.getBuilding(), block.getName(),
+//											setback.getLevel(), plot, FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(),
+//											frontYardResult);
+//								}
 
 //							} // for end
 
@@ -296,41 +300,41 @@ public class FrontYardService_Demo extends FrontYardService {
 
 	}
 
-	private Boolean commercial(Integer level, String blockName, BigDecimal min, BigDecimal mean,
-			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
-			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot) {
-		if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_2_5;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_3;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(12.2)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_3;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12.2)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(15.25)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_3;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(15.25)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_4;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_5;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) > 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_6;
-		}
-
-		/*
-		 * if (-1 == level) { rule = BSMT_FRONT_YARD_DESC; subRuleDesc =
-		 * SUB_RULE_24_12_DESCRIPTION; subRule = SUB_RULE_24_12; }
-		 */
-
-		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
-
-		compareFrontYardResult(blockName, min, mean, mostRestrictiveOccupancy, frontYardResult, valid, subRule, rule,
-				minVal, meanVal, level);
-		return valid;
-	}
+//	private Boolean commercial(Integer level, String blockName, BigDecimal min, BigDecimal mean,
+//			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
+//			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot) {
+//		if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) <= 0) {
+//			meanVal = FRONTYARDMINIMUM_DISTANCE_2_5;
+//		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) > 0
+//				&& depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) <= 0) {
+//			meanVal = FRONTYARDMINIMUM_DISTANCE_3;
+//		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) > 0
+//				&& depthOfPlot.compareTo(BigDecimal.valueOf(12.2)) <= 0) {
+//			meanVal = FRONTYARDMINIMUM_DISTANCE_3;
+//		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12.2)) > 0
+//				&& depthOfPlot.compareTo(BigDecimal.valueOf(15.25)) <= 0) {
+//			meanVal = FRONTYARDMINIMUM_DISTANCE_3;
+//		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(15.25)) > 0
+//				&& depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) {
+//			meanVal = FRONTYARDMINIMUM_DISTANCE_4;
+//		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) > 0
+//				&& depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) <= 0) {
+//			meanVal = FRONTYARDMINIMUM_DISTANCE_5;
+//		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) > 0) {
+//			meanVal = FRONTYARDMINIMUM_DISTANCE_6;
+//		}
+//
+//		/*
+//		 * if (-1 == level) { rule = BSMT_FRONT_YARD_DESC; subRuleDesc =
+//		 * SUB_RULE_24_12_DESCRIPTION; subRule = SUB_RULE_24_12; }
+//		 */
+//
+//		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
+//
+//		compareFrontYardResult(blockName, min, mean, mostRestrictiveOccupancy, frontYardResult, valid, subRule, rule,
+//				minVal, meanVal, level);
+//		return valid;
+//	}
 
 	private Boolean checkFrontYard(Plan pl, Building building, String blockName, Integer level, Plot plot,
 			String frontYardFieldName, BigDecimal min, BigDecimal mean, OccupancyTypeHelper mostRestrictiveOccupancy,
@@ -341,6 +345,7 @@ public class FrontYardService_Demo extends FrontYardService {
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
+		
 //		if (mostRestrictiveOccupancy.getSubtype() != null
 //				&& (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())
 //						|| A_R.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode())
@@ -352,90 +357,28 @@ public class FrontYardService_Demo extends FrontYardService {
 					&& DxfFileConstants.COMMERCIAL.equalsIgnoreCase(pl.getPlanInformation().getLandUseZone())
 //					&& pl.getPlanInformation().getRoadWidth().compareTo(ROAD_WIDTH_TWELVE_POINTTWO) < 0
 			) {
-				valid = commercial(level, blockName, min, mean, mostRestrictiveOccupancy, frontYardResult, valid,
-						DxfFileConstants.RULE_28, rule, minVal, meanVal, depthOfPlot);
+				occupancyName = "Commercial";
+				
 			} else {
-				valid = residential(blockName, level, min, mean, mostRestrictiveOccupancy, frontYardResult, valid,
-						subRule, rule, minVal, meanVal, depthOfPlot, errors, pl);
+				occupancyName = "Residential";
+				
 			}
 		} else if (F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
-			valid = commercial(level, blockName, min, mean, mostRestrictiveOccupancy, frontYardResult, valid, subRule,
-					rule, minVal, meanVal, depthOfPlot);
+			
+			occupancyName = "Commercial";
+		
+		} else if (G.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
+			occupancyName = "Industrial";
+			
+		} else if (mostRestrictiveOccupancy.getType() != null
+				&& J.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
+			   occupancyName = "Government/Semi Government";
 		}
+		valid = processFrontYardService(blockName, level, min, mean, mostRestrictiveOccupancy, frontYardResult, valid,
+				subRule, rule, minVal, meanVal, depthOfPlot, errors, pl,  occupancyName);
 		return valid;
 	}
 
-	private Boolean checkFrontYardBasement(Plan plan, Building building, String blockName, Integer level, Plot plot,
-			String frontYardFieldName, BigDecimal min, BigDecimal mean, OccupancyTypeHelper mostRestrictiveOccupancy,
-			FrontYardResult frontYardResult) {
-		Boolean valid = false;
-		String subRule = RULE_47;
-		String rule = FRONT_YARD_DESC;
-		BigDecimal minVal = BigDecimal.ZERO;
-		BigDecimal meanVal = BigDecimal.ZERO;
-		if ((mostRestrictiveOccupancy.getSubtype() != null
-				&& A_R.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode())
-				|| A_AF.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode())
-				|| A_PO.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode()))
-				|| F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
-			if (plot.getArea().compareTo(BigDecimal.valueOf(PLOTAREA_300)) <= 0) {
-				minVal = FRONTYARDMINIMUM_DISTANCE_3;
-				valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
-			}
-
-			rule = BSMT_FRONT_YARD_DESC;
-
-			compareFrontYardResult(blockName, min, mean, mostRestrictiveOccupancy, frontYardResult, valid, subRule,
-					rule, minVal, meanVal, level);
-		}
-		return valid;
-	}
-
-	private Boolean checkFrontYardForIndustrial(Plan pl, Building building, String blockName, Integer level, Plot plot,
-			String frontYardFieldName, BigDecimal min, BigDecimal mean, OccupancyTypeHelper mostRestrictiveOccupancy,
-			FrontYardResult frontYardResult) {
-		Boolean valid = false;
-		String subRule = RULE_35;
-		String rule = FRONT_YARD_DESC;
-		BigDecimal minVal = BigDecimal.ZERO;
-		BigDecimal meanVal = BigDecimal.ZERO;
-		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
-		valid = processFrontYardForIndustrial(blockName, level, min, mean, mostRestrictiveOccupancy, frontYardResult,
-				valid, subRule, rule, minVal, meanVal, pl.getPlot().getArea(), widthOfPlot);
-		return valid;
-	}
-
-	private Boolean processFrontYardGovtOccupancies(Plan pl, Building building, String blockName, Integer level,
-			Plot plot, String frontYardFieldName, BigDecimal min, BigDecimal mean,
-			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult) {
-		Boolean valid = false;
-		String subRule = RULE_7_C_1;
-		String rule = FRONT_YARD_DESC;
-		BigDecimal minVal = BigDecimal.ZERO;
-		BigDecimal meanVal = BigDecimal.ZERO;
-		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
-
-		if (depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_1_5;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(12.2)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_2_5;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12.2)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_3;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_4_5;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) > 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_6;
-		}
-
-		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
-
-		compareFrontYardResult(blockName, min, mean, mostRestrictiveOccupancy, frontYardResult, valid, subRule, rule,
-				minVal, meanVal, level);
-		return valid;
-	}
 
 	private void compareFrontYardResult(String blockName, BigDecimal min, BigDecimal mean,
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
@@ -468,80 +411,49 @@ public class FrontYardService_Demo extends FrontYardService {
 		}
 	}
 
-	private Boolean residential(String blockName, Integer level, BigDecimal min, BigDecimal mean,
+	private Boolean processFrontYardService(String blockName, Integer level, BigDecimal min, BigDecimal mean,
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot,
-			HashMap<String, String> errors, Plan pl) {
-		if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_1_5;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_1_5;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(9.15)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(12.2)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_1_5;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12.2)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(15.25)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_2_25;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(15.25)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_3;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.3)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_4;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) > 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_5;
-		}
+			HashMap<String, String> errors, Plan pl, String occupancyName) {
 
+	   BigDecimal  plotArea = pl.getPlot().getArea();
+		System.out.println("plotarea" + plotArea);
+		BigDecimal to_value = plotArea;
+		BigDecimal from_value = plotArea;
+		String feature = "FrontYardService";
+		
+		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
+		BigDecimal to_width = widthOfPlot;
+		BigDecimal from_width = widthOfPlot;
+		Map<String, Object> params = new HashMap<>();
+		
+		params.put("feature", feature);
+		params.put("occupancy", occupancyName);
+		params.put("to_depth", depthOfPlot);
+		params.put("from_depth", depthOfPlot);
+		if(occupancyName.equalsIgnoreCase("Industrial")) {
+		params.put("to_value", to_value);
+		params.put("from_value", from_value);
+		params.put("to_width", to_width);
+		params.put("from_width", from_width);
+		
+		}
+		 try {
+		         meanVal = edcrRestService.getPermissibleValue(params);
+		      
+		    
+		    } catch (NullPointerException e) {
+		        LOG.error("FrontYard Value not found--------", e);
+		       
+		        return null;
+		    }
+		
+ 
 		/*
 		 * if (-1 == level) { rule = BSMT_FRONT_YARD_DESC; subRuleDesc =
 		 * SUB_RULE_24_12_DESCRIPTION; subRule = SUB_RULE_24_12; }
 		 */
 
-		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
-
-		compareFrontYardResult(blockName, min, mean, mostRestrictiveOccupancy, frontYardResult, valid, subRule, rule,
-				minVal, meanVal, level);
-		return valid;
-	}
-
-	private Boolean processFrontYardForIndustrial(String blockName, Integer level, BigDecimal min, BigDecimal mean,
-			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
-			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal plotArea,
-			BigDecimal widthOfPlot) {
-		if (plotArea.compareTo(BigDecimal.valueOf(550)) < 0) {
-			if (widthOfPlot.compareTo(BigDecimal.valueOf(10)) <= 0) {
-				meanVal = FRONTYARDMINIMUM_DISTANCE_3;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(12)) <= 0) {
-				meanVal = FRONTYARDMINIMUM_DISTANCE_4;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
-				meanVal = FRONTYARDMINIMUM_DISTANCE_5;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) {
-				meanVal = FRONTYARDMINIMUM_DISTANCE_6;
-			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(18)) > 0) {
-				meanVal = FRONTYARDMINIMUM_DISTANCE_6;
-			}
-		} else if (plotArea.compareTo(BigDecimal.valueOf(550)) > 0
-				&& plotArea.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_9;
-
-		} else if (plotArea.compareTo(BigDecimal.valueOf(1000)) > 0
-				&& plotArea.compareTo(BigDecimal.valueOf(5000)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_10;
-
-		} else if (plotArea.compareTo(BigDecimal.valueOf(5000)) > 0
-				&& plotArea.compareTo(BigDecimal.valueOf(30000)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_12;
-
-		} else if (plotArea.compareTo(BigDecimal.valueOf(30000)) > 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_15;
-
-		}
-
-		/*
-		 * if (-1 == level) { rule = BSMT_FRONT_YARD_DESC; subRuleDesc =
-		 * SUB_RULE_24_12_DESCRIPTION; subRule = SUB_RULE_24_12; }
-		 */
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
 
 		compareFrontYardResult(blockName, min, mean, mostRestrictiveOccupancy, frontYardResult, valid, subRule, rule,

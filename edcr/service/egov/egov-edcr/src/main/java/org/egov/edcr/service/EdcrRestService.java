@@ -1111,6 +1111,8 @@ public class EdcrRestService {
 		Double permissibleValue = Double.valueOf(edcrRule.get("permissible_value").toString());
 		String occupancy = edcrRule.get("occupancy").toString();
 		String subOccupancy = edcrRule.get("sub_occupancy").toString();
+		Double minValue = Double.valueOf(edcrRule.get("min_value").toString());
+		Double maxValue = Double.valueOf(edcrRule.get("max_value").toString());
 		Double to_value = Double.valueOf(edcrRule.get("to_area").toString());
 		Double from_value = Double.valueOf(edcrRule.get("from_area").toString());
 		Double to_depth = Double.valueOf(edcrRule.get("to_depth").toString());
@@ -1118,12 +1120,13 @@ public class EdcrRestService {
 		Double to_width = Double.valueOf(edcrRule.get("to_width").toString());
 		Double from_width = Double.valueOf(edcrRule.get("from_width").toString());
 		String by_law = edcrRule.get("by_law").toString();
+		
 
-		String insertQuery = "INSERT INTO demo.edcr_rule_entry(feature, permissible_value, occupancy, to_area, from_area, by_law, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, to_depth, from_depth, to_width, from_width) VALUES ('"
+		String insertQuery = "INSERT INTO demo.edcr_rule_entry(feature, permissible_value, occupancy, to_area, from_area, by_law, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, to_depth, from_depth, to_width, from_width, min_value, max_value) VALUES ('"
 				+ feature + "','" + permissibleValue + "', '" + occupancy + "','" + to_value + "', '" + from_value
 				+ "', '" + by_law + "', '" + subOccupancy + "', '" + tenantId + "', '" + developmentZone + "', '"
 				+ roadWidth + "', '" + noOfFloors + "', '" + to_depth + "',  '" + from_depth + "',  '" + to_width
-				+ "',  '" + from_width + "'  )";
+				+ "',  '" + from_width + "', '" + minValue + "', '" + maxValue + "'  )";
 
 		final Query query = getCurrentSession().createSQLQuery(insertQuery);
 		Integer result = query.executeUpdate();
@@ -1182,7 +1185,7 @@ public class EdcrRestService {
 	}
 
 	public List<Map<String, Object>> getEdcrRule(String tenantId, String feature) {
-		String queryString = "SELECT id,feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, from_depth, to_depth, from_width, to_width FROM demo.edcr_rule_entry where feature = '"
+		String queryString = "SELECT id,feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, from_depth, to_depth, from_width, to_width, min_value, max_value FROM demo.edcr_rule_entry where feature = '"
 				+ feature + "' ";
 
 		final Query data = getCurrentSession().createSQLQuery(queryString);
