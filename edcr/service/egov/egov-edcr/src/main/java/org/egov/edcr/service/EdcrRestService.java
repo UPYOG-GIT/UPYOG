@@ -1121,7 +1121,9 @@ public class EdcrRestService {
 
 		String insertQuery = "INSERT INTO demo.edcr_rule_entry(feature, permissible_value, occupancy, to_area, from_area, by_law, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, to_depth, from_depth, to_width, from_width) VALUES ('"
 				+ feature + "','" + permissibleValue + "', '" + occupancy + "','" + to_value + "', '" + from_value
-				+ "', '" + by_law + "', '" + subOccupancy + "', '" + tenantId + "', '" + developmentZone + "', '" + roadWidth + "', '" + noOfFloors + "', '" + to_depth + "',  '" + from_depth + "',  '" + to_width + "',  '" + from_width + "'  )";
+				+ "', '" + by_law + "', '" + subOccupancy + "', '" + tenantId + "', '" + developmentZone + "', '"
+				+ roadWidth + "', '" + noOfFloors + "', '" + to_depth + "',  '" + from_depth + "',  '" + to_width
+				+ "',  '" + from_width + "'  )";
 
 		final Query query = getCurrentSession().createSQLQuery(insertQuery);
 		Integer result = query.executeUpdate();
@@ -1133,42 +1135,43 @@ public class EdcrRestService {
 	public BigDecimal getPermissibleValue(Map<String, Object> params) {
 
 		System.out.println("inside getPermissibleValue method");
-		
-	    String permissibleValue = "SELECT permissible_value FROM demo.edcr_rule_entry WHERE feature = '"+ params.get("feature") + "'";
-         if(params.containsKey("to_value")) {
-        	 permissibleValue += " AND to_area = '" + params.get("to_value") + "'";
-         }	
-         if(params.containsKey("from_value")) {
-        	 permissibleValue += " AND from_area = '" + params.get("from_value") + "'";
-         }	
-         
-         if(params.containsKey("to_depth")) {
-        	 permissibleValue += " AND to_depth = '" + params.get("to_depth") + "'";
-         }	
-         if(params.containsKey("from_depth")) {
-        	 permissibleValue += " AND from_depth = '" + params.get("from_depth") + "'";
-         }	
-         
-         if(params.containsKey("to_width")) {
-        	 permissibleValue += " AND to_width = '" + params.get("to_width") + "'";
-         }	
-         if(params.containsKey("from_width")) {
-        	 permissibleValue += " AND from_width = '" + params.get("from_width") + "'";
-         }	
-         
-         if(params.containsKey("occupancy")) {
-        	 permissibleValue += " AND occupancy = '" + params.get("occupancy") + "'";
-         }	
-         
-         if(params.containsKey("developmentZone")) {
-        	 permissibleValue += " AND development_zone = '" + params.get("developmentZone") + "'";
-         }	
-        System.out.println("permissibleValue ++" + permissibleValue);
- 
-	    final Query data = getCurrentSession().createSQLQuery(permissibleValue);
-	    System.out.println("data--" + data);
-	    
-	     BigDecimal result = (BigDecimal.valueOf(Double.valueOf(data.uniqueResult().toString()))) ;
+
+		String permissibleValue = "SELECT permissible_value FROM demo.edcr_rule_entry WHERE feature = '"
+				+ params.get("feature") + "'";
+		if (params.containsKey("to_value")) {
+			permissibleValue += " AND to_area = '" + params.get("to_value") + "'";
+		}
+		if (params.containsKey("from_value")) {
+			permissibleValue += " AND from_area = '" + params.get("from_value") + "'";
+		}
+
+		if (params.containsKey("to_depth")) {
+			permissibleValue += " AND to_depth = '" + params.get("to_depth") + "'";
+		}
+		if (params.containsKey("from_depth")) {
+			permissibleValue += " AND from_depth = '" + params.get("from_depth") + "'";
+		}
+
+		if (params.containsKey("to_width")) {
+			permissibleValue += " AND to_width = '" + params.get("to_width") + "'";
+		}
+		if (params.containsKey("from_width")) {
+			permissibleValue += " AND from_width = '" + params.get("from_width") + "'";
+		}
+
+		if (params.containsKey("occupancy")) {
+			permissibleValue += " AND occupancy = '" + params.get("occupancy") + "'";
+		}
+
+		if (params.containsKey("developmentZone")) {
+			permissibleValue += " AND development_zone = '" + params.get("developmentZone") + "'";
+		}
+		System.out.println("permissibleValue ++" + permissibleValue);
+
+		final Query data = getCurrentSession().createSQLQuery(permissibleValue);
+		System.out.println("data--" + data);
+
+		BigDecimal result = (BigDecimal.valueOf(Double.valueOf(data.uniqueResult().toString())));
 
 		System.out.println("******" + result);
 
@@ -1179,10 +1182,11 @@ public class EdcrRestService {
 	}
 
 	public List<Map<String, Object>> getEdcrRule(String tenantId, String feature) {
-	    String queryString = "SELECT id,feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, from_depth, to_depth, from_width, to_width FROM demo.edcr_rule_entry where feature = '" + feature + "' ";
-	    
-	    final Query data = getCurrentSession().createSQLQuery(queryString);
-	  //  data.setParameter("tenantId", tenantId);
+		String queryString = "SELECT id,feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, from_depth, to_depth, from_width, to_width FROM demo.edcr_rule_entry where feature = '"
+				+ feature + "' ";
+
+		final Query data = getCurrentSession().createSQLQuery(queryString);
+		// data.setParameter("tenantId", tenantId);
 
 		List<Map<String, Object>> rulesList = data.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
 
@@ -1192,7 +1196,7 @@ public class EdcrRestService {
 	}
 
 	public List<Map<String, Object>> getOccupancy() {
-		String queryString = "SELECT code, name from state.egbpa_occupancy";
+		String queryString = "SELECT id, code, name from state.egbpa_occupancy";
 
 		final Query query = getCurrentSession().createSQLQuery(queryString);
 
@@ -1203,8 +1207,8 @@ public class EdcrRestService {
 		return occupancyList;
 	}
 
-	public List<Map<String, Object>> getSubOccupancy() {
-		String queryString = "SELECT code, name from state.egbpa_sub_occupancy";
+	public List<Map<String, Object>> getSubOccupancy(int occupancyCode) {
+		String queryString = "SELECT id, code, name from state.egbpa_sub_occupancy WHERE occupancy = " + occupancyCode;
 
 		final Query query = getCurrentSession().createSQLQuery(queryString);
 
