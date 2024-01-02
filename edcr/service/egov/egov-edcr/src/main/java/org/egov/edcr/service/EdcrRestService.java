@@ -1107,18 +1107,21 @@ public class EdcrRestService {
 		String tenantId = edcrRule.get("tenant_id").toString();
 		String developmentZone = edcrRule.get("development_zone").toString();
 		Integer noOfFloors = (Integer) edcrRule.get("no_of_floors");
-		Double depthWidth = Double.valueOf(edcrRule.get("depth_width").toString());
 		Double roadWidth = Double.valueOf(edcrRule.get("road_width").toString());
 		Double permissibleValue = Double.valueOf(edcrRule.get("permissible_value").toString());
 		String occupancy = edcrRule.get("occupancy").toString();
 		String subOccupancy = edcrRule.get("sub_occupancy").toString();
 		Double to_value = Double.valueOf(edcrRule.get("to_area").toString());
 		Double from_value = Double.valueOf(edcrRule.get("from_area").toString());
+		Double to_depth = Double.valueOf(edcrRule.get("to_depth").toString());
+		Double from_depth = Double.valueOf(edcrRule.get("from_depth").toString());
+		Double to_width = Double.valueOf(edcrRule.get("to_width").toString());
+		Double from_width = Double.valueOf(edcrRule.get("from_width").toString());
 		String by_law = edcrRule.get("by_law").toString();
 
-		String insertQuery = "INSERT INTO demo.edcr_rule_entry(feature, permissible_value, occupancy, to_area, from_area, by_law, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, depth_width) VALUES ('"
+		String insertQuery = "INSERT INTO demo.edcr_rule_entry(feature, permissible_value, occupancy, to_area, from_area, by_law, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, to_depth, from_depth, to_width, from_width) VALUES ('"
 				+ feature + "','" + permissibleValue + "', '" + occupancy + "','" + to_value + "', '" + from_value
-				+ "', '" + by_law + "', '" + subOccupancy + "', '" + tenantId + "', '" + developmentZone + "', '" + roadWidth + "', '" + noOfFloors + "', '" + depthWidth + "'  )";
+				+ "', '" + by_law + "', '" + subOccupancy + "', '" + tenantId + "', '" + developmentZone + "', '" + roadWidth + "', '" + noOfFloors + "', '" + to_depth + "',  '" + from_depth + "',  '" + to_width + "',  '" + from_width + "'  )";
 
 		final Query query = getCurrentSession().createSQLQuery(insertQuery);
 		Integer result = query.executeUpdate();
@@ -1131,20 +1134,38 @@ public class EdcrRestService {
 		
 		System.out.println("inside getPermissibleValue method");
 		
-	    String farValue = "SELECT permissible_value FROM demo.edcr_rule_entry WHERE feature = '"+ params.get("feature") + "'";
+	    String permissibleValue = "SELECT permissible_value FROM demo.edcr_rule_entry WHERE feature = '"+ params.get("feature") + "'";
          if(params.containsKey("to_value")) {
-        	 farValue += " AND to_area = '" + params.get("to_value") + "'";
+        	 permissibleValue += " AND to_area = '" + params.get("to_value") + "'";
          }	
          if(params.containsKey("from_value")) {
-        	 farValue += " AND from_area = '" + params.get("from_value") + "'";
+        	 permissibleValue += " AND from_area = '" + params.get("from_value") + "'";
+         }	
+         
+         if(params.containsKey("to_depth")) {
+        	 permissibleValue += " AND to_depth = '" + params.get("to_depth") + "'";
+         }	
+         if(params.containsKey("from_depth")) {
+        	 permissibleValue += " AND from_depth = '" + params.get("from_depth") + "'";
+         }	
+         
+         if(params.containsKey("to_width")) {
+        	 permissibleValue += " AND to_width = '" + params.get("to_width") + "'";
+         }	
+         if(params.containsKey("from_width")) {
+        	 permissibleValue += " AND from_width = '" + params.get("from_width") + "'";
          }	
          
          if(params.containsKey("occupancy")) {
-        	 farValue += " AND occupancy = '" + params.get("occupancy") + "'";
+        	 permissibleValue += " AND occupancy = '" + params.get("occupancy") + "'";
          }	
-    System.out.println("farValue ++" + farValue);
+         
+         if(params.containsKey("developmentZone")) {
+        	 permissibleValue += " AND development_zone = '" + params.get("developmentZone") + "'";
+         }	
+        System.out.println("permissibleValue ++" + permissibleValue);
  
-	    final Query data = getCurrentSession().createSQLQuery(farValue);
+	    final Query data = getCurrentSession().createSQLQuery(permissibleValue);
 	    System.out.println("data--" + data);
 	    
 	     BigDecimal result = (BigDecimal.valueOf(Double.valueOf(data.uniqueResult().toString()))) ;
@@ -1157,7 +1178,7 @@ public class EdcrRestService {
 	}
 	
 	public List<Map<String, Object>> getEdcrRule(String tenantId, String feature) {
-	    String queryString = "SELECT id,feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, depth_width FROM demo.edcr_rule_entry where feature = '" + feature + "' ";
+	    String queryString = "SELECT id,feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, from_depth, to_depth, from_width, to_width FROM demo.edcr_rule_entry where feature = '" + feature + "' ";
 	    
 	    final Query data = getCurrentSession().createSQLQuery(queryString);
 	  //  data.setParameter("tenantId", tenantId);
