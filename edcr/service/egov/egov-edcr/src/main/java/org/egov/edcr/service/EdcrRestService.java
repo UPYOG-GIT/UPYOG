@@ -1221,7 +1221,7 @@ public class EdcrRestService {
 	}
 	
 	public List<Map<String, Object>> getFeatureName() {
-		String queryString = "SELECT id, code, name from state.egbpa_feature_name" ;
+		String queryString = "SELECT id, name from state.egbpa_feature_name" ;
 
 		final Query query = getCurrentSession().createSQLQuery(queryString);
 
