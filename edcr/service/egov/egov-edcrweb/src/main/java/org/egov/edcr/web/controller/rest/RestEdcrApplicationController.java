@@ -629,5 +629,14 @@ public class RestEdcrApplicationController {
 		
 		return new ResponseEntity<>(subOccupancyList, HttpStatus.OK);
 	}
+	
+	
+	@PostMapping(value = "/getFeatureName")
+	public ResponseEntity<List<Map<String, Object>>> getFeatureName() {
+
+		List<Map<String, Object>> subOccupancyList = edcrRestService.getFeatureName();
+		
+		return new ResponseEntity<>(subOccupancyList, HttpStatus.OK);
+	}
 
 }

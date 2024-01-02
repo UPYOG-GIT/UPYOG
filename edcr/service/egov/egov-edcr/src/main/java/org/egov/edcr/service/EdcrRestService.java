@@ -1220,8 +1220,16 @@ public class EdcrRestService {
 		return subOccupancyList;
 	}
 	
-	public void getFeatureName() {
-		
+	public List<Map<String, Object>> getFeatureName() {
+		String queryString = "SELECT id, code, name from state.egbpa_feature_name" ;
+
+		final Query query = getCurrentSession().createSQLQuery(queryString);
+
+		List<Map<String, Object>> featureNameList = query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
+				.list();
+
+		LOG.info("getFeatureName size : " + featureNameList.size());
+		return featureNameList;
 	}
 
 	public Date resetFromDateTimeStamp(final Date date) {
