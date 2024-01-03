@@ -8,23 +8,37 @@ const EdcrRuleEntry = () => {
 
   const { t } = useTranslation();
   const [modalData, setModalData] = useState(false);
-  const [SlabPyType, setSlabPyType] = useState({ code: 'Far', value: 1 });
-  const [occupancy, setOccupancy] = useState("");
+  const [featureNameType, setfeatureNameType] = useState({ code: 'Far', value: 'Far' });
+  // const [occupancy, setOccupancy] = useState("");
+  // const [subOccupancy, setSubOccupancy] = useState("");
+  const [occupancy, setOccupancy] = useState({ code: "", value: "null" });
+  const [subOccupancy, setSubOccupancy] = useState({ code: "", value: "null" });
   const [featureName, setFeatureName] = useState({ code: "", value: "null" });
+  const [PyBuildCat,setPyBuildCat] = useState({code: "", value: "null"});
   // const [PyBuildCat,setPyBuildCat] = useState("");
   const [PySubCat, setPySubCat] = useState({ code: "", value: "null" });
   const [fromArea, setFromArea] = useState(0);
   const [toArea, setToArea] = useState(0);
   const [PyOperation, setPyOperation] = useState("");
   const [byLaw, setByLaw] = useState(0);
+  const [noOfFloors  , setNoOfFloors] = useState(0);
+  const [developmentZone , setDevelopmentZone] = useState({ code: "", value: "null" });
+  const [roadWidth  , setRoadWidth] = useState(0);
+  const [depthOrWidth  , setDepthOrWidth] = useState(0);
+  const [fromDepth  , setFromDepth] = useState(0);
+  const [toDepth  , setToDepth] = useState(0);
+  const [fromWidth  , setFromWidth] = useState(0);
+  const [toWidth  , setToWidth] = useState(0);
   const [permissibleValue, setPermissibleValue] = useState(0);
+  const [minVal  , setMinVal] = useState(0);
+  const [maxVal  , setMaxVal] = useState(0);
   const [PyIndRate, setPyIndRate] = useState(0);
   const [PyMultiplyValue, setPyMultiplyValue] = useState(0);
   const [PyMaxLimit, setPyMaxLimit] = useState(0);
   const [PropCatdropdown, setPropCatdropdown] = useState([]);
   const [BuildCatdropdown, setBuildCatdropdown] = useState([]);
   const [SubCatdropdown, setSubCatdropdown] = useState([]);
-  const [SlabPyTypedropval, setSlabPyTypedropval] = useState([]);
+  const [featureTypedropval, setFeatureTypedropval] = useState([]);
   const [Slabtblval, setSlabtblval] = useState([]);
   const [showToast, setShowToast] = useState(null);
 
@@ -32,7 +46,11 @@ const EdcrRuleEntry = () => {
 
   const FeatureNameDropdown = [{ code: "Far", value: "Far" }, { code: "Coverage", value: "Coverage" }, { code: "Front Setback", value: "Front Setback" }, { code: "Rear Setback", value: "Rear Setback" }];
 
+  const DevelopmentZoneDropDown = [{ code: "CA", value: "CA" }, { code: "DA-01", value: "DA-01" }, { code: "DA-02", value: "DA-02" }, { code: "DA-03", value: "DA-03" }];
+
   const OccupancyDropdown = [{ code: "Residential", value: "Residential" }, { code: "Mercantile / Commercial", value: "Mercantile / Commercial" }, { code: "Industrial", value: "Industrial" }, { code: "Government/Semi Goverment", value: "Government/Semi Goverment" }];
+
+  // setSlabPyTypedropval(FeatureNameDropdown);
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   let validation = {};
@@ -40,30 +58,31 @@ const EdcrRuleEntry = () => {
   const selectedRows = [];
   const [rowid, setRowid] = useState([]);
 
-  const setSlabPaytype = (value) => setSlabPyType(value);
+  const setSlabPaytype = (value) => setfeatureNameType(value);
   const setPayPropCat = (value) => setOccupancy(value);
-  const setPayBuildCat = (value) => setFeatureName(value);
-  const setPaySubCat = (value) => setPySubCat(value);
-  const setPayOperation = (value) => setPyOperation(value);
+  const setFeatureNameCat = (value) => setFeatureName(value);
+  const setPayBuildCat = (value) => setPyBuildCat(value);
+  const setPaySubCat = (value) => setSubOccupancy(value);
+  const setPayOperation = (value) => setDevelopmentZone(value);
 
 
   let { uuid } = Digit.UserService.getUser()?.info || {};
   const GetCell = (value) => <span className="cell-text">{t(value)}</span>;
 
-  // useEffect( async ()=>{
+  useEffect( async ()=>{
 
-  //     let paytypeRule = await Digit.OBPSAdminService.getPaytype(tenantId);
-  //     let PyTydrop=[];
-  //     paytypeRule.map(item=>{
-  //       if(item.defunt==="N"){
-  //         PyTydrop.push({
-  //           code: item.charges_type_name,
-  //           value: item.id
-  //         })
-  //       }
-  //     });
-  //     setSlabPyTypedropval(PyTydrop);
-  // },[])
+      let paytypeRule = await Digit.EDCRService.getFeatureName();
+      let PyTydrop=[];
+      paytypeRule.map(item=>{
+        // if(item.defunt==="N"){
+          PyTydrop.push({
+            code: item.id,
+            value: item.name
+          })
+        // }
+      });
+      setFeatureTypedropval(PyTydrop);
+  },[])
 
   // useEffect( async ()=>{
   //   let propType = await Digit.OBPSAdminService.getProptype(tenantId);
@@ -79,43 +98,43 @@ const EdcrRuleEntry = () => {
   //   setPropCatdropdown(Proptydrop);
   // },[])
 
-  // useEffect( async ()=>{
-  //   let BCatetype = await Digit.OBPSAdminService.getBCategory(tenantId);
-  //   let BCatetydrop=[];
-  //   BCatetype.map(item=>{
-  //     if(item.defunt==="N"){
-  //       BCatetydrop.push({
-  //         code: item.description,
-  //         value: item.id
-  //       })
-  //     }
-  //   });
-  //   setBuildCatdropdown(BCatetydrop);
-  // },[])
-
-  // useEffect( async ()=>{
-  //   if(PyBuildCat.value != "null"){
-  //   let cateId = PyBuildCat.value;
-  //   let BStype = await Digit.OBPSAdminService.getBSCategory(tenantId, cateId);
-  //   let BSCatetydrop=[];
-  //   BStype.map(item=>{
-  //     if(item.defunt==="N"){
-  //       BSCatetydrop.push({
-  //         code: item.description,
-  //         value: item.id
-  //       })
-  //     }
-  //   });
-  //   setSubCatdropdown(BSCatetydrop);
-  // }
-  // },[PyBuildCat])
-
-
-  let typevalid=SlabPyType.value;
   useEffect( async ()=>{
-    let getslab = await Digit.EDCRService.getEdcrRule(tenantId);
-    setSlabtblval(getslab);
+    let BCatetype = await Digit.EDCRService.getOccupancy();
+    let BCatetydrop=[];
+    BCatetype.map(item=>{
+      // if(item.defunt==="N"){
+        BCatetydrop.push({
+          code: item.id,
+          value: item.name
+        })
+      // }
+    });
+    setBuildCatdropdown(BCatetydrop);
   },[])
+
+  useEffect( async ()=>{
+    if(PyBuildCat.value != "null"){
+    let occupancyId = PyBuildCat.code;
+    let BStype = await Digit.EDCRService.getSubOccupancy(occupancyId);
+    let BSCatetydrop=[];
+    BStype.map(item=>{
+      // if(item.defunt==="N"){
+        BSCatetydrop.push({
+          code: item.id,
+          value: item.name
+        })
+      // }
+    });
+    setSubCatdropdown(BSCatetydrop);
+  }
+  },[PyBuildCat])
+
+
+  let featureNameCondition=featureNameType.value;
+  useEffect( async ()=>{
+    let getslab = await Digit.EDCRService.getEdcrRule(tenantId,featureNameCondition);
+    setSlabtblval(getslab);
+  },[featureNameType])
 
 
 
@@ -124,7 +143,7 @@ const EdcrRuleEntry = () => {
 
     const SlabMasterRequest = {
       tenantId: tenantId,
-      payTypeId: SlabPyType.value,
+      payTypeId: featureNameType.value,
       fromVal: fromArea,
       toVal: toArea,
       operation: PyOperation.value,
@@ -157,12 +176,22 @@ const EdcrRuleEntry = () => {
 
     const params = {
       feature: featureName.value,
-      occupancy: occupancy.value,
+      occupancy: PyBuildCat.value,
+      sub_occupancy : PySubCat.value,
       to_area: toArea,
       from_area: fromArea,
       tenant_id:tenantId.split(".").length>1?tenantId.split('.')[1]:tenantId,
       by_law: byLaw,
       permissible_value: permissibleValue,
+      development_zone : developmentZone.value,
+      road_width : roadWidth,
+      no_of_floors : noOfFloors,
+      from_depth : fromDepth,
+      to_depth: toDepth,
+      from_width: fromWidth,
+      to_width: toWidth,
+      min_value: minVal,
+      max_value:maxVal,
 
     };
 
@@ -173,17 +202,24 @@ const EdcrRuleEntry = () => {
     setPyOperation("");
     setOccupancy("");
     setFeatureName({ code: "", value: "null" });
+    setDevelopmentZone({ code: "", value: "null" });
     setPySubCat("");
     setByLaw(0);
     setPermissibleValue(0);
+    setFromDepth(0);
+    setToDepth(0);
+    setFromWidth(0);
+    setToWidth(0);
+    setMaxVal(0);
+    setMinVal(0);
     setPyIndRate(0);
     setPyMultiplyValue(0);
     setPyMaxLimit(0);
 
     const edcrRuleResponse = await Digit.EDCRService.createEdcrRule(params);
     // const SlabMasterResp = await Digit.OBPSAdminService.createEdcrRule(params);
-    console.log("edcrRuleResponse: "+JSON.stringify(edcrRuleResponse));
-    console.log("edcrRuleResponse11 "+edcrRuleResponse);
+    // console.log("edcrRuleResponse: "+JSON.stringify(edcrRuleResponse));
+    // console.log("edcrRuleResponse11 "+edcrRuleResponse);
     if (edcrRuleResponse > 0) {
       setShowToast({ key: false, label: "Successfully Added ", bgcolor: "#4BB543" });
       location.reload();
@@ -228,6 +264,20 @@ const EdcrRuleEntry = () => {
         },
       },
       {
+        Header: t("Occupancy"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.occupancy}`);
+        },
+      },
+      {
+        Header: t("Sub Occupancy"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.sub_occupancy}`);
+        },
+      },
+      {
         Header: t("From Area"),
         disableSortBy: true,
         Cell: ({ row }) => {
@@ -242,17 +292,45 @@ const EdcrRuleEntry = () => {
         },
       },
       {
-        Header: t("Occupancy"),
+        Header: t("Min Val"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.occupancy}`);
+          return GetCell(`${row.original?.min_value}`);
         },
       },
       {
-        Header: t("Sub Occupancy"),
+        Header: t("Max Val"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.sub_occupancy}`);
+          return GetCell(`${row.original?.max_value}`);
+        },
+      },
+      {
+        Header: t("To Depth"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.to_depth}`);
+        },
+      },
+      {
+        Header: t("From Depth"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.from_depth}`);
+        },
+      },
+      {
+        Header: t("To Width"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.to_width}`);
+        },
+      },
+      {
+        Header: t("From Width"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.from_width}`);
         },
       },
       {
@@ -319,16 +397,16 @@ const EdcrRuleEntry = () => {
       <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("EDCR Rule Detail")}</Header>
 
       <LabelFieldPair>
-        <CardLabel style={{ color: "#000" }}>{`${t("Pay Type")}`}</CardLabel>
+        <CardLabel style={{ color: "#000" }}>{`${t("Rule Name")}`}</CardLabel>
         <Dropdown
           style={{ width: "100%" }}
           className="form-field"
-          selected={SlabPyType}
-          option={SlabPyTypedropval}
+          selected={featureNameType}
+          option={featureTypedropval}
           select={setSlabPaytype}
-          value={SlabPyType}
-          optionKey="code"
-          name="SlabPyType"
+          value={featureNameType}
+          optionKey="value"
+          name="featureNameType"
         />
       </LabelFieldPair>
 
@@ -420,38 +498,64 @@ const EdcrRuleEntry = () => {
                     style={{ width: "100%", height: "2rem" }}
                     className="form-field"
                     selected={featureName}
-                    option={FeatureNameDropdown}
-                    select={setPayBuildCat}
+                    option={featureTypedropval}
+                    select={setFeatureNameCat}
                     value={featureName}
-                    optionKey="code"
+                    optionKey="value"
                     placeholder="Select Feature Name"
                     name="PyBuildCat"
                   />
                 </LabelFieldPair>
 
                 <LabelFieldPair>
-                  <CardLabel style={{ color: "#000" }}>{`${t("Occupancy*")}`}</CardLabel>
+                  <CardLabel style={{ color: "#000" }}>{`${t("Occupancy")}`}</CardLabel>
                   <Dropdown
-                    style={{ width: "100%", height: "2rem" }}
-                    className="form-field"
-                    selected={occupancy}
-                    option={OccupancyDropdown}
-                    select={setPayPropCat}
-                    value={occupancy}
-                    optionKey="code"
-                    placeholder="Select Occupancy Type"
-                    name="PyPropCat"
-                    {...(validation = {
-                      isRequired: true,
-                      // pattern: "^[a-zA-Z-.`' ]*$",
-                      // type: "tel",
-                      title: t("CORE_COMMON_PROFILE_NAME_ERROR_MESSAGE"),
-                    })}
+                     style={{ width: "100%",height:"2rem" }}
+                     className="form-field"
+                     selected={PyBuildCat}
+                     option={BuildCatdropdown}
+                     select={setPayBuildCat}
+                     value={PyBuildCat}
+                     optionKey="value"
+                     placeholder="Select Occupancy"
+                     name="PyBuildCat"
+                    
                   />
                 </LabelFieldPair>
 
                 <LabelFieldPair>
-                  <CardLabel style={{ color: "#000" }}>{`${t("From Plot Area*")}`}</CardLabel>
+                  <CardLabel style={{ color: "#000" }}>{`${t("Sub Occupancy")}`}</CardLabel>
+                  <Dropdown
+                    style={{ width: "100%",height:"2rem" }}
+                    className="form-field"
+                    selected={PySubCat}
+                    option={SubCatdropdown}
+                    select={setPaySubCat}
+                    value={PySubCat}
+                    optionKey="value"
+                    placeholder="Select Sub Occupancy"
+                    name="PySubCat"
+                   
+                  />
+                </LabelFieldPair>
+
+                <LabelFieldPair>
+                  <CardLabel style={{ color: "#000" }}>{`${t("Development Zone")}`}</CardLabel>
+                  <Dropdown
+                    style={{ width: "100%", height: "2rem" }}
+                    className="form-field"
+                    selected={developmentZone}
+                    option={DevelopmentZoneDropDown}
+                    select={setPayOperation}
+                    value={developmentZone}
+                    optionKey="code"
+                    placeholder="Select Development Zone"
+                    name="PyBuildCat"
+                  />
+                </LabelFieldPair>
+
+                <LabelFieldPair>
+                  <CardLabel style={{ color: "#000" }}>{`${t("From Plot Area")}`}</CardLabel>
                   <TextInput
                     isMandatory={true}
                     name="fromvalue"
@@ -462,7 +566,7 @@ const EdcrRuleEntry = () => {
                   />
                 </LabelFieldPair>
                 <LabelFieldPair>
-                  <CardLabel style={{ color: "#000" }}>{`${t("To Plot Value*")}`}</CardLabel>
+                  <CardLabel style={{ color: "#000" }}>{`${t("To Plot Value")}`}</CardLabel>
                   <TextInput
                     isMandatory={true}
                     name="tovalue"
@@ -474,6 +578,90 @@ const EdcrRuleEntry = () => {
                 </LabelFieldPair>
 
                 <LabelFieldPair>
+                  <CardLabel style={{ color: "#000" }}>{`${t("From Depth")}`}</CardLabel>
+                  <TextInput
+                    isMandatory={true}
+                    name="fromdepth"
+                    onChange={(e) => setFromDepth(e.target.value)}
+                    value={fromDepth}
+                    placeholder="Enter From Depth"
+                    type="number"
+                  />
+                </LabelFieldPair>
+
+                <LabelFieldPair>
+                  <CardLabel style={{ color: "#000" }}>{`${t("To Depth")}`}</CardLabel>
+                  <TextInput
+                    isMandatory={true}
+                    name="todepth"
+                    onChange={(e) => setToDepth(e.target.value)}
+                    value={toDepth}
+                    placeholder="Enter To Depth"
+                    type="number"
+                  />
+                </LabelFieldPair>
+
+                <LabelFieldPair>
+                  <CardLabel style={{ color: "#000" }}>{`${t("From Width")}`}</CardLabel>
+                  <TextInput
+                    isMandatory={true}
+                    name="fromwidth"
+                    onChange={(e) => setFromWidth(e.target.value)}
+                    value={fromWidth}
+                    placeholder="Enter From Width"
+                    type="number"
+                  />
+                </LabelFieldPair>
+
+                <LabelFieldPair>
+                  <CardLabel style={{ color: "#000" }}>{`${t("To Width")}`}</CardLabel>
+                  <TextInput
+                    isMandatory={true}
+                    name="towidth"
+                    onChange={(e) => setToWidth(e.target.value)}
+                    value={toWidth}
+                    placeholder="Enter To Width"
+                    type="number"
+                  />
+                </LabelFieldPair>
+
+                <LabelFieldPair>
+                  <CardLabel style={{ color: "#000" }}>{`${t("Min Val")}`}</CardLabel>
+                  <TextInput
+                    isMandatory={true}
+                    name="mixval"
+                    onChange={(e) => setMinVal(e.target.value)}
+                    value={minVal}
+                    placeholder="Enter Min Value"
+                    type="number"
+                  />
+                </LabelFieldPair>
+
+                <LabelFieldPair>
+                  <CardLabel style={{ color: "#000" }}>{`${t("Max Val")}`}</CardLabel>
+                  <TextInput
+                    isMandatory={true}
+                    name="maxval"
+                    onChange={(e) => setMaxVal(e.target.value)}
+                    value={maxVal}
+                    placeholder="Enter Max Value"
+                    type="number"
+                  />
+                </LabelFieldPair>
+
+                {/* <LabelFieldPair>
+                  <CardLabel style={{ color: "#000" }}>{`${t("No of Floors")}`}</CardLabel>
+                  <TextInput
+                    isMandatory={true}
+                    name="nooffloors"
+                    onChange={(e) => setFromArea(e.target.value)}
+                    value={noOfFloors}
+                    placeholder="Enter No of Floors"
+                    type="number"
+                  />
+                </LabelFieldPair> */}
+
+                <LabelFieldPair>
                   <CardLabel style={{ color: "#000" }}>{`${t("Rule Number*")}`}</CardLabel>
                   <TextInput
                     isMandatory={true}
@@ -481,15 +669,15 @@ const EdcrRuleEntry = () => {
                     placeholder="Enter Rule Number"
                     onChange={(e) => setByLaw(e.target.value)}
                     value={byLaw}
-                    type="number"
+                    type="text"
                   />
                 </LabelFieldPair>
                 <LabelFieldPair>
-                  <CardLabel style={{ color: "#000" }}>{`${t("Value*")}`}</CardLabel>
+                  <CardLabel style={{ color: "#000" }}>{`${t("Permissible Value")}`}</CardLabel>
                   <TextInput
                     isMandatory={true}
                     name="commrate"
-                    placeholder="Enter Value"
+                    placeholder="Enter Permissible Value"
                     onChange={(e) => setPermissibleValue(e.target.value)}
                     value={permissibleValue}
                     type="number"
