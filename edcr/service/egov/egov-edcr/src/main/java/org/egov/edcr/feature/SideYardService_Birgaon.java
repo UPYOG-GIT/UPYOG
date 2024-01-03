@@ -300,14 +300,23 @@ public class SideYardService_Birgaon extends SideYardService {
 						} else {
 							if (pl.getPlanInformation() != null && occupancy.getTypeHelper().getType() != null) {
 								if ((A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
-										|| J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))
+										|| J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
+									if (pl.getPlanInformation().getWidthOfPlot()
+											.compareTo(BigDecimal.valueOf(7.60)) <= 0) {
+										exemptSideYard1ForAAndF(pl, block, sideYard1Result, BigDecimal.ZERO);
+									}
+									if (pl.getPlanInformation().getWidthOfPlot()
+											.compareTo(BigDecimal.valueOf(12.2)) <= 0) {
+										exemptSideYard2ForAAndF(pl, block, sideYard2Result, BigDecimal.ZERO);
+									}
+								} else if ((J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))
 										&& pl.getPlanInformation().getWidthOfPlot()
-												.compareTo(BigDecimal.valueOf(7.62)) <= 0) {
+												.compareTo(BigDecimal.valueOf(7.60)) <= 0) {
 									exemptSideYard1ForAAndF(pl, block, sideYard1Result, BigDecimal.ZERO);
 									exemptSideYard2ForAAndF(pl, block, sideYard2Result, BigDecimal.ZERO);
 								} else if (F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
 										&& pl.getPlanInformation().getWidthOfPlot()
-												.compareTo(BigDecimal.valueOf(15.25)) <= 0) {
+												.compareTo(BigDecimal.valueOf(30.48)) <= 0) {
 									exemptSideYard1ForAAndF(pl, block, sideYard1Result, BigDecimal.ZERO);
 									exemptSideYard2ForAAndF(pl, block, sideYard2Result, BigDecimal.ZERO);
 								}
@@ -495,7 +504,7 @@ public class SideYardService_Birgaon extends SideYardService {
 				&& widthOfPlot.compareTo(BigDecimal.valueOf(30.48)) <= 0) {
 			side2val = SIDEVALUE_TWOPOINTTWOFIVE;
 			side1val = SIDEVALUE_THREEPOINTFIVE;
-		} else if (widthOfPlot.compareTo(BigDecimal.valueOf(24.38)) > 0) {
+		} else if (widthOfPlot.compareTo(BigDecimal.valueOf(30.48)) > 0) {
 			side2val = SIDEVALUE_THREE;
 			side1val = SIDEVALUE_FOUR;
 		}
@@ -518,7 +527,7 @@ public class SideYardService_Birgaon extends SideYardService {
 		}
 
 		if (pl.getPlanInformation() != null
-				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(9.15)) <= 0) {
+				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(12.2)) <= 0) {
 			exemptSideYard2ForAAndF(pl, block, sideYard2Result, BigDecimal.valueOf(min));
 		}
 	}
@@ -576,8 +585,8 @@ public class SideYardService_Birgaon extends SideYardService {
 		BigDecimal plotArea = pl.getPlot().getArea();
 
 		if (plotArea.compareTo(BigDecimal.valueOf(1000)) < 0) {
-				side2val = SIDEVALUE_THREE;
-				side1val = SIDEVALUE_THREE;
+			side2val = SIDEVALUE_THREE;
+			side1val = SIDEVALUE_THREE;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(1000)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(5000)) <= 0) {
 			side2val = SIDEVALUE_FOURPOINTFIVE;
