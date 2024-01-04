@@ -614,6 +614,19 @@ public class RestEdcrApplicationController {
 		// return ResponseEntity.ok(result);
 
 	}
+	
+	
+	@PostMapping(value = "/getEdcrRuleList")
+	public ResponseEntity<List<Map<String, Object>>> getEdcrRuleList(String tenantId) {
+		System.out.println("tenantId" + tenantId);
+
+		ArrayList<Map<String, Object>> result = edcrRestService.getEdcrRuleList(tenantId);
+		return new ResponseEntity<>(result, HttpStatus.OK);
+
+		// return ResponseEntity.ok(result);
+
+	}
+	
 
 	@PostMapping(value = "/getOccupancy")
 	public ResponseEntity<List<Map<String, Object>>> getOccupancy() {

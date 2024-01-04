@@ -61,6 +61,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -109,6 +110,8 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.jfree.util.Log;
 import org.joda.time.LocalDate;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -119,6 +122,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -1120,7 +1124,6 @@ public class EdcrRestService {
 		Double to_width = Double.valueOf(edcrRule.get("to_width").toString());
 		Double from_width = Double.valueOf(edcrRule.get("from_width").toString());
 		String by_law = edcrRule.get("by_law").toString();
-		
 
 		String insertQuery = "INSERT INTO demo.edcr_rule_entry(feature, permissible_value, occupancy, to_area, from_area, by_law, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, to_depth, from_depth, to_width, from_width, min_value, max_value) VALUES ('"
 				+ feature + "','" + permissibleValue + "', '" + occupancy + "','" + to_value + "', '" + from_value
@@ -1135,52 +1138,102 @@ public class EdcrRestService {
 
 	}
 
-	public BigDecimal getPermissibleValue(Map<String, Object> params) {
+//	public BigDecimal getPermissibleValue(Map<String, Object> params) {
+//
+//		System.out.println("inside getPermissibleValue method");
+//
+//		String permissibleValue = "SELECT permissible_value FROM demo.edcr_rule_entry WHERE feature = '"
+//				+ params.get("feature") + "'";
+//		if (params.containsKey("to_value")) {
+//			permissibleValue += " AND to_area = '" + params.get("to_value") + "'";
+//		}
+//		if (params.containsKey("from_value")) {
+//			permissibleValue += " AND from_area = '" + params.get("from_value") + "'";
+//		}
+//
+//		if (params.containsKey("to_depth")) {
+//			permissibleValue += " AND to_depth = '" + params.get("to_depth") + "'";
+//		}
+//		if (params.containsKey("from_depth")) {
+//			permissibleValue += " AND from_depth = '" + params.get("from_depth") + "'";
+//		}
+//
+//		if (params.containsKey("to_width")) {
+//			permissibleValue += " AND to_width = '" + params.get("to_width") + "'";
+//		}
+//		if (params.containsKey("from_width")) {
+//			permissibleValue += " AND from_width = '" + params.get("from_width") + "'";
+//		}
+//
+//		if (params.containsKey("occupancy")) {
+//			permissibleValue += " AND occupancy = '" + params.get("occupancy") + "'";
+//		}
+//
+//		if (params.containsKey("developmentZone")) {
+//			permissibleValue += " AND development_zone = '" + params.get("developmentZone") + "'";
+//		}
+//		System.out.println("permissibleValue ++" + permissibleValue);
+//
+//		final Query data = getCurrentSession().createSQLQuery(permissibleValue);
+//		System.out.println("data--" + data);
+//
+//		BigDecimal result = (BigDecimal.valueOf(Double.valueOf(data.uniqueResult().toString())));
+//
+//		System.out.println("******" + result);
+//
+//		// System.out.println("+++++++++" + feature + " " + farValue + " " + occupancy +
+//		// " " + to_value );
+//
+//		return result;
+//	}
+
+	public List<Map<String, Object>> getPermissibleValue(ArrayList<Map<String, Object>> edcrRuleList,
+			Map<String, Object> params, ArrayList<String> valueFromColumn) {
 
 		System.out.println("inside getPermissibleValue method");
 
-		String permissibleValue = "SELECT permissible_value FROM demo.edcr_rule_entry WHERE feature = '"
-				+ params.get("feature") + "'";
-		if (params.containsKey("to_value")) {
-			permissibleValue += " AND to_area = '" + params.get("to_value") + "'";
+		
+		BigDecimal paramsToArea = params.containsKey("to_area") ? (BigDecimal) params.get("to_area") : null;
+		BigDecimal paramsFromArea = params.containsKey("from_area") ? (BigDecimal) params.get("from_area") : null;
+		BigDecimal paramsFromWidth = params.containsKey("from_width") ? (BigDecimal) params.get("from_width") : null;
+		BigDecimal paramsToWidth = params.containsKey("to_width") ? (BigDecimal) params.get("to_width") : null;
+		BigDecimal paramsFromDepth = params.containsKey("from_depth") ? (BigDecimal) params.get("from_depth") : null;
+		BigDecimal paramsToDepth = params.containsKey("to_depth") ? (BigDecimal) params.get("to_depth") : null;
+		String paramsFeature =   params.get("feature").toString() ;
+		String paramsOccupancy =  params.get("occupancy").toString();
+
+		List<Map<String, Object>> result = new ArrayList<>();
+
+		Map<String, Object> matchResult = new HashMap<>();
+
+		for (Map<String, Object> rule : edcrRuleList) {
+			BigDecimal ruleFromArea = (BigDecimal) rule.get("from_area");
+			BigDecimal ruleToArea = (BigDecimal) rule.get("to_area");
+			String ruleFeature = rule.get("feature").toString();
+			String ruleOccupancy = rule.get("occupancy").toString();
+
+			if (paramsFeature.equals(ruleFeature) && paramsOccupancy.equals(ruleOccupancy)) {
+
+				if (params.containsKey("to_area") && params.containsKey("from_area")) {
+					if (paramsFromArea.compareTo(ruleFromArea) >= 0 && paramsFromArea.compareTo(ruleToArea) <= 0) {
+						matchResult.putAll(rule);
+					}
+				}
+				
+
+				if (params.containsKey("to_width") && params.containsKey("from_width")) {
+					if (paramsFromArea.compareTo(ruleFromArea) >= 0 && paramsFromArea.compareTo(ruleToArea) <= 0) {
+						matchResult.putAll(rule);
+					}
+				}
+
+			}
 		}
-		if (params.containsKey("from_value")) {
-			permissibleValue += " AND from_area = '" + params.get("from_value") + "'";
+		if (valueFromColumn.size() == 1) {
+			result.add((Map<String, Object>) matchResult.get("permissible_value"));
+		} else if (valueFromColumn.size() > 1) {
+			result.add((Map<String, Object>) matchResult.get("min_value"));
 		}
-
-		if (params.containsKey("to_depth")) {
-			permissibleValue += " AND to_depth = '" + params.get("to_depth") + "'";
-		}
-		if (params.containsKey("from_depth")) {
-			permissibleValue += " AND from_depth = '" + params.get("from_depth") + "'";
-		}
-
-		if (params.containsKey("to_width")) {
-			permissibleValue += " AND to_width = '" + params.get("to_width") + "'";
-		}
-		if (params.containsKey("from_width")) {
-			permissibleValue += " AND from_width = '" + params.get("from_width") + "'";
-		}
-
-		if (params.containsKey("occupancy")) {
-			permissibleValue += " AND occupancy = '" + params.get("occupancy") + "'";
-		}
-
-		if (params.containsKey("developmentZone")) {
-			permissibleValue += " AND development_zone = '" + params.get("developmentZone") + "'";
-		}
-		System.out.println("permissibleValue ++" + permissibleValue);
-
-		final Query data = getCurrentSession().createSQLQuery(permissibleValue);
-		System.out.println("data--" + data);
-
-		BigDecimal result = (BigDecimal.valueOf(Double.valueOf(data.uniqueResult().toString())));
-
-		System.out.println("******" + result);
-
-		// System.out.println("+++++++++" + feature + " " + farValue + " " + occupancy +
-		// " " + to_value );
-
 		return result;
 	}
 
@@ -1195,6 +1248,24 @@ public class EdcrRestService {
 
 		System.out.println("******" + rulesList);
 
+		return rulesList;
+	}
+
+	public ArrayList<Map<String, Object>> getEdcrRuleList(String tenantId) {
+		String queryString = "SELECT id, feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, "
+				+ "tenant_id, development_zone, road_width, no_of_floors, from_depth, to_depth, from_width, to_width, "
+				+ "min_value, max_value FROM demo.edcr_rule_entry";
+
+		final Query data = getCurrentSession().createSQLQuery(queryString);
+
+		ArrayList<Map<String, Object>> rulesList = (ArrayList<Map<String, Object>>) data.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
+
+		System.out.println("******" + rulesList);
+
+		// Create a JSON Array
+		
+
+		// Now, jsonArray contains your data in JSON format
 		return rulesList;
 	}
 
@@ -1222,14 +1293,13 @@ public class EdcrRestService {
 
 		return subOccupancyList;
 	}
-	
+
 	public List<Map<String, Object>> getFeatureName() {
-		String queryString = "SELECT id, name from state.egbpa_feature_name" ;
+		String queryString = "SELECT id, name from state.egbpa_feature_name";
 
 		final Query query = getCurrentSession().createSQLQuery(queryString);
 
-		List<Map<String, Object>> featureNameList = query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
-				.list();
+		List<Map<String, Object>> featureNameList = query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
 
 		LOG.info("getFeatureName size : " + featureNameList.size());
 		return featureNameList;
