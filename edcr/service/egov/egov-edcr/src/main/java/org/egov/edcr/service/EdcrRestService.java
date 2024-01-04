@@ -1138,56 +1138,56 @@ public class EdcrRestService {
 
 	}
 
-//	public BigDecimal getPermissibleValue(Map<String, Object> params) {
-//
-//		System.out.println("inside getPermissibleValue method");
-//
-//		String permissibleValue = "SELECT permissible_value FROM demo.edcr_rule_entry WHERE feature = '"
-//				+ params.get("feature") + "'";
-//		if (params.containsKey("to_value")) {
-//			permissibleValue += " AND to_area = '" + params.get("to_value") + "'";
-//		}
-//		if (params.containsKey("from_value")) {
-//			permissibleValue += " AND from_area = '" + params.get("from_value") + "'";
-//		}
-//
-//		if (params.containsKey("to_depth")) {
-//			permissibleValue += " AND to_depth = '" + params.get("to_depth") + "'";
-//		}
-//		if (params.containsKey("from_depth")) {
-//			permissibleValue += " AND from_depth = '" + params.get("from_depth") + "'";
-//		}
-//
-//		if (params.containsKey("to_width")) {
-//			permissibleValue += " AND to_width = '" + params.get("to_width") + "'";
-//		}
-//		if (params.containsKey("from_width")) {
-//			permissibleValue += " AND from_width = '" + params.get("from_width") + "'";
-//		}
-//
-//		if (params.containsKey("occupancy")) {
-//			permissibleValue += " AND occupancy = '" + params.get("occupancy") + "'";
-//		}
-//
-//		if (params.containsKey("developmentZone")) {
-//			permissibleValue += " AND development_zone = '" + params.get("developmentZone") + "'";
-//		}
-//		System.out.println("permissibleValue ++" + permissibleValue);
-//
-//		final Query data = getCurrentSession().createSQLQuery(permissibleValue);
-//		System.out.println("data--" + data);
-//
-//		BigDecimal result = (BigDecimal.valueOf(Double.valueOf(data.uniqueResult().toString())));
-//
-//		System.out.println("******" + result);
-//
-//		// System.out.println("+++++++++" + feature + " " + farValue + " " + occupancy +
-//		// " " + to_value );
-//
-//		return result;
-//	}
+	public BigDecimal getPermissibleValue(Map<String, Object> params) {
 
-	public List<Map<String, Object>> getPermissibleValue(ArrayList<Map<String, Object>> edcrRuleList,
+		System.out.println("inside getPermissibleValue method");
+
+		String permissibleValue = "SELECT permissible_value FROM demo.edcr_rule_entry WHERE feature = '"
+				+ params.get("feature") + "'";
+		if (params.containsKey("to_value")) {
+			permissibleValue += " AND to_area = '" + params.get("to_value") + "'";
+		}
+		if (params.containsKey("from_value")) {
+			permissibleValue += " AND from_area = '" + params.get("from_value") + "'";
+		}
+
+		if (params.containsKey("to_depth")) {
+			permissibleValue += " AND to_depth = '" + params.get("to_depth") + "'";
+		}
+		if (params.containsKey("from_depth")) {
+			permissibleValue += " AND from_depth = '" + params.get("from_depth") + "'";
+		}
+
+		if (params.containsKey("to_width")) {
+			permissibleValue += " AND to_width = '" + params.get("to_width") + "'";
+		}
+		if (params.containsKey("from_width")) {
+			permissibleValue += " AND from_width = '" + params.get("from_width") + "'";
+		}
+
+		if (params.containsKey("occupancy")) {
+			permissibleValue += " AND occupancy = '" + params.get("occupancy") + "'";
+		}
+
+		if (params.containsKey("developmentZone")) {
+			permissibleValue += " AND development_zone = '" + params.get("developmentZone") + "'";
+		}
+		System.out.println("permissibleValue ++" + permissibleValue);
+
+		final Query data = getCurrentSession().createSQLQuery(permissibleValue);
+		System.out.println("data--" + data);
+
+		BigDecimal result = (BigDecimal.valueOf(Double.valueOf(data.uniqueResult().toString())));
+
+		System.out.println("******" + result);
+
+		// System.out.println("+++++++++" + feature + " " + farValue + " " + occupancy +
+		// " " + to_value );
+
+		return result;
+	}
+
+	public List<Map<String, Object>> getPermissibleValue1(ArrayList<Map<String, Object>> edcrRuleList,
 			Map<String, Object> params, ArrayList<String> valueFromColumn) {
 
 		System.out.println("inside getPermissibleValue method");
@@ -1211,18 +1211,28 @@ public class EdcrRestService {
 			BigDecimal ruleToArea = (BigDecimal) rule.get("to_area");
 			String ruleFeature = rule.get("feature").toString();
 			String ruleOccupancy = rule.get("occupancy").toString();
+			BigDecimal ruleFromWidth = (BigDecimal) rule.get("from_width");
+			BigDecimal ruleToWidth = (BigDecimal) rule.get("to_width");
+			BigDecimal ruleFromDepth = (BigDecimal) rule.get("from_depth");
+			BigDecimal ruleToDepth = (BigDecimal) rule.get("to_depth");
 
 			if (paramsFeature.equals(ruleFeature) && paramsOccupancy.equals(ruleOccupancy)) {
 
 				if (params.containsKey("to_area") && params.containsKey("from_area")) {
-					if (paramsFromArea.compareTo(ruleFromArea) >= 0 && paramsFromArea.compareTo(ruleToArea) <= 0) {
+					if (paramsFromArea.compareTo(ruleFromArea) >= 0 && paramsToArea.compareTo(ruleToArea) <= 0) {
 						matchResult.putAll(rule);
 					}
 				}
 				
 
 				if (params.containsKey("to_width") && params.containsKey("from_width")) {
-					if (paramsFromArea.compareTo(ruleFromArea) >= 0 && paramsFromArea.compareTo(ruleToArea) <= 0) {
+					if (paramsFromWidth.compareTo(ruleFromWidth) >= 0 && paramsToWidth.compareTo(ruleToWidth) <= 0) {
+						matchResult.putAll(rule);
+					}
+				}
+				
+				if (params.containsKey("to_depth") && params.containsKey("from_depth")) {
+					if (paramsFromDepth.compareTo(ruleFromArea) >= 0 && paramsFromArea.compareTo(ruleToArea) <= 0) {
 						matchResult.putAll(rule);
 					}
 				}
