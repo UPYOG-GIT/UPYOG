@@ -30,7 +30,7 @@ export const EDCRService = {
       multipartFormData: true
     }),
 
-    createEdcrRule: (edcrRule) =>
+  createEdcrRule: (edcrRule) =>
     Request({
       url: Urls.edcr.createEdcrRule,
       data: edcrRule,
@@ -39,15 +39,42 @@ export const EDCRService = {
       setTimeParam: false,
       userService: true,
       method: "POST",
-      params: { },
+      params: {},
       auth: false,
       // multipartFormData: true
     }),
 
-    getEdcrRule: (tenantId) =>
+  getEdcrRule: (tenantId, feature) =>
     Request({
       url: Urls.edcr.getEdcrRule,
-      params: {tenantId},
+      params: { tenantId, feature },
+      auth: false,
+      userService: false,
+      method: "POST"
+    }),
+
+  getOccupancy: () =>
+    Request({
+      url: Urls.edcr.getOccupancy,
+      params: {},
+      auth: false,
+      userService: false,
+      method: "POST"
+    }),
+
+  getSubOccupancy: (occupancyCode) =>
+    Request({
+      url: Urls.edcr.getSubOccupancy,
+      params: { occupancyCode },
+      auth: false,
+      userService: false,
+      method: "POST"
+    }),
+
+    getFeatureName: () =>
+    Request({
+      url: Urls.edcr.getFeatureName,
+      params: {},
       auth: false,
       userService: false,
       method: "POST"
