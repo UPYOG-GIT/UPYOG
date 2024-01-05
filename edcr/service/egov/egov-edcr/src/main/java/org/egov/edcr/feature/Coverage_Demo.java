@@ -51,10 +51,12 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -79,7 +81,7 @@ import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 @Service
 public class Coverage_Demo extends Coverage {
 	// private static final String OCCUPANCY2 = "OCCUPANCY";
-	
+
 	@Autowired
 	EdcrRestService edcrRestService;
 
@@ -123,6 +125,10 @@ public class Coverage_Demo extends Coverage {
 	@Override
 	public Plan process(Plan pl) {
 		LOG.info("inside Coverage process()");
+		String tenantId = "";
+		ArrayList<Map<String, Object>> edcrRuleList = edcrRestService.getEdcrRuleList(tenantId);
+		System.out.println("edcrrrRuleeeList++" + edcrRuleList);
+		pl.setEdcrRuleList(edcrRuleList);
 		validate(pl);
 		BigDecimal totalCoverage = BigDecimal.ZERO;
 		BigDecimal totalCoverageArea = BigDecimal.ZERO;
@@ -165,9 +171,8 @@ public class Coverage_Demo extends Coverage {
 		// pl.setCoverageArea(totalCoverageArea);
 		// use plotBoundaryArea
 		if (pl.getPlot() != null && pl.getPlot().getPlotBndryArea().doubleValue() > 0)
-			totalCoverage = totalCoverageArea.multiply(BigDecimal.valueOf(100)).divide(
-					plotBoundaryArea, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-					DcrConstants.ROUNDMODE_MEASUREMENTS);
+			totalCoverage = totalCoverageArea.multiply(BigDecimal.valueOf(100)).divide(plotBoundaryArea,
+					DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
 		pl.setCoverage(totalCoverage);
 		if (pl.getVirtualBuilding() != null) {
 			pl.getVirtualBuilding().setTotalCoverageArea(totalCoverageArea);
@@ -177,32 +182,34 @@ public class Coverage_Demo extends Coverage {
 //		String areaCategory = pl.getAreaCategory();
 		BigDecimal permissibleCoverageValue = BigDecimal.ZERO;
 		String developmentZone = pl.getPlanInformation().getDevelopmentZone(); //
-		if(developmentZone==null) {
-			pl.addError(DEVELOPMENT_ZONE,
-					getLocaleMessage(OBJECTNOTDEFINED, DEVELOPMENT_ZONE + " of PLAN_INFO layer"));
+		if (developmentZone == null) {
+			pl.addError(DEVELOPMENT_ZONE, getLocaleMessage(OBJECTNOTDEFINED, DEVELOPMENT_ZONE + " of PLAN_INFO layer"));
 		}
 		String occupancyName = "";
 		String feature = "Coverage";
-		//String developmentZone = pl.getPlanInformation().getDevelopmentZone();
+		// String developmentZone = pl.getPlanInformation().getDevelopmentZone();
 
 		// get coverage permissible value from method and store in
 		// permissibleCoverageValue
-		if (plotBoundaryArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null && developmentZone != null) {
+		if (plotBoundaryArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null
+				&& developmentZone != null) {
 //			occupancyType = mostRestrictiveOccupancy.getType().getCode();
 			if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
 				occupancyName = "Residential";
-			
+
 			} else if (F.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				
+
 				occupancyName = "Commercial";
-				
+
 			}
-			
-			permissibleCoverageValue = getPermissibleCoverage(plotBoundaryArea, developmentZone, feature, occupancyName);
+
+			permissibleCoverageValue = getPermissibleCoverage(plotBoundaryArea, developmentZone, feature, occupancyName,
+					edcrRuleList);
 		}
 
 		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0) {
-			processCoverage(pl, mostRestrictiveOccupancy.getType().getName(), totalCoverage, permissibleCoverageValue, developmentZone);
+			processCoverage(pl, mostRestrictiveOccupancy.getType().getName(), totalCoverage, permissibleCoverageValue,
+					developmentZone);
 		}
 
 //		if (roadWidth != null && roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) >= 0
@@ -211,7 +218,6 @@ public class Coverage_Demo extends Coverage {
 //			processCoverage(pl, StringUtils.EMPTY, totalCoverage, permissibleCoverageValue);
 //		}
 
-		
 		return pl;
 	}
 
@@ -220,36 +226,52 @@ public class Coverage_Demo extends Coverage {
 	/*
 	 * to get coverage permissible value for Residential
 	 */
-	private BigDecimal getPermissibleCoverage(BigDecimal area, String developmentZone, String feature, String occupancyName){
+	private BigDecimal getPermissibleCoverage(BigDecimal area, String developmentZone, String feature,
+			String occupancyName, ArrayList<Map<String, Object>> edcrRuleList) {
 		LOG.info("inside getPermissibleCoverage()");
-	
-		BigDecimal to_value = area;
-		BigDecimal from_value = area;
-		
+
+		BigDecimal permissibleCoverage = BigDecimal.ZERO;
+
 		Map<String, Object> params = new HashMap<>();
 		params.put("feature", feature);
 		params.put("occupancy", occupancyName);
-		params.put("to_value", to_value);
-		params.put("from_value", from_value);
+		params.put("plotArea", area);
 		params.put("developmentZone", developmentZone);
-		  try {
-		        BigDecimal permissibleCoverage = edcrRestService.getPermissibleValue(params);
-		      
-		        return permissibleCoverage;
-		    } catch (NullPointerException e) {
-		        LOG.error("Permissible Coverage not found--------", e);
-		       
-		        return null;
-		    }
 		
+		
+		ArrayList<String> valueFromColumn = new ArrayList<>();
+		valueFromColumn.add("permissibleValue");
+
+		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+
+		try {
+			permissibleValue = edcrRestService.getPermissibleValue1(edcrRuleList, params, valueFromColumn);
+			LOG.info("permissibleValue" + permissibleValue);
+			System.out.println("permis___ for coverage+++" + permissibleValue);
+
+		} catch (NullPointerException e) {
+
+			LOG.error("Permissible Coverage not found--------", e);
+			return null;
+		}
+
+		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+			permissibleCoverage = BigDecimal
+					.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+		}
+		
+		return permissibleCoverage;
+		
+		
+
 	}
 
 	/*
 	 * to get coverage permissible value for Commercial
 	 */
 
-
-	private void processCoverage(Plan pl, String occupancy, BigDecimal coverage, BigDecimal upperLimit, String developmentZone) {
+	private void processCoverage(Plan pl, String occupancy, BigDecimal coverage, BigDecimal upperLimit,
+			String developmentZone) {
 		LOG.info("inside processCoverage()");
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.setKey("Common_Coverage");

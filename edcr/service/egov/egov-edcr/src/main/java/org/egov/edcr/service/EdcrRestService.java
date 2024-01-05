@@ -120,6 +120,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.aspose.cad.internal.ai.v;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
@@ -1191,59 +1192,85 @@ public class EdcrRestService {
 			Map<String, Object> params, ArrayList<String> valueFromColumn) {
 
 		System.out.println("inside getPermissibleValue method");
-
-		
-		BigDecimal paramsToArea = params.containsKey("to_area") ? (BigDecimal) params.get("to_area") : null;
-		BigDecimal paramsFromArea = params.containsKey("from_area") ? (BigDecimal) params.get("from_area") : null;
-		BigDecimal paramsFromWidth = params.containsKey("from_width") ? (BigDecimal) params.get("from_width") : null;
-		BigDecimal paramsToWidth = params.containsKey("to_width") ? (BigDecimal) params.get("to_width") : null;
-		BigDecimal paramsFromDepth = params.containsKey("from_depth") ? (BigDecimal) params.get("from_depth") : null;
-		BigDecimal paramsToDepth = params.containsKey("to_depth") ? (BigDecimal) params.get("to_depth") : null;
-		String paramsFeature =   params.get("feature").toString() ;
-		String paramsOccupancy =  params.get("occupancy").toString();
+		String paramsFeature = params.get("feature").toString();
+		String paramsOccupancy = params.get("occupancy").toString();
+		BigDecimal paramsPlotArea = params.containsKey("plotArea") ? (BigDecimal) params.get("plotArea") : null;
+		BigDecimal paramsDepth = params.containsKey("depthOfPlot") ? (BigDecimal) params.get("depthOfPlot") : null;
+		BigDecimal paramsWidth = params.containsKey("widthOfPlot") ? (BigDecimal) params.get("widthOfPlot") : null;
+		String paramsSubOccupancy = params.containsKey("widthOfPlot") ? params.get("subOccupancy").toString() : null;
 
 		List<Map<String, Object>> result = new ArrayList<>();
 
 		Map<String, Object> matchResult = new HashMap<>();
 
 		for (Map<String, Object> rule : edcrRuleList) {
-			BigDecimal ruleFromArea = (BigDecimal) rule.get("from_area");
-			BigDecimal ruleToArea = (BigDecimal) rule.get("to_area");
+		//	System.out.println("ruleeee" + rule);
+			BigDecimal ruleFromArea = rule.containsKey("from_area") ? (BigDecimal) rule.get("from_area") : null;
+			BigDecimal ruleToArea = rule.containsKey("to_area") ? (BigDecimal) rule.get("to_area") : null;
 			String ruleFeature = rule.get("feature").toString();
 			String ruleOccupancy = rule.get("occupancy").toString();
-			BigDecimal ruleFromWidth = (BigDecimal) rule.get("from_width");
-			BigDecimal ruleToWidth = (BigDecimal) rule.get("to_width");
-			BigDecimal ruleFromDepth = (BigDecimal) rule.get("from_depth");
-			BigDecimal ruleToDepth = (BigDecimal) rule.get("to_depth");
+			String ruleSubOccupancy = rule.containsKey("subOccupancy") ? rule.get("subOccupancy").toString() : null;
+			BigDecimal ruleFromWidth = rule.containsKey("from_width") ? (BigDecimal) rule.get("from_width") : null;
+			BigDecimal ruleToWidth = rule.containsKey("to_width") ? (BigDecimal) rule.get("to_width") : null;
+			BigDecimal ruleFromDepth = rule.containsKey("from_depth") ? (BigDecimal) rule.get("from_depth") : null;
+			BigDecimal ruleToDepth = rule.containsKey("to_depth") ? (BigDecimal) rule.get("to_depth") : null;
 
 			if (paramsFeature.equals(ruleFeature) && paramsOccupancy.equals(ruleOccupancy)) {
 
-				if (params.containsKey("to_area") && params.containsKey("from_area")) {
-					if (paramsFromArea.compareTo(ruleFromArea) >= 0 && paramsToArea.compareTo(ruleToArea) <= 0) {
-						matchResult.putAll(rule);
-					}
-				}
-				
+				if (params.containsKey("plotArea") && params.containsKey("widthOfPlot")) {
+					if (paramsPlotArea.compareTo(ruleFromArea) >= 0 && paramsPlotArea.compareTo(ruleToArea) <= 0
+							&& paramsWidth.compareTo(ruleFromWidth) >= 0 && paramsWidth.compareTo(ruleToWidth) <= 0) {
 
-				if (params.containsKey("to_width") && params.containsKey("from_width")) {
-					if (paramsFromWidth.compareTo(ruleFromWidth) >= 0 && paramsToWidth.compareTo(ruleToWidth) <= 0) {
 						matchResult.putAll(rule);
+						break;
 					}
 				}
-				
-				if (params.containsKey("to_depth") && params.containsKey("from_depth")) {
-					if (paramsFromDepth.compareTo(ruleFromArea) >= 0 && paramsFromArea.compareTo(ruleToArea) <= 0) {
+
+				else if (params.containsKey("plotArea")) {
+					if (paramsPlotArea.compareTo(ruleFromArea) >= 0 && paramsPlotArea.compareTo(ruleToArea) <= 0) {
+
 						matchResult.putAll(rule);
+						break;
+					}
+				}
+
+				else if (params.containsKey("depthOfPlot")) {
+					if (paramsDepth.compareTo(ruleFromDepth) >= 0 && paramsDepth.compareTo(ruleToDepth) <= 0) {
+						matchResult.putAll(rule);
+						break;
+					}
+				}
+
+				else if (params.containsKey("widthOfPlot")) {
+					if (paramsWidth.compareTo(ruleFromWidth) >= 0 && paramsWidth.compareTo(ruleToWidth) <= 0) {
+						matchResult.putAll(rule);
+						break;
+					}
+				}
+
+				else if (params.containsKey("subOccupancy")) {
+					if (paramsSubOccupancy.equals(ruleSubOccupancy)) {
+						matchResult.putAll(rule);
+						break;
 					}
 				}
 
 			}
 		}
+		System.out.println("matchResul" + matchResult);
+
+		Map<String, Object> value = new HashMap<>();
+
+		// System.out.println("matchResult " + matchResult);
 		if (valueFromColumn.size() == 1) {
-			result.add((Map<String, Object>) matchResult.get("permissible_value"));
+			value.put("permissibleValue", matchResult.get("permissible_value"));
 		} else if (valueFromColumn.size() > 1) {
-			result.add((Map<String, Object>) matchResult.get("min_value"));
+			value.put("minValue", matchResult.get("min_value"));
+			value.put("maxValue", matchResult.get("max_value"));
+
 		}
+		result.add(value);
+		System.out.println("result--- " + result);
 		return result;
 	}
 
@@ -1268,12 +1295,12 @@ public class EdcrRestService {
 
 		final Query data = getCurrentSession().createSQLQuery(queryString);
 
-		ArrayList<Map<String, Object>> rulesList = (ArrayList<Map<String, Object>>) data.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
+		ArrayList<Map<String, Object>> rulesList = (ArrayList<Map<String, Object>>) data
+				.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
 
 		System.out.println("******" + rulesList);
 
 		// Create a JSON Array
-		
 
 		// Now, jsonArray contains your data in JSON format
 		return rulesList;

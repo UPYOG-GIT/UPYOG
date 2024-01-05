@@ -188,6 +188,8 @@ public class Plan implements Serializable {
     private Boolean strictlyValidateBldgHeightDimension = false;
 
     private Gate gate;
+    
+    private ArrayList<Map<String, Object>> edcrRuleList;
 
     // Used to show drawing mistakes, General errors, mistakes in following layer/color coding standard etc
     private transient Map<String, String> errors = new LinkedHashMap<>();
@@ -668,6 +670,14 @@ public class Plan implements Serializable {
     public void setIcts(List<ICT> icts) {
         this.icts = icts;
     }
+
+	public ArrayList<Map<String, Object>> getEdcrRuleList() {
+		return edcrRuleList;
+	}
+
+	public void setEdcrRuleList(ArrayList<Map<String, Object>> edcrRuleList) {
+		this.edcrRuleList = edcrRuleList;
+	}
 
 
     

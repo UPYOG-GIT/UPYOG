@@ -114,6 +114,7 @@ import org.egov.edcr.service.EdcrRestService;
 import org.egov.edcr.service.ProcessPrintHelper;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.utils.StringUtils;
+import org.json.simple.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -165,7 +166,11 @@ public class Far_Demo extends Far {
 
 	@Override
 	public Plan process(Plan pl) {
-//        decideNocIsRequired(pl);
+		String tenantId = "";
+		ArrayList<Map<String, Object>> edcrRuleList = edcrRestService.getEdcrRuleList(tenantId);
+		System.out.println("edcrrrRuleeeList++" + edcrRuleList);
+		pl.setEdcrRuleList(edcrRuleList);
+ //        decideNocIsRequired(pl);
 		HashMap<String, String> errorMsgs = new HashMap<>();
 		int errors = pl.getErrors().size();
 		validate(pl);
@@ -686,7 +691,7 @@ public class Far_Demo extends Far {
 //				processFarCommercial(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs);
 			}
 		}
-		processFar(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs, feature, occupancyName);
+		processFar(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs, feature, occupancyName, edcrRuleList);
 		ProcessPrintHelper.print(pl);
 		return pl;
 	}
@@ -936,8 +941,7 @@ public class Far_Demo extends Far {
 	}
 
 		private void processFar(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
-				BigDecimal roadWidth, HashMap<String, String> errors, String feature, String occupancyName) {
-			
+				BigDecimal roadWidth, HashMap<String, String> errors, String feature, String occupancyName, ArrayList<Map<String, Object>> edcrRuleList) {
 			
 			feature = "Far";
 			System.out.println("under processFarResidentoal");
@@ -947,27 +951,41 @@ public class Far_Demo extends Far {
 			
 			BigDecimal plotArea = pl.getPlot().getArea();
 			System.out.println("plotarea" + plotArea);
-			BigDecimal to_value = plotArea;
-			BigDecimal from_value = plotArea;
+		
+			BigDecimal permissibleFar = BigDecimal.ZERO;
 			
 			Map<String, Object> params = new HashMap<>();
 			
 			params.put("feature", feature);
 			params.put("occupancy", occupancyName);
-			params.put("to_value", to_value);
-			params.put("from_value", from_value);
-			BigDecimal permissibleFar = BigDecimal.ZERO;
+			params.put("plotArea", plotArea);
+			
+			System.out.println("Featureeee" + params.get("feature"));
+			ArrayList<String> valueFromColumn = new ArrayList<>();
+			valueFromColumn.add("permissibleValue");
+			
+			List<Map<String, Object>> permissibleValue = new ArrayList<>();
+			
 			try {
-				 permissibleFar = edcrRestService.getPermissibleValue(params);
-				LOG.info("permissibleFar" + permissibleFar);
+			 permissibleValue = edcrRestService.getPermissibleValue1(edcrRuleList, params, valueFromColumn);
+				LOG.info("permissibleValue" + permissibleValue);
+				System.out.println("permis___+++" + permissibleValue);
+			
 			} catch (NullPointerException e) {
+				
+				
 				 LOG.error("Permissible Far not found--------", e);
 			}
 			
 			String expectedResult = StringUtils.EMPTY;
 			boolean isAccepted = false;
-			System.out.println("+++++" + occupancyName + plotArea + permissibleFar);
-	
+			System.out.println("+++++" + occupancyName + plotArea + permissibleValue);
+	      
+			if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+			    permissibleFar = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString())) ;
+			}
+
+			System.out.println("farrr+" + permissibleFar);
 			isAccepted = far.compareTo(permissibleFar) <= 0;
 			pl.getFarDetails().setPermissableFar(permissibleFar.doubleValue());
 			expectedResult = "<= feature";
