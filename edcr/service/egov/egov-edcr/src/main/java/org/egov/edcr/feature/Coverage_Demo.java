@@ -125,10 +125,10 @@ public class Coverage_Demo extends Coverage {
 	@Override
 	public Plan process(Plan pl) {
 		LOG.info("inside Coverage process()");
-		String tenantId = "";
-		ArrayList<Map<String, Object>> edcrRuleList = edcrRestService.getEdcrRuleList(tenantId);
-		System.out.println("edcrrrRuleeeList++" + edcrRuleList);
-		pl.setEdcrRuleList(edcrRuleList);
+//		String tenantId = "";
+//		ArrayList<Map<String, Object>> edcrRuleList = edcrRestService.getEdcrRuleList(tenantId);
+//		System.out.println("edcrrrRuleeeList++" + edcrRuleList);
+		//pl.setEdcrRuleList(edcrRuleList);
 		validate(pl);
 		BigDecimal totalCoverage = BigDecimal.ZERO;
 		BigDecimal totalCoverageArea = BigDecimal.ZERO;
@@ -204,7 +204,7 @@ public class Coverage_Demo extends Coverage {
 			}
 
 			permissibleCoverageValue = getPermissibleCoverage(plotBoundaryArea, developmentZone, feature, occupancyName,
-					edcrRuleList);
+					pl.getEdcrRuleList());
 		}
 
 		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0) {
