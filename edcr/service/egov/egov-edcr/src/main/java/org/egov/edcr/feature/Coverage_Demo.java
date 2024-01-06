@@ -125,10 +125,6 @@ public class Coverage_Demo extends Coverage {
 	@Override
 	public Plan process(Plan pl) {
 		LOG.info("inside Coverage process()");
-//		String tenantId = "";
-//		ArrayList<Map<String, Object>> edcrRuleList = edcrRestService.getEdcrRuleList(tenantId);
-//		System.out.println("edcrrrRuleeeList++" + edcrRuleList);
-		//pl.setEdcrRuleList(edcrRuleList);
 		validate(pl);
 		BigDecimal totalCoverage = BigDecimal.ZERO;
 		BigDecimal totalCoverageArea = BigDecimal.ZERO;
