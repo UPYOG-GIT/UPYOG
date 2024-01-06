@@ -988,7 +988,8 @@ public class Far_Demo extends Far {
 			System.out.println("farrr+" + permissibleFar);
 			isAccepted = far.compareTo(permissibleFar) <= 0;
 			pl.getFarDetails().setPermissableFar(permissibleFar.doubleValue());
-			expectedResult = "<= feature";
+			expectedResult = "<= " + permissibleFar;
+		System.out.println("ec" + expectedResult);
 			if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
 				buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
 			}
