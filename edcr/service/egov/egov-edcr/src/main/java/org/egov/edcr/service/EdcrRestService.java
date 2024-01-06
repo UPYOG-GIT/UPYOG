@@ -1197,19 +1197,19 @@ public class EdcrRestService {
 		BigDecimal paramsPlotArea = params.containsKey("plotArea") ? (BigDecimal) params.get("plotArea") : null;
 		BigDecimal paramsDepth = params.containsKey("depthOfPlot") ? (BigDecimal) params.get("depthOfPlot") : null;
 		BigDecimal paramsWidth = params.containsKey("widthOfPlot") ? (BigDecimal) params.get("widthOfPlot") : null;
-		String paramsSubOccupancy = params.containsKey("widthOfPlot") ? params.get("subOccupancy").toString() : null;
+		String paramsSubOccupancy = params.containsKey("subOccupancy") ? params.get("subOccupancy").toString() : null;
 
 		List<Map<String, Object>> result = new ArrayList<>();
 
 		Map<String, Object> matchResult = new HashMap<>();
 
 		for (Map<String, Object> rule : edcrRuleList) {
-		//	System.out.println("ruleeee" + rule);
+			// System.out.println("ruleeee" + rule);
 			BigDecimal ruleFromArea = rule.containsKey("from_area") ? (BigDecimal) rule.get("from_area") : null;
 			BigDecimal ruleToArea = rule.containsKey("to_area") ? (BigDecimal) rule.get("to_area") : null;
 			String ruleFeature = rule.get("feature").toString();
 			String ruleOccupancy = rule.get("occupancy").toString();
-			String ruleSubOccupancy = rule.containsKey("subOccupancy") ? rule.get("subOccupancy").toString() : null;
+			String ruleSubOccupancy = rule.get("sub_occupancy") != null ? rule.get("sub_occupancy").toString() : null;
 			BigDecimal ruleFromWidth = rule.containsKey("from_width") ? (BigDecimal) rule.get("from_width") : null;
 			BigDecimal ruleToWidth = rule.containsKey("to_width") ? (BigDecimal) rule.get("to_width") : null;
 			BigDecimal ruleFromDepth = rule.containsKey("from_depth") ? (BigDecimal) rule.get("from_depth") : null;
@@ -1224,32 +1224,29 @@ public class EdcrRestService {
 						matchResult.putAll(rule);
 						break;
 					}
-				}
-
-				else if (params.containsKey("plotArea")) {
+				} else if (params.containsKey("plotArea")) {
 					if (paramsPlotArea.compareTo(ruleFromArea) >= 0 && paramsPlotArea.compareTo(ruleToArea) <= 0) {
 
 						matchResult.putAll(rule);
 						break;
 					}
-				}
-
-				else if (params.containsKey("depthOfPlot")) {
+				} else if (params.containsKey("depthOfPlot")) {
 					if (paramsDepth.compareTo(ruleFromDepth) >= 0 && paramsDepth.compareTo(ruleToDepth) <= 0) {
 						matchResult.putAll(rule);
 						break;
 					}
-				}
-
-				else if (params.containsKey("widthOfPlot")) {
+				} else if (params.containsKey("widthOfPlot")) {
 					if (paramsWidth.compareTo(ruleFromWidth) >= 0 && paramsWidth.compareTo(ruleToWidth) <= 0) {
 						matchResult.putAll(rule);
 						break;
 					}
-				}
-
-				else if (params.containsKey("subOccupancy")) {
+				} else if (params.containsKey("subOccupancy")) {
 					if (paramsSubOccupancy.equals(ruleSubOccupancy)) {
+						matchResult.putAll(rule);
+						break;
+					}
+				} else {
+					if (paramsOccupancy.equals(ruleOccupancy)) {
 						matchResult.putAll(rule);
 						break;
 					}

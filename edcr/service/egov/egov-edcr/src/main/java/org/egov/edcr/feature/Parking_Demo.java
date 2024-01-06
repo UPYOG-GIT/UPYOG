@@ -70,6 +70,7 @@ import static org.egov.edcr.utility.DcrConstants.SQMTRS;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -89,15 +90,20 @@ import org.egov.common.entity.edcr.ParkingHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.edcr.service.EdcrRestService;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
 import org.jfree.util.Log;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class Parking_Demo extends FeatureProcess {
 
 	private static final Logger LOGGER = LogManager.getLogger(Parking_Demo.class);
+	
+	@Autowired
+	EdcrRestService edcrRestService;
 
 	private static final String OUT_OF = "Out of ";
 	private static final String SLOT_HAVING_GT_4_PTS = " number of polygon not having only 4 points.";
@@ -284,6 +290,8 @@ public class Parking_Demo extends FeatureProcess {
 		Integer noOfSeats = 0;
 		Double requiredCarParkArea = 0d;
 		Double requiredVisitorParkArea = 0d;
+		
+		ArrayList<Map<String, Object>> edcrRuleList= pl.getEdcrRuleList();
 
 		BigDecimal openParkingArea = pl.getParkingDetails().getOpenCars().stream().map(Measurement::getArea)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -349,7 +357,7 @@ public class Parking_Demo extends FeatureProcess {
 
 						requiredCarParkArea += getRequiredCarParkArea(floorBuiltUpArea, occupancyTypeHelper,
 								coverParkingArea, basementParkingArea, openParkingArea, stiltParkingArea,
-								lowerGroungFloorParkingArea);
+								lowerGroungFloorParkingArea, edcrRuleList);
 					}
 
 				}
@@ -459,9 +467,14 @@ public class Parking_Demo extends FeatureProcess {
 	// signature and create conditions according requirement
 	private Double getRequiredCarParkArea(BigDecimal totalBuiltupArea, OccupancyTypeHelper mostRestrictiveOccupancy,
 			BigDecimal coverParkingArea, BigDecimal basementParkingArea, BigDecimal openParkingArea,
-			BigDecimal stiltParkingArea, BigDecimal lowerGroungFloorParkingArea) {
+			BigDecimal stiltParkingArea, BigDecimal lowerGroungFloorParkingArea, ArrayList<Map<String, Object>> edcrRuleList) {
 		LOGGER.info("inside getRequiredCarParkArea()");
 		Double requiredCarParkArea = 0d;
+		String occupancyName="";
+		String subOccupancyName=null;
+		String featureName="Parking";
+		
+		
 
 //		String occ=mostRestrictiveOccupancy.getType().getCode();
 //		String subOcc=mostRestrictiveOccupancy.getSubtype().getCode();
@@ -470,7 +483,15 @@ public class Parking_Demo extends FeatureProcess {
 		if (mostRestrictiveOccupancy != null && A.equals(mostRestrictiveOccupancy.getType().getCode())
 				&& A_AF.equals(mostRestrictiveOccupancy.getSubtype().getCode())) {
 			// multi family residential
-			requiredEcs = totalBuiltupArea.doubleValue() / 150;
+			occupancyName="Residential";
+			subOccupancyName="Apartment/Flat";
+//			requiredEcs = totalBuiltupArea.doubleValue() / 150;
+		} else if (mostRestrictiveOccupancy != null && A.equals(mostRestrictiveOccupancy.getType().getCode())
+				&& A_R.equals(mostRestrictiveOccupancy.getSubtype().getCode())) {
+			// multi family residential
+			occupancyName="Residential";
+			subOccupancyName="Residential Single Unit";
+//			requiredEcs = totalBuiltupArea.doubleValue() / 150;
 		} else if (mostRestrictiveOccupancy != null && B.equals(mostRestrictiveOccupancy.getType().getCode())) {
 			// Academic
 			requiredEcs = totalBuiltupArea.doubleValue() / 50;
@@ -500,6 +521,25 @@ public class Parking_Demo extends FeatureProcess {
 		} else if (mostRestrictiveOccupancy != null && D_MHCT.equals(mostRestrictiveOccupancy.getSubtype().getCode())) {
 			// Meeting Hall/Cinema Theater
 			requiredEcs = totalBuiltupArea.doubleValue() / 40;
+		}
+		
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("feature", featureName);
+		params.put("occupancy", occupancyName);
+		params.put("subOccupancy", subOccupancyName);
+		
+		
+		ArrayList<String> valueFromColumn = new ArrayList<>();
+		valueFromColumn.add("permissibleValue");
+		
+		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+		
+		permissibleValue = edcrRestService.getPermissibleValue1(edcrRuleList, params, valueFromColumn);
+		LOGGER.info("permissibleValue" + permissibleValue);
+		
+		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+			requiredEcs = Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString());
 		}
 
 		requiredEcs = BigDecimal.valueOf(requiredEcs).setScale(0, RoundingMode.UP).doubleValue();
