@@ -63,6 +63,7 @@ import static org.egov.edcr.utility.DcrConstants.SIDE_YARD2_DESC;
 import static org.egov.edcr.utility.DcrConstants.SIDE_YARD_DESC;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,13 +82,18 @@ import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.SetBack;
 import org.egov.common.entity.edcr.Yard;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.service.EdcrRestService;
 import org.egov.infra.utils.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SideYardService_Demo extends SideYardService {
+	
+	@Autowired
+	EdcrRestService edcrRestService;
 
-	private static final Logger LOG = LogManager.getLogger(SideYardService_Birgaon.class);
+	private static final Logger LOG = LogManager.getLogger(SideYardService_Demo.class);
 
 	private static final BigDecimal SIDEVALUE_ONE = BigDecimal.valueOf(1);
 	private static final BigDecimal SIDEVALUE_ONEPOINTFIVE = BigDecimal.valueOf(1.5);
@@ -142,7 +148,7 @@ public class SideYardService_Demo extends SideYardService {
 
 	public void processSideYard(final Plan pl) {
 
-		LOG.info("inside SideYardYardService_Birgaon process");
+		LOG.info("inside SideYardYardService_Demo process");
 
 		HashMap<String, String> errors = new HashMap<>();
 		Plot plot = pl.getPlot();
@@ -273,20 +279,20 @@ public class SideYardService_Demo extends SideYardService {
 
 							if (buildingHeight != null && (minlength > 0 || max > 0)) {
 
-								if (occupancy.getTypeHelper().getType() != null
-										&& (A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
-												|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
+//								if (occupancy.getTypeHelper().getType() != null
+//										&& (A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
+//												|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
 
 									checkSideYard(pl, block.getBuilding(), buildingHeight, block.getName(),
 											setback.getLevel(), plot, minlength, max, minMeanlength, maxMeanLength,
 											occupancy.getTypeHelper(), sideYard1Result, sideYard2Result, block);
 
-								} else if (occupancy.getTypeHelper().getType() != null
-										&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
-									processSideYardForGovtOccupancies(pl, block, block.getBuilding(), buildingHeight,
-											block.getName(), setback.getLevel(), plot, minlength, max, minMeanlength,
-											maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
-								}
+//								} else if (occupancy.getTypeHelper().getType() != null
+//										&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+//									processSideYardForGovtOccupancies(pl, block, block.getBuilding(), buildingHeight,
+//											block.getName(), setback.getLevel(), plot, minlength, max, minMeanlength,
+//											maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
+//								}
 
 //							} //for end
 
@@ -300,14 +306,23 @@ public class SideYardService_Demo extends SideYardService {
 						} else {
 							if (pl.getPlanInformation() != null && occupancy.getTypeHelper().getType() != null) {
 								if ((A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
-										|| J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))
+										|| J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
+									if (pl.getPlanInformation().getWidthOfPlot()
+											.compareTo(BigDecimal.valueOf(7.60)) <= 0) {
+										exemptSideYard1ForAAndF(pl, block, sideYard1Result, BigDecimal.ZERO);
+									}
+									if (pl.getPlanInformation().getWidthOfPlot()
+											.compareTo(BigDecimal.valueOf(12.2)) <= 0) {
+										exemptSideYard2ForAAndF(pl, block, sideYard2Result, BigDecimal.ZERO);
+									}
+								} else if ((J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))
 										&& pl.getPlanInformation().getWidthOfPlot()
-												.compareTo(BigDecimal.valueOf(7.62)) <= 0) {
+												.compareTo(BigDecimal.valueOf(7.60)) <= 0) {
 									exemptSideYard1ForAAndF(pl, block, sideYard1Result, BigDecimal.ZERO);
 									exemptSideYard2ForAAndF(pl, block, sideYard2Result, BigDecimal.ZERO);
 								} else if (F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
 										&& pl.getPlanInformation().getWidthOfPlot()
-												.compareTo(BigDecimal.valueOf(15.25)) <= 0) {
+												.compareTo(BigDecimal.valueOf(30.48)) <= 0) {
 									exemptSideYard1ForAAndF(pl, block, sideYard1Result, BigDecimal.ZERO);
 									exemptSideYard2ForAAndF(pl, block, sideYard2Result, BigDecimal.ZERO);
 								}
@@ -448,7 +463,7 @@ public class SideYardService_Demo extends SideYardService {
 		Boolean valid1 = false;
 		BigDecimal side2val = BigDecimal.ZERO;
 		BigDecimal side1val = BigDecimal.ZERO;
-
+        String occupancyName = mostRestrictiveOccupancy.getType().getName();
 		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
 
 		if (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
@@ -457,53 +472,97 @@ public class SideYardService_Demo extends SideYardService {
 					&& DxfFileConstants.COMMERCIAL.equalsIgnoreCase(pl.getPlanInformation().getLandUseZone())
 //					&& pl.getPlanInformation().getRoadWidth().compareTo(ROAD_WIDTH_TWELVE_POINTTWO) < 0
 			) {
-				checkCommercial(pl, blockName, level, min, max, minMeanlength, maxMeanLength, mostRestrictiveOccupancy,
-						sideYard1Result, sideYard2Result, rule, subRule, valid2, valid1, side2val, side1val,
-						widthOfPlot, block);
+				occupancyName = "Commercial";
 			} else {
-				checkResidential(pl, blockName, level, min, max, minMeanlength, maxMeanLength, mostRestrictiveOccupancy,
-						sideYard1Result, sideYard2Result, rule, subRule, valid2, valid1, side2val, side1val,
-						widthOfPlot, block);
+				occupancyName = "Residential";
 			}
 		} else if (F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
-			checkCommercial(pl, blockName, level, min, max, minMeanlength, maxMeanLength, mostRestrictiveOccupancy,
-					sideYard1Result, sideYard2Result, rule, subRule, valid2, valid1, side2val, side1val, widthOfPlot,
-					block);
+			occupancyName = "Commercial";
 		}
+		
+		else if (G.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
+			occupancyName = "Industrial";
+			
+		} else if (mostRestrictiveOccupancy.getType() != null
+				&& J.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
+			   occupancyName = "Government/Semi Government";
+		}
+		
+		processSideYard(pl, blockName, level, min, max, minMeanlength, maxMeanLength, mostRestrictiveOccupancy,
+				sideYard1Result, sideYard2Result, rule, subRule, valid2, valid1, side2val, side1val,
+				widthOfPlot, block, mostRestrictiveOccupancy.getType().getName(), pl.getEdcrRuleList());
 	}
 
-	private void checkResidential(Plan pl, String blockName, Integer level, final double min, final double max,
+	private void processSideYard(Plan pl, String blockName, Integer level, final double min, final double max,
 			double minMeanlength, double maxMeanLength, final OccupancyTypeHelper mostRestrictiveOccupancy,
 			SideYardResult sideYard1Result, SideYardResult sideYard2Result, String rule, String subRule, Boolean valid2,
-			Boolean valid1, BigDecimal side2val, BigDecimal side1val, BigDecimal widthOfPlot, Block block) {
-		if (widthOfPlot.compareTo(BigDecimal.valueOf(7.60)) <= 0) {
-			side2val = BigDecimal.ZERO;
-			side1val = BigDecimal.ZERO;
-		} else if (widthOfPlot.compareTo(BigDecimal.valueOf(7.60)) > 0
-				&& widthOfPlot.compareTo(BigDecimal.valueOf(9.15)) <= 0) {
-			side2val = BigDecimal.ZERO;
-			side1val = SIDEVALUE_ONEPOINTFIVE;
-		} else if (widthOfPlot.compareTo(BigDecimal.valueOf(9.15)) > 0
-				&& widthOfPlot.compareTo(BigDecimal.valueOf(12.2)) <= 0) {
-			side2val = BigDecimal.ZERO;
-			side1val = SIDEVALUE_TWO;
-		} else if (widthOfPlot.compareTo(BigDecimal.valueOf(12.2)) > 0
-				&& widthOfPlot.compareTo(BigDecimal.valueOf(18.3)) <= 0) {
-			side2val = SIDEVALUE_ONEPOINTFIVE;
-			side1val = SIDEVALUE_THREE;
-		} else if (widthOfPlot.compareTo(BigDecimal.valueOf(18.3)) > 0
-				&& widthOfPlot.compareTo(BigDecimal.valueOf(30.48)) <= 0) {
-			side2val = SIDEVALUE_TWOPOINTTWOFIVE;
-			side1val = SIDEVALUE_THREEPOINTFIVE;
-		} else if (widthOfPlot.compareTo(BigDecimal.valueOf(24.38)) > 0) {
-			side2val = SIDEVALUE_THREE;
-			side1val = SIDEVALUE_FOUR;
+			Boolean valid1, BigDecimal side2val, BigDecimal side1val, BigDecimal widthOfPlot, Block block, String occupancyName, 
+			ArrayList<Map<String, Object>> edcrRuleList) {
+	
+
+		String sideSetBack1 =  "Side SetBack1";
+
+		Map<String, Object> params = new HashMap<>();
+		
+
+		params.put("feature", sideSetBack1);
+		params.put("occupancy", occupancyName);
+		params.put("widthOfPlot", widthOfPlot);
+
+		ArrayList<String> valueFromColumn = new ArrayList<>();
+		valueFromColumn.add("permissibleValue");
+
+		List<Map<String, Object>> permissibleValue1 = new ArrayList<>();
+
+		try {
+			permissibleValue1 = edcrRestService.getPermissibleValue1(edcrRuleList, params, valueFromColumn);
+			LOG.info("permissibleValue" + permissibleValue1);
+			System.out.println("permis___ for RearYard+++" + permissibleValue1);
+
+		} catch (NullPointerException e) {
+
+			LOG.error("Permissible Front Yard service not found--------", e);
+			return;
 		}
 
+		if (!permissibleValue1.isEmpty() && permissibleValue1.get(0).containsKey("permissibleValue")) {
+			side1val = BigDecimal.valueOf(Double.valueOf(permissibleValue1.get(0).get("permissibleValue").toString()));
+
+		}
+		
+		String sideSetBack2 =  "Side SetBack2";
+
+		
+
+		params.put("feature", sideSetBack2);
+		
+
+		List<Map<String, Object>> permissibleValue2= new ArrayList<>();
+
+		try {
+			permissibleValue2 = edcrRestService.getPermissibleValue1(edcrRuleList, params, valueFromColumn);
+			LOG.info("permissibleValue2" + permissibleValue2);
+			System.out.println("permis___ for RearYard+++" + permissibleValue2);
+
+		} catch (NullPointerException e) {
+
+			LOG.error("Permissible Front Yard service not found--------", e);
+			return;
+		}
+		
+		if (!permissibleValue2.isEmpty() && permissibleValue2.get(0).containsKey("permissibleValue")) {
+			side2val = BigDecimal.valueOf(Double.valueOf(permissibleValue2.get(0).get("permissibleValue").toString()));
+
+		}
+		LOG.info("side2val" + side2val);
+		
 		if (max >= side1val.doubleValue())
 			valid1 = true;
 		if (min >= side2val.doubleValue())
 			valid2 = true;
+		
+		
+		
 
 		compareSideYard2Result(blockName, side2val, BigDecimal.valueOf(min), BigDecimal.ZERO,
 				BigDecimal.valueOf(minMeanlength), mostRestrictiveOccupancy, sideYard2Result, valid2, subRule, rule,
@@ -518,7 +577,7 @@ public class SideYardService_Demo extends SideYardService {
 		}
 
 		if (pl.getPlanInformation() != null
-				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(9.15)) <= 0) {
+				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(12.2)) <= 0) {
 			exemptSideYard2ForAAndF(pl, block, sideYard2Result, BigDecimal.valueOf(min));
 		}
 	}
@@ -576,8 +635,8 @@ public class SideYardService_Demo extends SideYardService {
 		BigDecimal plotArea = pl.getPlot().getArea();
 
 		if (plotArea.compareTo(BigDecimal.valueOf(1000)) < 0) {
-				side2val = SIDEVALUE_THREE;
-				side1val = SIDEVALUE_THREE;
+			side2val = SIDEVALUE_THREE;
+			side1val = SIDEVALUE_THREE;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(1000)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(5000)) <= 0) {
 			side2val = SIDEVALUE_FOURPOINTFIVE;
