@@ -1205,15 +1205,15 @@ public class EdcrRestService {
 
 		for (Map<String, Object> rule : edcrRuleList) {
 			// System.out.println("ruleeee" + rule);
-			BigDecimal ruleFromArea = rule.containsKey("from_area") ? (BigDecimal) rule.get("from_area") : null;
-			BigDecimal ruleToArea = rule.containsKey("to_area") ? (BigDecimal) rule.get("to_area") : null;
-			String ruleFeature = rule.get("feature").toString();
-			String ruleOccupancy = rule.get("occupancy").toString();
+			BigDecimal ruleFromArea = (BigDecimal) rule.get("from_area");
+			BigDecimal ruleToArea = (BigDecimal) rule.get("to_area");
+			String ruleFeature = rule.get("feature") != null ? rule.get("feature").toString() : null;
+			String ruleOccupancy = rule.get("occupancy") != null ? rule.get("occupancy").toString() : null;
 			String ruleSubOccupancy = rule.get("sub_occupancy") != null ? rule.get("sub_occupancy").toString() : null;
-			BigDecimal ruleFromWidth = rule.containsKey("from_width") ? (BigDecimal) rule.get("from_width") : null;
-			BigDecimal ruleToWidth = rule.containsKey("to_width") ? (BigDecimal) rule.get("to_width") : null;
-			BigDecimal ruleFromDepth = rule.containsKey("from_depth") ? (BigDecimal) rule.get("from_depth") : null;
-			BigDecimal ruleToDepth = rule.containsKey("to_depth") ? (BigDecimal) rule.get("to_depth") : null;
+			BigDecimal ruleFromWidth = (BigDecimal) rule.get("from_width");
+			BigDecimal ruleToWidth =  (BigDecimal) rule.get("to_width");
+			BigDecimal ruleFromDepth =  (BigDecimal) rule.get("from_depth");
+			BigDecimal ruleToDepth = (BigDecimal) rule.get("to_depth") ;
 
 			if (paramsFeature.equals(ruleFeature) && paramsOccupancy.equals(ruleOccupancy)) {
 
