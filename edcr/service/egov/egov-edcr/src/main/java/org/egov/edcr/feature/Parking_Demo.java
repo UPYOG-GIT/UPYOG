@@ -101,7 +101,7 @@ import org.springframework.stereotype.Service;
 public class Parking_Demo extends FeatureProcess {
 
 	private static final Logger LOGGER = LogManager.getLogger(Parking_Demo.class);
-	
+
 	@Autowired
 	EdcrRestService edcrRestService;
 
@@ -290,8 +290,8 @@ public class Parking_Demo extends FeatureProcess {
 		Integer noOfSeats = 0;
 		Double requiredCarParkArea = 0d;
 		Double requiredVisitorParkArea = 0d;
-		
-		ArrayList<Map<String, Object>> edcrRuleList= pl.getEdcrRuleList();
+
+		ArrayList<Map<String, Object>> edcrRuleList = pl.getEdcrRuleList();
 
 		BigDecimal openParkingArea = pl.getParkingDetails().getOpenCars().stream().map(Measurement::getArea)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -467,14 +467,13 @@ public class Parking_Demo extends FeatureProcess {
 	// signature and create conditions according requirement
 	private Double getRequiredCarParkArea(BigDecimal totalBuiltupArea, OccupancyTypeHelper mostRestrictiveOccupancy,
 			BigDecimal coverParkingArea, BigDecimal basementParkingArea, BigDecimal openParkingArea,
-			BigDecimal stiltParkingArea, BigDecimal lowerGroungFloorParkingArea, ArrayList<Map<String, Object>> edcrRuleList) {
+			BigDecimal stiltParkingArea, BigDecimal lowerGroungFloorParkingArea,
+			ArrayList<Map<String, Object>> edcrRuleList) {
 		LOGGER.info("inside getRequiredCarParkArea()");
 		Double requiredCarParkArea = 0d;
-		String occupancyName="";
-		String subOccupancyName=null;
-		String featureName="Parking";
-		
-		
+		String occupancyName = "";
+		String subOccupancyName = null;
+		String featureName = "Parking";
 
 //		String occ=mostRestrictiveOccupancy.getType().getCode();
 //		String subOcc=mostRestrictiveOccupancy.getSubtype().getCode();
@@ -483,61 +482,77 @@ public class Parking_Demo extends FeatureProcess {
 		if (mostRestrictiveOccupancy != null && A.equals(mostRestrictiveOccupancy.getType().getCode())
 				&& A_AF.equals(mostRestrictiveOccupancy.getSubtype().getCode())) {
 			// multi family residential
-			occupancyName="Residential";
-			subOccupancyName="Apartment/Flat";
+			occupancyName = "Residential";
+			subOccupancyName = "Apartment/Flat";
 //			requiredEcs = totalBuiltupArea.doubleValue() / 150;
 		} else if (mostRestrictiveOccupancy != null && A.equals(mostRestrictiveOccupancy.getType().getCode())
 				&& A_R.equals(mostRestrictiveOccupancy.getSubtype().getCode())) {
 			// multi family residential
-			occupancyName="Residential";
-			subOccupancyName="Residential Single Unit";
+			occupancyName = "Residential";
+			subOccupancyName = "Residential Single Unit";
 //			requiredEcs = totalBuiltupArea.doubleValue() / 150;
 		} else if (mostRestrictiveOccupancy != null && B.equals(mostRestrictiveOccupancy.getType().getCode())) {
 			// Academic
-			requiredEcs = totalBuiltupArea.doubleValue() / 50;
-		} else if (mostRestrictiveOccupancy != null && (F.equals(mostRestrictiveOccupancy.getType().getCode())
-				|| E.equals(mostRestrictiveOccupancy.getType().getCode()))) {
+			occupancyName = "Educational";
+//			requiredEcs = totalBuiltupArea.doubleValue() / 50;
+		} else if (mostRestrictiveOccupancy != null && F.equals(mostRestrictiveOccupancy.getType().getCode())) {
 			// Commercial (F) and Private Business Office (E)
-			requiredEcs = totalBuiltupArea.doubleValue() / 100;
+			occupancyName = "Mercantile / Commercial";
+//			requiredEcs = totalBuiltupArea.doubleValue() / 100;
+		} else if (mostRestrictiveOccupancy != null && E.equals(mostRestrictiveOccupancy.getType().getCode())) {
+			// Commercial (F) and Private Business Office (E)
+			occupancyName = "Office/Business";
+//			requiredEcs = totalBuiltupArea.doubleValue() / 100;
 		} else if (mostRestrictiveOccupancy != null && G.equals(mostRestrictiveOccupancy.getType().getCode())) {
 			// Industrial
-			requiredEcs = totalBuiltupArea.doubleValue() / 300;
+			occupancyName = "Industrial";
+//			requiredEcs = totalBuiltupArea.doubleValue() / 300;
 		} else if (mostRestrictiveOccupancy != null && H.equals(mostRestrictiveOccupancy.getType().getCode())) {
 			// Inventory (Storage)
-			requiredEcs = totalBuiltupArea.doubleValue() / 200;
+			occupancyName = "Storage";
+//			requiredEcs = totalBuiltupArea.doubleValue() / 200;
 		} else if (mostRestrictiveOccupancy != null && J.equals(mostRestrictiveOccupancy.getType().getCode())) {
 			// Government/Semi-Government
-			requiredEcs = totalBuiltupArea.doubleValue() / 150;
+			occupancyName = "Government/Semi Goverment";
+//			requiredEcs = totalBuiltupArea.doubleValue() / 150;
 		} else if (mostRestrictiveOccupancy != null && S_MCH.equals(mostRestrictiveOccupancy.getSubtype().getCode())) {
 			// Community Hall
-			requiredEcs = totalBuiltupArea.doubleValue() / 100;
+			occupancyName = "Socio";
+			subOccupancyName = "Multipurpose Community Hall";
+//			requiredEcs = totalBuiltupArea.doubleValue() / 100;
 		} else if (mostRestrictiveOccupancy != null && C_MPVT.equals(mostRestrictiveOccupancy.getSubtype().getCode())) {
 			// Medical Private
-			requiredEcs = totalBuiltupArea.doubleValue() / 10;
+			occupancyName = "Medical/Hospital";
+			subOccupancyName = "Medical Private";
+//			requiredEcs = totalBuiltupArea.doubleValue() / 10;
 		} else if (mostRestrictiveOccupancy != null
 				&& C_MPBLC.equals(mostRestrictiveOccupancy.getSubtype().getCode())) {
 			// Medical Public
-			requiredEcs = totalBuiltupArea.doubleValue() / 15;
+			occupancyName = "Medical/Hospital";
+			subOccupancyName = "Medical Public";
+//			requiredEcs = totalBuiltupArea.doubleValue() / 15;
 		} else if (mostRestrictiveOccupancy != null && D_MHCT.equals(mostRestrictiveOccupancy.getSubtype().getCode())) {
 			// Meeting Hall/Cinema Theater
-			requiredEcs = totalBuiltupArea.doubleValue() / 40;
+			occupancyName = "Assembly";
+			subOccupancyName = "Meeting Hall/Cinema Theater";
+//			requiredEcs = totalBuiltupArea.doubleValue() / 40;
 		}
-		
-		
+
 		Map<String, Object> params = new HashMap<>();
 		params.put("feature", featureName);
 		params.put("occupancy", occupancyName);
-		params.put("subOccupancy", subOccupancyName);
-		
-		
+		if (!subOccupancyName.equals("")) {
+			params.put("subOccupancy", subOccupancyName);
+		}
+
 		ArrayList<String> valueFromColumn = new ArrayList<>();
 		valueFromColumn.add("permissibleValue");
-		
+
 		List<Map<String, Object>> permissibleValue = new ArrayList<>();
-		
+
 		permissibleValue = edcrRestService.getPermissibleValue1(edcrRuleList, params, valueFromColumn);
 		LOGGER.info("permissibleValue" + permissibleValue);
-		
+
 		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
 			requiredEcs = Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString());
 		}
