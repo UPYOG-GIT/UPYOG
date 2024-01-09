@@ -58,6 +58,7 @@ import static org.egov.edcr.utility.DcrConstants.FRONT_YARD_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,6 +119,8 @@ public class FrontYardService_Demo extends FrontYardService {
 	public static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
 	
 	String occupancyName = "";
+	
+	
 
 	public static final String BSMT_FRONT_YARD_DESC = "Basement Front Yard";
 	private static final int PLOTAREA_300 = 300;
@@ -139,8 +142,9 @@ public class FrontYardService_Demo extends FrontYardService {
 	public void processFrontYard(Plan pl) {
 
 		LOG.info("inside FrontYardService_Birgaon processFrontYard()");
-
+		
 		Plot plot = pl.getPlot();
+	
 		HashMap<String, String> errors = new HashMap<>();
 		if (plot == null)
 			return;
@@ -375,7 +379,8 @@ public class FrontYardService_Demo extends FrontYardService {
 			   occupancyName = "Government/Semi Government";
 		}
 		valid = processFrontYardService(blockName, level, min, mean, mostRestrictiveOccupancy, frontYardResult, valid,
-				subRule, rule, minVal, meanVal, depthOfPlot, errors, pl,  occupancyName);
+				subRule, rule, minVal, meanVal, depthOfPlot, errors, pl,  occupancyName, pl.getEdcrRuleList()
+				);
 		return valid;
 	}
 
@@ -414,41 +419,46 @@ public class FrontYardService_Demo extends FrontYardService {
 	private Boolean processFrontYardService(String blockName, Integer level, BigDecimal min, BigDecimal mean,
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot,
-			HashMap<String, String> errors, Plan pl, String occupancyName) {
+			HashMap<String, String> errors, Plan pl, String occupancyName, ArrayList<Map<String, Object>> edcrRuleList ) {
 
 	   BigDecimal  plotArea = pl.getPlot().getArea();
 		System.out.println("plotarea" + plotArea);
-		BigDecimal to_value = plotArea;
-		BigDecimal from_value = plotArea;
-		String feature = "FrontYardService";
-		
-		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
-		BigDecimal to_width = widthOfPlot;
-		BigDecimal from_width = widthOfPlot;
+	
+		String feature = "Front SetBack";
+			
 		Map<String, Object> params = new HashMap<>();
 		
 		params.put("feature", feature);
 		params.put("occupancy", occupancyName);
-		params.put("to_depth", depthOfPlot);
-		params.put("from_depth", depthOfPlot);
+		params.put("depthOfPlot", depthOfPlot);
+		
 		if(occupancyName.equalsIgnoreCase("Industrial")) {
-		params.put("to_value", to_value);
-		params.put("from_value", from_value);
-		params.put("to_width", to_width);
-		params.put("from_width", from_width);
 		
+			
+			params.put("plotArea", plotArea);
 		}
-		 try {
-		         meanVal = edcrRestService.getPermissibleValue(params);
-		      
-		    
-		    } catch (NullPointerException e) {
-		        LOG.error("FrontYard Value not found--------", e);
-		       
-		        return null;
-		    }
-		
- 
+
+		ArrayList<String> valueFromColumn = new ArrayList<>();
+		valueFromColumn.add("permissibleValue");
+
+		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+
+		try {
+			permissibleValue = edcrRestService.getPermissibleValue1(edcrRuleList, params, valueFromColumn);
+			LOG.info("permissibleValue" + permissibleValue);
+			System.out.println("permis___ for Frontyard+++" + permissibleValue);
+
+		} catch (NullPointerException e) {
+
+			LOG.error("Permissible Front Yard service not found--------", e);
+			return null;
+		}
+
+		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+			meanVal = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+	
+		} 
+      System.out.println("meanVllll" + meanVal);
 		/*
 		 * if (-1 == level) { rule = BSMT_FRONT_YARD_DESC; subRuleDesc =
 		 * SUB_RULE_24_12_DESCRIPTION; subRule = SUB_RULE_24_12; }
