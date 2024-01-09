@@ -155,6 +155,7 @@ const Urls = {
     rgacreate: "/edcr/rest/dcr/rgascrutinize",
     createEdcrRule: "/edcr/rest/dcr/createEdcrRule",
     getEdcrRule: "/edcr/rest/dcr/getEdcrRule",
+    getEdcrRuleList: "/edcr/rest/dcr/getEdcrRuleList",
     getOccupancy: "/edcr/rest/dcr/getOccupancy",
     getSubOccupancy: "/edcr/rest/dcr/getSubOccupancy",
     getFeatureName: "/edcr/rest/dcr/getFeatureName",

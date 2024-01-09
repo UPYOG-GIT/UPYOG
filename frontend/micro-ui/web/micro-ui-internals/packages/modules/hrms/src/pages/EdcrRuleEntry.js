@@ -40,6 +40,7 @@ const EdcrRuleEntry = () => {
   const [SubCatdropdown, setSubCatdropdown] = useState([]);
   const [featureTypedropval, setFeatureTypedropval] = useState([]);
   const [Slabtblval, setSlabtblval] = useState([]);
+  const [allFeatureNameData, setAllFeatureNameData] = useState([]);
   const [showToast, setShowToast] = useState(null);
 
   const Operationdropdown = [{ code: "Multiply", value: "Multiply" }, { code: "Fix", value: "Fix" }, { code: "Fix and Multiply", value: "Fix and Multiply" }, { code: "Multiply and Check Limit", value: "Multiply and Check Limit" }];
@@ -129,11 +130,18 @@ const EdcrRuleEntry = () => {
   }
   },[PyBuildCat])
 
+  useEffect( async ()=>{
+    // let getslab = await Digit.EDCRService.getEdcrRule(tenantId,featureNameCondition);
+    let getslab = await Digit.EDCRService.getEdcrRuleList(tenantId);
+    setAllFeatureNameData(getslab);
+  },[])
 
   let featureNameCondition=featureNameType.value;
   useEffect( async ()=>{
-    let getslab = await Digit.EDCRService.getEdcrRule(tenantId,featureNameCondition);
-    setSlabtblval(getslab);
+    // let getslab = await Digit.EDCRService.getEdcrRule(tenantId,featureNameCondition);
+    // let getslab = await Digit.EDCRService.getEdcrRuleList(tenantId);
+    let filteredData = allFeatureNameData.filter(item => item.feature === featureNameCondition);
+    setSlabtblval(filteredData);
   },[featureNameType])
 
 
@@ -306,13 +314,6 @@ const EdcrRuleEntry = () => {
         },
       },
       {
-        Header: t("To Depth"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.to_depth}`);
-        },
-      },
-      {
         Header: t("From Depth"),
         disableSortBy: true,
         Cell: ({ row }) => {
@@ -320,10 +321,10 @@ const EdcrRuleEntry = () => {
         },
       },
       {
-        Header: t("To Width"),
+        Header: t("To Depth"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.to_width}`);
+          return GetCell(`${row.original?.to_depth}`);
         },
       },
       {
@@ -331,6 +332,13 @@ const EdcrRuleEntry = () => {
         disableSortBy: true,
         Cell: ({ row }) => {
           return GetCell(`${row.original?.from_width}`);
+        },
+      },
+      {
+        Header: t("To Width"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.to_width}`);
         },
       },
       {

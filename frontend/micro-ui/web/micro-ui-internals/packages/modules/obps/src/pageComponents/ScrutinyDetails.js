@@ -229,11 +229,11 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             label={checkingFlow === "OCBPA" ? t("BPA_OC_EDCR_NO_LABEL") : t("BPA_EDCR_NO_LABEL")}
             text={data?.edcrNumber}
           ></Row>
-          <Row
+          {/* <Row
             className="border-none"
             label={t("BPA_UPLOADED_PLAN_DIAGRAM")}
             text={<ActionButton label={t("BPA_UPLOADED_PLAN_DXF")} jumpTo={data?.updatedDxfFile} />}
-          ></Row>
+          ></Row> */}
           <Row
             className="border-none"
             label={t("BPA_SCRUNTINY_REPORT_OUTPUT")}

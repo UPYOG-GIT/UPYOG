@@ -1125,12 +1125,17 @@ public class EdcrRestService {
 		Double to_width = Double.valueOf(edcrRule.get("to_width").toString());
 		Double from_width = Double.valueOf(edcrRule.get("from_width").toString());
 		String by_law = edcrRule.get("by_law").toString();
+		Integer floorNumber = Integer.parseInt(edcrRule.get("floor_number").toString());
+		Double buildingHeight = Double.valueOf(edcrRule.get("building_height").toString());
 
-		String insertQuery = "INSERT INTO demo.edcr_rule_entry(feature, permissible_value, occupancy, to_area, from_area, by_law, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, to_depth, from_depth, to_width, from_width, min_value, max_value) VALUES ('"
-				+ feature + "','" + permissibleValue + "', '" + occupancy + "','" + to_value + "', '" + from_value
-				+ "', '" + by_law + "', '" + subOccupancy + "', '" + tenantId + "', '" + developmentZone + "', '"
-				+ roadWidth + "', '" + noOfFloors + "', '" + to_depth + "',  '" + from_depth + "',  '" + to_width
-				+ "',  '" + from_width + "', '" + minValue + "', '" + maxValue + "'  )";
+		String insertQuery = "INSERT INTO demo.edcr_rule_entry(feature, permissible_value, occupancy,"
+				+ " to_area, from_area, by_law, sub_occupancy, tenant_id, development_zone, road_width,"
+				+ " no_of_floors, to_depth, from_depth, to_width, from_width, min_value, max_value, floor_number, building_height)"
+				+ " VALUES ('" + feature + "','" + permissibleValue + "', '" + occupancy + "','" + to_value + "', '"
+				+ from_value + "', '" + by_law + "', '" + subOccupancy + "', '" + tenantId + "', '" + developmentZone
+				+ "', '" + roadWidth + "', '" + noOfFloors + "', '" + to_depth + "',  '" + from_depth + "',  '"
+				+ to_width + "',  '" + from_width + "', '" + minValue + "', '" + maxValue + "', '" + floorNumber
+				+ "', '" + buildingHeight + "' )";
 
 		final Query query = getCurrentSession().createSQLQuery(insertQuery);
 		Integer result = query.executeUpdate();
@@ -1211,9 +1216,9 @@ public class EdcrRestService {
 			String ruleOccupancy = rule.get("occupancy") != null ? rule.get("occupancy").toString() : null;
 			String ruleSubOccupancy = rule.get("sub_occupancy") != null ? rule.get("sub_occupancy").toString() : null;
 			BigDecimal ruleFromWidth = (BigDecimal) rule.get("from_width");
-			BigDecimal ruleToWidth =  (BigDecimal) rule.get("to_width");
-			BigDecimal ruleFromDepth =  (BigDecimal) rule.get("from_depth");
-			BigDecimal ruleToDepth = (BigDecimal) rule.get("to_depth") ;
+			BigDecimal ruleToWidth = (BigDecimal) rule.get("to_width");
+			BigDecimal ruleFromDepth = (BigDecimal) rule.get("from_depth");
+			BigDecimal ruleToDepth = (BigDecimal) rule.get("to_depth");
 
 			if (paramsFeature.equals(ruleFeature) && paramsOccupancy.equals(ruleOccupancy)) {
 
@@ -1272,7 +1277,7 @@ public class EdcrRestService {
 	}
 
 	public List<Map<String, Object>> getEdcrRule(String tenantId, String feature) {
-		String queryString = "SELECT id,feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, from_depth, to_depth, from_width, to_width, min_value, max_value FROM demo.edcr_rule_entry where feature = '"
+		String queryString = "SELECT id,feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, from_depth, to_depth, from_width, to_width, min_value, max_value, floor_number, building_height FROM demo.edcr_rule_entry where feature = '"
 				+ feature + "' ";
 
 		final Query data = getCurrentSession().createSQLQuery(queryString);
@@ -1288,7 +1293,7 @@ public class EdcrRestService {
 	public ArrayList<Map<String, Object>> getEdcrRuleList(String tenantId) {
 		String queryString = "SELECT id, feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, "
 				+ "tenant_id, development_zone, road_width, no_of_floors, from_depth, to_depth, from_width, to_width, "
-				+ "min_value, max_value FROM demo.edcr_rule_entry";
+				+ "min_value, max_value, floor_number, building_height FROM demo.edcr_rule_entry";
 
 		final Query data = getCurrentSession().createSQLQuery(queryString);
 

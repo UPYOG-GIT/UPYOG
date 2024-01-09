@@ -13,7 +13,7 @@ export const EDCRService = {
       method: "POST",
       params: { tenantId },
       auth: true,
-      multipartFormData: true
+      multipartFormData: true,
     }),
 
   rgacreate: (data, tenantId) =>
@@ -27,7 +27,7 @@ export const EDCRService = {
       method: "POST",
       params: { tenantId },
       auth: true,
-      multipartFormData: true
+      multipartFormData: true,
     }),
 
   createEdcrRule: (edcrRule) =>
@@ -50,7 +50,16 @@ export const EDCRService = {
       params: { tenantId, feature },
       auth: false,
       userService: false,
-      method: "POST"
+      method: "POST",
+    }),
+
+  getEdcrRuleList: (tenantId) =>
+    Request({
+      url: Urls.edcr.getEdcrRuleList,
+      params: { tenantId },
+      auth: false,
+      userService: false,
+      method: "POST",
     }),
 
   getOccupancy: () =>
@@ -59,7 +68,7 @@ export const EDCRService = {
       params: {},
       auth: false,
       userService: false,
-      method: "POST"
+      method: "POST",
     }),
 
   getSubOccupancy: (occupancyCode) =>
@@ -68,15 +77,15 @@ export const EDCRService = {
       params: { occupancyCode },
       auth: false,
       userService: false,
-      method: "POST"
+      method: "POST",
     }),
 
-    getFeatureName: () =>
+  getFeatureName: () =>
     Request({
       url: Urls.edcr.getFeatureName,
       params: {},
       auth: false,
       userService: false,
-      method: "POST"
+      method: "POST",
     }),
 };
