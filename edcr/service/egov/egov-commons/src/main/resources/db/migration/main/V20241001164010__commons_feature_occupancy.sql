@@ -8,3 +8,9 @@ INSERT INTO state.egbpa_feature_name (name) SELECT 'Toilet Area' WHERE NOT EXIST
 INSERT INTO state.egbpa_feature_name (name) SELECT 'Toilet Width' WHERE NOT EXISTS (SELECT 1 FROM state.egbpa_feature_name WHERE name = 'Toilet Width');
 INSERT INTO state.egbpa_feature_name (name) SELECT 'High Rise' WHERE NOT EXISTS (SELECT 1 FROM state.egbpa_feature_name WHERE name = 'High Rise');
 INSERT INTO state.egbpa_feature_name (name) SELECT 'Sanitation' WHERE NOT EXISTS (SELECT 1 FROM state.egbpa_feature_name WHERE name = 'Sanitation');
+INSERT INTO state.egbpa_feature_name (name) SELECT 'Room Area' WHERE NOT EXISTS (SELECT 1 FROM state.egbpa_feature_name WHERE name = 'Room Area');
+INSERT INTO state.egbpa_feature_name (name) SELECT 'Room Width' WHERE NOT EXISTS (SELECT 1 FROM state.egbpa_feature_name WHERE name = 'Room Width');
+
+
+INSERT INTO egbpa_occupancy(id, code, name, isactive, version, createdby, createddate, lastmodifiedby,lastmodifieddate, maxcoverage, minfar, maxfar, ordernumber, description)
+VALUES (nextval('seq_egbpa_occupancy'), '', 'Common', 't', 0, 1, now(), 1,now(), 65, 3, 4, 1, 'Common');
