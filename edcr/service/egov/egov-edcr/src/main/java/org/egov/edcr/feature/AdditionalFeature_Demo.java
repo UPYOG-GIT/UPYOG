@@ -454,6 +454,9 @@ public class AdditionalFeature_Demo extends AdditionalFeature {
 	}
 
 	private void validateHeightOfFloors(Plan pl, HashMap<String, String> errors) {
+
+		ArrayList<Map<String, Object>> edcrRuleList = pl.getEdcrRuleList();
+
 		for (Block block : pl.getBlocks()) {
 			boolean isAccepted = false;
 			ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
@@ -472,54 +475,74 @@ public class AdditionalFeature_Demo extends AdditionalFeature {
 //				String status;
 				String minRequiredFloorHeight = StringUtils.EMPTY;
 				String maxPermissibleFloorHeight = StringUtils.EMPTY;
+				BigDecimal minFloorHeight = BigDecimal.ZERO;
+				BigDecimal maxFloorHeight = BigDecimal.ZERO;
+
+				String occupancyName = "";
+				String featureName = "Floor Height";
+				String floorNo="";
+
 				if (occupancyTypeHelper != null && occupancyTypeHelper.getType() != null
 						&& G.equals(occupancyTypeHelper.getType().getCode())) {
-					minRequiredFloorHeight = "3.60" + DcrConstants.IN_METER;
-					maxPermissibleFloorHeight = "-";
-					if (floorHeight.compareTo(BigDecimal.valueOf(3.60)) >= 0) {
-						/*
-						 * Map<String, String> details = new HashMap<>(); details.put(FLOOR_NO,
-						 * String.valueOf(floorNumber)); details.put(RULE_NO, RULE_38);
-						 * details.put(MIN_REQUIRED, minRequiredFloorHeight + DcrConstants.IN_METER);
-						 * details.put(MAX_PERMISSIBLE, "-"); details.put(PROVIDED,
-						 * floorHeight.toString() + DcrConstants.IN_METER); details.put(STATUS,
-						 * Result.Accepted.getResultVal()); scrutinyDetail.getDetail().add(details);
-						 * pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-						 */
-//						status = Result.Accepted.getResultVal();
-						isAccepted = true;
-					} else {
-						/*
-						 * Map<String, String> details = new HashMap<>(); details.put(FLOOR_NO,
-						 * String.valueOf(floorNumber)); details.put(RULE_NO, RULE_38);
-						 * details.put(MIN_REQUIRED, minRequiredFloorHeight + DcrConstants.IN_METER);
-						 * details.put(MAX_PERMISSIBLE, "-"); details.put(PROVIDED,
-						 * floorHeight.toString() + DcrConstants.IN_METER); details.put(STATUS,
-						 * Result.Not_Accepted.getResultVal()); scrutinyDetail.getDetail().add(details);
-						 * pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-						 */
-//						status = Result.Not_Accepted.getResultVal();
-//						isAccepted=false;
-					}
+
 				} else if (floorNumber < 0) {
-					minRequiredFloorHeight = "2.40" + DcrConstants.IN_METER;
-					maxPermissibleFloorHeight = "4.20" + DcrConstants.IN_METER;
-					if (floorHeight.compareTo(BigDecimal.valueOf(2.40)) >= 0
-							&& floorHeight.compareTo(BigDecimal.valueOf(4.20)) <= 0) {
 
-//						status = Result.Accepted.getResultVal();
-						isAccepted = true;
-					}
+					occupancyName = "Common";
+					floorNo="-1";
+
 				} else {
-					minRequiredFloorHeight = "2.75" + DcrConstants.IN_METER;
-					maxPermissibleFloorHeight = "4.40" + DcrConstants.IN_METER;
-					if (floorHeight.compareTo(BigDecimal.valueOf(2.75)) >= 0
-							&& floorHeight.compareTo(BigDecimal.valueOf(4.40)) <= 0) {
 
+					occupancyName = "Common";
+					floorNo="0";
+				}
+
+				Map<String, Object> params = new HashMap<>();
+
+				params.put("feature", featureName);
+				params.put("occupancy", occupancyName);
+				if(!floorNo.equals("")) {
+					params.put("floorNumber", floorNo);
+				}
+				
+				ArrayList<String> valueFromColumn = new ArrayList<>();
+				valueFromColumn.add("minValue");
+				valueFromColumn.add("maxValue");
+				
+				List<Map<String, Object>> permissibleValue = new ArrayList<>();
+				
+				permissibleValue = edcrRestService.getPermissibleValue1(edcrRuleList, params, valueFromColumn);
+				LOG.info("permissibleValue" + permissibleValue);
+
+				if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("minValue")
+						&& permissibleValue.get(0).containsKey("maxValue")) {
+					minFloorHeight = BigDecimal
+							.valueOf(Double.valueOf(permissibleValue.get(0).get("minValue").toString()));
+
+					maxFloorHeight = BigDecimal
+							.valueOf(Double.valueOf(permissibleValue.get(0).get("maxValue").toString()));
+				}
+				
+				if(occupancyName.equals("Industrial")) {
+					if (floorHeight.compareTo(minFloorHeight) >= 0) {
+						
 //						status = Result.Accepted.getResultVal();
 						isAccepted = true;
 					}
+					minRequiredFloorHeight = minFloorHeight + DcrConstants.IN_METER;
+					maxPermissibleFloorHeight = "-";
+				} else {
+					if (floorHeight.compareTo(minFloorHeight) >= 0
+							&& floorHeight.compareTo(maxFloorHeight) <= 0) {
+						
+//						status = Result.Accepted.getResultVal();
+						isAccepted = true;
+					}
+					minRequiredFloorHeight = minFloorHeight + DcrConstants.IN_METER;
+					maxPermissibleFloorHeight = maxFloorHeight + DcrConstants.IN_METER;
 				}
+				
+				
+				
 //				addFloorHeightDetails(pl, scrutinyDetail, String.valueOf(floorNumber), RULE_38,
 //						minRequiredFloorHeight + DcrConstants.IN_METER, maxPermissibleFloorHeight,
 //						floorHeight.toString() + DcrConstants.IN_METER, status);

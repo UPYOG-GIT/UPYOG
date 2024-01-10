@@ -1203,6 +1203,7 @@ public class EdcrRestService {
 		BigDecimal paramsDepth = params.containsKey("depthOfPlot") ? (BigDecimal) params.get("depthOfPlot") : null;
 		BigDecimal paramsWidth = params.containsKey("widthOfPlot") ? (BigDecimal) params.get("widthOfPlot") : null;
 		String paramsSubOccupancy = params.containsKey("subOccupancy") ? params.get("subOccupancy").toString() : null;
+		String floorNumber = params.containsKey("floorNumber") ? params.get("floorNumber").toString() : null;
 
 		List<Map<String, Object>> result = new ArrayList<>();
 
@@ -1219,6 +1220,7 @@ public class EdcrRestService {
 			BigDecimal ruleToWidth = (BigDecimal) rule.get("to_width");
 			BigDecimal ruleFromDepth = (BigDecimal) rule.get("from_depth");
 			BigDecimal ruleToDepth = (BigDecimal) rule.get("to_depth");
+			String ruleFloorNumber = rule.get("floor_number") != null ? rule.get("floor_number").toString() : null;
 
 			if (paramsFeature.equals(ruleFeature) && paramsOccupancy.equals(ruleOccupancy)) {
 
@@ -1247,6 +1249,11 @@ public class EdcrRestService {
 					}
 				} else if (params.containsKey("subOccupancy")) {
 					if (paramsSubOccupancy.equals(ruleSubOccupancy)) {
+						matchResult.putAll(rule);
+						break;
+					}
+				} else if (params.containsKey("floorNumber")) {
+					if (floorNumber.equals(ruleFloorNumber)) {
 						matchResult.putAll(rule);
 						break;
 					}
