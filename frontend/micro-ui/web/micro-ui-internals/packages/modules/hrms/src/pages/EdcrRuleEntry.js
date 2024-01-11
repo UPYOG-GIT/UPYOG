@@ -1,37 +1,54 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Card, Header, Modal, Dropdown, CardLabel, TextInput, SubmitBar, Toast, CloseSvg, EditPencilIcon, DeleteIcon, LabelFieldPair, Loader, Row, Table, BackButton, KeyNote
+  Card,
+  Header,
+  Modal,
+  Dropdown,
+  CardLabel,
+  TextInput,
+  SubmitBar,
+  Toast,
+  CloseSvg,
+  EditPencilIcon,
+  DeleteIcon,
+  LabelFieldPair,
+  Loader,
+  Row,
+  Table,
+  BackButton,
+  KeyNote,
 } from "@egovernments/digit-ui-react-components";
 
 const EdcrRuleEntry = () => {
-
   const { t } = useTranslation();
   const [modalData, setModalData] = useState(false);
-  const [featureNameType, setfeatureNameType] = useState({ code: 'Far', value: 'Far' });
+  const [featureNameType, setfeatureNameType] = useState({ code: "Far", value: "Far" });
   // const [occupancy, setOccupancy] = useState("");
   // const [subOccupancy, setSubOccupancy] = useState("");
   const [occupancy, setOccupancy] = useState({ code: "", value: "null" });
   const [subOccupancy, setSubOccupancy] = useState({ code: "", value: "null" });
   const [featureName, setFeatureName] = useState({ code: "", value: "null" });
-  const [PyBuildCat,setPyBuildCat] = useState({code: "", value: "null"});
+  const [PyBuildCat, setPyBuildCat] = useState({ code: "", value: "null" });
   // const [PyBuildCat,setPyBuildCat] = useState("");
   const [PySubCat, setPySubCat] = useState({ code: "", value: "null" });
   const [fromArea, setFromArea] = useState(0);
   const [toArea, setToArea] = useState(0);
   const [PyOperation, setPyOperation] = useState("");
   const [byLaw, setByLaw] = useState(0);
-  const [noOfFloors  , setNoOfFloors] = useState(0);
-  const [developmentZone , setDevelopmentZone] = useState({ code: "", value: "null" });
-  const [roadWidth  , setRoadWidth] = useState(0);
-  const [depthOrWidth  , setDepthOrWidth] = useState(0);
-  const [fromDepth  , setFromDepth] = useState(0);
-  const [toDepth  , setToDepth] = useState(0);
-  const [fromWidth  , setFromWidth] = useState(0);
-  const [toWidth  , setToWidth] = useState(0);
+  const [noOfFloors, setNoOfFloors] = useState(0);
+  const [developmentZone, setDevelopmentZone] = useState({ code: "", value: "null" });
+  const [roadWidth, setRoadWidth] = useState(0);
+  const [depthOrWidth, setDepthOrWidth] = useState(0);
+  const [fromDepth, setFromDepth] = useState(0);
+  const [toDepth, setToDepth] = useState(0);
+  const [fromWidth, setFromWidth] = useState(0);
+  const [toWidth, setToWidth] = useState(0);
   const [permissibleValue, setPermissibleValue] = useState(0);
-  const [minVal  , setMinVal] = useState(0);
-  const [maxVal  , setMaxVal] = useState(0);
+  const [minVal, setMinVal] = useState(0);
+  const [maxVal, setMaxVal] = useState(0);
+  const [floorNumber, setFloorNumber] = useState(0);
+  const [buildingHeight, setBuildingHeight] = useState(0);
   const [PyIndRate, setPyIndRate] = useState(0);
   const [PyMultiplyValue, setPyMultiplyValue] = useState(0);
   const [PyMaxLimit, setPyMaxLimit] = useState(0);
@@ -43,13 +60,33 @@ const EdcrRuleEntry = () => {
   const [allFeatureNameData, setAllFeatureNameData] = useState([]);
   const [showToast, setShowToast] = useState(null);
 
-  const Operationdropdown = [{ code: "Multiply", value: "Multiply" }, { code: "Fix", value: "Fix" }, { code: "Fix and Multiply", value: "Fix and Multiply" }, { code: "Multiply and Check Limit", value: "Multiply and Check Limit" }];
+  const Operationdropdown = [
+    { code: "Multiply", value: "Multiply" },
+    { code: "Fix", value: "Fix" },
+    { code: "Fix and Multiply", value: "Fix and Multiply" },
+    { code: "Multiply and Check Limit", value: "Multiply and Check Limit" },
+  ];
 
-  const FeatureNameDropdown = [{ code: "Far", value: "Far" }, { code: "Coverage", value: "Coverage" }, { code: "Front Setback", value: "Front Setback" }, { code: "Rear Setback", value: "Rear Setback" }];
+  const FeatureNameDropdown = [
+    { code: "Far", value: "Far" },
+    { code: "Coverage", value: "Coverage" },
+    { code: "Front Setback", value: "Front Setback" },
+    { code: "Rear Setback", value: "Rear Setback" },
+  ];
 
-  const DevelopmentZoneDropDown = [{ code: "CA", value: "CA" }, { code: "DA-01", value: "DA-01" }, { code: "DA-02", value: "DA-02" }, { code: "DA-03", value: "DA-03" }];
+  const DevelopmentZoneDropDown = [
+    { code: "CA", value: "CA" },
+    { code: "DA-01", value: "DA-01" },
+    { code: "DA-02", value: "DA-02" },
+    { code: "DA-03", value: "DA-03" },
+  ];
 
-  const OccupancyDropdown = [{ code: "Residential", value: "Residential" }, { code: "Mercantile / Commercial", value: "Mercantile / Commercial" }, { code: "Industrial", value: "Industrial" }, { code: "Government/Semi Goverment", value: "Government/Semi Goverment" }];
+  const OccupancyDropdown = [
+    { code: "Residential", value: "Residential" },
+    { code: "Mercantile / Commercial", value: "Mercantile / Commercial" },
+    { code: "Industrial", value: "Industrial" },
+    { code: "Government/Semi Goverment", value: "Government/Semi Goverment" },
+  ];
 
   // setSlabPyTypedropval(FeatureNameDropdown);
 
@@ -66,24 +103,22 @@ const EdcrRuleEntry = () => {
   const setPaySubCat = (value) => setSubOccupancy(value);
   const setPayOperation = (value) => setDevelopmentZone(value);
 
-
   let { uuid } = Digit.UserService.getUser()?.info || {};
   const GetCell = (value) => <span className="cell-text">{t(value)}</span>;
 
-  useEffect( async ()=>{
-
-      let paytypeRule = await Digit.EDCRService.getFeatureName();
-      let PyTydrop=[];
-      paytypeRule.map(item=>{
-        // if(item.defunt==="N"){
-          PyTydrop.push({
-            code: item.id,
-            value: item.name
-          })
-        // }
+  useEffect(async () => {
+    let paytypeRule = await Digit.EDCRService.getFeatureName();
+    let PyTydrop = [];
+    paytypeRule.map((item) => {
+      // if(item.defunt==="N"){
+      PyTydrop.push({
+        code: item.id,
+        value: item.name,
       });
-      setFeatureTypedropval(PyTydrop);
-  },[])
+      // }
+    });
+    setFeatureTypedropval(PyTydrop);
+  }, []);
 
   // useEffect( async ()=>{
   //   let propType = await Digit.OBPSAdminService.getProptype(tenantId);
@@ -99,52 +134,50 @@ const EdcrRuleEntry = () => {
   //   setPropCatdropdown(Proptydrop);
   // },[])
 
-  useEffect( async ()=>{
+  useEffect(async () => {
     let BCatetype = await Digit.EDCRService.getOccupancy();
-    let BCatetydrop=[];
-    BCatetype.map(item=>{
+    let BCatetydrop = [];
+    BCatetype.map((item) => {
       // if(item.defunt==="N"){
-        BCatetydrop.push({
-          code: item.id,
-          value: item.name
-        })
+      BCatetydrop.push({
+        code: item.id,
+        value: item.name,
+      });
       // }
     });
     setBuildCatdropdown(BCatetydrop);
-  },[])
+  }, []);
 
-  useEffect( async ()=>{
-    if(PyBuildCat.value != "null"){
-    let occupancyId = PyBuildCat.code;
-    let BStype = await Digit.EDCRService.getSubOccupancy(occupancyId);
-    let BSCatetydrop=[];
-    BStype.map(item=>{
-      // if(item.defunt==="N"){
+  useEffect(async () => {
+    if (PyBuildCat.value != "null") {
+      let occupancyId = PyBuildCat.code;
+      let BStype = await Digit.EDCRService.getSubOccupancy(occupancyId);
+      let BSCatetydrop = [];
+      BStype.map((item) => {
+        // if(item.defunt==="N"){
         BSCatetydrop.push({
           code: item.id,
-          value: item.name
-        })
-      // }
-    });
-    setSubCatdropdown(BSCatetydrop);
-  }
-  },[PyBuildCat])
+          value: item.name,
+        });
+        // }
+      });
+      setSubCatdropdown(BSCatetydrop);
+    }
+  }, [PyBuildCat]);
 
-  useEffect( async ()=>{
+  useEffect(async () => {
     // let getslab = await Digit.EDCRService.getEdcrRule(tenantId,featureNameCondition);
     let getslab = await Digit.EDCRService.getEdcrRuleList(tenantId);
     setAllFeatureNameData(getslab);
-  },[])
+  }, []);
 
-  let featureNameCondition=featureNameType.value;
-  useEffect( async ()=>{
+  let featureNameCondition = featureNameType.value;
+  useEffect(async () => {
     // let getslab = await Digit.EDCRService.getEdcrRule(tenantId,featureNameCondition);
     // let getslab = await Digit.EDCRService.getEdcrRuleList(tenantId);
-    let filteredData = allFeatureNameData.filter(item => item.feature === featureNameCondition);
+    let filteredData = allFeatureNameData.filter((item) => item.feature === featureNameCondition);
     setSlabtblval(filteredData);
-  },[featureNameType])
-
-
+  }, [featureNameType]);
 
   const addEdcrRule = async (e) => {
     e.preventDefault();
@@ -181,28 +214,27 @@ const EdcrRuleEntry = () => {
     // console.log(obj);
     // {"name": "Ben", "prop name": "value 1", "prop-name": "value 2", "1prop-name": "value 3"}
 
-
     const params = {
       feature: featureName.value,
       occupancy: PyBuildCat.value,
-      sub_occupancy : PySubCat.value,
+      sub_occupancy: PySubCat.value,
       to_area: toArea,
       from_area: fromArea,
-      tenant_id:tenantId.split(".").length>1?tenantId.split('.')[1]:tenantId,
+      tenant_id: tenantId.split(".").length > 1 ? tenantId.split(".")[1] : tenantId,
       by_law: byLaw,
       permissible_value: permissibleValue,
-      development_zone : developmentZone.value,
-      road_width : roadWidth,
-      no_of_floors : noOfFloors,
-      from_depth : fromDepth,
+      development_zone: developmentZone.value,
+      road_width: roadWidth,
+      no_of_floors: noOfFloors,
+      from_depth: fromDepth,
       to_depth: toDepth,
       from_width: fromWidth,
       to_width: toWidth,
       min_value: minVal,
-      max_value:maxVal,
-
+      max_value: maxVal,
+      floor_number: floorNumber,
+      building_height: buildingHeight,
     };
-
 
     closeModal();
     setFromArea(0);
@@ -220,9 +252,12 @@ const EdcrRuleEntry = () => {
     setToWidth(0);
     setMaxVal(0);
     setMinVal(0);
+    setBuildingHeight(0);
+    setFloorNumber(0);
     setPyIndRate(0);
     setPyMultiplyValue(0);
     setPyMaxLimit(0);
+
 
     const edcrRuleResponse = await Digit.EDCRService.createEdcrRule(params);
     // const SlabMasterResp = await Digit.OBPSAdminService.createEdcrRule(params);
@@ -231,19 +266,14 @@ const EdcrRuleEntry = () => {
     if (edcrRuleResponse > 0) {
       setShowToast({ key: false, label: "Successfully Added ", bgcolor: "#4BB543" });
       location.reload();
-    }
-    else {
+    } else {
       setShowToast({ key: true, label: "Fail To Add", bgcolor: "red" });
     }
-
-  }
-
-
+  };
 
   const closeModal = () => {
     setModalData(false);
   };
-
 
   const GetCell1 = (value) => <input type="checkbox" id="checkbox2" onChange={(e) => getRowId(e)} name="checkbox2" value={value} />;
   const columns = React.useMemo(() => {
@@ -252,9 +282,7 @@ const EdcrRuleEntry = () => {
         Header: t("Select"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return (
-            GetCell1(`${row.original?.id}`)
-          );
+          return GetCell1(`${row.original?.id}`);
         },
       },
       {
@@ -342,6 +370,20 @@ const EdcrRuleEntry = () => {
         },
       },
       {
+        Header: t("Floor Number"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.floor_number}`);
+        },
+      },
+      {
+        Header: t("Building Height"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.building_height}`);
+        },
+      },
+      {
         Header: t("Permissible Value"),
         disableSortBy: true,
         Cell: ({ row }) => {
@@ -364,8 +406,7 @@ const EdcrRuleEntry = () => {
     if (checked) {
       selectedRows.push(value);
       // console.log("selectedRows value "+selectedRows);
-    }
-    else {
+    } else {
       const index = selectedRows.indexOf(value);
       if (index > -1) {
         selectedRows.splice(index, 1);
@@ -376,12 +417,11 @@ const EdcrRuleEntry = () => {
     }
   }
 
-
   //this is for delete rows selected in checkBox
   const deleteItem = async () => {
     const SlabMasterRequest = {
       ids: rowid,
-    }
+    };
     // console.log("rowid value "+rowid);
     if (rowid.length > 0) {
       const DeleterowResp = await Digit.OBPSAdminService.deleteSlabdata(SlabMasterRequest);
@@ -389,16 +429,11 @@ const EdcrRuleEntry = () => {
       if (DeleterowResp > 0) {
         setShowToast({ key: false, label: "Successfully Deleted ", bgcolor: "#4BB543" });
         location.reload();
-      }
-      else {
+      } else {
         setShowToast({ key: true, label: "Fail To Delete", bgcolor: "red" });
       }
-
     }
-  }
-
-
-
+  };
 
   return (
     <Card style={{ position: "relative" }} className={"employeeCard-override"}>
@@ -482,7 +517,6 @@ const EdcrRuleEntry = () => {
       </div>
 
       {modalData ? (
-
         <Modal
           hideSubmit={true}
           isDisabled={false}
@@ -496,9 +530,15 @@ const EdcrRuleEntry = () => {
                 <CloseSvg />
               </span>
             </div>
-            <form >
+            <form>
               <div>
-                <KeyNote noteStyle={{ color: "red", fontSize: "15px", padding: "auto" }} keyValue={t("Note")} note={"Information will not be updated if click other than ok button of this window. Press Tab button to field navigation.* - Required Fields"} />
+                <KeyNote
+                  noteStyle={{ color: "red", fontSize: "15px", padding: "auto" }}
+                  keyValue={t("Note")}
+                  note={
+                    "Information will not be updated if click other than ok button of this window. Press Tab button to field navigation.* - Required Fields"
+                  }
+                />
 
                 <LabelFieldPair>
                   <CardLabel style={{ color: "#000" }}>{`${t("Feature Name*")}`}</CardLabel>
@@ -518,23 +558,22 @@ const EdcrRuleEntry = () => {
                 <LabelFieldPair>
                   <CardLabel style={{ color: "#000" }}>{`${t("Occupancy")}`}</CardLabel>
                   <Dropdown
-                     style={{ width: "100%",height:"2rem" }}
-                     className="form-field"
-                     selected={PyBuildCat}
-                     option={BuildCatdropdown}
-                     select={setPayBuildCat}
-                     value={PyBuildCat}
-                     optionKey="value"
-                     placeholder="Select Occupancy"
-                     name="PyBuildCat"
-                    
+                    style={{ width: "100%", height: "2rem" }}
+                    className="form-field"
+                    selected={PyBuildCat}
+                    option={BuildCatdropdown}
+                    select={setPayBuildCat}
+                    value={PyBuildCat}
+                    optionKey="value"
+                    placeholder="Select Occupancy"
+                    name="PyBuildCat"
                   />
                 </LabelFieldPair>
 
                 <LabelFieldPair>
                   <CardLabel style={{ color: "#000" }}>{`${t("Sub Occupancy")}`}</CardLabel>
                   <Dropdown
-                    style={{ width: "100%",height:"2rem" }}
+                    style={{ width: "100%", height: "2rem" }}
                     className="form-field"
                     selected={PySubCat}
                     option={SubCatdropdown}
@@ -543,7 +582,6 @@ const EdcrRuleEntry = () => {
                     optionKey="value"
                     placeholder="Select Sub Occupancy"
                     name="PySubCat"
-                   
                   />
                 </LabelFieldPair>
 
@@ -657,6 +695,30 @@ const EdcrRuleEntry = () => {
                   />
                 </LabelFieldPair>
 
+                <LabelFieldPair>
+                  <CardLabel style={{ color: "#000" }}>{`${t("Floor Number(0 or -1)")}`}</CardLabel>
+                  <TextInput
+                    isMandatory={true}
+                    name="floornumber"
+                    onChange={(e) => setFloorNumber(e.target.value)}
+                    value={floorNumber}
+                    placeholder="Enter Floor Number"
+                    type="number"
+                  />
+                </LabelFieldPair>
+
+                <LabelFieldPair>
+                  <CardLabel style={{ color: "#000" }}>{`${t("Building Height")}`}</CardLabel>
+                  <TextInput
+                    isMandatory={true}
+                    name="buildingheight"
+                    onChange={(e) => setBuildingHeight(e.target.value)}
+                    value={buildingHeight}
+                    placeholder="Enter Building Height"
+                    type="number"
+                  />
+                </LabelFieldPair>
+
                 {/* <LabelFieldPair>
                   <CardLabel style={{ color: "#000" }}>{`${t("No of Floors")}`}</CardLabel>
                   <TextInput
@@ -721,7 +783,6 @@ const EdcrRuleEntry = () => {
                 </div>
               </div>
             </form>
-
           </div>
         </Modal>
       ) : null}
@@ -735,11 +796,7 @@ const EdcrRuleEntry = () => {
           style={{ backgroundColor: showToast.bgcolor }}
         />
       )}
-
-
-
-
     </Card>
   );
-}
+};
 export default EdcrRuleEntry;
