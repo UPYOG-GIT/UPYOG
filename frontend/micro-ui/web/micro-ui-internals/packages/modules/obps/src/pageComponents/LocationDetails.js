@@ -81,6 +81,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
     t
   );
 
+
   let isEditApplication = window.location.href.includes("editApplication");
   let isSendBackTOCitizen = window.location.href.includes("sendbacktocitizen");
 
@@ -279,7 +280,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
             isMandatory={config.isMandatory}
             options={localities.sort((a, b) => a.name.localeCompare(b.name))}
             selectedOption={selectedLocality}
-            optionKey="i18nkey"
+            optionKey="name"
             onSelect={selectLocality}
             t={t}
             isDependent={true}
