@@ -27,31 +27,31 @@ const EdcrRuleEntry = () => {
   // const [occupancy, setOccupancy] = useState("");
   // const [subOccupancy, setSubOccupancy] = useState("");
   const [occupancy, setOccupancy] = useState({ code: "", value: "null" });
-  const [subOccupancy, setSubOccupancy] = useState({ code: "", value: "null" });
+  const [subOccupancy, setSubOccupancy] = useState({ code: "", value: null });
   const [featureName, setFeatureName] = useState({ code: "", value: "null" });
   const [PyBuildCat, setPyBuildCat] = useState({ code: "", value: "null" });
   // const [PyBuildCat,setPyBuildCat] = useState("");
   const [PySubCat, setPySubCat] = useState({ code: "", value: "null" });
-  const [fromArea, setFromArea] = useState(0);
-  const [toArea, setToArea] = useState(0);
+  const [fromArea, setFromArea] = useState();
+  const [toArea, setToArea] = useState();
   const [PyOperation, setPyOperation] = useState("");
-  const [byLaw, setByLaw] = useState(0);
-  const [noOfFloors, setNoOfFloors] = useState(0);
+  const [byLaw, setByLaw] = useState();
+  const [noOfFloors, setNoOfFloors] = useState();
   const [developmentZone, setDevelopmentZone] = useState({ code: "", value: "null" });
-  const [roadWidth, setRoadWidth] = useState(0);
-  const [depthOrWidth, setDepthOrWidth] = useState(0);
-  const [fromDepth, setFromDepth] = useState(0);
-  const [toDepth, setToDepth] = useState(0);
-  const [fromWidth, setFromWidth] = useState(0);
-  const [toWidth, setToWidth] = useState(0);
-  const [permissibleValue, setPermissibleValue] = useState(0);
-  const [minVal, setMinVal] = useState(0);
-  const [maxVal, setMaxVal] = useState(0);
-  const [floorNumber, setFloorNumber] = useState(0);
-  const [buildingHeight, setBuildingHeight] = useState(0);
-  const [PyIndRate, setPyIndRate] = useState(0);
-  const [PyMultiplyValue, setPyMultiplyValue] = useState(0);
-  const [PyMaxLimit, setPyMaxLimit] = useState(0);
+  const [roadWidth, setRoadWidth] = useState();
+  const [depthOrWidth, setDepthOrWidth] = useState();
+  const [fromDepth, setFromDepth] = useState();
+  const [toDepth, setToDepth] = useState();
+  const [fromWidth, setFromWidth] = useState();
+  const [toWidth, setToWidth] = useState();
+  const [permissibleValue, setPermissibleValue] = useState();
+  const [minVal, setMinVal] = useState();
+  const [maxVal, setMaxVal] = useState();
+  const [floorNumber, setFloorNumber] = useState();
+  const [buildingHeight, setBuildingHeight] = useState();
+  const [PyIndRate, setPyIndRate] = useState();
+  const [PyMultiplyValue, setPyMultiplyValue] = useState();
+  const [PyMaxLimit, setPyMaxLimit] = useState();
   const [PropCatdropdown, setPropCatdropdown] = useState([]);
   const [BuildCatdropdown, setBuildCatdropdown] = useState([]);
   const [SubCatdropdown, setSubCatdropdown] = useState([]);
@@ -218,46 +218,45 @@ const EdcrRuleEntry = () => {
       feature: featureName.value,
       occupancy: PyBuildCat.value,
       sub_occupancy: PySubCat.value,
-      to_area: toArea,
-      from_area: fromArea,
+      to_area: toArea ? toArea : null,
+      from_area: fromArea ? fromArea : null,
       tenant_id: tenantId.split(".").length > 1 ? tenantId.split(".")[1] : tenantId,
-      by_law: byLaw,
+      by_law: byLaw ? byLaw : null,
       permissible_value: permissibleValue,
       development_zone: developmentZone.value,
-      road_width: roadWidth,
-      no_of_floors: noOfFloors,
-      from_depth: fromDepth,
-      to_depth: toDepth,
-      from_width: fromWidth,
-      to_width: toWidth,
-      min_value: minVal,
-      max_value: maxVal,
-      floor_number: floorNumber,
-      building_height: buildingHeight,
+      road_width: roadWidth ? roadWidth : null,
+      no_of_floors: noOfFloors ? noOfFloors : null,
+      from_depth: fromDepth ? fromDepth : null,
+      to_depth: toDepth ? toDepth : null,
+      from_width: fromWidth ? fromWidth : null,
+      to_width: toWidth ? toWidth : null,
+      min_value: minVal ? minVal : null,
+      max_value: maxVal ? maxVal : null,
+      floor_number: floorNumber ? floorNumber : null,
+      building_height: buildingHeight ? buildingHeight : null,
     };
 
     closeModal();
-    setFromArea(0);
-    setToArea(0);
+    setFromArea(null);
+    setToArea(null);
     setPyOperation("");
     setOccupancy("");
-    setFeatureName({ code: "", value: "null" });
-    setDevelopmentZone({ code: "", value: "null" });
+    setFeatureName({ code: "", value: null });
+    setDevelopmentZone({ code: "", value: null });
     setPySubCat("");
-    setByLaw(0);
-    setPermissibleValue(0);
-    setFromDepth(0);
-    setToDepth(0);
-    setFromWidth(0);
-    setToWidth(0);
-    setMaxVal(0);
-    setMinVal(0);
-    setBuildingHeight(0);
-    setFloorNumber(0);
-    setPyIndRate(0);
-    setPyMultiplyValue(0);
-    setPyMaxLimit(0);
-
+    setByLaw(null);
+    setPermissibleValue(null);
+    setFromDepth();
+    setToDepth();
+    setFromWidth(null);
+    setToWidth(null);
+    setMaxVal(null);
+    setMinVal(null);
+    setBuildingHeight(null);
+    setFloorNumber(null);
+    setPyIndRate(null);
+    setPyMultiplyValue(null);
+    setPyMaxLimit(null);
 
     const edcrRuleResponse = await Digit.EDCRService.createEdcrRule(params);
     // const SlabMasterResp = await Digit.OBPSAdminService.createEdcrRule(params);
