@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.bpa.config.BPAConfiguration;
 import org.egov.bpa.repository.NationalDashboardRepository;
 import org.egov.bpa.web.model.Data;
 import org.egov.bpa.web.model.IngestRequest;
@@ -39,6 +40,9 @@ public class NationalDashboardService {
 	NationalDashboardRepository repository;
 	
 	IngestRequest ingestRequest = new IngestRequest();
+	
+	@Autowired
+	BPAConfiguration bpaConfig;
    
 	@Primary
 	@Bean
@@ -57,7 +61,7 @@ public class NationalDashboardService {
 		Data data = new Data();
 
 		List<Map<String, Object>> ingestData = repository.getIngestData();
-		
+		log.info("ingestData" + ingestData);
 		for (Map<String, Object> nationalData : ingestData) {
 
 			
@@ -160,18 +164,16 @@ public class NationalDashboardService {
 		    }
 		    
 		    
-		
-
 			public Map<String, Object> pushDataToApi(String apiUrl) {
-				 log.info("Pushing data to API...");
+				log.info("Pushing data to API...");
 
 				IngestRequest body = getIngestData();
 
 				RequestInfo requestInfo = new RequestInfo();
 				// log.info("bodyy---====" + body);
 
-				Map<String, Object> requestInfoData = getAuthToken("CH_NDA_USER", "upyogTest@123", "password", "read",
-						"pg", "SYSTEM");
+				Map<String, Object> requestInfoData = getAuthToken(bpaConfig.getUsername(), bpaConfig.getPassword(),
+						bpaConfig.getGrantType(), bpaConfig.getScope(), bpaConfig.getTenantId(), bpaConfig.getType());
 
 				log.info("requestInfoData-----------" + requestInfoData);
 
@@ -186,18 +188,11 @@ public class NationalDashboardService {
 				User userInfo = new User();
 
 				userInfo.setUserName((String) userRequest.get("userName"));
-			//	userInfo.setId((Long) userRequest.get("id"));
+				// userInfo.setId((Long) userRequest.get("id"));
 				userInfo.setUuid((String) userRequest.get("uuid"));
 				userInfo.setName((String) userRequest.get("name"));
 				userInfo.setMobileNumber((String) userRequest.get("mobileNumber"));
 				userInfo.setType((String) userRequest.get("type"));
-
-				log.info("accerr " + access_token);
-				log.info("userName" + (String) userRequest.get("userName"));
-				log.info("name" + (String) userRequest.get("name"));
-				log.info("mobileNumber" + (String) userRequest.get("mobileNumber"));
-				// log.info("userName" + (String) userRequest.get("userName"));
-				log.info("type" + (String) userRequest.get("type"));
 
 				requestInfo.setUserInfo(userInfo);
 
@@ -219,8 +214,6 @@ public class NationalDashboardService {
 
 				ingestRequest.setRequestInfo(requestInfo);
 
-				log.info("requestInfo-----------" + requestInfo);
-				log.info("ingestRequest {{{{{" + ingestRequest);
 				HttpHeaders headers = new HttpHeaders();
 				headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -228,8 +221,6 @@ public class NationalDashboardService {
 
 				ResponseEntity<Map> responseEntity = this.restTemplate().exchange(apiUrl, HttpMethod.POST,
 						requestEntity, Map.class);
-
-				log.info("responseENtity+++++++" + responseEntity.getBody());
 
 				Map<String, Object> responseBody = responseEntity.getBody();
 				return responseBody;
@@ -239,7 +230,7 @@ public class NationalDashboardService {
 		    public Map<String, Object> getAuthToken(String username, String password, String grantType, String scope,
 					String tenantId, String userType) {
 
-				String apiUrl = "https://upyog-test.niua.org/user/oauth/token";
+				String authApi = bpaConfig.getAuthApi();
 
 				MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<String, String>();
 
@@ -257,15 +248,9 @@ public class NationalDashboardService {
 
 				HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
 
-				System.out.println("requestEntity" + requestEntity);
-                  
-				log.info("after request entiry " );
-				ResponseEntity<Map> responseEntity = this.restTemplate().exchange(apiUrl, HttpMethod.POST, requestEntity,
+				ResponseEntity<Map> responseEntity = this.restTemplate().exchange(authApi, HttpMethod.POST, requestEntity,
 						Map.class);
 
-				
-				log.info("Response Body: " + responseEntity.getBody());
-				log.info("Response Headers: " + responseEntity.getHeaders());
 				
 				 log.info("Data pushed to API successfully.");
 
@@ -277,8 +262,7 @@ public class NationalDashboardService {
 			public void scheduleDataPush() {
 		    	
 		    	log.info("Scheduled task started...");
-				String apiUrl = "https://upyog-test.niua.org/national-dashboard/metric/_ingest";
-				pushDataToApi(apiUrl);
+				pushDataToApi(bpaConfig.getIngestApi());
 				log.info("Scheduled task completed.");
 		    	
 		    }
