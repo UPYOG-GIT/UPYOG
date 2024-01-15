@@ -18,6 +18,7 @@ import {
   Table,
   BackButton,
   KeyNote,
+  CheckBox,
 } from "@egovernments/digit-ui-react-components";
 
 const EdcrRuleEntry = () => {
@@ -59,6 +60,8 @@ const EdcrRuleEntry = () => {
   const [Slabtblval, setSlabtblval] = useState([]);
   const [allFeatureNameData, setAllFeatureNameData] = useState([]);
   const [showToast, setShowToast] = useState(null);
+  const [multiStory, setMultiStory] = useState(false);
+  const [highRise, setHighRise] = useState(false);
 
   const Operationdropdown = [
     { code: "Multiply", value: "Multiply" },
@@ -179,6 +182,16 @@ const EdcrRuleEntry = () => {
     setSlabtblval(filteredData);
   }, [featureNameType]);
 
+  function highRiseCheck(event) {
+    const isHighRise = event.target.checked;
+    setHighRise(isHighRise);
+  }
+
+  function multiStoryCheck(event) {
+    const isMultiStory = event.target.checked;
+    setMultiStory(isMultiStory);
+  }
+
   const addEdcrRule = async (e) => {
     e.preventDefault();
 
@@ -234,6 +247,9 @@ const EdcrRuleEntry = () => {
       max_value: maxVal ? maxVal : null,
       floor_number: floorNumber ? floorNumber : null,
       building_height: buildingHeight ? buildingHeight : null,
+      createdBy: uuid,
+      high_rise: highRise == true ? "Y" : "N",
+      multi_stories: multiStory == true ? "Y" : "N",
     };
 
     closeModal();
@@ -257,6 +273,8 @@ const EdcrRuleEntry = () => {
     setPyIndRate(null);
     setPyMultiplyValue(null);
     setPyMaxLimit(null);
+    setHighRise(false);
+    setMultiStory(false);
 
     const edcrRuleResponse = await Digit.EDCRService.createEdcrRule(params);
     // const SlabMasterResp = await Digit.OBPSAdminService.createEdcrRule(params);
@@ -310,6 +328,13 @@ const EdcrRuleEntry = () => {
         disableSortBy: true,
         Cell: ({ row }) => {
           return GetCell(`${row.original?.sub_occupancy}`);
+        },
+      },
+      {
+        Header: t("Development Zone"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.development_zone}`);
         },
       },
       {
@@ -383,6 +408,20 @@ const EdcrRuleEntry = () => {
         },
       },
       {
+        Header: t("High Rise Building"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.high_rise}`);
+        },
+      },
+      {
+        Header: t("Multi-Story Building"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.multi_stories}`);
+        },
+      },
+      {
         Header: t("Permissible Value"),
         disableSortBy: true,
         Cell: ({ row }) => {
@@ -435,7 +474,7 @@ const EdcrRuleEntry = () => {
   };
 
   return (
-    <Card style={{ position: "relative" }} className={"employeeCard-override"}>
+    <Card style={{ position: "absolute" }} className={"employeeCard-override"}>
       <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("EDCR Rule Detail")}</Header>
 
       <LabelFieldPair>
@@ -463,7 +502,7 @@ const EdcrRuleEntry = () => {
           return {
             style: {
               padding: "20px 18px",
-              fontSize: "16px",
+              fontSize: "14px",
               borderTop: "1px solid grey",
               textAlign: "left",
               verticalAlign: "middle",
@@ -717,6 +756,18 @@ const EdcrRuleEntry = () => {
                     type="number"
                   />
                 </LabelFieldPair>
+
+                <LabelFieldPair>
+                  <CardLabel style={{ color: "#000" }}>{`${t("High Rise Building")}`}</CardLabel>
+                  <CheckBox onChange={highRiseCheck} checked={highRise} pageType={"employee"} value={highRise} />
+                </LabelFieldPair>
+                <br />
+
+                <LabelFieldPair>
+                  <CardLabel style={{ color: "#000" }}>{`${t("Multi Story Building")}`}</CardLabel>
+                  <CheckBox onChange={multiStoryCheck} checked={multiStory} pageType={"employee"} value={multiStory} />
+                </LabelFieldPair>
+                <br />
 
                 {/* <LabelFieldPair>
                   <CardLabel style={{ color: "#000" }}>{`${t("No of Floors")}`}</CardLabel>
