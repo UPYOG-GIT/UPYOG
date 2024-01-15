@@ -21,6 +21,7 @@ public class NationalDashboardRepository {
     }
 
     public List<Map<String, Object>> getIngestData() {
+    	log.info("inside getigestdata repo");
         String query1 = "SELECT " +
                 "la.locality, " +
                 "la.tenantid, " +

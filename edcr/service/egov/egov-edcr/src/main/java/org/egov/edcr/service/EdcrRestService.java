@@ -1111,31 +1111,46 @@ public class EdcrRestService {
 		String feature = edcrRule.get("feature").toString();
 		String tenantId = edcrRule.get("tenant_id").toString();
 		String developmentZone = edcrRule.get("development_zone").toString();
-		Integer noOfFloors = edcrRule.get("no_of_floors") !=null? (Integer) edcrRule.get("no_of_floors"): null;
-		Double roadWidth = edcrRule.get("road_width")!=null? Double.valueOf(edcrRule.get("road_width").toString()):null;
-		Double permissibleValue = edcrRule.get("permissible_value")!=null? Double.valueOf(edcrRule.get("permissible_value").toString()):null;
+//		Integer noOfFloors = edcrRule.get("no_of_floors") != null ? (Integer) edcrRule.get("no_of_floors") : null;
+		Double roadWidth = edcrRule.get("road_width") != null ? Double.valueOf(edcrRule.get("road_width").toString())
+				: null;
+		Double permissibleValue = edcrRule.get("permissible_value") != null
+				? Double.valueOf(edcrRule.get("permissible_value").toString())
+				: null;
 		String occupancy = edcrRule.get("occupancy").toString();
-		String subOccupancy = edcrRule.get("sub_occupancy")!=null? edcrRule.get("sub_occupancy").toString():null;
-		Double minValue = edcrRule.get("min_value")!=null? Double.valueOf(edcrRule.get("min_value").toString()):null;
-		Double maxValue = edcrRule.get("max_value")!=null ? Double.valueOf(edcrRule.get("max_value").toString()):null;
-		Double to_value = edcrRule.get("to_area")!=null? Double.valueOf(edcrRule.get("to_area").toString()):null;
-		Double from_value = edcrRule.get("from_area")!=null ? Double.valueOf(edcrRule.get("from_area").toString()):null;
-		Double to_depth = edcrRule.get("to_depth")!=null ? Double.valueOf(edcrRule.get("to_depth").toString()):null;
-		Double from_depth = edcrRule.get("from_depth")!=null ? Double.valueOf(edcrRule.get("from_depth").toString()): null;
-		Double to_width = edcrRule.get("to_width")!=null ? Double.valueOf(edcrRule.get("to_width").toString()): null;
-		Double from_width = edcrRule.get("from_width") !=null? Double.valueOf(edcrRule.get("from_width").toString()):null;
-		String by_law = edcrRule.get("by_law")!=null ? edcrRule.get("by_law").toString():null;
-		Integer floorNumber = edcrRule.get("floor_number")!=null ? Integer.parseInt(edcrRule.get("floor_number").toString()): null;
-		Double buildingHeight = edcrRule.get("building_height")!=null ? Double.valueOf(edcrRule.get("building_height").toString()) :null;
+		String subOccupancy = edcrRule.get("sub_occupancy") != null ? edcrRule.get("sub_occupancy").toString() : null;
+		Double minValue = edcrRule.get("min_value") != null ? Double.valueOf(edcrRule.get("min_value").toString())
+				: null;
+		Double maxValue = edcrRule.get("max_value") != null ? Double.valueOf(edcrRule.get("max_value").toString())
+				: null;
+		Double to_value = edcrRule.get("to_area") != null ? Double.valueOf(edcrRule.get("to_area").toString()) : null;
+		Double from_value = edcrRule.get("from_area") != null ? Double.valueOf(edcrRule.get("from_area").toString())
+				: null;
+		Double to_depth = edcrRule.get("to_depth") != null ? Double.valueOf(edcrRule.get("to_depth").toString()) : null;
+		Double from_depth = edcrRule.get("from_depth") != null ? Double.valueOf(edcrRule.get("from_depth").toString())
+				: null;
+		Double to_width = edcrRule.get("to_width") != null ? Double.valueOf(edcrRule.get("to_width").toString()) : null;
+		Double from_width = edcrRule.get("from_width") != null ? Double.valueOf(edcrRule.get("from_width").toString())
+				: null;
+		String by_law = edcrRule.get("by_law") != null ? edcrRule.get("by_law").toString() : null;
+		Integer floorNumber = edcrRule.get("floor_number") != null
+				? Integer.parseInt(edcrRule.get("floor_number").toString())
+				: null;
+		Double buildingHeight = edcrRule.get("building_height") != null
+				? Double.valueOf(edcrRule.get("building_height").toString())
+				: null;
+		String multiStory = edcrRule.get("multi_stories") != null ? edcrRule.get("multi_stories").toString() : null;
+		String highRise = edcrRule.get("high_rise") != null ? edcrRule.get("high_rise").toString() : null;
+		String createdBy = edcrRule.get("createdBy") != null ? edcrRule.get("createdBy").toString() : null;
 
 		String insertQuery = "INSERT INTO demo.edcr_rule_entry(feature, permissible_value, occupancy,"
 				+ " to_area, from_area, by_law, sub_occupancy, tenant_id, development_zone, road_width,"
-				+ " no_of_floors, to_depth, from_depth, to_width, from_width, min_value, max_value, floor_number, building_height)"
+				+ " to_depth, from_depth, to_width, from_width, min_value, max_value, floor_number, building_height, multi_stories, high_rise, createdby, createddate)"
 				+ " VALUES ('" + feature + "','" + permissibleValue + "', '" + occupancy + "'," + to_value + ", "
 				+ from_value + ", '" + by_law + "', '" + subOccupancy + "', '" + tenantId + "', '" + developmentZone
-				+ "', " + roadWidth + ", " + noOfFloors + ", " + to_depth + ",  " + from_depth + ",  "
-				+ to_width + ",  " + from_width + ", " + minValue + ", " + maxValue + ", " + floorNumber
-				+ ", " + buildingHeight + " )";
+				+ "', " + roadWidth + ", " + to_depth + ",  " + from_depth + ",  " + to_width
+				+ ",  " + from_width + ", " + minValue + ", " + maxValue + ", " + floorNumber + ", " + buildingHeight
+				+ ",'" + multiStory + "','" + highRise + "','" + createdBy + "','" + date + "'  )";
 
 		final Query query = getCurrentSession().createSQLQuery(insertQuery);
 		Integer result = query.executeUpdate();
@@ -1284,7 +1299,7 @@ public class EdcrRestService {
 	}
 
 	public List<Map<String, Object>> getEdcrRule(String tenantId, String feature) {
-		String queryString = "SELECT id,feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, tenant_id, development_zone, road_width, no_of_floors, from_depth, to_depth, from_width, to_width, min_value, max_value, floor_number, building_height FROM demo.edcr_rule_entry where feature = '"
+		String queryString = "SELECT id,feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, tenant_id, development_zone, road_width, from_depth, to_depth, from_width, to_width, min_value, max_value, floor_number, building_height, multi_stories, high_rise, createdby FROM demo.edcr_rule_entry where feature = '"
 				+ feature + "' ";
 
 		final Query data = getCurrentSession().createSQLQuery(queryString);
@@ -1299,8 +1314,8 @@ public class EdcrRestService {
 
 	public ArrayList<Map<String, Object>> getEdcrRuleList(String tenantId) {
 		String queryString = "SELECT id, feature, permissible_value, by_law, to_area, from_area, occupancy, sub_occupancy, "
-				+ "tenant_id, development_zone, road_width, no_of_floors, from_depth, to_depth, from_width, to_width, "
-				+ "min_value, max_value, floor_number, building_height FROM demo.edcr_rule_entry";
+				+ "tenant_id, development_zone, road_width, from_depth, to_depth, from_width, to_width, "
+				+ "min_value, max_value, floor_number, building_height, multi_stories, high_rise, createdby FROM demo.edcr_rule_entry";
 
 		final Query data = getCurrentSession().createSQLQuery(queryString);
 
