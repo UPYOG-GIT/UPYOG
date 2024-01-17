@@ -66,13 +66,9 @@ public class NationalDashboardService {
 
 			
 			String ulbName = (String) nationalData.get("ulb_name");
-			log.info("ulbName" + ulbName);
-			
+		
 			String ulb = "ch." + ulbName.trim().toLowerCase().replaceAll("\\s", "").replaceAll("-", "");
-			log.info("ulb---" + ulb);
-			System.out.println("ulb---" + ulb);
-			
-			data.setUlb(ulb);
+						data.setUlb(ulb);
 			data.setDate(formattedDate);
 			data.setModule("OBPAS");
 			data.setWard((String) nationalData.get("locality"));
@@ -258,7 +254,7 @@ public class NationalDashboardService {
 
 			}
 		    
-		    @Scheduled (cron = "0 0 0 * * ?")
+		    @Scheduled(cron = "0 59 23 * * ?")
 			public void scheduleDataPush() {
 		    	
 		    	log.info("Scheduled task started...");
