@@ -58,6 +58,8 @@ public class NationalDashboardService {
 
 		LocalDate currentDate = LocalDate.now();
 		String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+		
+		
 		Data data = new Data();
 
 		List<Map<String, Object>> ingestData = repository.getIngestData();
@@ -97,7 +99,7 @@ public class NationalDashboardService {
 			metrics.put("todaysApprovedApplications", nationalData.get("todaysApprovedApplicationsWithinSLA"));
 			metrics.put("todaysApprovedApplicationsWithinSLA", nationalData.get("todaysApprovedApplicationsWithinSLA"));
 			metrics.put("avgDaysForApplicationApproval", 0);
-			metrics.put("StipulatedDays", nationalData.get("tenantid"));
+			metrics.put("StipulatedDays", 0);
 
 			List<Map<String, Object>> todaysCollection = new ArrayList<>();
 
@@ -254,7 +256,7 @@ public class NationalDashboardService {
 
 			}
 		    
-		    @Scheduled(cron = "0 59 23 * * ?")
+		    @Scheduled(cron = "0 59 23 * * ?")	  
 			public void scheduleDataPush() {
 		    	
 		    	log.info("Scheduled task started...");

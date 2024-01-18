@@ -46,6 +46,7 @@ public class NationalDashboardRepository {
                 + "ORDER BY "
                 + "la.locality";
 
+
   System.out.println("query1111111" + query1);
 
         return jdbcTemplate.queryForList(query1);
