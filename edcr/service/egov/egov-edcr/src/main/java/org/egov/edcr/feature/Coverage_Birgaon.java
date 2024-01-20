@@ -190,7 +190,7 @@ public class Coverage_Birgaon extends Coverage {
 				&& developmentZone != null) {
 //			occupancyType = mostRestrictiveOccupancy.getType().getCode();
 			if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForResidential(plotBoundaryArea, developmentZone, noOfFloors);
+//				permissibleCoverageValue = getPermissibleCoverageForResidential(plotBoundaryArea, developmentZone, noOfFloors);
 			} else if (F.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
 				permissibleCoverageValue = getPermissibleCoverageForCommercial(plotBoundaryArea, developmentZone, noOfFloors);
 			} else if (J.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
@@ -200,7 +200,7 @@ public class Coverage_Birgaon extends Coverage {
 			}
 		}
 
-		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0) {
+		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0 || A.equals(mostRestrictiveOccupancy.getType().getCode())) {
 			processCoverage(pl, mostRestrictiveOccupancy.getType().getName(), totalCoverage, permissibleCoverageValue,
 					developmentZone);
 		}
@@ -290,24 +290,34 @@ public class Coverage_Birgaon extends Coverage {
 		scrutinyDetail.setHeading("Coverage in Percentage");
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, DEVELOPMENT_ZONE);
-		scrutinyDetail.addColumnHeading(3, DESCRIPTION);
+		
 		scrutinyDetail.addColumnHeading(4, OCCUPANCY);
-		scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
+		
 		scrutinyDetail.addColumnHeading(6, PROVIDED);
 		scrutinyDetail.addColumnHeading(7, STATUS);
+		
+		if(!occupancy.equalsIgnoreCase("Residential")) {
+			scrutinyDetail.addColumnHeading(3, DESCRIPTION);
+			scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
+		}
 
 		String desc = getLocaleMessage(RULE_DESCRIPTION_KEY, upperLimit.toString());
 		String actualResult = getLocaleMessage(RULE_ACTUAL_KEY, coverage.toString());
 		String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY, upperLimit.toString());
-		if (coverage.doubleValue() <= upperLimit.doubleValue()) {
+		if (coverage.doubleValue() <= upperLimit.doubleValue() || occupancy.equalsIgnoreCase("Residential")) {
 			Map<String, String> details = new HashMap<>();
 			details.put(RULE_NO, RULE_18_9);
 			details.put(DEVELOPMENT_ZONE, developmentZone);
-			details.put(DESCRIPTION, desc);
+			
 			details.put(OCCUPANCY, occupancy);
-			details.put(PERMISSIBLE, expectedResult);
+			
 			details.put(PROVIDED, actualResult);
 			details.put(STATUS, Result.Accepted.getResultVal());
+			
+			if(!occupancy.equalsIgnoreCase("Residential")) {
+				details.put(DESCRIPTION, desc);
+				details.put(PERMISSIBLE, expectedResult);
+			}
 			scrutinyDetail.getDetail().add(details);
 			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
@@ -315,11 +325,14 @@ public class Coverage_Birgaon extends Coverage {
 			Map<String, String> details = new HashMap<>();
 			details.put(RULE_NO, RULE_18_9);
 			details.put(DEVELOPMENT_ZONE, developmentZone);
-			details.put(DESCRIPTION, desc);
 			details.put(OCCUPANCY, occupancy);
-			details.put(PERMISSIBLE, expectedResult);
 			details.put(PROVIDED, actualResult);
 			details.put(STATUS, Result.Not_Accepted.getResultVal());
+			
+			if(!occupancy.equalsIgnoreCase("Residential")) {
+				details.put(DESCRIPTION, desc);
+				details.put(PERMISSIBLE, expectedResult);
+			}
 			scrutinyDetail.getDetail().add(details);
 			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
