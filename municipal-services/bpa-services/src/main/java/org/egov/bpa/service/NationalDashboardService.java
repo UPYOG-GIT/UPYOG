@@ -58,6 +58,8 @@ public class NationalDashboardService {
 
 		LocalDate currentDate = LocalDate.now();
 		String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+		
+		
 		Data data = new Data();
 
 		List<Map<String, Object>> ingestData = repository.getIngestData();
@@ -66,13 +68,9 @@ public class NationalDashboardService {
 
 			
 			String ulbName = (String) nationalData.get("ulb_name");
-			log.info("ulbName" + ulbName);
-			
+		
 			String ulb = "ch." + ulbName.trim().toLowerCase().replaceAll("\\s", "").replaceAll("-", "");
-			log.info("ulb---" + ulb);
-			System.out.println("ulb---" + ulb);
-			
-			data.setUlb(ulb);
+						data.setUlb(ulb);
 			data.setDate(formattedDate);
 			data.setModule("OBPAS");
 			data.setWard((String) nationalData.get("locality"));
@@ -101,7 +99,7 @@ public class NationalDashboardService {
 			metrics.put("todaysApprovedApplications", nationalData.get("todaysApprovedApplicationsWithinSLA"));
 			metrics.put("todaysApprovedApplicationsWithinSLA", nationalData.get("todaysApprovedApplicationsWithinSLA"));
 			metrics.put("avgDaysForApplicationApproval", 0);
-			metrics.put("StipulatedDays", nationalData.get("tenantid"));
+			metrics.put("StipulatedDays", 0);
 
 			List<Map<String, Object>> todaysCollection = new ArrayList<>();
 
@@ -258,7 +256,7 @@ public class NationalDashboardService {
 
 			}
 		    
-		    @Scheduled (cron = "0 0 0 * * ?")
+		    @Scheduled(cron = "0 59 23 * * ?")	  
 			public void scheduleDataPush() {
 		    	
 		    	log.info("Scheduled task started...");
