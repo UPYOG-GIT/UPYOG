@@ -3,6 +3,7 @@ package org.egov.bpa.service;
 
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -58,12 +60,15 @@ public class NationalDashboardService {
 
 		LocalDate currentDate = LocalDate.now();
 		String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-		
-		
+//		
+//		int targetYear = 2023;
+//
+//		LocalDate specificDate = LocalDate.of(targetYear, Month.APRIL, 28);
+//		String formattedDate = specificDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 		Data data = new Data();
 
 		List<Map<String, Object>> ingestData = repository.getIngestData();
-		log.info("ingestData" + ingestData);
+		log.info("ingestData from repository" + ingestData);
 		for (Map<String, Object> nationalData : ingestData) {
 
 			
@@ -72,7 +77,7 @@ public class NationalDashboardService {
 			String ulb = "ch." + ulbName.trim().toLowerCase().replaceAll("\\s", "").replaceAll("-", "");
 						data.setUlb(ulb);
 			data.setDate(formattedDate);
-			data.setModule("OBPAS");
+			data.setModule("OBPS");
 			data.setWard((String) nationalData.get("locality"));
 			data.setRegion((String) nationalData.get("tenantId"));
 			data.setState("Chhattisgarh");
@@ -99,7 +104,7 @@ public class NationalDashboardService {
 			metrics.put("todaysApprovedApplications", nationalData.get("todaysApprovedApplicationsWithinSLA"));
 			metrics.put("todaysApprovedApplicationsWithinSLA", nationalData.get("todaysApprovedApplicationsWithinSLA"));
 			metrics.put("avgDaysForApplicationApproval", 0);
-			metrics.put("StipulatedDays", 0);
+			metrics.put("StipulatedDays",0);
 
 			List<Map<String, Object>> todaysCollection = new ArrayList<>();
 
@@ -143,6 +148,8 @@ public class NationalDashboardService {
 			data.setMetrics(metrics);
 			 dataList.add(data);
 			ingestRequest.setIngestData(dataList);
+			
+			log.info("dataList which will be pushed ---" + dataList);
 		    //ingestRequest.setRequestInfo(requestInfo);
 			
 			//pushDataToApi(apiUrl, ingestRequest);
@@ -219,6 +226,20 @@ public class NationalDashboardService {
 
 				ResponseEntity<Map> responseEntity = this.restTemplate().exchange(apiUrl, HttpMethod.POST,
 						requestEntity, Map.class);
+				
+				HttpStatus statusCode = responseEntity.getStatusCode();
+				int statusCodeValue = statusCode.value();
+
+				System.out.println("HTTP Status Code: " + statusCodeValue);
+
+				// You can also check the status code to take appropriate actions
+				if (statusCode.is2xxSuccessful()) {
+				  log.info("----Data Pushed Successfully----");
+				} else if (statusCode.is4xxClientError()) {
+				   log.info("----4xx error----");
+				} else if (statusCode.is5xxServerError()) {
+					  log.info("----Internal server error---- or Duplicate data found");
+				}
 
 				Map<String, Object> responseBody = responseEntity.getBody();
 				return responseBody;
@@ -249,21 +270,21 @@ public class NationalDashboardService {
 				ResponseEntity<Map> responseEntity = this.restTemplate().exchange(authApi, HttpMethod.POST, requestEntity,
 						Map.class);
 
-				
-				 log.info("Data pushed to API successfully.");
+			
 
 				return responseEntity.getBody();
 
 			}
 		    
-		    @Scheduled(cron = "0 59 23 * * ?")	  
-			public void scheduleDataPush() {
-		    	
-		    	log.info("Scheduled task started...");
-				pushDataToApi(bpaConfig.getIngestApi());
-				log.info("Scheduled task completed.");
-		    	
-		    }
-		    
+//		    @Scheduled(cron = "0 59 23 * * ?")
+//		    @Scheduled(cron = "0 */5 * * * ?")
+//			public void scheduleDataPush() {
+//		    	
+//		    	log.info("Scheduled task started...");
+//				pushDataToApi(bpaConfig.getIngestApi());
+//				log.info("Scheduled task completed.");
+//		    	
+//		    }
+//		    
 		    
 }
