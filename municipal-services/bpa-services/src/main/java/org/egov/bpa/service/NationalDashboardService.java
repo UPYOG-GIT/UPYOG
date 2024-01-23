@@ -65,11 +65,12 @@ public class NationalDashboardService {
 //
 //		LocalDate specificDate = LocalDate.of(targetYear, Month.APRIL, 28);
 //		String formattedDate = specificDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-		Data data = new Data();
+		
 
 		List<Map<String, Object>> ingestData = repository.getIngestData();
 		log.info("ingestData from repository" + ingestData);
 		for (Map<String, Object> nationalData : ingestData) {
+			Data data = new Data();
 
 			
 			String ulbName = (String) nationalData.get("ulb_name");
