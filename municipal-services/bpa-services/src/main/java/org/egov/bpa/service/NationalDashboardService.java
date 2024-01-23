@@ -132,6 +132,17 @@ public class NationalDashboardService {
 
 
 	            occupancy.put("buckets", occupancyBuckets);
+	            
+	        	Map<String, Object> subOccupancy = new LinkedHashMap<>();
+				subOccupancy.put("groupBy", "subOccupancyType");
+
+				List<Map<String, Object>> subOccupancyBuckets = new ArrayList<>();
+				subOccupancyBuckets.add(createBucket("Residential.individual", nationalData.get("residential")));
+				subOccupancyBuckets.add(createBucket("Residential.shared", 0));
+				subOccupancyBuckets.add(createBucket("Institutional.shared", 0));
+				
+
+				subOccupancy.put("buckets", subOccupancyBuckets);
 
 	            Map<String, Object> permits = new LinkedHashMap<>();
 	            permits.put("groupBy", "riskType");
@@ -144,7 +155,7 @@ public class NationalDashboardService {
 	            permits.put("buckets", riskTypeBuckets);
 
 			metrics.put("todaysCollection", todaysCollection);
-			metrics.put("permitIssued", Arrays.asList(occupancy, permits));
+			metrics.put("permitIssued", Arrays.asList(occupancy, subOccupancy, permits));
 
 			data.setMetrics(metrics);
 			 dataList.add(data);
