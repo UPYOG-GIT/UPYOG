@@ -126,7 +126,7 @@ public class Coverage_Birgaon extends Coverage {
 		BigDecimal totalCoverageArea = BigDecimal.ZERO;
 //		BigDecimal area = pl.getPlot().getArea(); // add for get total plot area
 		BigDecimal plotBoundaryArea = pl.getPlot().getPlotBndryArea(); // add for get total plot area
-		
+
 		int noOfFloors = 0;
 
 		// add for getting OccupancyType
@@ -138,9 +138,8 @@ public class Coverage_Birgaon extends Coverage {
 
 			BigDecimal coverageAreaWithoutDeduction = BigDecimal.ZERO;
 			BigDecimal coverageDeductionArea = BigDecimal.ZERO;
-			
+
 			noOfFloors = block.getBuilding().getFloors().size();
-			
 
 			for (Measurement coverage : block.getCoverage()) {
 				coverageAreaWithoutDeduction = coverageAreaWithoutDeduction.add(coverage.getArea());
@@ -190,17 +189,20 @@ public class Coverage_Birgaon extends Coverage {
 				&& developmentZone != null) {
 //			occupancyType = mostRestrictiveOccupancy.getType().getCode();
 			if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForResidential(plotBoundaryArea, developmentZone, noOfFloors);
+//				permissibleCoverageValue = getPermissibleCoverageForResidential(plotBoundaryArea, developmentZone, noOfFloors);
 			} else if (F.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForCommercial(plotBoundaryArea, developmentZone, noOfFloors);
+//				permissibleCoverageValue = getPermissibleCoverageForCommercial(plotBoundaryArea, developmentZone, noOfFloors);
 			} else if (J.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForGovernment(plotBoundaryArea, developmentZone, noOfFloors);
-			}  else if (G.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
+				permissibleCoverageValue = getPermissibleCoverageForGovernment(plotBoundaryArea, developmentZone,
+						noOfFloors);
+			} else if (G.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
 				permissibleCoverageValue = getPermissibleCoverageForIndustrial();
 			}
 		}
 
-		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0) {
+		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0
+				|| A.equals(mostRestrictiveOccupancy.getType().getCode())
+				|| F.equals(mostRestrictiveOccupancy.getType().getCode())) {
 			processCoverage(pl, mostRestrictiveOccupancy.getType().getName(), totalCoverage, permissibleCoverageValue,
 					developmentZone);
 		}
@@ -222,20 +224,20 @@ public class Coverage_Birgaon extends Coverage {
 	private BigDecimal getPermissibleCoverageForResidential(BigDecimal area, String developmentZone, int noOfFloors) {
 		LOG.info("inside getPermissibleCoverageForResidential()");
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
-	   
-			if (area.compareTo(BigDecimal.valueOf(240)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(60);
-			} else if (area.compareTo(BigDecimal.valueOf(240)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(50);
-			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(40);
-			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(4000)) <= 0 && noOfFloors > 1) {
-				permissibleCoverage = BigDecimal.valueOf(35);
-			} else if (area.compareTo(BigDecimal.valueOf(4000)) > 0 && noOfFloors > 1) {
-				permissibleCoverage = BigDecimal.valueOf(30);
-			};
-			
-	
+
+		if (area.compareTo(BigDecimal.valueOf(240)) <= 0) {
+			permissibleCoverage = BigDecimal.valueOf(60);
+		} else if (area.compareTo(BigDecimal.valueOf(240)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
+			permissibleCoverage = BigDecimal.valueOf(50);
+		} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+			permissibleCoverage = BigDecimal.valueOf(40);
+		} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(4000)) <= 0
+				&& noOfFloors > 1) {
+			permissibleCoverage = BigDecimal.valueOf(35);
+		} else if (area.compareTo(BigDecimal.valueOf(4000)) > 0 && noOfFloors > 1) {
+			permissibleCoverage = BigDecimal.valueOf(30);
+		}
+		;
 
 		return permissibleCoverage;
 	}
@@ -247,67 +249,75 @@ public class Coverage_Birgaon extends Coverage {
 	private BigDecimal getPermissibleCoverageForCommercial(BigDecimal area, String developmentZone, int noOfFloors) {
 		LOG.info("inside getPermissibleCoverageForCommercial()");
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
-	
-			 if (area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(60);
-			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0 ) {
-				permissibleCoverage = BigDecimal.valueOf(50);
-			} 
-		
+
+		if (area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+			permissibleCoverage = BigDecimal.valueOf(60);
+		} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
+			permissibleCoverage = BigDecimal.valueOf(50);
+		}
+
 		return permissibleCoverage;
 	}
-	
+
 	private BigDecimal getPermissibleCoverageForIndustrial() {
 		LOG.info("inside getPermissibleCoverageForIndustrial()");
-		
+
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
 		permissibleCoverage = BigDecimal.valueOf(60);
-			
+
 		return permissibleCoverage;
 	}
-	
-	
-	
+
 	private BigDecimal getPermissibleCoverageForGovernment(BigDecimal area, String developmentZone, int noOfFloors) {
 		LOG.info("inside getPermissibleCoverageForGovernment()");
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
-	   
-			if (area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-				permissibleCoverage = BigDecimal.valueOf(40);
-			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0 ) {
-				permissibleCoverage = BigDecimal.valueOf(30);
-			} 
-			
-	
+
+		if (area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+			permissibleCoverage = BigDecimal.valueOf(40);
+		} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
+			permissibleCoverage = BigDecimal.valueOf(30);
+		}
 
 		return permissibleCoverage;
 	}
 
-	private void processCoverage(Plan pl, String occupancy, BigDecimal coverage, BigDecimal upperLimit, String developmentZone) {
+	private void processCoverage(Plan pl, String occupancy, BigDecimal coverage, BigDecimal upperLimit,
+			String developmentZone) {
 		LOG.info("inside processCoverage()");
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.setKey("Common_Coverage");
 		scrutinyDetail.setHeading("Coverage in Percentage");
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, DEVELOPMENT_ZONE);
-		scrutinyDetail.addColumnHeading(3, DESCRIPTION);
+
 		scrutinyDetail.addColumnHeading(4, OCCUPANCY);
-		scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
+
 		scrutinyDetail.addColumnHeading(6, PROVIDED);
 		scrutinyDetail.addColumnHeading(7, STATUS);
+
+		if (!(occupancy.equalsIgnoreCase("Residential") || occupancy.equalsIgnoreCase("Mercantile / Commercial"))) {
+			scrutinyDetail.addColumnHeading(3, DESCRIPTION);
+			scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
+		}
 
 		String desc = getLocaleMessage(RULE_DESCRIPTION_KEY, upperLimit.toString());
 		String actualResult = getLocaleMessage(RULE_ACTUAL_KEY, coverage.toString());
 		String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY, upperLimit.toString());
-		if (coverage.doubleValue() <= upperLimit.doubleValue()) {
+		if (coverage.doubleValue() <= upperLimit.doubleValue() || occupancy.equalsIgnoreCase("Residential")
+				|| occupancy.equalsIgnoreCase("Mercantile / Commercial")) {
 			Map<String, String> details = new HashMap<>();
 			details.put(RULE_NO, RULE_18_9);
 			details.put(DEVELOPMENT_ZONE, developmentZone);
-			details.put(DESCRIPTION, desc);
+
 			details.put(OCCUPANCY, occupancy);
-			details.put(PERMISSIBLE, expectedResult);
+
 			details.put(PROVIDED, actualResult);
 			details.put(STATUS, Result.Accepted.getResultVal());
+
+			if (!(occupancy.equalsIgnoreCase("Residential") || occupancy.equalsIgnoreCase("Mercantile / Commercial"))) {
+				details.put(DESCRIPTION, desc);
+				details.put(PERMISSIBLE, expectedResult);
+			}
 			scrutinyDetail.getDetail().add(details);
 			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
@@ -315,11 +325,14 @@ public class Coverage_Birgaon extends Coverage {
 			Map<String, String> details = new HashMap<>();
 			details.put(RULE_NO, RULE_18_9);
 			details.put(DEVELOPMENT_ZONE, developmentZone);
-			details.put(DESCRIPTION, desc);
 			details.put(OCCUPANCY, occupancy);
-			details.put(PERMISSIBLE, expectedResult);
 			details.put(PROVIDED, actualResult);
 			details.put(STATUS, Result.Not_Accepted.getResultVal());
+
+			if (!(occupancy.equalsIgnoreCase("Residential") || occupancy.equalsIgnoreCase("Mercantile / Commercial"))) {
+				details.put(DESCRIPTION, desc);
+				details.put(PERMISSIBLE, expectedResult);
+			}
 			scrutinyDetail.getDetail().add(details);
 			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
