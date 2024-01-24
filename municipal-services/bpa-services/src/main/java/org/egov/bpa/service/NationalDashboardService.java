@@ -147,7 +147,7 @@ public class NationalDashboardService {
 				subOccupancyBuckets.add(createBucket("COMMERCIAL.SHARED", 0));
 				subOccupancyBuckets.add(createBucket("COMMERCIAL.INDIVIDUAL", 0));
 				subOccupancyBuckets.add(createBucket("INDUSTRIAL.INDIVIDUAL", 0));
-				subOccupancyBuckets.add(createBucket("INDUSTRIAL.INDIVIDUAL.SHARED", 0));
+				subOccupancyBuckets.add(createBucket("INDUSTRIAL.SHARED", 0));
 				subOccupancyBuckets.add(createBucket("MIXED.INDIVIDUAL", 0));
 				subOccupancyBuckets.add(createBucket("MIXED.SHARED", 0));
 
