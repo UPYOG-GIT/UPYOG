@@ -189,6 +189,9 @@ public class Far_Birgaon extends Far {
 		Set<OccupancyTypeHelper> distinctOccupancyTypesHelper = new HashSet<>();
 		String developmentZone = pl.getPlanInformation().getDevelopmentZone();
 		BigDecimal area = pl.getPlot().getPlotBndryArea();
+
+		Set<OccupancyTypeHelper> occupancyByBlock = new HashSet<>();
+
 		for (Block blk : pl.getBlocks()) {
 			BigDecimal flrArea = BigDecimal.ZERO;
 			BigDecimal bltUpArea = BigDecimal.ZERO;
@@ -247,10 +250,10 @@ public class Far_Birgaon extends Far {
 			totalExistingCarpetArea = totalExistingCarpetArea.add(existingCarpetArea);
 
 			// Find Occupancies by block and add
-			Set<OccupancyTypeHelper> occupancyByBlock = new HashSet<>();
+
 			for (Floor flr : building.getFloors()) {
 				for (Occupancy occupancy : flr.getOccupancies()) {
-					if (occupancy.getTypeHelper() != null)
+					if (occupancy.getTypeHelper() != null && occupancy.getTypeHelper().getType() != null)
 						occupancyByBlock.add(occupancy.getTypeHelper());
 				}
 			}
@@ -662,31 +665,29 @@ public class Far_Birgaon extends Far {
 		if (mostRestrictiveOccupancyType != null && StringUtils.isNotBlank(typeOfArea) && roadWidth != null
 //                && !processFarForSpecialOccupancy(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs)
 		) {
-			if ((mostRestrictiveOccupancyType.getType() != null
+			if (occupancyByBlock != null && occupancyByBlock.size() > 1) {
+				processFarMix(pl, "Mix", providedFar, typeOfArea, roadWidth, errorMsgs, developmentZone, area);
+			} else if ((mostRestrictiveOccupancyType.getType() != null
 					&& DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode()))
 					|| (mostRestrictiveOccupancyType.getSubtype() != null
 							&& (A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())
 									|| A_AF.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())))) {
-				processFarResidential(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs, developmentZone, area);
-			}
-			if (mostRestrictiveOccupancyType.getType() != null
+				processFarResidential(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs,
+						developmentZone, area);
+			} else if (mostRestrictiveOccupancyType.getType() != null
 					&& (DxfFileConstants.G.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
 							|| DxfFileConstants.B.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
 							|| DxfFileConstants.D.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode()))) {
-				processFarIndustrial(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs, developmentZone, area);
-			}
-//            if (mostRestrictiveOccupancyType.getType() != null
-//                    && DxfFileConstants.I.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-//                processFarHaazardous(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs);
-//            }
-			if (mostRestrictiveOccupancyType.getType() != null
+				processFarIndustrial(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs,
+						developmentZone, area);
+			} else if (mostRestrictiveOccupancyType.getType() != null
 					&& DxfFileConstants.F.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-				processFarCommercial(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs, developmentZone, area);
-			}
-			
-			if (mostRestrictiveOccupancyType.getType() != null
+				processFarCommercial(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs,
+						developmentZone, area);
+			} else if (mostRestrictiveOccupancyType.getType() != null
 					&& DxfFileConstants.J.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-				processFarGovernment(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs, developmentZone, area);
+				processFarGovernment(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs,
+						developmentZone, area);
 			}
 		}
 		ProcessPrintHelper.print(pl);
@@ -944,38 +945,34 @@ public class Far_Birgaon extends Far {
 
 		String expectedResult = StringUtils.EMPTY;
 		boolean isAccepted = false;
-		 BigDecimal permissibleFar = BigDecimal.ZERO;
+		BigDecimal permissibleFar = BigDecimal.ZERO;
 //
 //		isAccepted = far.compareTo(ONE_POINTTWOFIVE) <= 0;
 //		pl.getFarDetails().setPermissableFar(ONE_POINTTWOFIVE.doubleValue());
-	
+
 //
 		switch (developmentZone) {
 		case "CA":
-			if (area.compareTo(BigDecimal.valueOf(1000)) <= 0 )
-			{
-				 pl.getFarDetails().setPermissableFar(TWO.doubleValue());
-				 permissibleFar = BigDecimal.valueOf(2.0);
-			
-		
+			if (area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+				pl.getFarDetails().setPermissableFar(TWO.doubleValue());
+				permissibleFar = BigDecimal.valueOf(2.0);
+
 			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
 				pl.getFarDetails().setPermissableFar(TWO_POINTFIVE.doubleValue());
-				 permissibleFar = BigDecimal.valueOf(2.5);
+				permissibleFar = BigDecimal.valueOf(2.5);
 			}
-			
+
 			break;
-			
+
 		case "DA-01":
 
-			if (area.compareTo(BigDecimal.valueOf(1000)) <= 0 )
-			{
-				 pl.getFarDetails().setPermissableFar(TWO.doubleValue());
-				 permissibleFar = BigDecimal.valueOf(2.0);
-			
-		
+			if (area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+				pl.getFarDetails().setPermissableFar(TWO.doubleValue());
+				permissibleFar = BigDecimal.valueOf(2.0);
+
 			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
 				pl.getFarDetails().setPermissableFar(TWO_POINTFIVE.doubleValue());
-				 permissibleFar = BigDecimal.valueOf(2.5);
+				permissibleFar = BigDecimal.valueOf(2.5);
 			}
 			break;
 
@@ -983,30 +980,30 @@ public class Far_Birgaon extends Far {
 
 			if (area.compareTo(BigDecimal.valueOf(500)) <= 0) {
 				pl.getFarDetails().setPermissableFar(ONE_POINTEIGHT.doubleValue());
-				 permissibleFar = BigDecimal.valueOf(1.8);
-			
+				permissibleFar = BigDecimal.valueOf(1.8);
+
 			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
 				pl.getFarDetails().setPermissableFar(TWO.doubleValue());
-				 permissibleFar = BigDecimal.valueOf(2);
-			
+				permissibleFar = BigDecimal.valueOf(2);
+
 			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
 				pl.getFarDetails().setPermissableFar(TWO_POINTFIVE.doubleValue());
-				 permissibleFar = BigDecimal.valueOf(2.5);
+				permissibleFar = BigDecimal.valueOf(2.5);
 			}
 			break;
 		case "DA-03":
 
 			if (area.compareTo(BigDecimal.valueOf(500)) <= 0) {
 				pl.getFarDetails().setPermissableFar(ONE_POINTEIGHT.doubleValue());
-				 permissibleFar = BigDecimal.valueOf(1.8);
-			
+				permissibleFar = BigDecimal.valueOf(1.8);
+
 			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
 				pl.getFarDetails().setPermissableFar(TWO.doubleValue());
-				 permissibleFar = BigDecimal.valueOf(2);
-			
+				permissibleFar = BigDecimal.valueOf(2);
+
 			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
 				pl.getFarDetails().setPermissableFar(TWO_POINTFIVE.doubleValue());
-				 permissibleFar = BigDecimal.valueOf(2.5);
+				permissibleFar = BigDecimal.valueOf(2.5);
 			}
 			break;
 
@@ -1019,8 +1016,6 @@ public class Far_Birgaon extends Far {
 		}
 
 	}
-		
-	
 
 	// FAR values changed according to Commercial
 	private void processFarCommercial(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
@@ -1028,7 +1023,7 @@ public class Far_Birgaon extends Far {
 
 		String expectedResult = StringUtils.EMPTY;
 		boolean isAccepted = false;
-		 BigDecimal permissibleFar = BigDecimal.ZERO;
+		BigDecimal permissibleFar = BigDecimal.ZERO;
 //
 //		isAccepted = far.compareTo(ONE_POINTFIVE) <= 0;
 //		pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
@@ -1038,77 +1033,95 @@ public class Far_Birgaon extends Far {
 //		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
 //			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
 //		}
-		
-		
+
 		switch (developmentZone) {
-		case "CA" :
-			if (area.compareTo(BigDecimal.valueOf(1000)) <= 0 )
-			{
-				 pl.getFarDetails().setPermissableFar(TWO.doubleValue());
-				 permissibleFar = BigDecimal.valueOf(2.0);
-			
-		
+		case "CA":
+			if (area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+				pl.getFarDetails().setPermissableFar(TWO.doubleValue());
+				permissibleFar = BigDecimal.valueOf(2.0);
+
 			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
 				pl.getFarDetails().setPermissableFar(TWO_POINTFIVE.doubleValue());
+				permissibleFar = BigDecimal.valueOf(2.5);
 			}
 			break;
-			
-		case "DA-01" : 
-			
-			if (area.compareTo(BigDecimal.valueOf(1000)) <= 0 )
-			{
-				 pl.getFarDetails().setPermissableFar(TWO.doubleValue());
-				 permissibleFar = BigDecimal.valueOf(2.0);
-			
-		
+
+		case "DA-01":
+
+			if (area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+				pl.getFarDetails().setPermissableFar(TWO.doubleValue());
+				permissibleFar = BigDecimal.valueOf(2.0);
+
 			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
 				pl.getFarDetails().setPermissableFar(TWO_POINTFIVE.doubleValue());
+				permissibleFar = BigDecimal.valueOf(2.5);
 			}
-				break;
-				
-		case "DA-02" : 
-			
+			break;
+
+		case "DA-02":
+
 			if (area.compareTo(BigDecimal.valueOf(500)) <= 0) {
 				pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
-				 permissibleFar = BigDecimal.valueOf(1.5);
-			
+				permissibleFar = BigDecimal.valueOf(1.5);
+
 			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
 				pl.getFarDetails().setPermissableFar(TWO.doubleValue());
-				 permissibleFar = BigDecimal.valueOf(2);
-			
+				permissibleFar = BigDecimal.valueOf(2);
+
 			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
 				pl.getFarDetails().setPermissableFar(TWO_POINTFIVE.doubleValue());
-				 permissibleFar = BigDecimal.valueOf(2.5);
+				permissibleFar = BigDecimal.valueOf(2.5);
 			}
-				break;
-				
-				
-			case "DA-03" : 
-				
-				if (area.compareTo(BigDecimal.valueOf(500)) <= 0) {
-					pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
-					 permissibleFar = BigDecimal.valueOf(1.5);
-				
-				} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-					pl.getFarDetails().setPermissableFar(TWO.doubleValue());
-					 permissibleFar = BigDecimal.valueOf(2);
-				
-				} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
-					pl.getFarDetails().setPermissableFar(TWO_POINTFIVE.doubleValue());
-					 permissibleFar = BigDecimal.valueOf(2.5);
-				}
-					break;
-		
-	}
+			break;
+
+		case "DA-03":
+
+			if (area.compareTo(BigDecimal.valueOf(500)) <= 0) {
+				pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
+				permissibleFar = BigDecimal.valueOf(1.5);
+
+			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+				pl.getFarDetails().setPermissableFar(TWO.doubleValue());
+				permissibleFar = BigDecimal.valueOf(2);
+
+			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
+				pl.getFarDetails().setPermissableFar(TWO_POINTFIVE.doubleValue());
+				permissibleFar = BigDecimal.valueOf(2.5);
+			}
+			break;
+
+		}
 		isAccepted = far.compareTo(permissibleFar) <= 0;
 		expectedResult = "<= " + permissibleFar;
 		String occupancyName = occupancyType.getType().getName();
 		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
 			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
 		}
-		
-	
-	
+
+	}
+
+	private void processFarMix(Plan pl, String occupancyName, BigDecimal far, String typeOfArea, BigDecimal roadWidth,
+			HashMap<String, String> errors, String developmentZone, BigDecimal area) {
+
+		String expectedResult = StringUtils.EMPTY;
+		boolean isAccepted = false;
+		BigDecimal permissibleFar = BigDecimal.ZERO;
+		if (area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+			pl.getFarDetails().setPermissableFar(TWO.doubleValue());
+			permissibleFar = BigDecimal.valueOf(2.0);
+
+		} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
+			pl.getFarDetails().setPermissableFar(TWO_POINTFIVE.doubleValue());
+			permissibleFar = BigDecimal.valueOf(2.5);
+		}
+
+		isAccepted = far.compareTo(permissibleFar) <= 0;
+		expectedResult = "<= " + permissibleFar;
+//		String occupancyName = occupancyType.getType().getName();
+		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
+			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+		}
+
 	}
 
 	// FAR values changed according to Industrial
@@ -1136,80 +1149,69 @@ public class Far_Birgaon extends Far {
 			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
 		}
 	}
-	
+
 	private void processFarGovernment(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
 			BigDecimal roadWidth, HashMap<String, String> errors, String developmentZone, BigDecimal area) {
-		
+
 		String expectedResult = StringUtils.EMPTY;
 		boolean isAccepted = false;
-		 BigDecimal permissibleFar = BigDecimal.ZERO;
-		
+		BigDecimal permissibleFar = BigDecimal.ZERO;
 
 		switch (developmentZone) {
-		case "CA" :
-			if (area.compareTo(BigDecimal.valueOf(500)) <= 0 )
-			{
-				 pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
-				 permissibleFar = BigDecimal.valueOf(1.5);
-			
-		
+		case "CA":
+			if (area.compareTo(BigDecimal.valueOf(500)) <= 0) {
+				pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
+				permissibleFar = BigDecimal.valueOf(1.5);
+
 			} else if ((area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0)) {
 				pl.getFarDetails().setPermissableFar(TWO.doubleValue());
 				permissibleFar = BigDecimal.valueOf(2);
-			} else if ((area.compareTo(BigDecimal.valueOf(1000)) > 0 )) {
+			} else if ((area.compareTo(BigDecimal.valueOf(1000)) > 0)) {
 				pl.getFarDetails().setPermissableFar(TWO_POINTFIVE.doubleValue());
 				permissibleFar = BigDecimal.valueOf(2.5);
 			}
 			break;
-			
-		case "DA-01" : 
-			
-			if (area.compareTo(BigDecimal.valueOf(500)) <= 0 )
-			{
-				 pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
-				 permissibleFar = BigDecimal.valueOf(1.5);
-			
-		
+
+		case "DA-01":
+
+			if (area.compareTo(BigDecimal.valueOf(500)) <= 0) {
+				pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
+				permissibleFar = BigDecimal.valueOf(1.5);
+
 			} else if ((area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0)) {
 				pl.getFarDetails().setPermissableFar(TWO.doubleValue());
 				permissibleFar = BigDecimal.valueOf(2);
-			} else if ((area.compareTo(BigDecimal.valueOf(1000)) > 0 )) {
+			} else if ((area.compareTo(BigDecimal.valueOf(1000)) > 0)) {
 				pl.getFarDetails().setPermissableFar(TWO_POINTFIVE.doubleValue());
 				permissibleFar = BigDecimal.valueOf(2.5);
 			}
-				break;
-				
-		case "DA-02" : 
-			
-			if (area.compareTo(BigDecimal.valueOf(500)) <= 0 )
-			{
-				 pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
-				 permissibleFar = BigDecimal.valueOf(1.5);
-			
-		
-			} else if ((area.compareTo(BigDecimal.valueOf(500)) > 0 )) {
+			break;
+
+		case "DA-02":
+
+			if (area.compareTo(BigDecimal.valueOf(500)) <= 0) {
+				pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
+				permissibleFar = BigDecimal.valueOf(1.5);
+
+			} else if ((area.compareTo(BigDecimal.valueOf(500)) > 0)) {
 				pl.getFarDetails().setPermissableFar(ONE_POINTSEVENFIVE.doubleValue());
 				permissibleFar = BigDecimal.valueOf(1.75);
 			}
-				break;
-				
-				
-			case "DA-03" : 
-				
-				
-				if (area.compareTo(BigDecimal.valueOf(500)) <= 0 )
-				{
-					 pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
-					 permissibleFar = BigDecimal.valueOf(1.5);
-				
-			
-				} else if ((area.compareTo(BigDecimal.valueOf(500)) > 0 )) {
-					pl.getFarDetails().setPermissableFar(ONE_POINTSEVENFIVE.doubleValue());
-					permissibleFar = BigDecimal.valueOf(1.75);
-				}
-					break;
-		
-	}
+			break;
+
+		case "DA-03":
+
+			if (area.compareTo(BigDecimal.valueOf(500)) <= 0) {
+				pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
+				permissibleFar = BigDecimal.valueOf(1.5);
+
+			} else if ((area.compareTo(BigDecimal.valueOf(500)) > 0)) {
+				pl.getFarDetails().setPermissableFar(ONE_POINTSEVENFIVE.doubleValue());
+				permissibleFar = BigDecimal.valueOf(1.75);
+			}
+			break;
+
+		}
 		isAccepted = far.compareTo(permissibleFar) <= 0;
 		expectedResult = "<= " + permissibleFar;
 		String occupancyName = occupancyType.getType().getName();
