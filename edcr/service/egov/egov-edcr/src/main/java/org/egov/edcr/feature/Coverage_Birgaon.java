@@ -50,31 +50,35 @@
  */
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.DxfFileConstants.A;
+import static org.egov.edcr.constants.DxfFileConstants.F;
+import static org.egov.edcr.constants.DxfFileConstants.G;
+import static org.egov.edcr.constants.DxfFileConstants.J;
+import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Measurement;
+import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.OccupancyType;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.utility.DcrConstants;
-import org.egov.infra.utils.StringUtils;
 import org.springframework.stereotype.Service;
-
-import static org.egov.edcr.constants.DxfFileConstants.A;
-import static org.egov.edcr.constants.DxfFileConstants.F;
-import static org.egov.edcr.constants.DxfFileConstants.J;
-import static org.egov.edcr.constants.DxfFileConstants.G;
-import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
 @Service
 public class Coverage_Birgaon extends Coverage {
@@ -128,13 +132,20 @@ public class Coverage_Birgaon extends Coverage {
 		BigDecimal plotBoundaryArea = pl.getPlot().getPlotBndryArea(); // add for get total plot area
 
 		int noOfFloors = 0;
-
+		Set<OccupancyTypeHelper> occupancyList = new HashSet<>();
 		// add for getting OccupancyType
 		OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
 //		String a=mostRestrictiveOccupancy.getType().getCode();
 		// add for getting OccupancyType
 //		OccupancyType mostRestrictiveOccupancy = getMostRestrictiveCoverage(pl.getVirtualBuilding().getOccupancies());
 		for (Block block : pl.getBlocks()) {
+
+			for (Floor flr : block.getBuilding().getFloors()) {
+				for (Occupancy occupancy : flr.getOccupancies()) {
+					if (occupancy.getTypeHelper() != null && occupancy.getTypeHelper().getType() != null)
+						occupancyList.add(occupancy.getTypeHelper());
+				}
+			}
 
 			BigDecimal coverageAreaWithoutDeduction = BigDecimal.ZERO;
 			BigDecimal coverageDeductionArea = BigDecimal.ZERO;
@@ -188,7 +199,9 @@ public class Coverage_Birgaon extends Coverage {
 		if (plotBoundaryArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null
 				&& developmentZone != null) {
 //			occupancyType = mostRestrictiveOccupancy.getType().getCode();
-			if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
+			if (occupancyList != null && occupancyList.size() > 1) {
+				permissibleCoverageValue = getPermissibleCoverageForMix(plotBoundaryArea, developmentZone, noOfFloors);
+			} else if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
 //				permissibleCoverageValue = getPermissibleCoverageForResidential(plotBoundaryArea, developmentZone, noOfFloors);
 			} else if (F.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
 //				permissibleCoverageValue = getPermissibleCoverageForCommercial(plotBoundaryArea, developmentZone, noOfFloors);
@@ -203,8 +216,17 @@ public class Coverage_Birgaon extends Coverage {
 		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0
 				|| A.equals(mostRestrictiveOccupancy.getType().getCode())
 				|| F.equals(mostRestrictiveOccupancy.getType().getCode())) {
-			processCoverage(pl, mostRestrictiveOccupancy.getType().getName(), totalCoverage, permissibleCoverageValue,
-					developmentZone);
+			if (occupancyList != null && occupancyList.size() > 1) {
+				processCoverage(pl, "Mix", totalCoverage, permissibleCoverageValue, developmentZone);
+			}
+//			else if (A.equals(mostRestrictiveOccupancy.getType().getCode())
+//					|| F.equals(mostRestrictiveOccupancy.getType().getCode())) {
+//
+//			} 
+			else {
+				processCoverage(pl, mostRestrictiveOccupancy.getType().getName(), totalCoverage,
+						permissibleCoverageValue, developmentZone);
+			}
 		}
 
 //		if (roadWidth != null && roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) >= 0
@@ -247,6 +269,19 @@ public class Coverage_Birgaon extends Coverage {
 	 */
 
 	private BigDecimal getPermissibleCoverageForCommercial(BigDecimal area, String developmentZone, int noOfFloors) {
+		LOG.info("inside getPermissibleCoverageForCommercial()");
+		BigDecimal permissibleCoverage = BigDecimal.ZERO;
+
+		if (area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+			permissibleCoverage = BigDecimal.valueOf(60);
+		} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
+			permissibleCoverage = BigDecimal.valueOf(50);
+		}
+
+		return permissibleCoverage;
+	}
+
+	private BigDecimal getPermissibleCoverageForMix(BigDecimal area, String developmentZone, int noOfFloors) {
 		LOG.info("inside getPermissibleCoverageForCommercial()");
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
 
