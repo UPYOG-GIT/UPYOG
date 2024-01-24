@@ -140,6 +140,13 @@ public class NationalDashboardService {
 				subOccupancyBuckets.add(createBucket("Residential.individual", nationalData.get("residential")));
 				subOccupancyBuckets.add(createBucket("Residential.shared", 0));
 				subOccupancyBuckets.add(createBucket("Institutional.shared", 0));
+				subOccupancyBuckets.add(createBucket("Institutional.individual", 0));
+				subOccupancyBuckets.add(createBucket("Commercial.shared", 0));
+				subOccupancyBuckets.add(createBucket("Commercial.individual", 0));
+				subOccupancyBuckets.add(createBucket("Industrial.individual", 0));
+				subOccupancyBuckets.add(createBucket("Industrial.shared", 0));
+				subOccupancyBuckets.add(createBucket("Mixed.individual", 0));
+				subOccupancyBuckets.add(createBucket("Mixed.shared", 0));
 				
 
 				subOccupancy.put("buckets", subOccupancyBuckets);
