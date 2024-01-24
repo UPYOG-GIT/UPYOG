@@ -124,30 +124,32 @@ public class NationalDashboardService {
 			 Map<String, Object> occupancy = new LinkedHashMap<>();
 	            occupancy.put("groupBy", "occupancyType");
 
-	            List<Map<String, Object>> occupancyBuckets = new ArrayList<>();
-	            occupancyBuckets.add(createBucket("Residential", nationalData.get("residential")));
-	            occupancyBuckets.add(createBucket("Institutional", nationalData.get("institutional")));
-	            occupancyBuckets.add(createBucket("Mixed Use", 0));
-	            occupancyBuckets.add(createBucket("Institutional", 0));
 
+				List<Map<String, Object>> occupancyBuckets = new ArrayList<>();
+				occupancyBuckets.add(createBucket("RESIDENTIAL", nationalData.get("residential")));
+				occupancyBuckets.add(createBucket("INSTITUTIONAL", nationalData.get("institutional")));
+				occupancyBuckets.add(createBucket("COMMERCIAL", nationalData.get("commercial")));
+				occupancyBuckets.add(createBucket("INDUSTRIAL", nationalData.get("industrial")));
+				occupancyBuckets.add(createBucket("Mixed Use", 0));
+			
 
-	            occupancy.put("buckets", occupancyBuckets);
-	            
-	        	Map<String, Object> subOccupancy = new LinkedHashMap<>();
+				occupancy.put("buckets", occupancyBuckets);
+				
+				
+				Map<String, Object> subOccupancy = new LinkedHashMap<>();
 				subOccupancy.put("groupBy", "subOccupancyType");
 
 				List<Map<String, Object>> subOccupancyBuckets = new ArrayList<>();
-				subOccupancyBuckets.add(createBucket("Residential.individual", nationalData.get("residential")));
-				subOccupancyBuckets.add(createBucket("Residential.shared", 0));
-				subOccupancyBuckets.add(createBucket("Institutional.shared", 0));
-				subOccupancyBuckets.add(createBucket("Institutional.individual", 0));
-				subOccupancyBuckets.add(createBucket("Commercial.shared", 0));
-				subOccupancyBuckets.add(createBucket("Commercial.individual", 0));
-				subOccupancyBuckets.add(createBucket("Industrial.individual", 0));
-				subOccupancyBuckets.add(createBucket("Industrial.shared", 0));
-				subOccupancyBuckets.add(createBucket("Mixed.individual", 0));
-				subOccupancyBuckets.add(createBucket("Mixed.shared", 0));
-				
+				subOccupancyBuckets.add(createBucket("RESIDENTIAL.INDIVIDUAL", nationalData.get("residential")));
+				subOccupancyBuckets.add(createBucket("RESIDENTIAL.SHARED", nationalData.get("residential")));
+				subOccupancyBuckets.add(createBucket("INSTITUTIONAL.SHARED", 0));
+				subOccupancyBuckets.add(createBucket("INSTITUTIONAL.INDIVIDUAL", 0));
+				subOccupancyBuckets.add(createBucket("COMMERCIAL.SHARED", 0));
+				subOccupancyBuckets.add(createBucket("COMMERCIAL.INDIVIDUAL", 0));
+				subOccupancyBuckets.add(createBucket("INDUSTRIAL.INDIVIDUAL", 0));
+				subOccupancyBuckets.add(createBucket("INDUSTRIAL.INDIVIDUAL.SHARED", 0));
+				subOccupancyBuckets.add(createBucket("MIXED.INDIVIDUAL", 0));
+				subOccupancyBuckets.add(createBucket("MIXED.SHARED", 0));
 
 				subOccupancy.put("buckets", subOccupancyBuckets);
 
