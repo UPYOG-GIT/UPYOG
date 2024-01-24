@@ -128,8 +128,8 @@ public class NationalDashboardService {
 				List<Map<String, Object>> occupancyBuckets = new ArrayList<>();
 				occupancyBuckets.add(createBucket("RESIDENTIAL", nationalData.get("residential")));
 				occupancyBuckets.add(createBucket("INSTITUTIONAL", nationalData.get("institutional")));
-				occupancyBuckets.add(createBucket("COMMERCIAL", nationalData.get("commercial")));
-				occupancyBuckets.add(createBucket("INDUSTRIAL", nationalData.get("industrial")));
+				occupancyBuckets.add(createBucket("COMMERCIAL", 0));
+				occupancyBuckets.add(createBucket("INDUSTRIAL",0));
 				occupancyBuckets.add(createBucket("Mixed Use", 0));
 			
 
