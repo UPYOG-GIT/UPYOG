@@ -164,7 +164,7 @@ public class NationalDashboardService {
 	            permits.put("buckets", riskTypeBuckets);
 
 			metrics.put("todaysCollection", todaysCollection);
-			metrics.put("permitIssued", Arrays.asList(occupancy, subOccupancy, permits));
+			metrics.put("permitsIssued", Arrays.asList(occupancy, subOccupancy, permits));
 
 			data.setMetrics(metrics);
 			 dataList.add(data);
