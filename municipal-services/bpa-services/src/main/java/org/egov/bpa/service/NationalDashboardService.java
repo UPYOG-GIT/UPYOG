@@ -175,17 +175,7 @@ public class NationalDashboardService {
 			metrics.put("todaysCollection", todaysCollection);
 			metrics.put("permitsIssued", Arrays.asList(occupancy, subOccupancy, permits));
 
-			data.setMetrics(metrics);
-			int nonZeroMetricsCount = 0;
-
-		    // Process metrics
-		    for (Map.Entry<String, Object> entry : nationalData.entrySet()) {
-		        if (entry.getValue() instanceof Integer && (Integer) entry.getValue() != 0) {
-		            // Increment count for each non-zero metric
-		            nonZeroMetricsCount++;
-		        }
-		    }
-
+		
 		    // Check if there is at least one non-zero metric before adding to dataList
 		    if (hasNonZeroValue(metrics)) {
 	            data.setMetrics(metrics);
