@@ -187,9 +187,10 @@ public class NationalDashboardService {
 		    }
 
 		    // Check if there is at least one non-zero metric before adding to dataList
-		    if (nonZeroMetricsCount > 0) {
-		        dataList.add(data);
-		    }
+		    if (hasNonZeroValue(metrics)) {
+	            data.setMetrics(metrics);
+	            dataList.add(data);
+	        }
 			ingestRequest.setIngestData(dataList);
 			
 			log.info("dataList which will be pushed ---" + dataList);
@@ -204,7 +205,20 @@ public class NationalDashboardService {
 		
 	}
 
-
+	private boolean hasNonZeroValue(Map<String, Object> metrics) {
+	    for (Map.Entry<String, Object> entry : metrics.entrySet()) {
+	        if (entry.getValue() instanceof Map) {
+	            if (hasNonZeroValue((Map<String, Object>) entry.getValue())) {
+	                return true;
+	            }
+	        } else if (entry.getValue() instanceof Number) {
+	            if (((Number) entry.getValue()).doubleValue() != 0) {
+	                return true;
+	            }
+	        }
+	    }
+	    return false;
+	}
 
 
 		    private Map<String, Object> createBucket(String name, Object object) {
