@@ -57,9 +57,12 @@ public class NationalDashboardService {
 		
 		
 		List<Data> dataList = new ArrayList<>();
+		
+		  LocalDate specificDate = LocalDate.of(2024, 1, 16);
+	        String formattedDate = specificDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 
-		LocalDate currentDate = LocalDate.now();
-		String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+//		LocalDate currentDate = LocalDate.now();
+//		String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 //		
 //		int targetYear = 2023;
 //
@@ -106,6 +109,12 @@ public class NationalDashboardService {
 			metrics.put("todaysApprovedApplicationsWithinSLA", nationalData.get("todaysApprovedApplicationsWithinSLA"));
 			metrics.put("avgDaysForApplicationApproval", 0);
 			metrics.put("StipulatedDays",0);
+			
+			int totalMetricValue = metrics.values().stream()
+			        .filter(value -> value instanceof Number)
+			        .mapToInt(value -> ((Number) value).intValue())
+			        .sum();
+   if (totalMetricValue > 0) {
 
 			List<Map<String, Object>> todaysCollection = new ArrayList<>();
 
@@ -128,8 +137,8 @@ public class NationalDashboardService {
 				List<Map<String, Object>> occupancyBuckets = new ArrayList<>();
 				occupancyBuckets.add(createBucket("RESIDENTIAL", nationalData.get("residential")));
 				occupancyBuckets.add(createBucket("INSTITUTIONAL", nationalData.get("institutional")));
-				occupancyBuckets.add(createBucket("COMMERCIAL", nationalData.get("commercial")));
-				occupancyBuckets.add(createBucket("INDUSTRIAL", nationalData.get("industrial")));
+				occupancyBuckets.add(createBucket("COMMERCIAL", 0));
+				occupancyBuckets.add(createBucket("INDUSTRIAL",0));
 				occupancyBuckets.add(createBucket("Mixed Use", 0));
 			
 
@@ -164,10 +173,14 @@ public class NationalDashboardService {
 	            permits.put("buckets", riskTypeBuckets);
 
 			metrics.put("todaysCollection", todaysCollection);
-			metrics.put("permitIssued", Arrays.asList(occupancy, subOccupancy, permits));
+			metrics.put("permitsIssued", Arrays.asList(occupancy, subOccupancy, permits));
 
-			data.setMetrics(metrics);
-			 dataList.add(data);
+		
+		    // Check if there is at least one non-zero metric before adding to dataList
+		    if (hasNonZeroValue(metrics)) {
+	            data.setMetrics(metrics);
+	            dataList.add(data);
+	        }
 			ingestRequest.setIngestData(dataList);
 			
 			log.info("dataList which will be pushed ---" + dataList);
@@ -176,11 +189,27 @@ public class NationalDashboardService {
 			//pushDataToApi(apiUrl, ingestRequest);
 
 
-		       
+   }
 		}
 		 return ingestRequest;
 		
 	}
+
+	private boolean hasNonZeroValue(Map<String, Object> metrics) {
+	    for (Map.Entry<String, Object> entry : metrics.entrySet()) {
+	        if (entry.getValue() instanceof Map) {
+	            if (hasNonZeroValue((Map<String, Object>) entry.getValue())) {
+	                return true;
+	            }
+	        } else if (entry.getValue() instanceof Number) {
+	            if (((Number) entry.getValue()).doubleValue() != 0) {
+	                return true;
+	            }
+	        }
+	    }
+	    return false;
+	}
+
 
 		    private Map<String, Object> createBucket(String name, Object object) {
 		        Map<String, Object> bucket = new HashMap<>();
@@ -296,6 +325,8 @@ public class NationalDashboardService {
 				return responseEntity.getBody();
 
 			}
+		    
+		    
 		    
 //		    @Scheduled(cron = "0 59 23 * * ?")
 //		    @Scheduled(cron = "0 */5 * * * ?")
