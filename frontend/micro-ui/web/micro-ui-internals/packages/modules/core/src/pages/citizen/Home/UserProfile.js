@@ -110,7 +110,7 @@ const UserProfile = ({ stateCode, userType, cityDetails, config, onSelect, formD
   const setUserName = (value) => {
     setName(value);
 
-    if(!new RegExp(/^[a-zA-Z ]+$/i).test(value) || value.length === 0 || value.length > 50){
+    if(!new RegExp(/^[a-zA-Z -]+$/i).test(value) || value.length === 0 || value.length > 50){
       setErrors({...errors, userName : {type: "pattern", message: "CORE_COMMON_PROFILE_NAME_INVALID"}});
     }else{
       setErrors({...errors, userName : null})
@@ -190,7 +190,7 @@ const UserProfile = ({ stateCode, userType, cityDetails, config, onSelect, formD
         photo: profilePic,
       };
 
-      if (!new RegExp(/^([a-zA-Z ])*$/).test(name) || name === "" || name.length > 50 || name.length < 1) {
+      if (!new RegExp(/^([a-zA-Z -])*$/).test(name) || name === "" || name.length > 50 || name.length < 1) {
         throw JSON.stringify({ type: "error", message: "CORE_COMMON_PROFILE_NAME_INVALID" });
       }
 
