@@ -52,8 +52,9 @@ import static org.egov.edcr.constants.DxfFileConstants.A_AF;
 import static org.egov.edcr.constants.DxfFileConstants.A_PO;
 import static org.egov.edcr.constants.DxfFileConstants.A_R;
 import static org.egov.edcr.constants.DxfFileConstants.F;
-import static org.egov.edcr.constants.DxfFileConstants.J;
 import static org.egov.edcr.constants.DxfFileConstants.G;
+import static org.egov.edcr.constants.DxfFileConstants.J;
+import static org.egov.edcr.constants.DxfFileConstants.B;
 import static org.egov.edcr.utility.DcrConstants.FRONT_YARD_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
@@ -245,7 +246,8 @@ public class FrontYardService_BhilaiCharoda extends FrontYardService {
 								}
 
 								else if (occupancy.getTypeHelper().getType() != null
-										&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+										&& (J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
+										|| B.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
 									processFrontYardGovtOccupancies(pl, block.getBuilding(), block.getName(),
 											setback.getLevel(), plot, FRONT_YARD_DESC, min, mean,
 											occupancy.getTypeHelper(), frontYardResult);

@@ -312,7 +312,8 @@ public class SideYardService_BhilaiCharoda extends SideYardService {
 								}
 
 								else if (occupancy.getTypeHelper().getType() != null
-										&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+										&& (J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
+												|| B.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
 									processSideYardForGovtOccupancies(pl, block, block.getBuilding(), buildingHeight,
 											block.getName(), setback.getLevel(), plot, minlength, max, minMeanlength,
 											maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
@@ -344,7 +345,8 @@ public class SideYardService_BhilaiCharoda extends SideYardService {
 									exemptSideYard1ForAAndF(pl, block, sideYard1Result, BigDecimal.ZERO);
 									exemptSideYard2ForAAndF(pl, block, sideYard2Result, BigDecimal.ZERO);
 
-								} else if (J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
+								} else if ((J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
+										|| B.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))
 										&& pl.getPlanInformation().getWidthOfPlot()
 												.compareTo(BigDecimal.valueOf(7.5)) <= 0) {
 									exemptSideYard1ForAAndF(pl, block, sideYard1Result, BigDecimal.ZERO);
@@ -622,7 +624,7 @@ public class SideYardService_BhilaiCharoda extends SideYardService {
 		BigDecimal plotArea = pl.getPlot().getArea();
 
 		if (plotArea.compareTo(BigDecimal.valueOf(450)) < 0) {
-			side2val =  SIDEVALUE_TWOPOINTONE;
+			side2val = SIDEVALUE_TWOPOINTONE;
 			side1val = SIDEVALUE_TWOPOINTONE;
 		} else if (plotArea.compareTo(BigDecimal.valueOf(450)) > 0
 				&& plotArea.compareTo(BigDecimal.valueOf(1000)) <= 0) {
