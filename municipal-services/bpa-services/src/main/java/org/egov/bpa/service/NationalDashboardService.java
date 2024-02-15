@@ -53,34 +53,75 @@ public class NationalDashboardService {
     }
 
 	
-	public IngestRequest getIngestData() {
-		
-		
+	public IngestRequest getIngestData(String formattedDate1) {
+
 		List<Data> dataList = new ArrayList<>();
 		
-		  LocalDate specificDate = LocalDate.of(2024, 1, 16);
-	        String formattedDate = specificDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-
+		
+//
 //		LocalDate currentDate = LocalDate.now();
 //		String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-//		
-//		int targetYear = 2023;
+		
+		  LocalDate specificDate = LocalDate.of(2023, 12, 15);
+	        String formattedDate = specificDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+	        
+//	        LocalDate startDate = LocalDate.of(2023, 1, 1);
+//	        LocalDate endDate = LocalDate.of(2024, 2, 14);
+//	        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 //
-//		LocalDate specificDate = LocalDate.of(targetYear, Month.APRIL, 28);
+//	        Map<String, Object> resultMap = new HashMap<>();
+//
+//	        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+//	            String formattedDate1 = date.format(dateFormatter);
+
+		//Data data = new Data();
+		
+		//int targetYear = 2024;
+
+//		LocalDate specificDate = LocalDate.of(targetYear, Month.JANUARY, 1);
 //		String formattedDate = specificDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-		
+	        
+	        
 
-		List<Map<String, Object>> ingestData = repository.getIngestData();
-		log.info("ingestData from repository" + ingestData);
+		Map<String, Object> ingestDataResult = repository.getIngestData(formattedDate1);
+		//System.out.println("ingestttt_____" + ingestDataResult.get("result1"));
+		List<Map<String, Object>> ingestData = (List<Map<String, Object>>) ingestDataResult.get("result1");
+		String avgDaysToIssueCertificate = ingestDataResult.get("avg_days_to_issue_certificate").toString();
+		String totalPlotArea = ingestDataResult.get("totalPlotArea").toString();
+		//String landAreaAppliedInSystemForBPA = ingestDataResult.get("land_area_applied_in_system_for_bpa").toString();
+
+		// Remove square brackets if present
+		if (avgDaysToIssueCertificate.startsWith("[") && avgDaysToIssueCertificate.endsWith("]")) {
+		    avgDaysToIssueCertificate = avgDaysToIssueCertificate.substring(1, avgDaysToIssueCertificate.length() - 1);
+		}
+		
+		// Remove everything after the decimal point
+		if (avgDaysToIssueCertificate.contains(".")) {
+		    avgDaysToIssueCertificate = avgDaysToIssueCertificate.split("\\.")[0];
+		}
+		
+//		if (landAreaAppliedInSystemForBPA.startsWith("[") && landAreaAppliedInSystemForBPA.endsWith("]")) {
+//			landAreaAppliedInSystemForBPA = landAreaAppliedInSystemForBPA.substring(1, landAreaAppliedInSystemForBPA.length() - 1);
+//		}
+//		
+	
 		for (Map<String, Object> nationalData : ingestData) {
-			Data data = new Data();
-
 			
+			//System.out.println("nationalDataa----" + nationalData);
+			
+			 Data data = new Data();
+
+			// System.out.println("nationalData--" + nationalData);
 			String ulbName = (String) nationalData.get("ulb_name");
+			// System.out.println("ulbName--" + ulbName);
+	//		System.out.println("date__&**" + nationalData.get("avg_days_to_issue_certificate"));
 		
+			
 			String ulb = "ch." + ulbName.trim().toLowerCase().replaceAll("\\s", "").replaceAll("-", "");
-						data.setUlb(ulb);
-			data.setDate(formattedDate);
+			
+		  //  System.out.println("ulbbb" + ulb);
+			data.setUlb(ulb);
+			data.setDate(formattedDate1);
 			data.setModule("OBPS");
 			data.setWard((String) nationalData.get("locality"));
 			data.setRegion((String) nationalData.get("tenantId"));
@@ -93,11 +134,11 @@ public class NationalDashboardService {
 			metrics.put("ocSubmitted", 0);
 			metrics.put("applicationsSubmitted", nationalData.get("initiatedcount"));
 			metrics.put("ocIssued", 0);
-			metrics.put("landAreaAppliedInSystemForBPA", 0);
-			metrics.put("averageDaysToIssuePermit", 0);
+			metrics.put("landAreaAppliedInSystemForBPA", totalPlotArea);
+			metrics.put("averageDaysToIssuePermit", avgDaysToIssueCertificate);
 			metrics.put("averageDaysToIssueOC", 0);
 			metrics.put("todaysClosedApplicationsOC", 0);
-			metrics.put("todaysClosedApplicationsPermit", 0);
+			metrics.put("todaysClosedApplicationsPermit", nationalData.get("todaysApprovedApplicationsWithinSLA"));
 			metrics.put("todaysCompletedApplicationsWithinSLAPermit",
 					nationalData.get("todaysApprovedApplicationsWithinSLA"));
 			metrics.put("slaComplianceOC", 0);
@@ -107,106 +148,132 @@ public class NationalDashboardService {
 			metrics.put("ocWithDeviation", 0);
 			metrics.put("todaysApprovedApplications", nationalData.get("todaysApprovedApplicationsWithinSLA"));
 			metrics.put("todaysApprovedApplicationsWithinSLA", nationalData.get("todaysApprovedApplicationsWithinSLA"));
-			metrics.put("avgDaysForApplicationApproval", 0);
-			metrics.put("StipulatedDays",0);
+			metrics.put("avgDaysForApplicationApproval", avgDaysToIssueCertificate);
+			metrics.put("StipulatedDays", 0);
 			
-			int totalMetricValue = metrics.values().stream()
-			        .filter(value -> value instanceof Number)
-			        .mapToInt(value -> ((Number) value).intValue())
-			        .sum();
-   if (totalMetricValue > 0) {
-
 			List<Map<String, Object>> todaysCollection = new ArrayList<>();
 
 			Map<String, Object> collectionMode = new LinkedHashMap<>();
 			collectionMode.put("groupBy", "paymentMode");
 
 			List<Map<String, Object>> collectionBuckets = new ArrayList<>();
-			collectionBuckets.add(createBucket("UPI", nationalData.get("upi")));
-			collectionBuckets.add(createBucket("DEBIT.CARD", nationalData.get("debit_card")));
-			collectionBuckets.add(createBucket("CREDIT.CARD", nationalData.get("credit_card")));
+			collectionBuckets.add(createBucket("UPI", nationalData.get("upi_amt")));
+			collectionBuckets.add(createBucket("DEBIT.CARD", nationalData.get("debit_amt")));
+			collectionBuckets.add(createBucket("CREDIT.CARD", nationalData.get("credit_amt")));
 			collectionBuckets.add(createBucket("CASH", 0));
 
 			collectionMode.put("buckets", collectionBuckets);
 			todaysCollection.add(collectionMode);
+
+			Map<String, Object> occupancy = new LinkedHashMap<>();
+			occupancy.put("groupBy", "occupancyType");
+
+			List<Map<String, Object>> occupancyBuckets = new ArrayList<>();
+			occupancyBuckets.add(createBucket("RESIDENTIAL", nationalData.get("residential")));
+			occupancyBuckets.add(createBucket("INSTITUTIONAL", nationalData.get("institutional")));
+			occupancyBuckets.add(createBucket("COMMERCIAL", 0));
+			occupancyBuckets.add(createBucket("INDUSTRIAL",nationalData.get("industrial")));
+			occupancyBuckets.add(createBucket("Mixed Use", 0));
+		
+
+			occupancy.put("buckets", occupancyBuckets);
 			
-			 Map<String, Object> occupancy = new LinkedHashMap<>();
-	            occupancy.put("groupBy", "occupancyType");
+			
+			Map<String, Object> subOccupancy = new LinkedHashMap<>();
+			subOccupancy.put("groupBy", "subOccupancyType");
 
-
-				List<Map<String, Object>> occupancyBuckets = new ArrayList<>();
-				occupancyBuckets.add(createBucket("RESIDENTIAL", nationalData.get("residential")));
-				occupancyBuckets.add(createBucket("INSTITUTIONAL", nationalData.get("institutional")));
-				occupancyBuckets.add(createBucket("COMMERCIAL", 0));
-				occupancyBuckets.add(createBucket("INDUSTRIAL",0));
-				occupancyBuckets.add(createBucket("Mixed Use", 0));
+			List<Map<String, Object>> subOccupancyBuckets = new ArrayList<>();
+			subOccupancyBuckets.add(createBucket("RESIDENTIAL.INDIVIDUAL", nationalData.get("residential")));
+			subOccupancyBuckets.add(createBucket("RESIDENTIAL.SHARED", nationalData.get("residential")));
+			subOccupancyBuckets.add(createBucket("INSTITUTIONAL.SHARED", 0));
+			subOccupancyBuckets.add(createBucket("INSTITUTIONAL.INDIVIDUAL", 0));
+			subOccupancyBuckets.add(createBucket("COMMERCIAL.SHARED", 0));
+			subOccupancyBuckets.add(createBucket("COMMERCIAL.INDIVIDUAL", 0));
+			subOccupancyBuckets.add(createBucket("INDUSTRIAL.INDIVIDUAL", 0));
+			subOccupancyBuckets.add(createBucket("INDUSTRIAL.SHARED", 0));
+			subOccupancyBuckets.add(createBucket("MIXED.INDIVIDUAL", 0));
+			subOccupancyBuckets.add(createBucket("MIXED.SHARED", 0));
 			
 
-				occupancy.put("buckets", occupancyBuckets);
-				
-				
-				Map<String, Object> subOccupancy = new LinkedHashMap<>();
-				subOccupancy.put("groupBy", "subOccupancyType");
+			subOccupancy.put("buckets", subOccupancyBuckets);
 
-				List<Map<String, Object>> subOccupancyBuckets = new ArrayList<>();
-				subOccupancyBuckets.add(createBucket("RESIDENTIAL.INDIVIDUAL", nationalData.get("residential")));
-				subOccupancyBuckets.add(createBucket("RESIDENTIAL.SHARED", nationalData.get("residential")));
-				subOccupancyBuckets.add(createBucket("INSTITUTIONAL.SHARED", 0));
-				subOccupancyBuckets.add(createBucket("INSTITUTIONAL.INDIVIDUAL", 0));
-				subOccupancyBuckets.add(createBucket("COMMERCIAL.SHARED", 0));
-				subOccupancyBuckets.add(createBucket("COMMERCIAL.INDIVIDUAL", 0));
-				subOccupancyBuckets.add(createBucket("INDUSTRIAL.INDIVIDUAL", 0));
-				subOccupancyBuckets.add(createBucket("INDUSTRIAL.SHARED", 0));
-				subOccupancyBuckets.add(createBucket("MIXED.INDIVIDUAL", 0));
-				subOccupancyBuckets.add(createBucket("MIXED.SHARED", 0));
+			Map<String, Object> permits = new LinkedHashMap<>();
+			permits.put("groupBy", "riskType");
 
-				subOccupancy.put("buckets", subOccupancyBuckets);
+			List<Map<String, Object>> riskTypeBuckets = new ArrayList<>();
+			riskTypeBuckets.add(createBucket("LOW", nationalData.get("low")));
+			riskTypeBuckets.add(createBucket("MEDIUM", 0));
+			riskTypeBuckets.add(createBucket("HIGH", nationalData.get("medhigh")));
 
-	            Map<String, Object> permits = new LinkedHashMap<>();
-	            permits.put("groupBy", "riskType");
-
-	            List<Map<String, Object>> riskTypeBuckets = new ArrayList<>();
-	            riskTypeBuckets.add(createBucket("LOW", nationalData.get("low")));
-	            riskTypeBuckets.add(createBucket("MEDIUM", 0));
-	            riskTypeBuckets.add(createBucket("HIGH", nationalData.get("medhigh")));
-
-	            permits.put("buckets", riskTypeBuckets);
+			permits.put("buckets", riskTypeBuckets);												
 
 			metrics.put("todaysCollection", todaysCollection);
-			metrics.put("permitsIssued", Arrays.asList(occupancy, subOccupancy, permits));
-
+			metrics.put("permitsIssued", List.of(occupancy, subOccupancy, permits));
 		
-		    // Check if there is at least one non-zero metric before adding to dataList
-		    if (hasNonZeroValue(metrics)) {
-	            data.setMetrics(metrics);
-	            dataList.add(data);
-	        }
+			data.setMetrics(metrics);
+			
+			
+			 boolean hasNonZeroMetric = hasNonZeroMetric(metrics);
+				if (hasNonZeroMetric) {
+					
+		            System.out.println("countt==" + dataList.size());
+		            dataList.add(data);
+				}
+		
+			
+}
+	//	System.out.println("dataList--" + dataList);
 			ingestRequest.setIngestData(dataList);
-			
-			log.info("dataList which will be pushed ---" + dataList);
-		    //ingestRequest.setRequestInfo(requestInfo);
-			
-			//pushDataToApi(apiUrl, ingestRequest);
-
-
-   }
-		}
+	      //  }
 		 return ingestRequest;
 		
 	}
 
-	private boolean hasNonZeroValue(Map<String, Object> metrics) {
+
+	private boolean hasNonZeroMetric(HashMap<String, Object> metrics) {
+	    // Check top-level metrics
 	    for (Map.Entry<String, Object> entry : metrics.entrySet()) {
-	        if (entry.getValue() instanceof Map) {
-	            if (hasNonZeroValue((Map<String, Object>) entry.getValue())) {
-	                return true;
-	            }
-	        } else if (entry.getValue() instanceof Number) {
+	        if (entry.getValue() instanceof Number) {
 	            if (((Number) entry.getValue()).doubleValue() != 0) {
 	                return true;
 	            }
 	        }
 	    }
+	    // Check nested metrics
+	   // Map<String, Object> nestedMetrics = data.getMetrics();
+	    System.out.println("hhhhhhhh");
+	    for (Map.Entry<String, Object> nestedEntry : metrics.entrySet()) {
+	        Object nestedValue = nestedEntry.getValue();
+
+	        if (nestedValue instanceof List) {
+	            // Handle lists of metrics, e.g., permitsIssued, todaysCollection
+	            for (Object listItem : (List<?>) nestedValue) {
+	                if (listItem instanceof Map) {
+	                    for (Object mapValue : ((Map<?, ?>) listItem).values()) {
+	                    	  if (mapValue instanceof List) {
+	                    		  for (Object listItem1 : ((List<?>) mapValue)) {
+	                    			  for (Object mapValue1 : ((Map<?, ?>) listItem1).values()) {
+	                    		  if (mapValue1 instanceof Number && ((Number) mapValue1).doubleValue() != 0) {
+	  	                            return true;
+	                    		  }
+	  	                        }}
+	                    	  }
+	                        if (mapValue instanceof Number && ((Number) mapValue).doubleValue() != 0) {
+	                            return true;
+	                        }
+	                    }
+	                }
+	            }
+	        } else if (nestedValue instanceof Map) {
+	            // Handle nested maps, e.g., permitsIssued with buckets
+	            for (Object mapValue : ((Map<?, ?>) nestedValue).values()) {
+	                if (mapValue instanceof Number && ((Number) mapValue).doubleValue() != 0) {
+	                    return true;
+	                }
+	            }
+	        }
+	    }
+
 	    return false;
 	}
 
@@ -219,79 +286,56 @@ public class NationalDashboardService {
 		    }
 		    
 		    
-			public Map<String, Object> pushDataToApi(String apiUrl) {
-				log.info("Pushing data to API...");
-
-				IngestRequest body = getIngestData();
-
-				RequestInfo requestInfo = new RequestInfo();
-				// log.info("bodyy---====" + body);
-
-				Map<String, Object> requestInfoData = getAuthToken(bpaConfig.getUsername(), bpaConfig.getPassword(),
-						bpaConfig.getGrantType(), bpaConfig.getScope(), bpaConfig.getTenantId(), bpaConfig.getType());
-
-				log.info("requestInfoData-----------" + requestInfoData);
-
+		    public Map<String, Object> pushDataToApi(String apiUrl) {
+				 String formattedDate1 = "";
+				IngestRequest body = getIngestData(formattedDate1);
+				//System.out.println("bodyy---====" + body);
+				
+				
+				Map<String, Object> requestInfoData = getAuthToken("NDCG", "Cg@ingest123", "password", "read", "pg", "SYSTEM");
 				Map<String, Object> requestData = new HashMap<>();
+				
+			
+				//System.out.println("requestInfoData" + requestInfoData);
+				
+			    String access_token =	(String) requestInfoData.get("access_token");
+			    Map<String, Object> userRequest = (Map<String, Object>) requestInfoData.get("UserRequest");
+			    
+			    
+		    	System.out.println("accerr " + access_token);
+				System.out.println("userName" + (String) userRequest.get("userName"));
+				System.out.println("name" + (String) userRequest.get("name"));
+				System.out.println("mobileNumber" + (String) userRequest.get("mobileNumber"));
+			//	log.info("userName" + (String) userRequest.get("userName"));
+				System.out.println("type" + (String) userRequest.get("type"));
 
-				Map<String, Object> userRequest = (Map<String, Object>) requestInfoData.get("UserRequest");
-
-				String access_token = (String) requestInfoData.get("access_token");
-
-				requestInfo.setAuthToken(access_token);
-
-				User userInfo = new User();
-
-				userInfo.setUserName((String) userRequest.get("userName"));
-				// userInfo.setId((Long) userRequest.get("id"));
-				userInfo.setUuid((String) userRequest.get("uuid"));
-				userInfo.setName((String) userRequest.get("name"));
-				userInfo.setMobileNumber((String) userRequest.get("mobileNumber"));
-				userInfo.setType((String) userRequest.get("type"));
-
-				requestInfo.setUserInfo(userInfo);
-
-				List<Map<String, Object>> roles = (List<Map<String, Object>>) userRequest.get("roles");
-
-				List<Role> userRole = new ArrayList<>();
-
-				for (Map<String, Object> role : roles) {
-
-					Role rolee = new Role();
-					rolee.setName((String) role.get("name"));
-					rolee.setCode((String) role.get("code"));
-					rolee.setTenantId((String) role.get("tenantId"));
-
-					userRole.add(rolee);
-				}
-
-				userInfo.setRoles(userRole);
-
-				ingestRequest.setRequestInfo(requestInfo);
+				
+				ingestRequest.setRequestInfo((RequestInfo) requestInfoData);
 
 				HttpHeaders headers = new HttpHeaders();
 				headers.setContentType(MediaType.APPLICATION_JSON);
 
 				HttpEntity<IngestRequest> requestEntity = new HttpEntity<IngestRequest>(body, headers);
 
-				ResponseEntity<Map> responseEntity = this.restTemplate().exchange(apiUrl, HttpMethod.POST,
-						requestEntity, Map.class);
+				ResponseEntity<Map> responseEntity = this.restTemplate().exchange(apiUrl, HttpMethod.POST, requestEntity,
+						Map.class);
+
+				Map<String, Object> responseBody = responseEntity.getBody();
 				
-				HttpStatus statusCode = responseEntity.getStatusCode();
+				
+				HttpStatus statusCode = (HttpStatus) responseEntity.getStatusCode();
 				int statusCodeValue = statusCode.value();
 
 				System.out.println("HTTP Status Code: " + statusCodeValue);
 
 				// You can also check the status code to take appropriate actions
 				if (statusCode.is2xxSuccessful()) {
-				  log.info("----Data Pushed Successfully----");
+					System.out.println("----Data Pushed Successfully----");
 				} else if (statusCode.is4xxClientError()) {
-				   log.info("----4xx error----");
+					System.out.println("----4xx error----");
 				} else if (statusCode.is5xxServerError()) {
-					  log.info("----Internal server error---- or Duplicate data found");
+					System.out.println("----Internal server error---- or Duplicate data found");
 				}
-
-				Map<String, Object> responseBody = responseEntity.getBody();
 				return responseBody;
 
 			}

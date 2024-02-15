@@ -2,6 +2,8 @@ package org.egov.bpa.web.controller;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.egov.bpa.config.BPAConfiguration;
 import org.egov.bpa.service.BPAService;
 import org.egov.bpa.service.NationalDashboardService;
 import org.egov.bpa.util.BPAConstants;
@@ -68,6 +71,15 @@ public class BPAController {
 
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
+	
+	@Autowired
+	BPAConfiguration bpaConfig;
+	
+
+	LocalDate startDate = LocalDate.of(2023, 5, 28);
+    LocalDate endDate = LocalDate.of(2024, 2, 15);
+    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    
 
 	@PostMapping(value = "/_create")
 	public ResponseEntity<BPAResponse> create(@Valid @RequestBody BPARequest bpaRequest) {
@@ -538,17 +550,40 @@ public class BPAController {
 
 
 	
-	@GetMapping(value = "/ingestData")	
-	public ResponseEntity <IngestRequest> getListOfIngestData() {
-		
-		IngestRequest list = nationalDashboardService.getIngestData();
-	
-		return new ResponseEntity(list,HttpStatus.OK);
-
+	@GetMapping(value = "/ingestData")   
+	public ResponseEntity<List<IngestRequest>> getListOfIngestData() {
+	    
+	    List<IngestRequest> resultList = new ArrayList<>();
+	    
+	    int loopCount = 0;
+	    
+	    for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+	        String formattedDate = date.format(dateFormatter);
+	        IngestRequest request = nationalDashboardService.getIngestData(formattedDate);
+	        
+	        System.out.println("requestt(((" + request.getIngestData().toString());
+	        
+	        // Create a new instance of IngestRequest for each iteration
+	        IngestRequest newRequest = new IngestRequest();
+	        newRequest.setIngestData(request.getIngestData()); // Assuming you need to copy the data
+	        
+	        resultList.add(newRequest);
+	        loopCount++; 
+	        
+	        System.out.println("Loop ran " + loopCount + " times.");
+	    }
+	    
+	    return new ResponseEntity<>(resultList, HttpStatus.OK);
 	}
-	
+
+
+
 	@PostMapping(value = "/pushData")
 	public ResponseEntity<Map<String, Object>> pushDataToApi() {
+		 
+
+	        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+	            String formattedDate1 = date.format(dateFormatter);
 		
 		//System.out.println("request----" + requestInfoWrapper.getRequestInfo());
 		String apiUrl = "https://upyog-test.niua.org/national-dashboard/metric/_ingest";
@@ -558,8 +593,12 @@ public class BPAController {
 	    } catch (Exception e) {
 	       
 	        e.printStackTrace();
+	    
 	        return new ResponseEntity<>(Collections.singletonMap("error", "Failed to push data: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 
 	    }
+	        }
+	        return null;
 	}
+	
 }
