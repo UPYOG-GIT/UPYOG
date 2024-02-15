@@ -286,6 +286,11 @@ public class SideYardService_Birgaon extends SideYardService {
 									processSideYardForGovtOccupancies(pl, block, block.getBuilding(), buildingHeight,
 											block.getName(), setback.getLevel(), plot, minlength, max, minMeanlength,
 											maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
+								} else if (occupancy.getTypeHelper().getType() != null
+										&& G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+									checkSideYardForIndustrial(pl, block, block.getBuilding(), buildingHeight,
+											block.getName(), setback.getLevel(), plot, minlength, max, minMeanlength,
+											maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
 								}
 
 //							} //for end
@@ -569,9 +574,10 @@ public class SideYardService_Birgaon extends SideYardService {
 		}
 	}
 
-	private void checkSideYardForIndustrial(final Plan pl, Building building, BigDecimal buildingHeight,
-			String blockName, Integer level, final Plot plot, final double min, final double max, double minMeanlength,
-			double maxMeanLength, final OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard1Result,
+	private void checkSideYardForIndustrial(final Plan pl, Block block, Building building,
+			BigDecimal buildingHeight, String blockName, Integer level, final Plot plot, final double min,
+			final double max, double minMeanlength, double maxMeanLength,
+			final OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard1Result,
 			SideYardResult sideYard2Result) {
 
 		String rule = SIDE_YARD_DESC;

@@ -73,6 +73,7 @@ import org.springframework.stereotype.Service;
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.constants.DxfFileConstants.G;
+import static org.egov.edcr.constants.DxfFileConstants.B;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
 @Service
@@ -149,9 +150,9 @@ public class Coverage_BhilaiCharoda extends Coverage {
 //					coverage = block.getBuilding().getCoverageArea().multiply(BigDecimal.valueOf(100)).divide(
 //							pl.getPlanInformation().getPlotArea(), DcrConstants.DECIMALDIGITS_MEASUREMENTS,
 //							DcrConstants.ROUNDMODE_MEASUREMENTS);
-				coverage = block.getBuilding().getCoverageArea().multiply(BigDecimal.valueOf(100)).divide(
-						plotBoundaryArea, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-						DcrConstants.ROUNDMODE_MEASUREMENTS);
+					coverage = block.getBuilding().getCoverageArea().multiply(BigDecimal.valueOf(100)).divide(
+							plotBoundaryArea, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+							DcrConstants.ROUNDMODE_MEASUREMENTS);
 
 				block.getBuilding().setCoverage(coverage);
 
@@ -165,9 +166,8 @@ public class Coverage_BhilaiCharoda extends Coverage {
 		// pl.setCoverageArea(totalCoverageArea);
 		// use plotBoundaryArea
 		if (pl.getPlot() != null && pl.getPlot().getPlotBndryArea().doubleValue() > 0)
-			totalCoverage = totalCoverageArea.multiply(BigDecimal.valueOf(100)).divide(
-					plotBoundaryArea, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-					DcrConstants.ROUNDMODE_MEASUREMENTS);
+			totalCoverage = totalCoverageArea.multiply(BigDecimal.valueOf(100)).divide(plotBoundaryArea,
+					DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
 //		totalCoverage = totalCoverageArea.multiply(BigDecimal.valueOf(100)).divide(
 //				pl.getPlanInformation().getPlotArea(), DcrConstants.DECIMALDIGITS_MEASUREMENTS,
 //				DcrConstants.ROUNDMODE_MEASUREMENTS);
@@ -187,7 +187,8 @@ public class Coverage_BhilaiCharoda extends Coverage {
 
 		// get coverage permissible value from method and store in
 		// permissibleCoverageValue
-		if (plotBoundaryArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null && developmentZone != null) {
+		if (plotBoundaryArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null
+				&& developmentZone != null) {
 //			occupancyType = mostRestrictiveOccupancy.getType().getCode();
 			if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
 				permissibleCoverageValue = getPermissibleCoverageForResidential(plotBoundaryArea, developmentZone);
@@ -195,6 +196,8 @@ public class Coverage_BhilaiCharoda extends Coverage {
 				permissibleCoverageValue = getPermissibleCoverageForCommercial(plotBoundaryArea, developmentZone);
 			} else if (G.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
 				permissibleCoverageValue = getPermissibleCoverageForIndustrial(plotBoundaryArea, developmentZone);
+			} else if (B.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
+				permissibleCoverageValue = getPermissibleCoverageForGovtOccupancies(plotBoundaryArea, developmentZone);
 			}
 		}
 
@@ -268,6 +271,24 @@ public class Coverage_BhilaiCharoda extends Coverage {
 		return permissibleCoverage;
 	}
 
+	private BigDecimal getPermissibleCoverageForGovtOccupancies(BigDecimal area, String developmentZone) {
+		LOG.info("inside getPermissibleCoverageForGovtAndSemiGovt()");
+		BigDecimal permissibleCoverage = BigDecimal.ZERO;
+
+//		switch (developmentZone) {
+//
+//		case "DA-01":
+		if (area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+			permissibleCoverage = BigDecimal.valueOf(40);
+		} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
+			permissibleCoverage = BigDecimal.valueOf(30);
+		}
+//			break;
+//		}
+		LOG.info("return from getPermissibleCoverageForGovtAndSemiGovt()");
+		return permissibleCoverage;
+	}
+
 	private BigDecimal getPermissibleCoverageForIndustrial(BigDecimal area, String developmentZone) {
 		LOG.info("inside getPermissibleCoverageForCommercial()");
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
@@ -295,7 +316,7 @@ public class Coverage_BhilaiCharoda extends Coverage {
 		String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY, upperLimit.toString());
 		if (coverage.doubleValue() <= upperLimit.doubleValue()) {
 			Map<String, String> details = new HashMap<>();
-			details.put(RULE_NO, occupancy.equalsIgnoreCase("Industrial") ? RULE_48_3 : RULE_7_C_1 );
+			details.put(RULE_NO, occupancy.equalsIgnoreCase("Industrial") ? RULE_48_3 : RULE_7_C_1);
 			details.put(DESCRIPTION, desc);
 			details.put(OCCUPANCY, occupancy);
 			details.put(PERMISSIBLE, expectedResult);

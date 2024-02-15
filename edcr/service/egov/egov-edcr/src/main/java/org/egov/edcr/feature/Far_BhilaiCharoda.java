@@ -53,6 +53,7 @@ import static org.egov.edcr.constants.DxfFileConstants.A_AF;
 import static org.egov.edcr.constants.DxfFileConstants.A_FH;
 import static org.egov.edcr.constants.DxfFileConstants.A_R;
 import static org.egov.edcr.constants.DxfFileConstants.A_SA;
+import static org.egov.edcr.constants.DxfFileConstants.B;
 import static org.egov.edcr.constants.DxfFileConstants.B2;
 import static org.egov.edcr.constants.DxfFileConstants.D_A;
 import static org.egov.edcr.constants.DxfFileConstants.D_B;
@@ -452,7 +453,8 @@ public class Far_BhilaiCharoda extends Far {
 				}
 
 				if (mostRestrictiveFar != null && mostRestrictiveFar.getConvertedSubtype() != null
-						&& mostRestrictiveFar.getSubtype()!=null && !A_R.equals(mostRestrictiveFar.getSubtype().getCode())) {
+						&& mostRestrictiveFar.getSubtype() != null
+						&& !A_R.equals(mostRestrictiveFar.getSubtype().getCode())) {
 					if (carpetArea.compareTo(BigDecimal.ZERO) == 0) {
 						pl.addError("Carpet area in block " + blk.getNumber() + "floor " + flr.getNumber(),
 								"Carpet area is not defined in block " + blk.getNumber() + "floor " + flr.getNumber());
@@ -673,21 +675,23 @@ public class Far_BhilaiCharoda extends Far {
 							&& (A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())
 									|| A_AF.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())))) {
 				processFarResidential(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs);
-			}
-			if (mostRestrictiveOccupancyType.getType() != null
+			} else if (mostRestrictiveOccupancyType.getType() != null
 					&& (DxfFileConstants.G.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
-							|| DxfFileConstants.B.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
 							|| DxfFileConstants.D.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode()))) {
 				processFarIndustrial(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs);
-			}
-//			if (mostRestrictiveOccupancyType.getType() != null
-//					&& DxfFileConstants.I.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-//				processFarHaazardous(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs);
-//			}
-			if (mostRestrictiveOccupancyType.getType() != null
+			} else if (mostRestrictiveOccupancyType.getType() != null
+					&& DxfFileConstants.B.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+				processFarGovtOccupancies(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth,
+						errorMsgs);
+			} else if (mostRestrictiveOccupancyType.getType() != null
 					&& DxfFileConstants.F.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
 				processFarCommercial(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs);
 			}
+//			else if (mostRestrictiveOccupancyType.getType() != null
+//					&& DxfFileConstants.I.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+//				processFarHaazardous(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs);
+//			}
+
 		}
 		ProcessPrintHelper.print(pl);
 		return pl;
@@ -834,6 +838,8 @@ public class Far_BhilaiCharoda extends Far {
 			return codesMap.get(F);
 		else if (codes.contains(A))
 			return codesMap.get(A);
+		else if (codes.contains(B))
+			return codesMap.get(B);
 		else
 			return null;
 
@@ -1012,6 +1018,39 @@ public class Far_BhilaiCharoda extends Far {
 		} else if (plotArea.compareTo(BigDecimal.valueOf(1000.0)) > 0) {
 			farValue = BigDecimal.valueOf(1.0);
 
+		}
+
+		isAccepted = far.compareTo(farValue) <= 0;
+		pl.getFarDetails().setPermissableFar(farValue.doubleValue());
+		expectedResult = "<= " + farValue;
+
+		String occupancyName = occupancyType.getType().getName();
+		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
+			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted, plotArea);
+		}
+	}
+
+	private void processFarGovtOccupancies(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far,
+			String typeOfArea, BigDecimal roadWidth, HashMap<String, String> errors) {
+
+		String expectedResult = StringUtils.EMPTY;
+		boolean isAccepted = false;
+		BigDecimal farValue = BigDecimal.ZERO;
+
+		// changed far according to Bhilai-Charoda
+
+		BigDecimal plotArea = pl.getPlot().getArea();
+
+		if (plotArea.compareTo(BigDecimal.valueOf(150.0)) <= 0) {
+			farValue = BigDecimal.valueOf(1.0);
+		} else if (plotArea.compareTo(BigDecimal.valueOf(150)) > 0
+				&& plotArea.compareTo(BigDecimal.valueOf(500)) <= 0) {
+			farValue = BigDecimal.valueOf(1.25);
+		} else if (plotArea.compareTo(BigDecimal.valueOf(500)) > 0
+				&& plotArea.compareTo(BigDecimal.valueOf(750)) <= 0) {
+			farValue = BigDecimal.valueOf(1.50);
+		} else if (plotArea.compareTo(BigDecimal.valueOf(750.0)) > 0) {
+			farValue = BigDecimal.valueOf(1.75);
 		}
 
 		isAccepted = far.compareTo(farValue) <= 0;

@@ -404,9 +404,9 @@ public class AdditionalFeature extends FeatureProcess {
 				String maxPermissibleFloorHeight = StringUtils.EMPTY;
 				if (occupancyTypeHelper != null && occupancyTypeHelper.getType() != null
 						&& G.equals(occupancyTypeHelper.getType().getCode())) {
-					minRequiredFloorHeight = "3.60" + DcrConstants.IN_METER;
+					minRequiredFloorHeight = "6.0" + DcrConstants.IN_METER;
 					maxPermissibleFloorHeight = "-";
-					if (floorHeight.compareTo(BigDecimal.valueOf(3.60)) >= 0) {
+					if (floorHeight.compareTo(BigDecimal.valueOf(6.0)) >= 0) {
 						/*
 						 * Map<String, String> details = new HashMap<>(); details.put(FLOOR_NO,
 						 * String.valueOf(floorNumber)); details.put(RULE_NO, RULE_38);
@@ -486,8 +486,11 @@ public class AdditionalFeature extends FeatureProcess {
 	}
 
 	private void validatePlinthHeight(Plan pl, HashMap<String, String> errors) {
+		String minPermissiblePlinthHeight = null;
+		String maxPermissiblePlinthHeight = null;
 		for (Block block : pl.getBlocks()) {
 
+			OccupancyTypeHelper occupancyTypeHelper = block.getBuilding().getMostRestrictiveFarHelper();
 			boolean isAccepted = false;
 			BigDecimal minPlinthHeight = BigDecimal.ZERO;
 			String blkNo = block.getNumber();
@@ -502,10 +505,23 @@ public class AdditionalFeature extends FeatureProcess {
 
 			if (!plinthHeights.isEmpty()) {
 				minPlinthHeight = plinthHeights.stream().reduce(BigDecimal::min).get();
-				if (minPlinthHeight.compareTo(BigDecimal.valueOf(0.45)) >= 0
-						&& minPlinthHeight.compareTo(BigDecimal.valueOf(1.20)) <= 0) {
-					isAccepted = true;
+				if (occupancyTypeHelper != null && occupancyTypeHelper.getType() != null
+						&& G.equals(occupancyTypeHelper.getType().getCode())) {
+					minPermissiblePlinthHeight = "0.45";
+					maxPermissiblePlinthHeight = "1.50";
+					if (minPlinthHeight.compareTo(BigDecimal.valueOf(0.45)) >= 0
+							&& minPlinthHeight.compareTo(BigDecimal.valueOf(1.50)) <= 0) {
+						isAccepted = true;
+					}
+				} else {
+					minPermissiblePlinthHeight = "0.45";
+					maxPermissiblePlinthHeight = "1.20";
+					if (minPlinthHeight.compareTo(BigDecimal.valueOf(0.45)) >= 0
+							&& minPlinthHeight.compareTo(BigDecimal.valueOf(1.20)) <= 0) {
+						isAccepted = true;
+					}
 				}
+
 			} else {
 				String plinthHeightLayer = String.format(DxfFileConstants.LAYER_PLINTH_HEIGHT, block.getNumber());
 				errors.put(plinthHeightLayer, "Plinth height is not defined in layer " + plinthHeightLayer);
@@ -515,8 +531,8 @@ public class AdditionalFeature extends FeatureProcess {
 			if (errors.isEmpty()) {
 				Map<String, String> details = new HashMap<>();
 				details.put(RULE_NO, RULE_41_I_A);
-				details.put(MIN_REQUIRED, MIN_PLINTH_HEIGHT);
-				details.put(MAX_PERMISSIBLE, MAX_PLINTH_HEIGHT);
+				details.put(MIN_REQUIRED, minPermissiblePlinthHeight);
+				details.put(MAX_PERMISSIBLE, maxPermissiblePlinthHeight);
 				details.put(PROVIDED, String.valueOf(minPlinthHeight));
 				details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 				scrutinyDetail.getDetail().add(details);

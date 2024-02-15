@@ -53,6 +53,7 @@ import static org.egov.edcr.constants.DxfFileConstants.A_AF;
 import static org.egov.edcr.constants.DxfFileConstants.A_FH;
 import static org.egov.edcr.constants.DxfFileConstants.A_R;
 import static org.egov.edcr.constants.DxfFileConstants.A_SA;
+import static org.egov.edcr.constants.DxfFileConstants.B;
 import static org.egov.edcr.constants.DxfFileConstants.B2;
 import static org.egov.edcr.constants.DxfFileConstants.D_A;
 import static org.egov.edcr.constants.DxfFileConstants.D_B;
@@ -819,6 +820,8 @@ public class Far_Dhamtari extends Far {
 			return codesMap.get(F);
 		else if (codes.contains(A))
 			return codesMap.get(A);
+		else if (codes.contains(B))
+			return codesMap.get(B);
 		else
 			return null;
 

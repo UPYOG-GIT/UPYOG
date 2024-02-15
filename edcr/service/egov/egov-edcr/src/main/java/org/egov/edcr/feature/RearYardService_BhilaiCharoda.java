@@ -235,7 +235,8 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 								}
 
 								else if (occupancy.getTypeHelper().getType() != null
-										&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+										&& (J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
+												|| B.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
 									processRearYardGovtOccupancies(setback, block.getBuilding(), pl, block,
 											setback.getLevel(), plot, REAR_YARD_DESC, min, mean,
 											occupancy.getTypeHelper(), rearYardResult, buildingHeight);
@@ -273,8 +274,10 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 										&& pl.getPlanInformation().getDepthOfPlot()
 												.compareTo(BigDecimal.valueOf(12)) <= 0) {
 									exemptRearYard(pl, block, rearYardResult);
-								} else if (J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()) && pl
-										.getPlanInformation().getDepthOfPlot().compareTo(BigDecimal.valueOf(6)) <= 0) {
+								} else if ((J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
+										|| B.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))
+										&& pl.getPlanInformation().getDepthOfPlot()
+												.compareTo(BigDecimal.valueOf(6)) <= 0) {
 									exemptRearYard(pl, block, rearYardResult);
 								}
 							}
@@ -456,7 +459,6 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 		} else if (plotArea.compareTo(BigDecimal.valueOf(20000)) > 0) {
 			meanVal = REARYARDMINIMUM_DISTANCE_12;
 		}
-
 
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
 		/*
