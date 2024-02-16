@@ -225,11 +225,11 @@ public class MDMSService {
 						HashMap typeHelper = (HashMap) getOccupanciesMap.get("typeHelper");
 						log.info("typeHelper=====" + typeHelper);
 
-						if (!typeHelper.isEmpty()) {
+						if (typeHelper != null) {
 							log.info("typeHelper size----- " + typeHelper.size());
 						}
 
-						if (typeHelper.isEmpty() || typeHelper.size() == 0) {
+						if (typeHelper == null || typeHelper.size() == 0) {
 							continue;
 						}
 
