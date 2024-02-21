@@ -56,6 +56,7 @@ public class NationalDashboardService {
 	public IngestRequest getIngestData(String formattedDate1) {
 
 		List<Data> dataList = new ArrayList<>();
+	
 		
 		
 //
@@ -84,7 +85,7 @@ public class NationalDashboardService {
 	        
 
 		Map<String, Object> ingestDataResult = repository.getIngestData(formattedDate1);
-		//System.out.println("ingestttt_____" + ingestDataResult.get("result1"));
+		//log.info("ingestttt_____" + ingestDataResult.get("result1"));
 		List<Map<String, Object>> ingestData = (List<Map<String, Object>>) ingestDataResult.get("result1");
 		String avgDaysToIssueCertificate = ingestDataResult.get("avg_days_to_issue_certificate").toString();
 		String totalPlotArea = ingestDataResult.get("totalPlotArea").toString();
@@ -107,19 +108,19 @@ public class NationalDashboardService {
 	
 		for (Map<String, Object> nationalData : ingestData) {
 			
-			//System.out.println("nationalDataa----" + nationalData);
+			//log.info("nationalDataa----" + nationalData);
 			
 			 Data data = new Data();
 
-			// System.out.println("nationalData--" + nationalData);
+			// log.info("nationalData--" + nationalData);
 			String ulbName = (String) nationalData.get("ulb_name");
-			// System.out.println("ulbName--" + ulbName);
-	//		System.out.println("date__&**" + nationalData.get("avg_days_to_issue_certificate"));
+			// log.info("ulbName--" + ulbName);
+	//		log.info("date__&**" + nationalData.get("avg_days_to_issue_certificate"));
 		
 			
 			String ulb = "ch." + ulbName.trim().toLowerCase().replaceAll("\\s", "").replaceAll("-", "");
 			
-		  //  System.out.println("ulbbb" + ulb);
+		  //  log.info("ulbbb" + ulb);
 			data.setUlb(ulb);
 			data.setDate(formattedDate1);
 			data.setModule("OBPS");
@@ -208,7 +209,7 @@ public class NationalDashboardService {
 			permits.put("buckets", riskTypeBuckets);												
 
 			metrics.put("todaysCollection", todaysCollection);
-			metrics.put("permitsIssued", List.of(occupancy, subOccupancy, permits));
+			metrics.put("permitsIssued", Arrays.asList(occupancy, subOccupancy, permits));
 		
 			data.setMetrics(metrics);
 			
@@ -216,20 +217,19 @@ public class NationalDashboardService {
 			 boolean hasNonZeroMetric = hasNonZeroMetric(metrics);
 				if (hasNonZeroMetric) {
 					
-		            System.out.println("countt==" + dataList.size());
+		            log.info("countt==" + dataList.size());
 		            dataList.add(data);
 				}
 		
 			
 }
-	//	System.out.println("dataList--" + dataList);
+	//	log.info("dataList--" + dataList);
 			ingestRequest.setIngestData(dataList);
 	      //  }
 		 return ingestRequest;
 		
 	}
-
-
+	
 	private boolean hasNonZeroMetric(HashMap<String, Object> metrics) {
 	    // Check top-level metrics
 	    for (Map.Entry<String, Object> entry : metrics.entrySet()) {
@@ -241,7 +241,7 @@ public class NationalDashboardService {
 	    }
 	    // Check nested metrics
 	   // Map<String, Object> nestedMetrics = data.getMetrics();
-	    System.out.println("hhhhhhhh");
+	   
 	    for (Map.Entry<String, Object> nestedEntry : metrics.entrySet()) {
 	        Object nestedValue = nestedEntry.getValue();
 
@@ -289,28 +289,61 @@ public class NationalDashboardService {
 		    public Map<String, Object> pushDataToApi(String apiUrl) {
 				 String formattedDate1 = "";
 				IngestRequest body = getIngestData(formattedDate1);
-				//System.out.println("bodyy---====" + body);
+				//log.info("bodyy---====" + body);
 				
 				
-				Map<String, Object> requestInfoData = getAuthToken("NDCG", "Cg@ingest123", "password", "read", "pg", "SYSTEM");
+				Map<String, Object> requestInfoData = getAuthToken(bpaConfig.getUsername(), bpaConfig.getPassword(),
+						bpaConfig.getGrantType(), bpaConfig.getScope(), bpaConfig.getTenantId(), bpaConfig.getType());
 				Map<String, Object> requestData = new HashMap<>();
-				
+				RequestInfo requestInfo = new RequestInfo();
 			
-				//System.out.println("requestInfoData" + requestInfoData);
+				//log.info("requestInfoData" + requestInfoData);
 				
-			    String access_token =	(String) requestInfoData.get("access_token");
+			   
 			    Map<String, Object> userRequest = (Map<String, Object>) requestInfoData.get("UserRequest");
-			    
-			    
-		    	System.out.println("accerr " + access_token);
-				System.out.println("userName" + (String) userRequest.get("userName"));
-				System.out.println("name" + (String) userRequest.get("name"));
-				System.out.println("mobileNumber" + (String) userRequest.get("mobileNumber"));
-			//	log.info("userName" + (String) userRequest.get("userName"));
-				System.out.println("type" + (String) userRequest.get("type"));
+
+				String access_token = (String) requestInfoData.get("access_token");
+
+				requestInfo.setAuthToken(access_token);
+
+				User userInfo = new User();
+
+				userInfo.setUserName((String) userRequest.get("userName"));
+				// userInfo.setId((Long) userRequest.get("id"));
+				userInfo.setUuid((String) userRequest.get("uuid"));
+				userInfo.setName((String) userRequest.get("name"));
+				userInfo.setMobileNumber((String) userRequest.get("mobileNumber"));
+				userInfo.setType((String) userRequest.get("type"));
 
 				
-				ingestRequest.setRequestInfo((RequestInfo) requestInfoData);
+
+				List<Map<String, Object>> roles = (List<Map<String, Object>>) userRequest.get("roles");
+
+				List<Role> userRole = new ArrayList<>();
+
+				for (Map<String, Object> role : roles) {
+					
+					log.info("inside for loop -- " + role.toString());
+
+					Role rolee = new Role();
+					rolee.setName(role.get("name").toString());
+					rolee.setCode(role.get("code").toString());
+					rolee.setTenantId(role.get("tenantId").toString());
+
+					userRole.add(rolee);
+				}
+
+
+				userInfo.setRoles(userRole);
+				requestInfo.setUserInfo(userInfo);
+
+				ingestRequest.setRequestInfo(requestInfo);
+				//ingestRequest.setRequestInfo((RequestInfo) requestInfoData);
+				log.info("rolesss" + roles.toString());
+				log.info("getRoles--" + userInfo.getRoles().toString());
+			
+			
+				log.info( "requesttInfoo ______ " + ingestRequest.getRequestInfo().toString());
 
 				HttpHeaders headers = new HttpHeaders();
 				headers.setContentType(MediaType.APPLICATION_JSON);
@@ -326,20 +359,19 @@ public class NationalDashboardService {
 				HttpStatus statusCode = (HttpStatus) responseEntity.getStatusCode();
 				int statusCodeValue = statusCode.value();
 
-				System.out.println("HTTP Status Code: " + statusCodeValue);
+				log.info("HTTP Status Code: " + statusCodeValue);
 
 				// You can also check the status code to take appropriate actions
 				if (statusCode.is2xxSuccessful()) {
-					System.out.println("----Data Pushed Successfully----");
+					log.info("----Data Pushed Successfully----");
 				} else if (statusCode.is4xxClientError()) {
-					System.out.println("----4xx error----");
+					log.info("----4xx error----");
 				} else if (statusCode.is5xxServerError()) {
-					System.out.println("----Internal server error---- or Duplicate data found");
+					log.info("----Internal server error---- or Duplicate data found");
 				}
 				return responseBody;
 
 			}
-		    
 		    public Map<String, Object> getAuthToken(String username, String password, String grantType, String scope,
 					String tenantId, String userType) {
 

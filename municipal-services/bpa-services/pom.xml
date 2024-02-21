@@ -176,6 +176,8 @@
 			      <customTypeMapping>org.egov.common.contract.response.ResponseInfo:ResponseInfo</customTypeMapping>			      
 			      <customTypeMapping>org.egov.bpa.web.model.Document:Document</customTypeMapping>
 			      <customTypeMapping>org.egov.bpa.web.model.AuditDetails:AuditDetails</customTypeMapping>
+			       <customTypeMapping>org.egov.common.contract.request.Role:Role</customTypeMapping>
+			      
 			    </customTypeMappings>
 			    <namespace>Digit</namespace>
 			    <debug>true</debug>
