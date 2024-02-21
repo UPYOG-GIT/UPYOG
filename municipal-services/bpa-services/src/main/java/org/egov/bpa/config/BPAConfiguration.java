@@ -347,6 +347,36 @@ public class BPAConfiguration {
 
 	@Value("${egov.shortener.url}")
 	private String shortenerURL;
+	
+	@Value("${egov.nationalDashboard.username}")
+	private String username;
+	
+	@Value("${egov.nationalDashboard.password}")
+	private String password;
+	
+	@Value("${egov.nationalDashboard.grantType}")
+	private String grantType;
+	
+	@Value("${egov.nationalDashboard.scope}")
+	private String scope;
+	
+	@Value("${egov.nationalDashboard.tenantId}")
+	private String tenantId;
+	
+	@Value("${egov.nationalDashboard.type}")
+	private String type;
+	
+	@Value("${egov.nationalDashboard.authApi}")
+	private String authApi;
+	
+	@Value("${egov.nationalDashboard.ingestApi}")
+	private String ingestApi;
+	
+	
+
+	
+	
+
 
 	
 }
