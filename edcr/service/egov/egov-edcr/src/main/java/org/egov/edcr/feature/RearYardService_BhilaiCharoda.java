@@ -508,7 +508,7 @@ public class RearYardService_BhilaiCharoda extends RearYardService {
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult,
 			BigDecimal buildingHeight) {
 		Boolean valid = false;
-		String subRule = RULE_37_TWO_A;
+		String subRule = RULE_7_C_1;
 		String rule = REAR_YARD_DESC;
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;
