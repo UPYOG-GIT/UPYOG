@@ -363,7 +363,7 @@ public class MinDistance {
             Double dist = distanceList.iterator().next();
             DXFLine line = map.get(dist);
             LOG.debug("the shortest Distance is " + dist);
-            PrintUtil.printForDXf(line.getStartPoint(), line.getEndPoint(), name + "_MIN_DISTANCE", pl);
+//            PrintUtil.printForDXf(line.getStartPoint(), line.getEndPoint(), name + "_MIN_DISTANCE", pl);
             return BigDecimal.valueOf(dist).setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, RoundingMode.HALF_UP);
         } else
             return BigDecimal.ZERO.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS);
