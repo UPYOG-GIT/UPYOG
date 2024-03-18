@@ -154,11 +154,12 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     // setName(e.target.value);
 
     const value = e.target.value;
-    const isValid = /^[A-Za-z ]*$/.test(value);
+    const trimmedValue = value.replace(/\s+/g, ' ');
+    const isValid = /^[A-Za-z ]*$/.test(trimmedValue);
 
     if (isValid) {
       // Update the name state or perform any other necessary actions
-      const titleCaseValue = value.toLowerCase().replace(/(^|\s)\w/g, (match) => match.toUpperCase());
+      const titleCaseValue = trimmedValue.toLowerCase().replace(/(^|\s)\w/g, (match) => match.toUpperCase());
       setName(titleCaseValue);
     } else {
       // Display an error message or handle invalid input
@@ -171,11 +172,12 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     // setName(e.target.value);
 
     const value = e.target.value;
-    const isValid = /^[A-Za-z ]*$/.test(value);
+    const trimmedValue = value.replace(/\s+/g, ' ');
+    const isValid = /^[A-Za-z ]*$/.test(trimmedValue);
 
     if (isValid) {
       // Update the name state or perform any other necessary actions
-      const titleCaseValue = value.toLowerCase().replace(/(^|\s)\w/g, (match) => match.toUpperCase());
+      const titleCaseValue = trimmedValue.toLowerCase().replace(/(^|\s)\w/g, (match) => match.toUpperCase());
       setGuardianName(titleCaseValue);
     } else {
       // Display an error message or handle invalid input
