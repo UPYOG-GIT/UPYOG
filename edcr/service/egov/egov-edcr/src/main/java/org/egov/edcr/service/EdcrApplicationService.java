@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -309,7 +311,14 @@ public class EdcrApplicationService {
 				graphicsState.setAlphaSourceFlag(true);
 				// Set the opacity (0.5f for semi-transparent)
 				contentStream.setGraphicsStateParameters(graphicsState);
-				InputStream imageStream = EdcrApplication.class.getResourceAsStream("/watermark.png");
+				// Create a URL object
+	            URL url = new URL("https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/watermark.png");
+
+	            // Open a connection to the URL
+	            URLConnection connection = url.openConnection();
+	            InputStream imageStream = connection.getInputStream();
+
+//				InputStream imageStream = EdcrApplication.class.getResourceAsStream("/watermark.png");
 				java.awt.image.BufferedImage image1 = ImageIO.read(imageStream);
 				// Load the watermark image (replace "watermark.png" with the path to your
 				// watermark image)
