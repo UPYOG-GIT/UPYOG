@@ -1,4 +1,15 @@
-import { BPAHomeIcon, BPAIcon, CitizenHomeCard, EDCRIcon, EmployeeModuleCard, Loader, Toast, SubmitBar, Card, CardText } from "@egovernments/digit-ui-react-components";
+import {
+  BPAHomeIcon,
+  BPAIcon,
+  CitizenHomeCard,
+  EDCRIcon,
+  EmployeeModuleCard,
+  Loader,
+  Toast,
+  SubmitBar,
+  Card,
+  CardText,
+} from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, Link } from "react-router-dom";
@@ -46,7 +57,6 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
     tradeType = "TOWNPLANNER.CLASSA";
   }
 
-
   // if (false) {
   // if (userRoles && (userRoles.includes("BPA_ARCHITECT") || userRoles.includes("BPA_BUILDER") || userRoles.includes("BPA_ENGINEER") || userRoles.includes("BPA_STRUCTURALENGINEER") || userRoles.includes("BPA_SUPERVISOR") || userRoles.includes("BPA_TOWNPLANNER")) && validityDate < currentDate.getTime()) {
   if (userRoles && tradeType !== null && validityDate < currentDate.getTime()) {
@@ -54,47 +64,47 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
     // console.log("validityDate: " + validityDate);
 
     let payload = {
-      "Licenses": [
+      Licenses: [
         {
-          "tradeLicenseDetail": {
-            "owners": [
+          tradeLicenseDetail: {
+            owners: [
               {
-                "id": userInfo?.info?.id,
-                "uuid": userInfo?.info?.uuid,
-                "userName": userInfo?.info?.userName,
-                "gender": "",
-                "mobileNumber": userInfo?.info?.mobileNumber,
-                "emailId": userInfo?.info?.email,
-                "name": userInfo?.info?.name,
-                "roles": userInfo?.info?.roles,
-                "permanentAddress": "",
-                "correspondenceAddress": "",
-                "pan": "",
-                "dob": null,
+                id: userInfo?.info?.id,
+                uuid: userInfo?.info?.uuid,
+                userName: userInfo?.info?.userName,
+                gender: "",
+                mobileNumber: userInfo?.info?.mobileNumber,
+                emailId: userInfo?.info?.email,
+                name: userInfo?.info?.name,
+                roles: userInfo?.info?.roles,
+                permanentAddress: "",
+                correspondenceAddress: "",
+                pan: "",
+                dob: null,
                 // "permanentPinCode": "143001"
-              }
+              },
             ],
-            "subOwnerShipCategory": "INDIVIDUAL",
-            "tradeUnits": [
+            subOwnerShipCategory: "INDIVIDUAL",
+            tradeUnits: [
               {
-                "tradeType": tradeType,
-              }
+                tradeType: tradeType,
+              },
             ],
-            "address": {
-              "city": "",
-              "landmark": "",
-              "pincode": ""
+            address: {
+              city: "",
+              landmark: "",
+              pincode: "",
             },
-            "institution": null,
-            "applicationDocuments": null
+            institution: null,
+            applicationDocuments: null,
           },
-          "licenseType": "PERMANENT",
-          "businessService": "BPAREN",
-          "tenantId": userInfo?.info?.tenantId,
-          "action": "NOWORKFLOW"
-        }
-      ]
-    }
+          licenseType: "PERMANENT",
+          businessService: "BPAREN",
+          tenantId: userInfo?.info?.tenantId,
+          action: "NOWORKFLOW",
+        },
+      ],
+    };
 
     // console.log("payload: " + JSON.stringify(payload));
     const [responseData, setResponseData] = useState(null);
@@ -123,15 +133,19 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
     const homeScreen = (
       <div className="mainContent citizenAllServiceGrid">
         <Card>
-          <CardText>{"Please Pay Renewal Fee for Renew your Registration"}</CardText>
-          {<Link to={{
-            pathname: `/digit-ui/citizen/payment/collect/BPAREN/${consumerCode}/${userInfo?.info?.tenantId}?tenantId=${userInfo?.info?.tenantId}`
-          }}>
-            <SubmitBar label={t("COMMON_MAKE_PAYMENT")} />
-          </Link>}
+          <CardText>{"Please Pay Renewal Fee for Renew your Registration, Application Number : " + consumerCode}</CardText>
+          {
+            <Link
+              to={{
+                pathname: `/digit-ui/citizen/payment/collect/BPAREN/${consumerCode}/${userInfo?.info?.tenantId}?tenantId=${userInfo?.info?.tenantId}`,
+              }}
+            >
+              <SubmitBar label={t("COMMON_MAKE_PAYMENT")} />
+            </Link>
+          }
         </Card>
       </div>
-    )
+    );
     return homeScreen;
   } else {
     // console.log("Hiiiiii2222");
@@ -185,10 +199,10 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
 
     useEffect(() => {
       if (location.pathname === "/digit-ui/citizen/obps/home") {
-        Digit.SessionStorage.del("OBPS.INBOX")
-        Digit.SessionStorage.del("STAKEHOLDER.INBOX")
+        Digit.SessionStorage.del("OBPS.INBOX");
+        Digit.SessionStorage.del("STAKEHOLDER.INBOX");
       }
-    }, [location.pathname])
+    }, [location.pathname]);
 
     useEffect(() => {
       if (!bpaLoading) {
@@ -204,19 +218,19 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
         // Initialize counts for BPA and BPA_LOW
         let bpaMapCount = 0;
         let bpaLowMapCount = 0;
-        let approvedMapCount=0;
+        let approvedMapCount = 0;
 
         // Iterate through the statusMap array
         bpaInboxData?.statuses.forEach((status) => {
           // Check the businessservice value and increment the corresponding count
-          if (status.businessservice === 'BPA') {
+          if (status.businessservice === "BPA") {
             bpaMapCount += status.count;
-          } else if (status.businessservice === 'BPA_LOW') {
+          } else if (status.businessservice === "BPA_LOW") {
             bpaLowMapCount += status.count;
           }
 
-          if (status.applicationstatus === 'APPROVED') {
-            approvedMapCount+=status.count;
+          if (status.applicationstatus === "APPROVED") {
+            approvedMapCount += status.count;
           }
         });
 
@@ -296,19 +310,19 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
         kpis: [
           {
             label: t("Approved Applications"),
-            count: !(bpaLoading) && approvedCount ? approvedCount : "-",
+            count: !bpaLoading && approvedCount ? approvedCount : "-",
             link: `#`,
             // i18nKey: t("High/Medium: " + bpaCount),
           },
           {
             label: t("High/Medium Risk Applications"),
-            count: !(bpaLoading) && bpaCount ? bpaCount : "-",
+            count: !bpaLoading && bpaCount ? bpaCount : "-",
             link: `#`,
             // i18nKey: t("High/Medium: " + bpaCount),
           },
           {
             label: t("Low Risk Applications"),
-            count: !(bpaLoading) && bpaLowCount ? bpaLowCount : "-",
+            count: !bpaLoading && bpaLowCount ? bpaLowCount : "-",
             link: `#`,
           },
         ],
@@ -325,7 +339,7 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
           },
         ],
         className: "CitizenHomeCard",
-        styles: { padding: "0px", minWidth: "90%", minHeight: "90%" }
+        styles: { padding: "0px", minWidth: "90%", minHeight: "90%" },
       },
       {
         title: t("ACTION_TEST_EDCR_SCRUTINY"),
@@ -340,13 +354,13 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
             i18nKey: t("BPA_OC_PLAN_SCRUTINY_FOR_NEW_CONSTRUCTION_LABEL"),
           },
         ],
-        styles: { minWidth: "90%", minHeight: "90%" }
+        styles: { minWidth: "90%", minHeight: "90%" },
       },
       {
         title: t("ACTION_TEST_BPA_STAKE_HOLDER_HOME"),
         Icon: <BPAIcon className="fill-path-primary-main" />,
         links: bpaLinks,
-        styles: { minWidth: "90%", minHeight: "90%" }
+        styles: { minWidth: "90%", minHeight: "90%" },
       },
       // {
       //   Icon: <BPAHomeIcon />,
@@ -415,13 +429,16 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
         {homeDetails.map((data) => {
           return (
             <div>
-              {data.name === "employeeCard" ? <EmployeeModuleCard {...data} /> :
-                <CitizenHomeCard header={data.title} links={data.links} Icon={() => data.Icon} styles={data?.styles} />}
+              {data.name === "employeeCard" ? (
+                <EmployeeModuleCard {...data} />
+              ) : (
+                <CitizenHomeCard header={data.title} links={data.links} Icon={() => data.Icon} styles={data?.styles} />
+              )}
             </div>
-          )
+          );
         })}
       </div>
-    )
+    );
     sessionStorage.setItem("isPermitApplication", true);
     sessionStorage.setItem("isEDCRDisable", JSON.stringify(false));
     return homeScreen;

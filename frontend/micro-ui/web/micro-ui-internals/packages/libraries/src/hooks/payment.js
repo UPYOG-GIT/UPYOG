@@ -95,14 +95,17 @@ export const useFetchPayment = ({ tenantId, consumerCode, businessService }, con
 };
 
 export const usePaymentUpdate = ({ egId }, businessService, config) => {
+  // console.log("object........"+JSON.stringify(config) + "egid "+egId+"BS "+businessService);
   const getPaymentData = async (egId) => {
     const transaction = await Digit.PaymentService.updateCitizenReciept(egId);
     const payments = await Digit.PaymentService.getReciept(transaction.Transaction[0].tenantId, businessService, {
       consumerCodes: transaction.Transaction[0].consumerCode,
     });
+    // console.log("transactin: "+JSON.stringify(transaction));
+    // console.log("payments: "+JSON.stringify(payments));
     return { payments, applicationNo: transaction.Transaction[0].consumerCode, txnStatus: transaction.Transaction[0].txnStatus };
   };
-
+  // console.log("object111 exit from usePaymentUpdate");
   return useQuery(["paymentUpdate", egId], () => getPaymentData(egId), config);
 };
 

@@ -386,7 +386,6 @@ export const FailedPayment = (props) => {
   const { addParams, clearParams } = props;
   const { t } = useTranslation();
   const { consumerCode } = useParams();
-
   const getMessage = () => "Failure !";
   return (
     <Card>
