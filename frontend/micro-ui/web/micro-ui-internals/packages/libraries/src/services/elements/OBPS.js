@@ -92,6 +92,15 @@ export const OBPSService = {
       params: {},
       auth: window.location.href.includes("openlink") ? false : true,
     }),
+  BPARENSearch: (tenantId, details, params) =>
+    Request({
+      url: Urls.obps.bpaRenSearch,
+      params: { ...params },
+      auth: true,
+      userService: true,
+      method: "POST",
+      data: details,
+    }),
   BPARENCreate: (details, tenantId) =>
     Request({
       url: Urls.obps.bpaRenCreate,

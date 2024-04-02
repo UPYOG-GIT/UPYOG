@@ -150,6 +150,7 @@ import useEDCRInbox from "./obps/useEDCRInbox";
 import useBPAApplicationActions from "./obps/useApplicationActions"
 import useArchitectInbox from "./obps/useArchitectInbox";
 import useBPAREGSearch from "./obps/useBPAREGSearch";
+import useBPARENSearch from "./obps/useBPARENSearch";
 import useEmpBPAREGSearch from "./obps/useEmpBPAREGSearch";
 import useServiceTypeFromApplicationType from "./obps/useServiceTypeFromApplicationType"
 import useBusinessServiceBasedOnServiceType from "./obps/useBusinessServiceBasedOnServiceType"
@@ -310,6 +311,7 @@ const obps = {
   useBPAREGgetbill,
   useStakeholderAPI,
   useBPAREGSearch,
+  useBPARENSearch,
   useOCEdcrSearch,
   useLicenseDetails,
   useBPAREGApplicationActions,
