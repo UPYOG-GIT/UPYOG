@@ -114,7 +114,8 @@ public class TLRepository {
 	                targetDateTime = targetDateTime.plusYears(1);
 	            }
 	            
-	            if (license.getBusinessService().equals("BPAREG") && license.getStatus().equals("PENDINGAPPROVAL")) {
+	            if ((license.getBusinessService().equals("BPAREG") && license.getStatus().equals("PENDINGAPPROVAL")) 
+	            		|| (license.getBusinessService().equals("BPAREN") && license.getStatus().equals("APPROVED")) ) {
 	                String uuid = requestInfo.getUserInfo().getUuid();
 	                String updateQuery = "UPDATE eg_user SET validitydate ='" + targetDateTime 
 	                		+ "' where uuid ='" + uuid + "'";
