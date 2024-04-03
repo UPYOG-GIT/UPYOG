@@ -303,7 +303,7 @@ public class FrontYardService_Dhamtari extends FrontYardService {
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot) {
 		
-		minVal = FRONTYARDMINIMUM_DISTANCE_4_5;
+		meanVal = FRONTYARDMINIMUM_DISTANCE_4_5;
 
 		/*
 		 * if (-1 == level) { rule = BSMT_FRONT_YARD_DESC; subRuleDesc =
