@@ -111,18 +111,18 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
     const [renewalSearch, setRenewalSearch] = useState(null);
     const [paymentDetailsResponse, setPaymentDetailsResponse] = useState(null);
     const [isRenewalSearchDone, setIsRenewalSearchDone] = useState(false);
-    useEffect(async () => {
-      // const response = await Digit.OBPSService.BPARENCreate(payload, userInfo?.info?.tenantId);
-      const { Licenses } = await Digit.OBPSService.BPARENSearch(userInfo?.info?.tenantId, userInfo);
-      // console.log("object "+JSON.stringify(ResponseInfo));
-      // console.log("Licenses "+JSON.stringify(Licenses));
-      // const data = await Licenses.json();
-      setRenewalSearch(Licenses[0]);
-      setIsRenewalSearchDone(true);
-    }, []);
+    // useEffect(async () => {
+    //   // const response = await Digit.OBPSService.BPARENCreate(payload, userInfo?.info?.tenantId);
+    //   const { Licenses } = await Digit.OBPSService.BPARENSearch(userInfo?.info?.tenantId, userInfo, 'BPAREN');
+    //   // console.log("object "+JSON.stringify(ResponseInfo));
+    //   // console.log("Licenses "+JSON.stringify(Licenses));
+    //   // const data = await Licenses.json();
+    //   setRenewalSearch(Licenses[0]);
+    //   setIsRenewalSearchDone(true);
+    // }, []);
     // console.log("renewalSearch : "+JSON.stringify(renewalSearch));
     // useEffect(async () => {
-      if(isRenewalSearchDone && renewalSearch===null){
+      // if(isRenewalSearchDone && renewalSearch===null){
         // console.log("inside create ren")
       useEffect(async () => {
         // const response = await Digit.OBPSService.BPARENCreate(payload, userInfo?.info?.tenantId);
@@ -131,10 +131,11 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
         // console.log("Licenses "+JSON.stringify(Licenses));
         // const data = await Licenses.json();
         setResponseData(Licenses[0]);
-      }, [isRenewalSearchDone, renewalSearch]);
-    }
+      }, []);
+    // }[isRenewalSearchDone, renewalSearch]
     // console.log("Response111 :"+JSON.stringify(responseData));
-    let consumerCode = renewalSearch ? renewalSearch.applicationNumber : responseData?.applicationNumber;
+    // let consumerCode = renewalSearch ? renewalSearch.applicationNumber : responseData?.applicationNumber;
+    let consumerCode = responseData?.applicationNumber;
 
     const fetchBillParams = { consumerCode };
     const { data: paymentDetails } = Digit.Hooks.obps.useBPAREGgetbill(
