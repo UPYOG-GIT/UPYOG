@@ -51,7 +51,7 @@ public class ArchitectDetailsResultSetExtractor implements ResultSetExtractor<Li
                         .createdDate(rs.getTimestamp("createddate")).guardian(rs.getString("guardian")).signature(rs.getString("signature"))
                         .accountLocked(rs.getBoolean("accountlocked")).photo(rs.getString("photo"))
                         .identificationMark(rs.getString("identificationmark")).uuid(rs.getString("uuid"))
-                        .accountLockedDate(rs.getLong("accountlockeddate")).alternateMobileNumber(rs.getString("alternatemobilenumber")).validityDate(rs.getTimestamp("validitydate")).userTenantid(rs.getString("usertenantid"))
+                        .accountLockedDate(rs.getLong("accountlockeddate")).alternateMobileNumber(rs.getString("alternatemobilenumber")).validityDate(rs.getTimestamp("validitydate")).userTenantid(rs.getString("user_tenantid"))
                         .build();
 
                 for (UserType type : UserType.values()) {
