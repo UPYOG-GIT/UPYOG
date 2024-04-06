@@ -210,6 +210,13 @@ public class UserService {
 		setFileStoreUrlsByFileStoreIds(list);
 		return list;
 	}
+	
+	
+	public List<org.egov.user.domain.model.User> getStackHolderDetails(String tenantId, RequestInfo requestInfo) {
+		
+		List<org.egov.user.domain.model.User> list = userRepository.getStackholderDetails(tenantId);
+		return list;	
+	}
 
 	/**
 	 * api will create the user based on some validations

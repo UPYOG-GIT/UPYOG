@@ -101,6 +101,15 @@ public class UserRepository {
 		return users;
 	}
 
+	public List<User> getStackholderDetails(String tenantId) {
+
+		String queryStr = userTypeQueryBuilder.getStachholderDetailQuery(tenantId);
+
+		List<User> users = jdbcTemplate.query(queryStr, userResultSetExtractor);
+
+		return users;
+	}
+
 	/**
 	 * get list of all userids with role in given tenant
 	 *
@@ -157,7 +166,7 @@ public class UserRepository {
 		user.setUserTenantid(user.getUserTenantid());
 		user.setGuardian(user.getGuardian());
 		log.info("user.getUserTenantid()-------" + user.getUserTenantid());
-		 log.info("user.getGuardian()-------" + user.getGuardian());
+		log.info("user.getGuardian()-------" + user.getGuardian());
 		final User savedUser = save(user);
 		if (user.getRoles().size() > 0) {
 			saveUserRoles(user);
