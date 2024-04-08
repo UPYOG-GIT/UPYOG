@@ -1,9 +1,22 @@
 package org.egov.user.persistence.repository;
 
-import lombok.extern.log4j.Log4j;
-import lombok.extern.slf4j.Slf4j;
+import static java.util.Objects.isNull;
+import static org.egov.user.repository.builder.UserTypeQueryBuilder.SELECT_FAILED_ATTEMPTS_BY_USER_SQL;
+import static org.egov.user.repository.builder.UserTypeQueryBuilder.SELECT_NEXT_SEQUENCE_USER;
+import static org.springframework.util.StringUtils.isEmpty;
 
-import org.egov.common.contract.request.RequestInfo;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.egov.tracer.model.CustomException;
 import org.egov.user.domain.model.Address;
 import org.egov.user.domain.model.Role;
@@ -16,6 +29,7 @@ import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.persistence.dto.FailedLoginAttempt;
 import org.egov.user.repository.builder.RoleQueryBuilder;
 import org.egov.user.repository.builder.UserTypeQueryBuilder;
+import org.egov.user.repository.rowmapper.ArchitectDetailsResultSetExtractor;
 import org.egov.user.repository.rowmapper.UserResultSetExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -25,13 +39,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.isNull;
-import static org.egov.user.repository.builder.UserTypeQueryBuilder.SELECT_FAILED_ATTEMPTS_BY_USER_SQL;
-import static org.egov.user.repository.builder.UserTypeQueryBuilder.SELECT_NEXT_SEQUENCE_USER;
-import static org.springframework.util.StringUtils.isEmpty;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
 @Repository
 @Slf4j
@@ -45,6 +54,8 @@ public class UserRepository {
 	private UserTypeQueryBuilder userTypeQueryBuilder;
 	private RoleRepository roleRepository;
 	private UserResultSetExtractor userResultSetExtractor;
+	
+	private ArchitectDetailsResultSetExtractor architectDetailsResultSetExtractor;
 
 	@Autowired
 	UserRepository(RoleRepository roleRepository, UserTypeQueryBuilder userTypeQueryBuilder,
@@ -105,7 +116,7 @@ public class UserRepository {
 
 		String queryStr = userTypeQueryBuilder.getStachholderDetailQuery(tenantId);
 
-		List<User> users = jdbcTemplate.query(queryStr, userResultSetExtractor);
+		List<User> users = jdbcTemplate.query(queryStr, architectDetailsResultSetExtractor);
 
 		return users;
 	}
