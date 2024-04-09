@@ -19,22 +19,29 @@ const ArchitectDetailsDesktopInbox = ({ tableConfig, filterComponent, ...props }
 
   const columns = React.useMemo(() => {
     return [
-      {
-        Header: t("HR_EMP_ID_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return (
-            <span className="link">
-              <Link to={`/digit-ui/employee/hrms/details/${row.original.tenantId}/${row.original.code}`}>{row.original.code}</Link>
-            </span>
-          );
-        },
-      },
+      // {
+      //   Header: t("HR_EMP_ID_LABEL"),
+      //   disableSortBy: true,
+      //   Cell: ({ row }) => {
+      //     return (
+      //       <span className="link">
+      //         <Link to={`/digit-ui/employee/hrms/details/${row.original.tenantId}/${row.original.code}`}>{row.original.code}</Link>
+      //       </span>
+      //     );
+      //   },
+      // },
       {
         Header: t("HR_EMP_NAME_LABEL"),
         disableSortBy: true,
         Cell: ({ row }) => {
           return GetCell(`${row.original?.user?.name}`);
+        },
+      },
+      {
+        Header: t("Mobile Number"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.user?.mobileNumber}`);
         },
       },
       {
@@ -56,37 +63,31 @@ const ArchitectDetailsDesktopInbox = ({ tableConfig, filterComponent, ...props }
         },
         disableSortBy: true,
       },
+      // {
+      //   Header: t("HR_DESG_LABEL"),
+      //   disableSortBy: true,
+      //   Cell: ({ row }) => {
+      //     return GetCell(
+      //       `${
+      //         t(
+      //           "COMMON_MASTERS_DESIGNATION_" + row.original?.assignments?.sort((a, b) => new Date(a.fromDate) - new Date(b.fromDate))[0]?.designation
+      //         ) || ""
+      //       }`
+      //     );
+      //   },
+      // },
       {
-        Header: t("HR_DESG_LABEL"),
+        Header: t("Validity"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(
-            `${
-              t(
-                "COMMON_MASTERS_DESIGNATION_" + row.original?.assignments?.sort((a, b) => new Date(a.fromDate) - new Date(b.fromDate))[0]?.designation
-              ) || ""
-            }`
-          );
-        },
-      },
-      {
-        Header: t("HR_DEPT_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(
-            `${
-              t(
-                "COMMON_MASTERS_DEPARTMENT_" + row.original?.assignments?.sort((a, b) => new Date(a.fromDate) - new Date(b.fromDate))[0]?.department
-              ) || ""
-            }`
-          );
+          return GetCell(`${row.original?.user?.validityDate}`);
         },
       },
       {
         Header: t("HR_STATUS_LABEL"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetSlaCell(`${row.original?.isActive ? "ACTIVE" : "INACTIVE"}`);
+          return GetSlaCell(`${row.original?.active ? "ACTIVE" : "INACTIVE"}`);
         },
       },
     ];

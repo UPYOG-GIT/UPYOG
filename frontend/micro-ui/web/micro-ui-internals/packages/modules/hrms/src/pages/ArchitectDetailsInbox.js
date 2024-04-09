@@ -1,4 +1,4 @@
-import { Header, Loader } from "@egovernments/digit-ui-react-components";
+import { Header, Loader, CardLabel, Table, LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ArchitectDetailsDesktopInbox from "../components/inbox/ArchitectDetailsDesktopInbox";
@@ -13,36 +13,41 @@ const ArchitectDetailsInbox = ({ parentRoute, businessService = "HRMS", initialS
   const [pageSize, setPageSize] = useState(initialStates.pageSize || 10);
   const [sortParams, setSortParams] = useState(initialStates.sortParams || [{ id: "createdTime", desc: false }]);
   const [totalRecords, setTotalReacords] = useState(undefined);
+  const GetCell = (value) => <span className="cell-text">{t(value)}</span>;
+
+  const [architectDetails, setArchitectDetails] = useState();
   const [searchParams, setSearchParams] = useState(() => {
     return initialStates.searchParams || {};
   });
 
-  let isMobile = window.Digit.Utils.browser.isMobile();
-  let paginationParams = isMobile
-    ? { limit: 100, offset: pageOffset, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" }
-    : { limit: pageSize, offset: pageOffset, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" };
-  const isupdate = Digit.SessionStorage.get("isupdate");
-  const { isLoading: hookLoading, isError, error, data, ...rest } = Digit.Hooks.hrms.useHRMSSearch(
-    searchParams,
-    tenantId,
-    paginationParams,
-    isupdate
-  );
+  // let isMobile = window.Digit.Utils.browser.isMobile();
+  // let paginationParams = isMobile
+  //   ? { limit: 100, offset: pageOffset, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" }
+  //   : { limit: pageSize, offset: pageOffset, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" };
+  // const isupdate = Digit.SessionStorage.get("isupdate");
+  // const { isLoading: hookLoading, isError, error, data, ...rest } = Digit.Hooks.hrms.useHRMSSearch(
+  //   searchParams,
+  //   tenantId,
+  //   paginationParams,
+  //   isupdate
+  // );
 
   useEffect(async () => {
     const tenant = Digit.ULBService.getCurrentTenantId();
     
     
-      const usersResponse = await Digit.HrmsService.architectdetailssearch(tenant, { tenantId: [tenant] }, {});
-      console.log("Architect : "+JSON.stringify(usersResponse));
+      const usersResponse = await Digit.HRMSService.architectdetailssearch(tenant, { tenantId: tenant }, {});
+      // console.log("Architect : "+JSON.stringify(usersResponse));
+      setArchitectDetails(usersResponse);
       // if (usersResponse && usersResponse.user && usersResponse.user.length) {
       //   const userDetails = usersResponse.user[0];
       //   const thumbs = userDetails?.photo?.split(",");
       //   setProfilePic(thumbs?.at(0));
       // }
     
-  }, [profilePic !== null, userDetails?.info?.uuid]);
+  }, []);
 
+  console.log("architectDetails: "+JSON.stringify(architectDetails));
   useEffect(() => {
     // setTotalReacords(res?.EmployeCount?.totalEmployee);
   }, [res]);
@@ -104,65 +109,192 @@ const ArchitectDetailsInbox = ({ parentRoute, businessService = "HRMS", initialS
     return <Loader />;
   }
 
-  if (data?.length !== null) {
-    if (isMobile) {
-      return (
-        <ArchitectDetailsMobileInbox
-          businessService={businessService}
-          data={data}
-          isLoading={hookLoading}
-          defaultSearchParams={initialStates.searchParams}
-          isSearch={!isInbox}
-          onFilterChange={handleFilterChange}
-          searchFields={getSearchFields()}
-          onSearch={handleFilterChange}
-          onSort={handleSort}
-          onNextPage={fetchNextPage}
-          tableConfig={rest?.tableConfig}
-          onPrevPage={fetchPrevPage}
-          currentPage={Math.floor(pageOffset / pageSize)}
-          pageSizeLimit={pageSize}
-          disableSort={false}
-          onPageSizeChange={handlePageSizeChange}
-          parentRoute={parentRoute}
-          searchParams={searchParams}
-          sortParams={sortParams}
-          totalRecords={totalRecords}
-          linkPrefix={'/digit-ui/employee/hrms/details/'}
-          filterComponent={filterComponent}
+  const GetCell1 = (value) => <input type="checkbox" id="checkbox2" onChange={(e) => getRowId(e)}  name="checkbox2" value={value}/>;
+  const columns = React.useMemo(() => {
+    return [
+      {
+        Header: t("Select"),
+        disableSortBy: true,
+        Cell: ({row}) => {
+          return (
+            GetCell1(`${row.original?.id}`)
+          );
+        },
+      },
+      {
+        Header: t("Name"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.name}`);
+        },
+      },
+      {
+        Header: t("Mobile Number"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.from_val }`);
+        },
+      },
+      {
+        Header: t("Validity Date"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.validityDate}`);
+        },
+      },
+      
+      
+    ];
+  }, []);
+
+  return (
+    <Card style={{ position: "relative" }} className={"employeeCard-override"}>
+      <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("Slab Master")}</Header>
+     
+      {/* <LabelFieldPair>
+        <CardLabel style={{ color: "#000" }}>{`${t("Pay Type")}`}</CardLabel>
+        <Dropdown
+          style={{ width: "100%" }}
+          className="form-field"
+          selected={SlabPyType}
+          option={SlabPyTypedropval}
+          select={setSlabPaytype}
+          value={SlabPyType}
+          optionKey="code"
+          name="SlabPyType"
         />
-        // <div></div>
-      );
-    } else {
-      return (
-        <div>
-          {isInbox && <Header>{t("HR_HOME_SEARCH_RESULTS_HEADING")}</Header>}
-          <ArchitectDetailsDesktopInbox
-            businessService={businessService}
-            data={data}
-            isLoading={hookLoading}
-            defaultSearchParams={initialStates.searchParams}
-            isSearch={!isInbox}
-            onFilterChange={handleFilterChange}
-            searchFields={getSearchFields()}
-            onSearch={handleFilterChange}
-            onSort={handleSort}
-            onNextPage={fetchNextPage}
-            onPrevPage={fetchPrevPage}
-            currentPage={Math.floor(pageOffset / pageSize)}
-            pageSizeLimit={pageSize}
-            disableSort={false}
-            onPageSizeChange={handlePageSizeChange}
-            parentRoute={parentRoute}
-            searchParams={searchParams}
-            sortParams={sortParams}
-            totalRecords={totalRecords}
-            filterComponent={filterComponent}
-          />
-        </div>
-      );
-    }
-  }
+      </LabelFieldPair> */}
+      
+      <Table
+        t={t}
+        data={architectDetails}
+        columns={columns}
+        className="customTable table-border-style"       
+        // manualPagination={false}
+        // isPaginationRequired={false}
+        getCellProps={(cellInfo) => {
+          return {
+            style: {
+              padding: "20px 18px",
+              fontSize: "16px",
+              borderTop: "1px solid grey",
+              textAlign: "left",
+              verticalAlign: "middle",
+            },
+          };
+        }}
+      />
+      
+      <button
+        onClick={()=>setModalData(true)}
+        style={{
+          margin: "24px",
+          backgroundColor: "#F47738",
+          width: "20%",
+          height: "40px",
+          color: "white",
+          borderBottom: "1px solid black",
+        }}
+      >
+        {t("Add")}
+      </button>
+      <button
+        onClick={deleteItem}
+        style={{
+          margin: "24px",
+          backgroundColor: "#F47738",
+          width: "20%",
+          height: "40px",
+          color: "white",
+          borderBottom: "1px solid black",
+        }}
+      >
+        {t("Delete")}
+      </button>
+
+      <div style={{display:"flex",justifyContent:"center"}}>
+      <button
+        // onClick={updateProfile}
+        style={{
+          margin: "24px",
+          backgroundColor: "#F47738",
+          width: "20%",
+          height: "40px",
+          color: "white",
+          borderBottom: "1px solid black",
+        }}
+      >
+        {t("Cancel")}
+      </button>
+      </div>
+  
+     
+
+
+
+
+    </Card>
+  );
+
+  // if (architectDetails?.length !== null) {
+  //   if (isMobile) {
+  //     return (
+  //       <ArchitectDetailsMobileInbox
+  //         businessService={businessService}
+  //         data={architectDetails}
+  //         isLoading={hookLoading}
+  //         defaultSearchParams={initialStates.searchParams}
+  //         isSearch={!isInbox}
+  //         onFilterChange={handleFilterChange}
+  //         searchFields={getSearchFields()}
+  //         onSearch={handleFilterChange}
+  //         onSort={handleSort}
+  //         onNextPage={fetchNextPage}
+  //         tableConfig={rest?.tableConfig}
+  //         onPrevPage={fetchPrevPage}
+  //         currentPage={Math.floor(pageOffset / pageSize)}
+  //         pageSizeLimit={pageSize}
+  //         disableSort={false}
+  //         onPageSizeChange={handlePageSizeChange}
+  //         parentRoute={parentRoute}
+  //         searchParams={searchParams}
+  //         sortParams={sortParams}
+  //         totalRecords={totalRecords}
+  //         linkPrefix={'/digit-ui/employee/hrms/details/'}
+  //         filterComponent={filterComponent}
+  //       />
+  //       // <div></div>
+  //     );
+  //   } else {
+  //     return (
+  //       <div>
+  //         {isInbox && <Header>{t("HR_HOME_SEARCH_RESULTS_HEADING")}</Header>}
+  //         <ArchitectDetailsDesktopInbox
+  //           businessService={businessService}
+  //           data={architectDetails}
+  //           // isLoading={hookLoading}
+  //           defaultSearchParams={initialStates.searchParams}
+  //           isSearch={!isInbox}
+  //           onFilterChange={handleFilterChange}
+  //           searchFields={getSearchFields()}
+  //           onSearch={handleFilterChange}
+  //           onSort={handleSort}
+  //           onNextPage={fetchNextPage}
+  //           onPrevPage={fetchPrevPage}
+  //           currentPage={Math.floor(pageOffset / pageSize)}
+  //           pageSizeLimit={pageSize}
+  //           disableSort={false}
+  //           onPageSizeChange={handlePageSizeChange}
+  //           parentRoute={parentRoute}
+  //           searchParams={searchParams}
+  //           sortParams={sortParams}
+  //           totalRecords={totalRecords}
+  //           filterComponent={filterComponent}
+  //         />
+  //       </div>
+  //     );
+  //   }
+  // }
 };
 
 export default ArchitectDetailsInbox;
