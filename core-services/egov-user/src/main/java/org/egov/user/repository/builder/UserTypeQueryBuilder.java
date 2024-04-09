@@ -96,6 +96,23 @@ public class UserTypeQueryBuilder {
 		addOrderByClause(selectQuery, userSearchCriteria);
 		return addPagingClause(selectQuery, preparedStatementValues, userSearchCriteria);
 	}
+	
+	public String getStachholderDetailQuery(String tenantId) {
+		
+		String query = "SELECT user1.*, userrole.*"
+				+ "FROM eg_user user1"
+				+ " JOIN eg_userrole_v1 userrole ON user1.id = userrole.user_id"
+				+ " WHERE userrole.user_tenantid = '" + tenantId + "'"
+				+ "  AND user1.type != 'EMPLOYEE'"
+				+ "  AND user1.id IN ("
+				+ "    SELECT user_id"
+				+ "    FROM eg_userrole_v1"
+				+ "    WHERE user_tenantid = '" + tenantId + "'"
+				+ "    GROUP BY user_id"
+				+ "    HAVING COUNT(*) > 1"
+				+ ") AND userrole.role_code!='CITIZEN'";
+		return query;
+	}
 
 	@SuppressWarnings("rawtypes")
 	public String getQueryUserRoleSearch(final UserSearchCriteria userSearchCriteria,

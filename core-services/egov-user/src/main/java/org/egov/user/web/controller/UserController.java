@@ -121,6 +121,16 @@ public class UserController {
 		}
 		return searchUsers(request, headers);
 	}
+	
+	@PostMapping("/_stackholdersearch")
+	public UserSearchResponse getStackHolderDetails(@RequestBody @Valid UserSearchRequest request) {
+
+		List<User> userModels =  userService.getStackHolderDetails(request.getTenantId(), request.getRequestInfo());
+		List<UserSearchResponseContent> userContracts = userModels.stream().map(UserSearchResponseContent::new)
+				.collect(Collectors.toList());
+		ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
+		return new UserSearchResponse(responseInfo, userContracts);
+	}
 
 	/**
 	 * end-point to search the users by providing userSearchRequest. In Request if
