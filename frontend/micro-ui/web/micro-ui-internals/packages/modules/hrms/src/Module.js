@@ -28,6 +28,7 @@ import ProptymasterEntry from "./pages/Proposaltymaster";
 import CateEntry from "./pages/CategoryEntry";
 import SubCateEntry from "./pages/SubCategoryEntry";
 import PayTpEntry from "./pages/PayTpEntry";
+import ArchitectDetailsInbox from "./pages/ArchitectDetailsInbox";
 
 export const HRMSModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = "HR";
@@ -72,6 +73,7 @@ const componentsToRegister = {
   HREditEmpolyee: EditEmployee,
   HRCreateEmployee: CreateEmployee,
   HRInbox: Inbox,
+  ArchitectDetailsInbox,
   HRMS_INBOX_FILTER: (props) => <InboxFilter {...props} />,
 };
 

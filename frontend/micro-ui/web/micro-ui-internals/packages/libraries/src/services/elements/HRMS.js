@@ -41,6 +41,16 @@ const HrmsService = {
       userService: true,
       params: { tenantId },
     }),
+    architectdetailssearch: (tenantId, data, filters) =>
+    Request({
+      url: Urls.ArchitectDetailsSearch,
+      useCache: false,
+      method: "POST",
+      auth: false,
+      userService: true,
+      params: { },
+      data: data,
+    }),
 };
 
 export default HrmsService;

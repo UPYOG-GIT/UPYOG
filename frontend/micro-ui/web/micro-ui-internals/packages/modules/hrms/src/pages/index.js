@@ -26,6 +26,7 @@ const EmployeeApp = ({ path, url, userType }) => {
   const CateEntry = Digit?.ComponentRegistryService?.getComponent("CateEntry");
   const SubCateEntry = Digit?.ComponentRegistryService?.getComponent("SubCateEntry");
   const PayTpEntry = Digit?.ComponentRegistryService?.getComponent("PayTpEntry");
+  const ArchitectDetailsInbox = Digit?.ComponentRegistryService?.getComponent("ArchitectDetailsInbox");
   
   return (
     <Switch>
@@ -37,6 +38,12 @@ const EmployeeApp = ({ path, url, userType }) => {
             </Link>{" "}
             / <span>{location.pathname === "/digit-ui/employee/hrms/inbox" ? t("HR_COMMON_HEADER") : t("HR_COMMON_HEADER")}</span>
           </p>
+          <PrivateRoute
+            path={`${path}/architectdetailsinbox`}
+            component={() => (
+              <ArchitectDetailsInbox parentRoute={path} businessService="hrms" filterComponent="HRMS_INBOX_FILTER" initialStates={inboxInitialState} isInbox={true} />
+            )}
+          />
           <PrivateRoute
             path={`${path}/inbox`}
             component={() => (

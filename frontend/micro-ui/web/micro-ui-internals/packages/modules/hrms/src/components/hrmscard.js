@@ -32,6 +32,10 @@ const HRMSCard = () => {
                 link: `/digit-ui/employee/hrms/inbox`
             },
             {
+                label: t("Architect Details Search"),
+                link: `/digit-ui/employee/hrms/architectdetailsinbox`
+            },
+            {
                 label: t("HR_COMMON_CREATE_EMPLOYEE_HEADER"),
                 link: `/digit-ui/employee/hrms/create`
             },
