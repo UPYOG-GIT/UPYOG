@@ -1,24 +1,26 @@
-import { Header, Loader, CardLabel, Table, LabelFieldPair } from "@egovernments/digit-ui-react-components";
+import { Header, Loader, CardLabel, Table, LabelFieldPair, Card } from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ArchitectDetailsDesktopInbox from "../components/inbox/ArchitectDetailsDesktopInbox";
 import ArchitectDetailsMobileInbox from "../components/inbox/ArchitectDetailsMobileInbox";
 
-const ArchitectDetailsInbox = ({ parentRoute, businessService = "HRMS", initialStates = {}, filterComponent, isInbox }) => {
+const ArchitectDetailsInbox1 = ({ }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { isLoading: isLoading, Errors, data: res } = Digit.Hooks.hrms.useHRMSCount(tenantId);
+  // const { isLoading: isLoading, Errors, data: res } = Digit.Hooks.hrms.useHRMSCount(tenantId);
 
-  const { t } = useTranslation();
-  const [pageOffset, setPageOffset] = useState(initialStates.pageOffset || 0);
-  const [pageSize, setPageSize] = useState(initialStates.pageSize || 10);
-  const [sortParams, setSortParams] = useState(initialStates.sortParams || [{ id: "createdTime", desc: false }]);
-  const [totalRecords, setTotalReacords] = useState(undefined);
-  const GetCell = (value) => <span className="cell-text">{t(value)}</span>;
+  // const { t } = useTranslation();
+  // const [pageOffset, setPageOffset] = useState(initialStates.pageOffset || 0);
+  // const [pageSize, setPageSize] = useState(initialStates.pageSize || 10);
+  // const [sortParams, setSortParams] = useState(initialStates.sortParams || [{ id: "createdTime", desc: false }]);
+  // const [totalRecords, setTotalReacords] = useState(undefined);
+  
 
-  const [architectDetails, setArchitectDetails] = useState();
-  const [searchParams, setSearchParams] = useState(() => {
-    return initialStates.searchParams || {};
-  });
+  // const [architectDetails, setArchitectDetails] = useState();
+
+  
+  // const [searchParams, setSearchParams] = useState(() => {
+  //   return initialStates.searchParams || {};
+  // });
 
   // let isMobile = window.Digit.Utils.browser.isMobile();
   // let paginationParams = isMobile
@@ -32,45 +34,21 @@ const ArchitectDetailsInbox = ({ parentRoute, businessService = "HRMS", initialS
   //   isupdate
   // );
 
-  
-  useEffect(async () => {
-    const tenant = Digit.ULBService.getCurrentTenantId();
+  const { isLoading: hookLoading, isError, error, data, ...rest } = Digit.Hooks.hrms.useArchitectDetailsSearch(
     
+    tenantId
+  );
 
-    let isMounted = true; // Flag to track component mount status
-
-  const fetchData = async () => {
-    try {
-      const tenant = Digit.ULBService.getCurrentTenantId();
-      const usersResponse = await Digit.HRMSService.architectdetailssearch(tenant, { tenantId: tenant }, {});
-      if (isMounted) {
-        setArchitectDetails(usersResponse);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      // Handle error appropriately
-    }
-  };
-
-  fetchData(); // Call the async function
-
-  // Cleanup function to set isMounted to false when component unmounts
-  return () => {
-    isMounted = false;
-  };
+  // useEffect(async () => {
+  //   // const tenant = Digit.ULBService.getCurrentTenantId();
     
-      // const usersResponse = await Digit.HRMSService.architectdetailssearch(tenant, { tenantId: tenant }, {});
-      // console.log("Architect : "+JSON.stringify(usersResponse));
-      // setArchitectDetails(usersResponse);
-      // if (usersResponse && usersResponse.user && usersResponse.user.length) {
-      //   const userDetails = usersResponse.user[0];
-      //   const thumbs = userDetails?.photo?.split(",");
-      //   setProfilePic(thumbs?.at(0));
-      // }
-    
-  }, []);
+  //     const usersResponse = await Digit.HRMSService.architectdetailssearch(tenantId, { tenantId: tenantId }, {});
+  //     // console.log("Architect : "+JSON.stringify(usersResponse));
+  //     setArchitectDetails(usersResponse);
+      
+  // }, []);
 
-  console.log("architectDetails: "+JSON.stringify(architectDetails));
+  console.log("architectDetails: "+JSON.stringify(data));
   // useEffect(() => {
   //   // setTotalReacords(res?.EmployeCount?.totalEmployee);
   // }, [res]);
@@ -81,62 +59,68 @@ const ArchitectDetailsInbox = ({ parentRoute, businessService = "HRMS", initialS
   //   setPageOffset(0);
   // }, [searchParams]);
 
-  const fetchNextPage = () => {
-    setPageOffset((prevState) => prevState + pageSize);
-  };
+  // const fetchNextPage = () => {
+  //   setPageOffset((prevState) => prevState + pageSize);
+  // };
 
-  const fetchPrevPage = () => {
-    setPageOffset((prevState) => prevState - pageSize);
-  };
+  // const fetchPrevPage = () => {
+  //   setPageOffset((prevState) => prevState - pageSize);
+  // };
 
-  const handleFilterChange = (filterParam) => {
-    let keys_to_delete = filterParam.delete;
-    let _new = { ...searchParams, ...filterParam };
-    if (keys_to_delete) keys_to_delete.forEach((key) => delete _new[key]);
-    filterParam.delete;
-    delete _new.delete;
-    setSearchParams({ ..._new });
-  };
+  // const handleFilterChange = (filterParam) => {
+  //   let keys_to_delete = filterParam.delete;
+  //   let _new = { ...searchParams, ...filterParam };
+  //   if (keys_to_delete) keys_to_delete.forEach((key) => delete _new[key]);
+  //   filterParam.delete;
+  //   delete _new.delete;
+  //   setSearchParams({ ..._new });
+  // };
 
-  const handleSort = useCallback((args) => {
-    if (args.length === 0) return;
-    setSortParams(args);
-  }, []);
+  // const handleSort = useCallback((args) => {
+  //   if (args.length === 0) return;
+  //   setSortParams(args);
+  // }, []);
 
-  const handlePageSizeChange = (e) => {
-    setPageSize(Number(e.target.value));
-  };
+  // const handlePageSizeChange = (e) => {
+  //   setPageSize(Number(e.target.value));
+  // };
 
-  const getSearchFields = () => {
-    return [
-      {
-        label: t("HR_NAME_LABEL"),
-        name: "names",
-      },
-      {
-        label: t("HR_MOB_NO_LABEL"),
-        name: "phone",
-        maxlength: 10,
-        pattern: "[6-9][0-9]{9}",
-        title: t("ES_SEARCH_APPLICATION_MOBILE_INVALID"),
-        componentInFront: "+91",
-      },
-      {
-        label: t("HR_EMPLOYEE_ID_LABEL"),
-        name: "codes",
-      },
-    ];
-  };
+  // const getSearchFields = () => {
+  //   return [
+  //     {
+  //       label: t("HR_NAME_LABEL"),
+  //       name: "names",
+  //     },
+  //     {
+  //       label: t("HR_MOB_NO_LABEL"),
+  //       name: "phone",
+  //       maxlength: 10,
+  //       pattern: "[6-9][0-9]{9}",
+  //       title: t("ES_SEARCH_APPLICATION_MOBILE_INVALID"),
+  //       componentInFront: "+91",
+  //     },
+  //     {
+  //       label: t("HR_EMPLOYEE_ID_LABEL"),
+  //       name: "codes",
+  //     },
+  //   ];
+  // };
 
-  if (isLoading) {
+  if (hookLoading) {
     return <Loader />;
   }
 
-  const GetCell1 = (value) => <input type="checkbox" id="checkbox2" onChange={(e) => getRowId(e)}  name="checkbox2" value={value}/>;
+  if (isError) {
+    return <div>Error: {error.message}</div>;
+  }
+
+ 
+  const GetCell = (value) => <span className="cell-text">{value}</span>;
+  const GetCell1 = (value) => <input type="checkbox" id="checkbox2"   name="checkbox2" value={value}/>;
   const columns = React.useMemo(() => {
     return [
       {
-        Header: t("Select"),
+        Header: "Select",
         disableSortBy: true,
         Cell: ({row}) => {
           return (
@@ -145,21 +129,21 @@ const ArchitectDetailsInbox = ({ parentRoute, businessService = "HRMS", initialS
         },
       },
       {
-        Header: t("Name"),
+        Header: "Name",
         disableSortBy: true,
         Cell: ({ row }) => {
           return GetCell(`${row.original?.name}`);
         },
       },
       {
-        Header: t("Mobile Number"),
+        Header: "Mobile Number",
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.from_val }`);
+          return GetCell(`${row.original?.mobileNumber }`);
         },
       },
       {
-        Header: t("Validity Date"),
+        Header: "Validity Date",
         disableSortBy: true,
         Cell: ({ row }) => {
           return GetCell(`${row.original?.validityDate}`);
@@ -188,9 +172,10 @@ const ArchitectDetailsInbox = ({ parentRoute, businessService = "HRMS", initialS
         />
       </LabelFieldPair> */}
       
+      
       <Table
-        t={t}
-        data={architectDetails}
+        // t={t}
+        data={data}
         columns={columns}
         className="customTable table-border-style"       
         // manualPagination={false}
@@ -208,7 +193,7 @@ const ArchitectDetailsInbox = ({ parentRoute, businessService = "HRMS", initialS
         }}
       />
       
-      <button
+      {/* <button
         onClick={()=>setModalData(true)}
         style={{
           margin: "24px",
@@ -249,7 +234,7 @@ const ArchitectDetailsInbox = ({ parentRoute, businessService = "HRMS", initialS
       >
         {t("Cancel")}
       </button>
-      </div>
+      </div> */}
   
      
 
@@ -320,4 +305,4 @@ const ArchitectDetailsInbox = ({ parentRoute, businessService = "HRMS", initialS
   // }
 };
 
-export default ArchitectDetailsInbox;
+export default ArchitectDetailsInbox1;

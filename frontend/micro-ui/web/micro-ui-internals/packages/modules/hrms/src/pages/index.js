@@ -27,6 +27,8 @@ const EmployeeApp = ({ path, url, userType }) => {
   const SubCateEntry = Digit?.ComponentRegistryService?.getComponent("SubCateEntry");
   const PayTpEntry = Digit?.ComponentRegistryService?.getComponent("PayTpEntry");
   const ArchitectDetailsInbox = Digit?.ComponentRegistryService?.getComponent("ArchitectDetailsInbox");
+  const ArchitectDetailsInbox1 = Digit?.ComponentRegistryService?.getComponent("ArchitectDetailsInbox1");
+  const ArchitectDetailsInbox2 = Digit?.ComponentRegistryService?.getComponent("ArchitectDetailsInbox2");
   
   return (
     <Switch>
@@ -41,7 +43,7 @@ const EmployeeApp = ({ path, url, userType }) => {
           <PrivateRoute
             path={`${path}/architectdetailsinbox`}
             component={() => (
-              <ArchitectDetailsInbox parentRoute={path} businessService="hrms" filterComponent="HRMS_INBOX_FILTER" initialStates={inboxInitialState} isInbox={true} />
+              <ArchitectDetailsInbox2  />
             )}
           />
           <PrivateRoute

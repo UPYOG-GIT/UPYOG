@@ -123,6 +123,7 @@ import useHRMSCreate from "./hrms/useHRMScreate";
 import useHRMSUpdate from "./hrms/useHRMSUpdate";
 import useHRMSCount from "./hrms/useHRMSCount";
 import useHRMSGenderMDMS from "./hrms/useHRMSGender";
+import useArchitectDetailsSearch from "./hrms/useArchitectDetailsSearch";
 
 import useReceiptsSearch from "./receipts/useReceiptsSearch";
 import useReceiptsMDMS from "./receipts/useReceiptsMDMS";
@@ -273,6 +274,7 @@ const hrms = {
   useHRMSUpdate,
   useHRMSCount,
   useHRMSGenderMDMS,
+  useArchitectDetailsSearch,
 };
 const tl = {
   useTenants: useTenantsTL,
