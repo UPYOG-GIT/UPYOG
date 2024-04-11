@@ -43,7 +43,7 @@ const EmployeeApp = ({ path, url, userType }) => {
           <PrivateRoute
             path={`${path}/architectdetailsinbox`}
             component={() => (
-              <ArchitectDetailsInbox2  />
+              <ArchitectDetailsInbox  />
             )}
           />
           <PrivateRoute

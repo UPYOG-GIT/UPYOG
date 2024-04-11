@@ -13,7 +13,8 @@ const ArchitectDetailsDesktopInbox = ({ tableConfig, filterComponent, ...props }
   const GetSlaCell = (value) => {
     return value == "INACTIVE" ? <span className="sla-cell-error">{ t(value )|| ""}</span> : <span className="sla-cell-success">{ t(value) || ""}</span>;
   };
-  const data = props?.data?.Employees;
+
+  const data = props?.data?.user;
 
   const [FilterComponent, setComp] = useState(() => Digit.ComponentRegistryService?.getComponent(filterComponent));
 
@@ -34,35 +35,35 @@ const ArchitectDetailsDesktopInbox = ({ tableConfig, filterComponent, ...props }
         Header: t("HR_EMP_NAME_LABEL"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.user?.name}`);
+          return GetCell(`${row.original?.name}`);
         },
       },
       {
         Header: t("Mobile Number"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.user?.mobileNumber}`);
+          return GetCell(`${row.original?.mobileNumber}`);
         },
       },
-      {
-        Header: t("HR_ROLE_NO_LABEL"),
-        Cell: ({ row }) => {
-          return (
-            <div className="tooltip">
-              {" "}
-              {GetCell(`${row.original?.user?.roles.length}`)}
-              <span className="tooltiptext" style={{whiteSpace: "nowrap"}}>
-                {row.original?.user?.roles.map((ele, index) => (
-                  <span>
-                    {`${index + 1}. ` + t(`ACCESSCONTROL_ROLES_ROLES_${ele.code}`)} <br />{" "}
-                  </span>
-                ))}
-              </span>
-            </div>
-          );
-        },
-        disableSortBy: true,
-      },
+      // {
+      //   Header: t("HR_ROLE_NO_LABEL"),
+      //   Cell: ({ row }) => {
+      //     return (
+      //       <div className="tooltip">
+      //         {" "}
+      //         {GetCell(`${row.original?.user?.roles.length}`)}
+      //         <span className="tooltiptext" style={{whiteSpace: "nowrap"}}>
+      //           {row.original?.user?.roles.map((ele, index) => (
+      //             <span>
+      //               {`${index + 1}. ` + t(`ACCESSCONTROL_ROLES_ROLES_${ele.code}`)} <br />{" "}
+      //             </span>
+      //           ))}
+      //         </span>
+      //       </div>
+      //     );
+      //   },
+      //   disableSortBy: true,
+      // },
       // {
       //   Header: t("HR_DESG_LABEL"),
       //   disableSortBy: true,
@@ -80,7 +81,7 @@ const ArchitectDetailsDesktopInbox = ({ tableConfig, filterComponent, ...props }
         Header: t("Validity"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.user?.validityDate}`);
+          return GetCell(`${row.original?.validityDate}`);
         },
       },
       {

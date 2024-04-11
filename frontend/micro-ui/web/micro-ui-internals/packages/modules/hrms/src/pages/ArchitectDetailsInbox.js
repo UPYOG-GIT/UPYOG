@@ -6,25 +6,26 @@ import ArchitectDetailsMobileInbox from "../components/inbox/ArchitectDetailsMob
 
 const ArchitectDetailsInbox = ({ parentRoute, businessService = "HRMS", initialStates = {}, filterComponent, isInbox }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { isLoading: isLoading, Errors, data: res } = Digit.Hooks.hrms.useHRMSCount(tenantId);
+  // const { isLoading: isLoading, Errors, data: res } = Digit.Hooks.hrms.useHRMSCount(tenantId);
 
   const { t } = useTranslation();
   const [pageOffset, setPageOffset] = useState(initialStates.pageOffset || 0);
   const [pageSize, setPageSize] = useState(initialStates.pageSize || 10);
   const [sortParams, setSortParams] = useState(initialStates.sortParams || [{ id: "createdTime", desc: false }]);
   const [totalRecords, setTotalReacords] = useState(undefined);
-  const GetCell = (value) => <span className="cell-text">{t(value)}</span>;
+  // const GetCell = (value) => <span className="cell-text">{t(value)}</span>;
 
   const [architectDetails, setArchitectDetails] = useState();
+  const [architectDetailsLoaded, setArchitectDetailsLoaded] = useState(false);
   const [searchParams, setSearchParams] = useState(() => {
     return initialStates.searchParams || {};
   });
 
-  // let isMobile = window.Digit.Utils.browser.isMobile();
-  // let paginationParams = isMobile
-  //   ? { limit: 100, offset: pageOffset, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" }
-  //   : { limit: pageSize, offset: pageOffset, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" };
-  // const isupdate = Digit.SessionStorage.get("isupdate");
+  let isMobile = window.Digit.Utils.browser.isMobile();
+  let paginationParams = isMobile
+    ? { limit: 100, offset: pageOffset, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" }
+    : { limit: pageSize, offset: pageOffset, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" };
+  const isupdate = Digit.SessionStorage.get("isupdate");
   // const { isLoading: hookLoading, isError, error, data, ...rest } = Digit.Hooks.hrms.useHRMSSearch(
   //   searchParams,
   //   tenantId,
@@ -33,53 +34,27 @@ const ArchitectDetailsInbox = ({ parentRoute, businessService = "HRMS", initialS
   // );
 
   
-  useEffect(async () => {
-    const tenant = Digit.ULBService.getCurrentTenantId();
+   useEffect(async () => {
+    // const tenant = Digit.ULBService.getCurrentTenantId();
     
-
-    let isMounted = true; // Flag to track component mount status
-
-  const fetchData = async () => {
-    try {
-      const tenant = Digit.ULBService.getCurrentTenantId();
-      const usersResponse = await Digit.HRMSService.architectdetailssearch(tenant, { tenantId: tenant }, {});
-      if (isMounted) {
-        setArchitectDetails(usersResponse);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      // Handle error appropriately
-    }
-  };
-
-  fetchData(); // Call the async function
-
-  // Cleanup function to set isMounted to false when component unmounts
-  return () => {
-    isMounted = false;
-  };
-    
-      // const usersResponse = await Digit.HRMSService.architectdetailssearch(tenant, { tenantId: tenant }, {});
+      const usersResponse = await Digit.HRMSService.architectdetailssearch(tenantId, { tenantId: tenantId }, {});
       // console.log("Architect : "+JSON.stringify(usersResponse));
-      // setArchitectDetails(usersResponse);
-      // if (usersResponse && usersResponse.user && usersResponse.user.length) {
-      //   const userDetails = usersResponse.user[0];
-      //   const thumbs = userDetails?.photo?.split(",");
-      //   setProfilePic(thumbs?.at(0));
-      // }
-    
+      setArchitectDetails(usersResponse);
+      setArchitectDetailsLoaded(true);
+      
   }, []);
 
-  console.log("architectDetails: "+JSON.stringify(architectDetails));
+
+  // console.log("architectDetails: "+JSON.stringify(architectDetails));
   // useEffect(() => {
   //   // setTotalReacords(res?.EmployeCount?.totalEmployee);
   // }, [res]);
 
   // useEffect(() => {}, [hookLoading, rest]);
 
-  // useEffect(() => {
-  //   setPageOffset(0);
-  // }, [searchParams]);
+  useEffect(() => {
+    setPageOffset(0);
+  }, [searchParams]);
 
   const fetchNextPage = () => {
     setPageOffset((prevState) => prevState + pageSize);
@@ -121,203 +96,206 @@ const ArchitectDetailsInbox = ({ parentRoute, businessService = "HRMS", initialS
         title: t("ES_SEARCH_APPLICATION_MOBILE_INVALID"),
         componentInFront: "+91",
       },
-      {
-        label: t("HR_EMPLOYEE_ID_LABEL"),
-        name: "codes",
-      },
+      // {
+      //   label: t("HR_EMPLOYEE_ID_LABEL"),
+      //   name: "codes",
+      // },
     ];
   };
 
-  if (isLoading) {
+  // if (isLoading) {
+  //   return <Loader />;
+  // }
+  if (!architectDetailsLoaded) {
     return <Loader />;
   }
 
-  const GetCell1 = (value) => <input type="checkbox" id="checkbox2" onChange={(e) => getRowId(e)}  name="checkbox2" value={value}/>;
-  const columns = React.useMemo(() => {
-    return [
-      {
-        Header: t("Select"),
-        disableSortBy: true,
-        Cell: ({row}) => {
-          return (
-            GetCell1(`${row.original?.id}`)
-          );
-        },
-      },
-      {
-        Header: t("Name"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.name}`);
-        },
-      },
-      {
-        Header: t("Mobile Number"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.from_val }`);
-        },
-      },
-      {
-        Header: t("Validity Date"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.validityDate}`);
-        },
-      },
+  // const GetCell1 = (value) => <input type="checkbox" id="checkbox2" onChange={(e) => getRowId(e)}  name="checkbox2" value={value}/>;
+  // const columns = React.useMemo(() => {
+  //   return [
+  //     {
+  //       Header: t("Select"),
+  //       disableSortBy: true,
+  //       Cell: ({row}) => {
+  //         return (
+  //           GetCell1(`${row.original?.id}`)
+  //         );
+  //       },
+  //     },
+  //     {
+  //       Header: t("Name"),
+  //       disableSortBy: true,
+  //       Cell: ({ row }) => {
+  //         return GetCell(`${row.original?.name}`);
+  //       },
+  //     },
+  //     {
+  //       Header: t("Mobile Number"),
+  //       disableSortBy: true,
+  //       Cell: ({ row }) => {
+  //         return GetCell(`${row.original?.from_val }`);
+  //       },
+  //     },
+  //     {
+  //       Header: t("Validity Date"),
+  //       disableSortBy: true,
+  //       Cell: ({ row }) => {
+  //         return GetCell(`${row.original?.validityDate}`);
+  //       },
+  //     },
       
       
-    ];
-  }, []);
+  //   ];
+  // }, []);
 
-  return (
-    <Card style={{ position: "relative" }} className={"employeeCard-override"}>
-      <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("Slab Master")}</Header>
+  // return (
+  //   <Card style={{ position: "relative" }} className={"employeeCard-override"}>
+  //     <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("Slab Master")}</Header>
      
-      {/* <LabelFieldPair>
-        <CardLabel style={{ color: "#000" }}>{`${t("Pay Type")}`}</CardLabel>
-        <Dropdown
-          style={{ width: "100%" }}
-          className="form-field"
-          selected={SlabPyType}
-          option={SlabPyTypedropval}
-          select={setSlabPaytype}
-          value={SlabPyType}
-          optionKey="code"
-          name="SlabPyType"
-        />
-      </LabelFieldPair> */}
+  //     {/* <LabelFieldPair>
+  //       <CardLabel style={{ color: "#000" }}>{`${t("Pay Type")}`}</CardLabel>
+  //       <Dropdown
+  //         style={{ width: "100%" }}
+  //         className="form-field"
+  //         selected={SlabPyType}
+  //         option={SlabPyTypedropval}
+  //         select={setSlabPaytype}
+  //         value={SlabPyType}
+  //         optionKey="code"
+  //         name="SlabPyType"
+  //       />
+  //     </LabelFieldPair> */}
       
-      <Table
-        t={t}
-        data={architectDetails}
-        columns={columns}
-        className="customTable table-border-style"       
-        // manualPagination={false}
-        // isPaginationRequired={false}
-        getCellProps={(cellInfo) => {
-          return {
-            style: {
-              padding: "20px 18px",
-              fontSize: "16px",
-              borderTop: "1px solid grey",
-              textAlign: "left",
-              verticalAlign: "middle",
-            },
-          };
-        }}
-      />
+  //     <Table
+  //       t={t}
+  //       data={architectDetails}
+  //       columns={columns}
+  //       className="customTable table-border-style"       
+  //       // manualPagination={false}
+  //       // isPaginationRequired={false}
+  //       getCellProps={(cellInfo) => {
+  //         return {
+  //           style: {
+  //             padding: "20px 18px",
+  //             fontSize: "16px",
+  //             borderTop: "1px solid grey",
+  //             textAlign: "left",
+  //             verticalAlign: "middle",
+  //           },
+  //         };
+  //       }}
+  //     />
       
-      <button
-        onClick={()=>setModalData(true)}
-        style={{
-          margin: "24px",
-          backgroundColor: "#F47738",
-          width: "20%",
-          height: "40px",
-          color: "white",
-          borderBottom: "1px solid black",
-        }}
-      >
-        {t("Add")}
-      </button>
-      <button
-        onClick={deleteItem}
-        style={{
-          margin: "24px",
-          backgroundColor: "#F47738",
-          width: "20%",
-          height: "40px",
-          color: "white",
-          borderBottom: "1px solid black",
-        }}
-      >
-        {t("Delete")}
-      </button>
+  //     <button
+  //       onClick={()=>setModalData(true)}
+  //       style={{
+  //         margin: "24px",
+  //         backgroundColor: "#F47738",
+  //         width: "20%",
+  //         height: "40px",
+  //         color: "white",
+  //         borderBottom: "1px solid black",
+  //       }}
+  //     >
+  //       {t("Add")}
+  //     </button>
+  //     <button
+  //       onClick={deleteItem}
+  //       style={{
+  //         margin: "24px",
+  //         backgroundColor: "#F47738",
+  //         width: "20%",
+  //         height: "40px",
+  //         color: "white",
+  //         borderBottom: "1px solid black",
+  //       }}
+  //     >
+  //       {t("Delete")}
+  //     </button>
 
-      <div style={{display:"flex",justifyContent:"center"}}>
-      <button
-        // onClick={updateProfile}
-        style={{
-          margin: "24px",
-          backgroundColor: "#F47738",
-          width: "20%",
-          height: "40px",
-          color: "white",
-          borderBottom: "1px solid black",
-        }}
-      >
-        {t("Cancel")}
-      </button>
-      </div>
+  //     <div style={{display:"flex",justifyContent:"center"}}>
+  //     <button
+  //       // onClick={updateProfile}
+  //       style={{
+  //         margin: "24px",
+  //         backgroundColor: "#F47738",
+  //         width: "20%",
+  //         height: "40px",
+  //         color: "white",
+  //         borderBottom: "1px solid black",
+  //       }}
+  //     >
+  //       {t("Cancel")}
+  //     </button>
+  //     </div>
   
      
 
 
 
 
-    </Card>
-  );
+  //   </Card>
+  // );
 
-  // if (architectDetails?.length !== null) {
-  //   if (isMobile) {
-  //     return (
-  //       <ArchitectDetailsMobileInbox
-  //         businessService={businessService}
-  //         data={architectDetails}
-  //         isLoading={hookLoading}
-  //         defaultSearchParams={initialStates.searchParams}
-  //         isSearch={!isInbox}
-  //         onFilterChange={handleFilterChange}
-  //         searchFields={getSearchFields()}
-  //         onSearch={handleFilterChange}
-  //         onSort={handleSort}
-  //         onNextPage={fetchNextPage}
-  //         tableConfig={rest?.tableConfig}
-  //         onPrevPage={fetchPrevPage}
-  //         currentPage={Math.floor(pageOffset / pageSize)}
-  //         pageSizeLimit={pageSize}
-  //         disableSort={false}
-  //         onPageSizeChange={handlePageSizeChange}
-  //         parentRoute={parentRoute}
-  //         searchParams={searchParams}
-  //         sortParams={sortParams}
-  //         totalRecords={totalRecords}
-  //         linkPrefix={'/digit-ui/employee/hrms/details/'}
-  //         filterComponent={filterComponent}
-  //       />
-  //       // <div></div>
-  //     );
-  //   } else {
-  //     return (
-  //       <div>
-  //         {isInbox && <Header>{t("HR_HOME_SEARCH_RESULTS_HEADING")}</Header>}
-  //         <ArchitectDetailsDesktopInbox
-  //           businessService={businessService}
-  //           data={architectDetails}
-  //           // isLoading={hookLoading}
-  //           defaultSearchParams={initialStates.searchParams}
-  //           isSearch={!isInbox}
-  //           onFilterChange={handleFilterChange}
-  //           searchFields={getSearchFields()}
-  //           onSearch={handleFilterChange}
-  //           onSort={handleSort}
-  //           onNextPage={fetchNextPage}
-  //           onPrevPage={fetchPrevPage}
-  //           currentPage={Math.floor(pageOffset / pageSize)}
-  //           pageSizeLimit={pageSize}
-  //           disableSort={false}
-  //           onPageSizeChange={handlePageSizeChange}
-  //           parentRoute={parentRoute}
-  //           searchParams={searchParams}
-  //           sortParams={sortParams}
-  //           totalRecords={totalRecords}
-  //           filterComponent={filterComponent}
-  //         />
-  //       </div>
-  //     );
-  //   }
-  // }
+  if (architectDetails?.length !== null) {
+    if (isMobile) {
+      return (
+        <ArchitectDetailsMobileInbox
+          businessService={businessService}
+          data={architectDetails}
+          isLoading={hookLoading}
+          defaultSearchParams={initialStates.searchParams}
+          isSearch={!isInbox}
+          onFilterChange={handleFilterChange}
+          searchFields={getSearchFields()}
+          onSearch={handleFilterChange}
+          onSort={handleSort}
+          onNextPage={fetchNextPage}
+          tableConfig={rest?.tableConfig}
+          onPrevPage={fetchPrevPage}
+          currentPage={Math.floor(pageOffset / pageSize)}
+          pageSizeLimit={pageSize}
+          disableSort={false}
+          onPageSizeChange={handlePageSizeChange}
+          parentRoute={parentRoute}
+          searchParams={searchParams}
+          sortParams={sortParams}
+          totalRecords={totalRecords}
+          linkPrefix={'/digit-ui/employee/hrms/details/'}
+          filterComponent={filterComponent}
+        />
+        // <div></div>
+      );
+    } else {
+      return (
+        <div>
+          {isInbox && <Header>{t("HR_HOME_SEARCH_RESULTS_HEADING")}</Header>}
+          <ArchitectDetailsDesktopInbox
+            businessService={businessService}
+            data={architectDetails}
+            // isLoading={hookLoading}
+            defaultSearchParams={initialStates.searchParams}
+            isSearch={!isInbox}
+            onFilterChange={handleFilterChange}
+            searchFields={getSearchFields()}
+            onSearch={handleFilterChange}
+            onSort={handleSort}
+            onNextPage={fetchNextPage}
+            onPrevPage={fetchPrevPage}
+            currentPage={Math.floor(pageOffset / pageSize)}
+            pageSizeLimit={pageSize}
+            disableSort={false}
+            onPageSizeChange={handlePageSizeChange}
+            parentRoute={parentRoute}
+            searchParams={searchParams}
+            sortParams={sortParams}
+            totalRecords={totalRecords}
+            filterComponent={filterComponent}
+          />
+        </div>
+      );
+    }
+  }
 };
 
 export default ArchitectDetailsInbox;

@@ -48,6 +48,8 @@ const ArchitectDetailsInbox2 = () => {
   
     // No cleanup required, so no return statement needed
   }, []);
+
+  console.log("architectDetails "+JSON.stringify(architectDetails));
   
   // if (hookLoading) {
   //   return <Loader />;
@@ -57,44 +59,36 @@ const ArchitectDetailsInbox2 = () => {
     return <Loader />;
   }
 
-  // const GetCell = (value) => <span className="cell-text">{t(value)}</span>;
+  const GetCell = (value) => <span className="cell-text">{t(value)}</span>;
 
 
-  console.log("architectDetails "+JSON.stringify(architectDetails));
-  // const GetCell1 = (value) => <input type="checkbox" id="checkbox2" onChange={(e) => getRowId(e)}  name="checkbox2" value={value}/>;
+  
+  const GetCell1 = (value) => <input type="checkbox" id="checkbox2" onChange={(e) => getRowId(e)}  name="checkbox2" value={value}/>;
   const columns = React.useMemo(() => {
     return [
-      // {
-      //   Header: "Select",
-      //   disableSortBy: true,
-      //   Cell: ({row}) => {
-      //     return (
-      //       GetCell1(`${row.original?.id}`)
-      //     );
-      //   },
-      // },
       {
-        Header: "Name",
+        Header: "Select",
         disableSortBy: true,
-        Cell: ({ row }) => {
-          // return GetCell(`${row.original?.name}`);
-          return <span className="cell-text">{t(row.original?.name)}</span>;
+        Cell: ({row}) => {
+          return (
+            GetCell1(`${row.original?.id}`)
+          );
         },
       },
-      // {
-      //   Header: "Mobile Number",
-      //   disableSortBy: true,
-      //   Cell: ({ row }) => {
-      //     return GetCell(`${row.original?.mobileNumber }`);
-      //   },
-      // },
-      // {
-      //   Header: "Validity Date",
-      //   disableSortBy: true,
-      //   Cell: ({ row }) => {
-      //     return GetCell(`${row.original?.validityDate}`);
-      //   },
-      // },
+      {
+        Header: "Mobile Number",
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.mobileNumber }`);
+        },
+      },
+      {
+        Header: "Validity Date",
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.validityDate}`);
+        },
+      },
     ];
   }, []);
 
