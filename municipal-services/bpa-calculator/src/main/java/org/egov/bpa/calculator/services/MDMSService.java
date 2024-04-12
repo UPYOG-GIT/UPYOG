@@ -193,7 +193,8 @@ public class MDMSService {
 			String totalParkArea = parkDetails11.get(0).toString();
 			String totalParkArea1 = parkDetails12.get(0).toString();
 
-			String zonedesc = context.read("edcrDetail[0].planDetail.planInfoProperties.DEVELOPMENT_ZONE");
+//			String zonedesc = context.read("edcrDetail[0].planDetail.planInfoProperties.DEVELOPMENT_ZONE");
+			String zonedesc = "";
 
 			ArrayList<LinkedHashMap> block = context.read("edcrDetail[0].planDetail.blocks");
 //			log.info("block LinkedHashMap===="+block);
