@@ -11,7 +11,11 @@ const ArchitectDetailsDesktopInbox = ({ tableConfig, filterComponent, ...props }
   const tenantIds = Digit.SessionStorage.get("HRMS_TENANTS");
   const GetCell = (value) => <span className="cell-text">{t(value)}</span>;
   const GetSlaCell = (value) => {
-    return value == "INACTIVE" ? <span className="sla-cell-error">{ t(value )|| ""}</span> : <span className="sla-cell-success">{ t(value) || ""}</span>;
+    return value == "INACTIVE" ? (
+      <span className="sla-cell-error">{t(value) || ""}</span>
+    ) : (
+      <span className="sla-cell-success">{t(value) || ""}</span>
+    );
   };
 
   const data = props?.data?.user;
@@ -81,7 +85,23 @@ const ArchitectDetailsDesktopInbox = ({ tableConfig, filterComponent, ...props }
         Header: t("Validity"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.validityDate}`);
+          // return GetCell(`${row.original?.validityDate}`);
+          // Parse the validityDate string into a Date object
+          const validityDate = new Date(row.original?.validityDate);
+
+          // Check if validityDate is a valid date object
+          if (isNaN(validityDate.getTime())) {
+            return "Invalid Date"; // Return a message indicating an invalid date
+          }
+
+          // Format the date as "dd-mm-yyyy"
+          const formattedDate = validityDate.toLocaleString("en-US", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          });
+
+          return formattedDate;
         },
       },
       {
@@ -92,7 +112,7 @@ const ArchitectDetailsDesktopInbox = ({ tableConfig, filterComponent, ...props }
         },
       },
     ];
-  }, []); 
+  }, []);
 
   let result;
   if (props.isLoading) {
