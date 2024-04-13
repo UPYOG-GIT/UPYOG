@@ -187,6 +187,14 @@ public class UserController {
 		return createResponseforUpdate(updatedUser);
 	}
 
+	@PostMapping("/validity/_update")
+	public UpdateResponse validityUpdate(@RequestBody final @Valid CreateUserRequest createUserRequest) {
+		log.info("Received Validity Update Request  " + createUserRequest);
+		User user = createUserRequest.toDomain(false);
+		final User updatedUser = userService.partialUpdate(user, createUserRequest.getRequestInfo());
+		return createResponseforUpdate(updatedUser);
+	}
+
 	private UserDetailResponse createResponse(User newUser) {
 		UserRequest userRequest = new UserRequest(newUser);
 		ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();

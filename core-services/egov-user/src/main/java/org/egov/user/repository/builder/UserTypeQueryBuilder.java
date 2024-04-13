@@ -39,18 +39,20 @@
  */
 package org.egov.user.repository.builder;
 
-import lombok.extern.slf4j.Slf4j;
+import static java.util.Objects.isNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
 import org.egov.user.domain.model.UserSearchCriteria;
 import org.egov.user.persistence.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Iterator;
-import java.util.List;
-
-import static java.util.Objects.isNull;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
@@ -96,21 +98,20 @@ public class UserTypeQueryBuilder {
 		addOrderByClause(selectQuery, userSearchCriteria);
 		return addPagingClause(selectQuery, preparedStatementValues, userSearchCriteria);
 	}
-	
+
 	public String getStachholderDetailQuery(String tenantId) {
-		
-		String query = "SELECT user1.*, userrole.*"
-				+ "FROM eg_user user1"
-				+ " JOIN eg_userrole_v1 userrole ON user1.id = userrole.user_id"
-				+ " WHERE userrole.user_tenantid = '" + tenantId + "'"
-				+ "  AND user1.type != 'EMPLOYEE'"
-				+ "  AND user1.id IN ("
-				+ "    SELECT user_id"
-				+ "    FROM eg_userrole_v1"
-				+ "    WHERE user_tenantid = '" + tenantId + "'"
-				+ "    GROUP BY user_id"
-				+ "    HAVING COUNT(*) > 1"
-				+ ") AND userrole.role_code!='CITIZEN'";
+
+		String query = "SELECT user1.*, userrole.*" + "FROM eg_user user1"
+				+ " JOIN eg_userrole_v1 userrole ON user1.id = userrole.user_id" + " WHERE userrole.user_tenantid = '"
+				+ tenantId + "'" + "  AND user1.type != 'EMPLOYEE'" + "  AND user1.id IN (" + "    SELECT user_id"
+				+ "    FROM eg_userrole_v1" + "    WHERE user_tenantid = '" + tenantId + "'" + "    GROUP BY user_id"
+				+ "    HAVING COUNT(*) > 1" + ") AND userrole.role_code!='CITIZEN'";
+		return query;
+	}
+
+	public String getUpdateValidityQuery(Long id, Date validityDate) {
+
+		String query = "UPDATE eg_user SET validitydate ='" + validityDate + "' WHERE id = " + id;
 		return query;
 	}
 
@@ -266,12 +267,12 @@ public class UserTypeQueryBuilder {
 					|| userSearchCriteria.getRoleCodes().contains("BPA_SUPERVISOR")
 					|| userSearchCriteria.getRoleCodes().contains("BPA_TOWNPLANNER"))) {
 				processedRoleTenantId = userSearchCriteria.getTenantId().split("\\.")[0].trim();
-			}else {
+			} else {
 				processedRoleTenantId = userSearchCriteria.getTenantId().trim();
 			}
 //			preparedStatementValues.add(userSearchCriteria.getTenantId().trim());
 			preparedStatementValues.add(processedRoleTenantId);
-			
+
 			selectQuery.append(" AND ur.user_tenantid = ?");
 			preparedStatementValues.add(userSearchCriteria.getTenantId().trim());
 		}

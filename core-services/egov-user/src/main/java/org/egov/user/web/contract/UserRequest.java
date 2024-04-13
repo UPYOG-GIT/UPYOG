@@ -154,6 +154,8 @@ public class UserRequest {
     private Date dob;
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private Date pwdExpiryDate;
+    
+    private Date validityDate;
 
     public UserRequest(User user) {
 
@@ -189,6 +191,7 @@ public class UserRequest {
         this.uuid = user.getUuid();
         this.alternatemobilenumber=user.getAlternateMobileNumber();
         this.userTenantid = user.getUserTenantid();
+        this.validityDate = user.getValidityDate();
         mapPermanentAddress(user);
         mapCorrespondenceAddress(user);
     }
@@ -265,6 +268,7 @@ public class UserRequest {
                 .correspondenceAddress(toDomainCorrespondenceAddress())
                 .guardian(fatherOrHusbandName)
                 .guardianRelation(relationship).alternateMobileNumber(this.alternatemobilenumber).userTenantid(this.userTenantid)
+                .validityDate(validityDate)
                 .build();
     }
 

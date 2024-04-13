@@ -54,7 +54,7 @@ public class UserRepository {
 	private UserTypeQueryBuilder userTypeQueryBuilder;
 	private RoleRepository roleRepository;
 	private UserResultSetExtractor userResultSetExtractor;
-	
+
 	private ArchitectDetailsResultSetExtractor architectDetailsResultSetExtractor;
 
 	@Autowired
@@ -325,6 +325,11 @@ public class UserRepository {
 		if (user.getPermanentAndCorrespondenceAddresses() != null) {
 			addressRepository.update(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId());
 		}
+	}
+
+	public void updateValidity(final User user, User oldUser, long userId, String uuid) {
+		String query = userTypeQueryBuilder.getUpdateValidityQuery(user.getId(), user.getValidityDate());
+		jdbcTemplate.update(query);
 	}
 
 	public void fetchFailedLoginAttemptsByUser(String uuid) {

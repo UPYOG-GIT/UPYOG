@@ -450,6 +450,31 @@ public class UserService {
 		}
 		return updatedUser;
 	}
+	
+	
+	public User validityUpdate(User user, RequestInfo requestInfo) {
+		/* encrypt here */
+//		user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+
+		User existingUser = getUserByUuid(user.getUuid());
+//		validateProfileUpdateIsDoneByTheSameLoggedInUser(user);
+//		user.nullifySensitiveFields();
+//		validatePassword(user.getPassword());
+		userRepository.updateValidity(user, existingUser, requestInfo.getUserInfo().getId(),
+				requestInfo.getUserInfo().getUuid());
+		User updatedUser = getUserByUuid(user.getUuid());
+
+		/* decrypt here */
+		existingUser = encryptionDecryptionUtil.decryptObject(existingUser, "User", User.class, requestInfo);
+		updatedUser = encryptionDecryptionUtil.decryptObject(updatedUser, "User", User.class, requestInfo);
+
+		setFileStoreUrlsByFileStoreIds(Collections.singletonList(updatedUser));
+//		if (!(updatedUser.getEmailId().equalsIgnoreCase(existingUser.getEmailId()))) {
+//			notificationUtil.sendEmail(requestInfo, existingUser.getEmailId(), updatedUser.getEmailId(),
+//					updatedUser.getMobileNumber());
+//		}
+		return updatedUser;
+	}
 
 	/**
 	 * This api will update the password for logged-in user
