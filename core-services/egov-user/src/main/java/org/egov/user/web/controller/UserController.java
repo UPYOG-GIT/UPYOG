@@ -191,7 +191,7 @@ public class UserController {
 	public UpdateResponse validityUpdate(@RequestBody final @Valid CreateUserRequest createUserRequest) {
 		log.info("Received Validity Update Request  " + createUserRequest);
 		User user = createUserRequest.toDomain(false);
-		final User updatedUser = userService.partialUpdate(user, createUserRequest.getRequestInfo());
+		final User updatedUser = userService.validityUpdate(user, createUserRequest.getRequestInfo());
 		return createResponseforUpdate(updatedUser);
 	}
 

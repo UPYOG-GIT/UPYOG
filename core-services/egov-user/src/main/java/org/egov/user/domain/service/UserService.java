@@ -454,7 +454,7 @@ public class UserService {
 	
 	public User validityUpdate(User user, RequestInfo requestInfo) {
 		/* encrypt here */
-//		user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+		user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
 
 		User existingUser = getUserByUuid(user.getUuid());
 //		validateProfileUpdateIsDoneByTheSameLoggedInUser(user);
