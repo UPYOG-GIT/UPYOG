@@ -215,6 +215,7 @@ public class UserService {
 	public List<org.egov.user.domain.model.User> getStackHolderDetails(String tenantId, RequestInfo requestInfo) {
 		
 		List<org.egov.user.domain.model.User> list = userRepository.getStackholderDetails(tenantId);
+		list = encryptionDecryptionUtil.decryptObject(list, "UserList", User.class, requestInfo);
 		return list;	
 	}
 
