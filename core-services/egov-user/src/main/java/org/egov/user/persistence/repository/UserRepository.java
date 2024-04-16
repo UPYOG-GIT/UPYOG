@@ -55,6 +55,7 @@ public class UserRepository {
 	private RoleRepository roleRepository;
 	private UserResultSetExtractor userResultSetExtractor;
 
+	@Autowired
 	private ArchitectDetailsResultSetExtractor architectDetailsResultSetExtractor;
 
 	@Autowired
