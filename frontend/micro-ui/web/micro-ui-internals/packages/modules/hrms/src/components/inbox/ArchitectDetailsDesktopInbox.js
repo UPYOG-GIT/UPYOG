@@ -4,9 +4,6 @@ import ApplicationTable from "../inbox/ApplicationTable";
 import { Card, Header, Loader, Modal, LabelFieldPair, Dropdown, CardLabel, TextInput, KeyNote, Toast } from "@egovernments/digit-ui-react-components";
 import InboxLinks from "../inbox/ApplicationLinks";
 import SearchApplication from "./search";
-import DatePicker from "react-datepicker";
-// import "react-datepicker/dist/react-datepicker.css";
-import { Link } from "react-router-dom";
 
 const ArchitectDetailsDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
   const { t } = useTranslation();
