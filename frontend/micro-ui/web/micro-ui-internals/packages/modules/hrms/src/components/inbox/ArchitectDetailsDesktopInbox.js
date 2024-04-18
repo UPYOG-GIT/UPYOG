@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationTable from "../inbox/ApplicationTable";
-import { Card, Header, Loader, Modal, LabelFieldPair, Dropdown, CardLabel, TextInput,  KeyNote,} from "@egovernments/digit-ui-react-components";
+import { Card, Header, Loader, Modal, LabelFieldPair, Dropdown, CardLabel, TextInput, KeyNote, Toast } from "@egovernments/digit-ui-react-components";
 import InboxLinks from "../inbox/ApplicationLinks";
 import SearchApplication from "./search";
 import DatePicker from "react-datepicker";
@@ -11,100 +11,89 @@ import { Link } from "react-router-dom";
 const ArchitectDetailsDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
   const { t } = useTranslation();
   const tenantIds = Digit.SessionStorage.get("HRMS_TENANTS");
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   const GetCell = (value) => <span className="cell-text">{t(value)}</span>;
   const [modalData, setModalData] = useState(false);
+  const [showToast, setShowToast] = useState(null);
   const [archId, setArchId] = useState();
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
+  const [architectId, setArchitectId] = useState();
+  const [architectName, setArchitectName] = useState();
+  const [architectMobNo, setArchitectMobNo] = useState();
+  const [architectUuid, setArchitectUuid] = useState();
+  const [architectValidity, setArchitectValidity] = useState();
+  const [architectUpdateValidity, setArchitectUpdateValidity] = useState();
+
+  // const handleDateChange = (date) => {
+  //   setSelectedDate(date);
+  // };
+
+  // const formatValidityDate = (dateString) => {
+  //   const date = new Date(dateString);
+  //   const formattedDate = date.toISOString().slice(0, 16); // Extracting "yyyy-MM-ddThh:mm" from ISO string
+  //   return formattedDate;
+
+  // };
+
+  const formattedUpdateValidityDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // January is 0!
+    const year = date.getFullYear();
+    // const hours = String(date.getHours()).padStart(2, "0");
+    // const minutes = String(date.getMinutes()).padStart(2, "0");
+    // const seconds = String(date.getSeconds()).padStart(2, "0");
+
+    return `${day}-${month}-${year} 00:00:00`;
   };
+
   const GetSlaCell = (value) => {
     return value == "INACTIVE" ? (
       <span className="sla-cell-error">{t(value) || ""}</span>
     ) : (
       <span className="sla-cell-success">{t(value) || ""}</span>
     );
-  }; 
+  };
+
+  const updateValidity = async (e) => {
+    e.preventDefault();
+    // console.log("Validity Update Date : " + architectUpdateValidity);
+
+    const user = {
+      uuid: architectUuid,
+      mobileNumber: architectMobNo,
+      id: architectId,
+      validityDate: formattedUpdateValidityDate(architectUpdateValidity),
+    };
+
+    // console.log("User : " + JSON.stringify(user));
+    closeModal();
+
+    const updateResponse = await Digit.HRMSService.architectValidityUpdate(tenantId, { user: user }, {});
+    // const responseObject = JSON.parse(updateResponse?.user);
+
+    // console.log("updateResponse: "+ JSON.stringify(updateResponse));
+
+    // if (updateResponse > 0) {
+    if (updateResponse.user && updateResponse.user.length > 0) {
+      setShowToast({ key: false, label: "Architect Validity Updated ", bgcolor: "#4BB543" });
+      location.reload();
+    } else {
+      setShowToast({ key: true, label: "Fail To Update", bgcolor: "red" });
+    }
+  };
 
   const handleClick = (row) => {
-    // Access row data and perform actions based on it
-    console.log("Button clicked in row with data:", row.original.id);
-    return(
-    <Card style={{ position: "absolute" }} className={"employeeCard-override"}>
-      <Modal
-          hideSubmit={true}
-          isDisabled={false}
-          popupStyles={{ width: "800px", height: "auto", margin: "auto", padding: "auto" }}
-          formId="modal-action"
-        >
-          <div>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <Header styles={{ marginLeft: "0px", paddingTop: "1px", fontSize: "25px" }}>{t("EDCR Rule Entry")}</Header>
-              {/* <span onClick={closeModal}>
-                <CloseSvg />
-              </span> */}
-            </div>
-            <form>
-              <div>
-                <KeyNote
-                  noteStyle={{ color: "red", fontSize: "15px", padding: "auto" }}
-                  keyValue={t("Note")}
-                  note={
-                    "Information will not be updated if click other than ok button of this window. Press Tab button to field navigation.* - Required Fields"
-                  }
-                />
+    // console.log("Button clicked in row with data:", row.original.id);
+    setArchitectId(row.original.id);
+    setArchitectMobNo(row.original.mobileNumber);
+    setArchitectName(row.original.name);
+    setArchitectUuid(row.original.uuid);
+    setArchitectValidity(row.original.validityDate);
+    setModalData(true);
+  };
 
-               
-
-                <LabelFieldPair>
-                  <CardLabel style={{ color: "#000" }}>{`${t("From Plot Area")}`}</CardLabel>
-                  <TextInput
-                    isMandatory={true}
-                    name="fromvalue"
-                    onChange={(e) => setArchId(e.target.value)}
-                    value={row.id}
-                    type="number"
-                  />
-                </LabelFieldPair>
-                
-
-                
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                  <button
-                    onClick={''}
-                    style={{
-                      margin: "24px",
-                      backgroundColor: "#F47738",
-                      width: "20%",
-                      height: "40px",
-                      color: "white",
-                      borderBottom: "1px solid black",
-                    }}
-                  >
-                    {t("Update")}
-                  </button>
-                  <button
-                    onClick={''}
-                    style={{
-                      margin: "24px",
-                      backgroundColor: "#F47738",
-                      width: "20%",
-                      height: "40px",
-                      color: "white",
-                      borderBottom: "1px solid black",
-                    }}
-                  >
-                    {t("Cancel")}
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </Modal>
-    </Card>
-    );
-  
-    // For example, you can access specific properties of the row data
-    // and perform operations like updating state, making API calls, etc.
+  const closeModal = () => {
+    setModalData(false);
   };
 
   const data = props?.data?.user;
@@ -113,17 +102,6 @@ const ArchitectDetailsDesktopInbox = ({ tableConfig, filterComponent, ...props }
 
   const columns = React.useMemo(() => {
     return [
-      // {
-      //   Header: t("HR_EMP_ID_LABEL"),
-      //   disableSortBy: true,
-      //   Cell: ({ row }) => {
-      //     return (
-      //       <span className="link">
-      //         <Link to={`/digit-ui/employee/hrms/details/${row.original.tenantId}/${row.original.code}`}>{row.original.code}</Link>
-      //       </span>
-      //     );
-      //   },
-      // },
       {
         Header: t("Architect Name"),
         disableSortBy: true,
@@ -138,51 +116,17 @@ const ArchitectDetailsDesktopInbox = ({ tableConfig, filterComponent, ...props }
           return GetCell(`${row.original?.mobileNumber}`);
         },
       },
-      // {
-      //   Header: t("HR_ROLE_NO_LABEL"),
-      //   Cell: ({ row }) => {
-      //     return (
-      //       <div className="tooltip">
-      //         {" "}
-      //         {GetCell(`${row.original?.user?.roles.length}`)}
-      //         <span className="tooltiptext" style={{whiteSpace: "nowrap"}}>
-      //           {row.original?.user?.roles.map((ele, index) => (
-      //             <span>
-      //               {`${index + 1}. ` + t(`ACCESSCONTROL_ROLES_ROLES_${ele.code}`)} <br />{" "}
-      //             </span>
-      //           ))}
-      //         </span>
-      //       </div>
-      //     );
-      //   },
-      //   disableSortBy: true,
-      // },
-      // {
-      //   Header: t("HR_DESG_LABEL"),
-      //   disableSortBy: true,
-      //   Cell: ({ row }) => {
-      //     return GetCell(
-      //       `${
-      //         t(
-      //           "COMMON_MASTERS_DESIGNATION_" + row.original?.assignments?.sort((a, b) => new Date(a.fromDate) - new Date(b.fromDate))[0]?.designation
-      //         ) || ""
-      //       }`
-      //     );
-      //   },
-      // },
       {
         Header: t("Validity Date"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.validityDate ? ""+ (row.original?.validityDate).split(' ')[0] : null}`);
+          return GetCell(`${row.original?.validityDate ? "" + (row.original?.validityDate).split(" ")[0] : null}`);
         },
       },
       {
         Header: "Actions",
         disableSortBy: true,
-        Cell: ({ row }) => (
-          <button onClick={() => handleClick(row)}>Click Me</button>
-        ),
+        Cell: ({ row }) => <button onClick={() => handleClick(row)}>Update Validity Date</button>,
       },
       {
         Header: t("HR_STATUS_LABEL"),
@@ -284,7 +228,132 @@ const ArchitectDetailsDesktopInbox = ({ tableConfig, filterComponent, ...props }
           {result}
         </div>
       </div>
-     
+
+      {modalData && (
+        <Card style={{ position: "absolute" }} className={"employeeCard-override"}>
+          <Modal
+            hideSubmit={true}
+            isDisabled={false}
+            popupStyles={{ width: "800px", height: "auto", margin: "auto", padding: "auto" }}
+            formId="modal-action"
+          >
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <Header styles={{ marginLeft: "0px", paddingTop: "1px", fontSize: "25px" }}>{t("Architect Validity Date Update")}</Header>
+                {/* <span onClick={closeModal}>
+                <CloseSvg />
+              </span> */}
+              </div>
+              <form>
+                <div>
+                  {/* <KeyNote
+                    noteStyle={{ color: "red", fontSize: "15px", padding: "auto" }}
+                    keyValue={t("Note")}
+                    note={
+                      "Information will not be updated if click other than ok button of this window. Press Tab button to field navigation.* - Required Fields"
+                    }
+                  /> */}
+                  <LabelFieldPair>
+                    <CardLabel style={{ color: "#000" }}>{`${t("Architect Name")}`}</CardLabel>
+                    <TextInput
+                      isMandatory={true}
+                      name="architectId"
+                      onChange={(e) => setArchitectName(e.target.value)}
+                      value={architectName}
+                      type="text"
+                      disabled={true}
+                    />
+                  </LabelFieldPair>
+                  <LabelFieldPair>
+                    <CardLabel style={{ color: "#000" }}>{`${t("Mobile Number")}`}</CardLabel>
+                    <TextInput
+                      isMandatory={true}
+                      name="architectMobNo"
+                      onChange={(e) => setArchitectMobNo(e.target.value)}
+                      value={architectMobNo}
+                      type="number"
+                      disabled={true}
+                    />
+                  </LabelFieldPair>
+                  <LabelFieldPair>
+                    <CardLabel style={{ color: "#000" }}>{`${t("Validity Date")}`}</CardLabel>
+                    <TextInput
+                      isMandatory={true}
+                      name="architectValidity"
+                      // onChange={(e) => setArchitectMobNo(e.target.value)}
+                      value={architectValidity ? architectValidity.split(" ")[0] : null}
+                      type="text"
+                      disabled={true}
+                    />
+                  </LabelFieldPair>
+                  <LabelFieldPair>
+                    <CardLabel style={{ color: "#000" }}>{`${t("Select Validity Date")}`}</CardLabel>
+                    <input
+                      isMandatory={true}
+                      name="architectValidity"
+                      // onChange={(e) => setArchitectUpdateValidity(formatValidityDate(e.target.value))}
+                      onChange={(e) => setArchitectUpdateValidity(e.target.value)}
+                      // onChange={date => setArchitectValidity(date)}
+                      dateFormat="dd-MM-yyyy"
+                      value={architectUpdateValidity}
+                      // selected={architectValidity}
+                      type="date"
+                      // type="datetime-local"
+                    />
+                  </LabelFieldPair>
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    <button
+                      onClick={updateValidity}
+                      //   () => {
+                      //   // Handle update logic
+                      //   // Close modal afterwards
+                      //   setShowModal(false);
+                      // }}
+                      style={{
+                        margin: "24px",
+                        backgroundColor: "#F47738",
+                        width: "20%",
+                        height: "40px",
+                        color: "white",
+                        borderBottom: "1px solid black",
+                      }}
+                    >
+                      {t("Update")}
+                    </button>
+                    <button
+                      onClick={() => {
+                        // Handle cancel logic
+                        // Close modal afterwards
+                        closeModal;
+                      }}
+                      style={{
+                        margin: "24px",
+                        backgroundColor: "#F47738",
+                        width: "20%",
+                        height: "40px",
+                        color: "white",
+                        borderBottom: "1px solid black",
+                      }}
+                    >
+                      {t("Cancel")}
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </Modal>
+        </Card>
+      )}
+       {showToast && (
+        <Toast
+          error={showToast.key}
+          label={t(showToast.label)}
+          onClose={() => {
+            setShowToast(null);
+          }}
+          style={{ backgroundColor: showToast.bgcolor }}
+        />
+      )}
     </div>
   );
 };

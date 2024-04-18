@@ -46,7 +46,17 @@ const HrmsService = {
       url: Urls.ArchitectDetailsSearch,
       useCache: false,
       method: "POST",
-      auth: false,
+      auth: true,
+      userService: true,
+      params: { },
+      data: data,
+    }),
+    architectValidityUpdate: (tenantId, data, filters) =>
+    Request({
+      url: Urls.ArchitectValidityUpdate,
+      useCache: false,
+      method: "POST",
+      auth: true,
       userService: true,
       params: { },
       data: data,
