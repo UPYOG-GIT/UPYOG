@@ -123,7 +123,7 @@ const ArchitectDetailsDesktopInbox = ({ tableConfig, filterComponent, ...props }
       {
         Header: "Actions",
         disableSortBy: true,
-        Cell: ({ row }) => <button onClick={() => handleClick(row)}>Update Validity Date</button>,
+        Cell: ({ row }) => <button onClick={() => handleClick(row)} style={{margin: "24px",backgroundColor: "#F47738",height: "40px",color: "white",borderBottom: "1px solid black"}}>Update Validity Date</button>,
       },
       {
         Header: t("HR_STATUS_LABEL"),
