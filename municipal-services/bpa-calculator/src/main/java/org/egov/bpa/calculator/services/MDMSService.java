@@ -251,6 +251,9 @@ public class MDMSService {
 //							IndArea += (Double) getOccupanciesMap.get("floorArea");
 							IndArea += Double.valueOf(getOccupanciesMap.get("floorArea").toString());
 							log.info("IndArea=====" + IndArea);
+						} else if (nameOcc.equals("Educational")) {
+							CommArea += Double.valueOf(getOccupanciesMap.get("floorArea").toString());
+							log.info("Educational CommArea=====" + CommArea);
 						} else {
 							throw new CustomException(BPACalculatorConstants.CALCULATION_ERROR,
 									"Not a valid occupency");
@@ -505,6 +508,8 @@ public class MDMSService {
 //		else if(occupancyType.equals("MIX")) {
 		else if ((occupancyType.split(",")).length > 1) {
 			pCategory = 4; // this is srno. of proposal type master based on occupency
+		} else if (occupancyType.equalsIgnoreCase("Educational")) {
+			pCategory = 5; // this is srno. of proposal type master based on occupency
 		}
 
 		if (feety.equalsIgnoreCase("Pre")) {
