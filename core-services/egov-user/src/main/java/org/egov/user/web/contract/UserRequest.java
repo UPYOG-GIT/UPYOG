@@ -115,7 +115,7 @@ public class UserRequest {
     private String bloodGroup;
 
     @SafeHtml
-    @Size(max = 36)
+    @Size(max = 56)
     private String photo;
 
     @SafeHtml
