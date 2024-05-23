@@ -11,6 +11,7 @@ import { PrivateRoute, BackButton } from "@egovernments/digit-ui-react-component
 // import BPACitizenHomeScreen from "./home";
 // import StakeholderRegistration from "./StakeholderRegistration";
 import MyApplication from "./MyApplication";
+import MyApplicationLoginByPass from "./MyApplicationByPassLogin";
 import ApplicationDetails from "./ApplicationDetail";
 // import OCBuildingPermit from "./OCBuildingPermit";
 // import BpaApplicationDetail from "./BpaApplicationDetail";
@@ -66,6 +67,7 @@ const App = ({ path }) => {
         <PrivateRoute path={`${path}/sendbacktocitizen/ocbpa/:tenantId/:applicationNo`} component={OCSendBackToCitizen} />
         <PrivateRoute path={`${path}/response`} component={OBPSResponse} />
         <PrivateRoute path={`${path}/rga/edcrscrutiny/apply`} component={CreateRGAEDCR} />
+        <Route path={`${path}/my-applications-bypass`} component={MyApplicationLoginByPass} />
       </Switch>
     </React.Fragment>
   )
