@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -132,7 +133,7 @@ public class UserController {
 		return new UserSearchResponse(responseInfo, userContracts);
 	}
 
-	@PostMapping("/_stackholdersearchsws")
+	@GetMapping("/_stackholdersearchsws")
 //	public UserSearchResponseSws getStackHolderDetailsforSWS(@RequestBody @Valid UserSearchRequest request) {
 	public UserSearchResponseSws getStackHolderDetailsforSWS(@RequestParam(value = "tenantId") String tenantId) {
 		
