@@ -1,44 +1,44 @@
 package org.egov.user.web.controller;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.egov.common.contract.response.ResponseInfo;
-import org.egov.user.domain.model.*;
+import static org.egov.tracer.http.HttpUtils.isInterServiceCall;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.tracer.model.CustomException;
+import org.egov.user.domain.model.UpdateRequest;
+import org.egov.user.domain.model.UpdateResponse;
 import org.egov.user.domain.model.User;
 import org.egov.user.domain.model.UserDetail;
 import org.egov.user.domain.model.UserSearchCriteria;
 import org.egov.user.domain.service.TokenService;
 import org.egov.user.domain.service.UserService;
-import org.egov.user.web.contract.*;
+import org.egov.user.web.contract.CreateUserRequest;
+import org.egov.user.web.contract.UserDetailResponse;
+import org.egov.user.web.contract.UserRequest;
+import org.egov.user.web.contract.UserSearchRequest;
+import org.egov.user.web.contract.UserSearchResponse;
+import org.egov.user.web.contract.UserSearchResponseContent;
+import org.egov.user.web.contract.UserSearchResponseContentSws;
+import org.egov.user.web.contract.UserSearchResponseSws;
 import org.egov.user.web.contract.auth.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.validation.Valid;
-
-import static org.egov.tracer.http.HttpUtils.isInterServiceCall;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
@@ -121,15 +121,26 @@ public class UserController {
 		}
 		return searchUsers(request, headers);
 	}
-	
+
 	@PostMapping("/_stackholdersearch")
 	public UserSearchResponse getStackHolderDetails(@RequestBody @Valid UserSearchRequest request) {
 
-		List<User> userModels =  userService.getStackHolderDetails(request.getTenantId(), request.getRequestInfo());
+		List<User> userModels = userService.getStackHolderDetails(request.getTenantId(), request.getRequestInfo());
 		List<UserSearchResponseContent> userContracts = userModels.stream().map(UserSearchResponseContent::new)
 				.collect(Collectors.toList());
 		ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
 		return new UserSearchResponse(responseInfo, userContracts);
+	}
+
+	@PostMapping("/_stackholdersearchsws")
+//	public UserSearchResponseSws getStackHolderDetailsforSWS(@RequestBody @Valid UserSearchRequest request) {
+	public UserSearchResponseSws getStackHolderDetailsforSWS(@RequestParam(value = "tenantId") String tenantId) {
+		
+		List<User> userModels = userService.getStackHolderDetails(tenantId, new RequestInfo());
+		List<UserSearchResponseContentSws> userContracts = userModels.stream().map(UserSearchResponseContentSws::new)
+				.collect(Collectors.toList());
+		ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
+		return new UserSearchResponseSws(userContracts);
 	}
 
 	/**
