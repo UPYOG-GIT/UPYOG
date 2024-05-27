@@ -47,6 +47,11 @@ public class CryptoApiController{
     public ResponseEntity<Object> cryptoDecryptPost(@Valid @RequestBody Object decryptionRequest) throws Exception {
         return new ResponseEntity<>(encryptionService.decrypt(decryptionRequest), HttpStatus.OK );
     }
+    
+    @RequestMapping(value="/crypto/v1/_swsdecrypt", method = RequestMethod.POST)
+    public ResponseEntity<String> cryptoSwsDecryptPost(@Valid @RequestBody String decryptionRequest) throws Exception {
+        return new ResponseEntity<>(encryptionService.swsDecrypt(decryptionRequest), HttpStatus.OK );
+    }
 
     @RequestMapping(value="/crypto/v1/_sign", method = RequestMethod.POST)
     public ResponseEntity<SignResponse> cryptoSignPost(@Valid @RequestBody SignRequest signRequest) throws Exception {

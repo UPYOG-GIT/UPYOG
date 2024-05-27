@@ -1,6 +1,12 @@
 package org.egov.enc.services;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.Base64;
+import java.util.LinkedList;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
 import org.egov.enc.config.AppProperties;
 import org.egov.enc.models.MethodEnum;
 import org.egov.enc.models.ModeEnum;
@@ -12,7 +18,7 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
@@ -45,5 +51,22 @@ public class EncryptionService {
 
     public Object decrypt(Object decryptionRequest) throws Exception {
         return processJSONUtil.processJSON(decryptionRequest, ModeEnum.DECRYPT, null, null);
+    }
+    
+    public String swsDecrypt(String decryptionRequest) throws Exception {
+    	Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
+		byte[] keyBytes = Base64.getDecoder().decode(appProperties.getSwsKey());
+		byte[] b = Base64.getDecoder().decode(appProperties.getSwsKey());
+		int len = b.length;
+		if (len > keyBytes.length) {
+			len = keyBytes.length;
+		}
+		System.arraycopy(b, 0, keyBytes, 0, len);
+		SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
+		IvParameterSpec ivSpec = new IvParameterSpec(Base64.getDecoder().decode(appProperties.getSwsIntialVector()));
+		cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+		byte[] results = cipher.doFinal(Base64.getDecoder().decode(decryptionRequest));
+		
+		return new String(results, "UTF-8");
     }
 }

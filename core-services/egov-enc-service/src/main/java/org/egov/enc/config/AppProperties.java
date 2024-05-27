@@ -43,4 +43,9 @@ public class AppProperties {
     @Value("#{${type.to.method.map}}")
     private HashMap<String, String> typeToMethodMap;
 
+    @Value("${sws.integration.aeskey}")
+    private String swsKey;
+    
+    @Value("${sws.integration.inialvector}")
+    private String swsIntialVector;
 }
