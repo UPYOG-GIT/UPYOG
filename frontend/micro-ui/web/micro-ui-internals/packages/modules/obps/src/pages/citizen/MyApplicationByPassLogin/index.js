@@ -13,6 +13,7 @@ const MyApplicationByPassLogin = () => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [finalData, setFinalData] = useState([]);
   const location = useLocation();
   // Function to parse the query string
   const getQueryParams = (query) => {
@@ -22,8 +23,19 @@ const MyApplicationByPassLogin = () => {
   const queryParams = getQueryParams(location.search);
   const token = queryParams.get("token"); // Get the 'token' parameter
 
-  console.log("token111 " + token);
-  // if (token != null) {
+  const setCitizenDetail = (userObject, token, tenantId) => {
+    let locale = JSON.parse(sessionStorage.getItem("Digit.initData"))?.value?.selectedLanguage;
+    localStorage.setItem("Citizen.tenant-id", tenantId);
+    localStorage.setItem("tenant-id", tenantId);
+    localStorage.setItem("citizen.userRequestObject", JSON.stringify(userObject));
+    localStorage.setItem("locale", locale);
+    localStorage.setItem("Citizen.locale", locale);
+    localStorage.setItem("token", token);
+    localStorage.setItem("Citizen.token", token);
+    localStorage.setItem("user-info", JSON.stringify(userObject));
+    localStorage.setItem("Citizen.user-info", JSON.stringify(userObject));
+
+  };
   useEffect(async () => {
     try {
       const requestData = {
@@ -35,43 +47,44 @@ const MyApplicationByPassLogin = () => {
       };
 
       const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
-      console.log("info :"+JSON.stringify(info));
-      console.log("tokens: "+tokens)
+
       const usersResponse1 = await Digit.UserService.userSearch(info?.tenantId, { uuid: [info?.uuid] }, {});
 
-      // const usersResponse = await Digit.UserService.userSearch("cg.birgaon", { mobileNumber: token, tenantId:"cg.birgaon" }, {});
-      console.log("usersResponse: " + JSON.stringify(usersResponse1));
 
       setUser({ info, ...tokens });
-      Digit.SessionStorage.set("citizen.userRequestObject", user);
-      Digit.UserService.setUser(user);
 
-      console.log("user : "+JSON.stringify(user));
-      console.log("Digit.UserService.getUser() "+JSON.stringify(Digit.UserService.getUser()));
       setLoading(false);
     } catch (err) {
       // setError(err);
-    } 
+    }
     // finally {
-      
+
     // }
   }, []);
   // }
 
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+    Digit.SessionStorage.set("citizen.userRequestObject", user);
+    Digit.UserService.setUser(user);
+    setCitizenDetail(user?.info, user?.access_token, user?.info?.tenantId);
+    Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", ({ code: user?.info?.tenantId }));
+  }, [user]);
+
   const history = useHistory();
 
-  // if (!loading) {
-  const [finalData, setFinalData] = useState([]);
   const [labelMessage, setLableMessage] = useState(false);
-  // const tenantId = Digit.ULBService.getCurrentTenantId();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant();
+  
   const userInfo = Digit.UserService.getUser();
   const requestor = userInfo?.info?.mobileNumber;
-  // console.log("requestor : " + JSON.stringify(requestor));
-  // console.log("userInfo : " + JSON.stringify(userInfo));
-  // const { data, isLoading, revalidate } = Digit.Hooks.obps.useBPAREGSearch(tenantId);
-  // const { data: renData, isLoading: isRenSearchLoading, revalidate: renRevlidate } = Digit.Hooks.obps.useBPARENSearch(tenantId);
-  const { data: bpaData, isLoading: isBpaSearchLoading, revalidate: bpaRevalidate } = Digit.Hooks.obps.useBPASearch(tenantId, {
+  const {
+    data: bpaData,
+    isLoading: isBpaSearchLoading,
+    revalidate: bpaRevalidate,
+  } = Digit.Hooks.obps.useBPASearch(tenantId, {
     requestor,
     limit: -1,
     offset: 0,
@@ -112,9 +125,6 @@ const MyApplicationByPassLogin = () => {
   if (isBpaSearchLoading) {
     return <Loader />;
   }
-  // } else{
-  //   return <Loader />;
-  // }
 
   if (loading) {
     return <Loader />;
@@ -122,7 +132,7 @@ const MyApplicationByPassLogin = () => {
 
   return (
     <Fragment>
-      <Header>{`${t("BPA_MY_APPLICATIONS")} (${bpaData?.length})`}</Header>
+      <Header>{`${t("BPA_MY_APPLICATIONS")} (${finalData?.length})`}</Header>
       {finalData?.map((application, index) => {
         return (
           <Card key={index}>
