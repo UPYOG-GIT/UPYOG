@@ -54,6 +54,16 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
   const searchParams = Digit.Hooks.useQueryParams();
 
+  // // Function to parse the query string
+  // const getQueryParams = (query) => {
+  //   return new URLSearchParams(query);
+  // };
+
+  // const queryParams = getQueryParams(location.search);
+  // const token = queryParams.get('token'); // Get the 'token' parameter
+
+  // console.log("token "+token);
+
   const [isSignup, setSignup] = useState(false);
 
   const [mobileNumber, setMobileNumber] = useState();
@@ -268,7 +278,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
 
   const concatGuardianName = relation + " " + guardianName;
-  console.log("concatGuardianName" + concatGuardianName); 
+  // console.log("concatGuardianName" + concatGuardianName); 
   const selectOtp = async () => {
 
     try {
