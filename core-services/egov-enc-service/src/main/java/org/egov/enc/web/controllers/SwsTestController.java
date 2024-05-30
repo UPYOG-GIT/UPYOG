@@ -81,7 +81,7 @@ public class SwsTestController {
 
 		log.info("requestEntity : " + requestEntity.toString());
 		String apiUrl = "https://industries.cg.gov.in/swschhattisgarhserviceapi/api/UnitRegistration/getapplicationdetail";
-
+		log.info("Request Factory : " + restTemplate.getRequestFactory().toString());
 		try {
 			// Make the API call using RestTemplatex1x
 			ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity,
@@ -102,24 +102,18 @@ class AppConfig {
 
 	@Bean
 	public RestTemplate restTemplate() throws Exception {
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient()));
-        return restTemplate;
-    }
-	
+		RestTemplate restTemplate = new RestTemplate();
+		restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient()));
+		return restTemplate;
+	}
+
 //	public RestTemplate restTemplate() {
 //		return new RestTemplate();
 //	}
-	
-	
+
 	private CloseableHttpClient httpClient() throws Exception {
-        SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(
-                SSLContext.getDefault(),
-                new String[]{"TLSv1.2"},
-                null,
-                new NoopHostnameVerifier());
-        return HttpClients.custom()
-                .setSSLSocketFactory(socketFactory)
-                .build();
-    }
+		SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(SSLContext.getDefault(),
+				new String[] { "TLSv1.2" }, null, new NoopHostnameVerifier());
+		return HttpClients.custom().setSSLSocketFactory(socketFactory).build();
+	}
 }
