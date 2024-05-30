@@ -56,11 +56,11 @@ public class SwsTestController {
 			return ResponseEntity.ok(error);
 		}
 	}
-	
-	
-	@PostMapping("/_getapplicationdetails")
-	public ResponseEntity<String> getApplicationDetails(@RequestBody JSONObject data) {
 
+	@PostMapping("/_getapplicationdetails")
+	public ResponseEntity<String> getApplicationDetails(@RequestBody String dataRequest) {
+
+		JSONObject data = new JSONObject(dataRequest);
 		Map<String, Object> requestBody = new HashMap<>();
 //		requestBody.put("applicationNumber", "112405250417235");
 		requestBody.put("applicationNumber", data.get("applicationNumber").toString());
@@ -90,12 +90,11 @@ public class SwsTestController {
 	}
 }
 
-
 @Configuration
 class AppConfig {
 
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
 }
