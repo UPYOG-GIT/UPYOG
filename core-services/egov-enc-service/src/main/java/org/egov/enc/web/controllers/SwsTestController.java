@@ -3,6 +3,12 @@ package org.egov.enc.web.controllers;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.net.ssl.SSLContext;
+
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -94,7 +101,25 @@ public class SwsTestController {
 class AppConfig {
 
 	@Bean
-	public RestTemplate restTemplate() {
-		return new RestTemplate();
-	}
+	public RestTemplate restTemplate() throws Exception {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient()));
+        return restTemplate;
+    }
+	
+//	public RestTemplate restTemplate() {
+//		return new RestTemplate();
+//	}
+	
+	
+	private CloseableHttpClient httpClient() throws Exception {
+        SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(
+                SSLContext.getDefault(),
+                new String[]{"TLSv1.2"},
+                null,
+                new NoopHostnameVerifier());
+        return HttpClients.custom()
+                .setSSLSocketFactory(socketFactory)
+                .build();
+    }
 }
