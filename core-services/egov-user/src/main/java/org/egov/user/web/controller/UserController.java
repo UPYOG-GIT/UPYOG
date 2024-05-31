@@ -136,7 +136,7 @@ public class UserController {
 	@GetMapping("/_stackholdersearchsws")
 //	public UserSearchResponseSws getStackHolderDetailsforSWS(@RequestBody @Valid UserSearchRequest request) {
 	public UserSearchResponseSws getStackHolderDetailsforSWS(@RequestParam(value = "tenantId") String tenantId) {
-		
+
 		List<User> userModels = userService.getStackHolderDetails(tenantId, new RequestInfo());
 		List<UserSearchResponseContentSws> userContracts = userModels.stream().map(UserSearchResponseContentSws::new)
 				.collect(Collectors.toList());
@@ -245,13 +245,13 @@ public class UserController {
 		}
 		return true;
 	}
-	
-	
+
 	@GetMapping("/_stackholdersearchbpms")
 //	public UserSearchResponseSws getStackHolderDetailsforSWS(@RequestBody @Valid UserSearchRequest request) {
 	public Object getStackHolderDetailsFromBpms(@RequestParam(value = "locId") String locId) {
-		
+
 		Object userModels = userService.getArchitectDetailsFromBpms(locId);
+		log.info("Architects : " + userModels.toString());
 //		List<UserSearchResponseContentSws> userContracts = userModels.stream().map(UserSearchResponseContentSws::new)
 //				.collect(Collectors.toList());
 //		ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
