@@ -210,13 +210,12 @@ public class UserService {
 		setFileStoreUrlsByFileStoreIds(list);
 		return list;
 	}
-	
-	
+
 	public List<org.egov.user.domain.model.User> getStackHolderDetails(String tenantId, RequestInfo requestInfo) {
-		
+
 		List<org.egov.user.domain.model.User> list = userRepository.getStackholderDetails(tenantId);
 		list = encryptionDecryptionUtil.decryptObject(list, "UserList", User.class, requestInfo);
-		return list;	
+		return list;
 	}
 
 	/**
@@ -451,8 +450,7 @@ public class UserService {
 		}
 		return updatedUser;
 	}
-	
-	
+
 	public User validityUpdate(User user, RequestInfo requestInfo) {
 		/* encrypt here */
 		user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
@@ -694,4 +692,11 @@ public class UserService {
 		}
 	}
 
+	public Object getArchitectDetailsFromBpms(String locId) {
+
+		String url = "https://bpms.sudacg.in/architect_api.php?tam_loc_id=" + locId;
+		return restTemplate.getForObject(url, String.class);
+
+//		return null;
+	}
 }

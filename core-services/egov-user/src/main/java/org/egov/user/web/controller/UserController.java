@@ -245,5 +245,17 @@ public class UserController {
 		}
 		return true;
 	}
+	
+	
+	@GetMapping("/_stackholdersearchbpms")
+//	public UserSearchResponseSws getStackHolderDetailsforSWS(@RequestBody @Valid UserSearchRequest request) {
+	public Object getStackHolderDetailsFromBpms(@RequestParam(value = "locId") String locId) {
+		
+		Object userModels = userService.getArchitectDetailsFromBpms(locId);
+//		List<UserSearchResponseContentSws> userContracts = userModels.stream().map(UserSearchResponseContentSws::new)
+//				.collect(Collectors.toList());
+//		ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
+		return userModels;
+	}
 
 }
