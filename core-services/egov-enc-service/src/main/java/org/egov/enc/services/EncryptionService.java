@@ -1,5 +1,6 @@
 package org.egov.enc.services;
 
+import java.net.URLDecoder;
 import java.util.Base64;
 import java.util.LinkedList;
 
@@ -54,6 +55,7 @@ public class EncryptionService {
     }
     
     public String swsDecrypt(String decryptionRequest) throws Exception {
+    	String encryptedText = URLDecoder.decode(decryptionRequest, "UTF-8");
     	Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
 		byte[] keyBytes = Base64.getDecoder().decode(appProperties.getSwsKey());
 		byte[] b = Base64.getDecoder().decode(appProperties.getSwsKey());
@@ -65,7 +67,7 @@ public class EncryptionService {
 		SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
 		IvParameterSpec ivSpec = new IvParameterSpec(Base64.getDecoder().decode(appProperties.getSwsIntialVector()));
 		cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-		byte[] results = cipher.doFinal(Base64.getDecoder().decode(decryptionRequest));
+		byte[] results = cipher.doFinal(Base64.getDecoder().decode(encryptedText));
 		
 		return new String(results, "UTF-8");
     }
