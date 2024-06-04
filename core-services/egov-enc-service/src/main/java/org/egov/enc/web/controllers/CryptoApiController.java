@@ -1,12 +1,20 @@
 package org.egov.enc.web.controllers;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.egov.enc.services.KeyManagementService;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.egov.enc.services.EncryptionService;
+import org.egov.enc.services.KeyManagementService;
 import org.egov.enc.services.SignatureService;
-import org.egov.enc.web.models.*;
+import org.egov.enc.web.models.EncryptionRequest;
+import org.egov.enc.web.models.RotateKeyRequest;
+import org.egov.enc.web.models.RotateKeyResponse;
+import org.egov.enc.web.models.SignRequest;
+import org.egov.enc.web.models.SignResponse;
+import org.egov.enc.web.models.VerifyRequest;
+import org.egov.enc.web.models.VerifyResponse;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +23,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
@@ -49,8 +58,10 @@ public class CryptoApiController{
     }
     
     @RequestMapping(value="/crypto/v1/_swsdecrypt", method = RequestMethod.POST)
-    public ResponseEntity<String> cryptoSwsDecryptPost(@Valid @RequestBody String decryptionRequest) throws Exception {
-        return new ResponseEntity<>(encryptionService.swsDecrypt(decryptionRequest), HttpStatus.OK );
+    public ResponseEntity<String> cryptoSwsDecryptPost(@Valid @RequestBody Object decryptionRequest) throws Exception {
+    	JSONObject decryptionObject = new JSONObject(decryptionRequest);
+    	String decryptionString = decryptionObject.getJSONObject("decryptionRequest").getString("userDetails");
+        return new ResponseEntity<>(encryptionService.swsDecrypt(decryptionString), HttpStatus.OK );
     }
 
     @RequestMapping(value="/crypto/v1/_sign", method = RequestMethod.POST)
