@@ -19,6 +19,7 @@ import org.egov.user.domain.model.UserSearchCriteria;
 import org.egov.user.domain.service.TokenService;
 import org.egov.user.domain.service.UserService;
 import org.egov.user.web.contract.CreateUserRequest;
+import org.egov.user.web.contract.DecryptionRequestWrapper;
 import org.egov.user.web.contract.UserDetailResponse;
 import org.egov.user.web.contract.UserRequest;
 import org.egov.user.web.contract.UserSearchRequest;
@@ -263,9 +264,9 @@ public class UserController {
 	
 	
 	 @RequestMapping(value="/crypto/_swsdecrypt", method = RequestMethod.POST)
-	    public ResponseEntity<String> cryptoSwsDecryptPost(@Valid @RequestBody Object decryptionRequest) throws Exception {
-	    	JSONObject decryptionObject = new JSONObject(decryptionRequest);
-	    	String decryptionString = decryptionObject.getJSONObject("decryptionRequest").getString("userDetails");
+	    public ResponseEntity<String> cryptoSwsDecryptPost(@Valid @RequestBody DecryptionRequestWrapper decryptionRequestWrapper) throws Exception {
+//	    	JSONObject decryptionObject = new JSONObject(decryptionRequest);
+	    	String decryptionString = decryptionRequestWrapper.getDecryptionRequest().getEncryptedSwsUser();
 	        return new ResponseEntity<>(userService.swsDecrypt(decryptionString), HttpStatus.OK );
 	    }
 
