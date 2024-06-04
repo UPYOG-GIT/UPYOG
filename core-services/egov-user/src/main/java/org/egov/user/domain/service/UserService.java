@@ -94,12 +94,12 @@ public class UserService {
 
 	@Value("${egov.user.pwd.pattern.max.length}")
 	private Integer pwdMaxLength;
-	
+
 	@Value("${sws.integration.aeskey}")
-    private String swsKey;
-    
-    @Value("${sws.integration.inialvector}")
-    private String swsIntialVector;
+	private String swsKey;
+
+	@Value("${sws.integration.inialvector}")
+	private String swsIntialVector;
 
 	@Autowired
 	private RestTemplate restTemplate;
@@ -710,11 +710,10 @@ public class UserService {
 
 //		return null;
 	}
-	
-	
+
 	public String swsDecrypt(String decryptionRequest) throws Exception {
-    	String encryptedText = URLDecoder.decode(decryptionRequest, "UTF-8");
-    	Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
+		String encryptedText = URLDecoder.decode(decryptionRequest, "UTF-8");
+		Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
 		byte[] keyBytes = Base64.getDecoder().decode(swsKey);
 		byte[] b = Base64.getDecoder().decode(swsKey);
 		int len = b.length;
@@ -726,7 +725,7 @@ public class UserService {
 		IvParameterSpec ivSpec = new IvParameterSpec(Base64.getDecoder().decode(swsIntialVector));
 		cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
 		byte[] results = cipher.doFinal(Base64.getDecoder().decode(encryptedText));
-		
+		log.info("Encrypted String: " + new String(results, "UTF-8"));
 		return new String(results, "UTF-8");
-    }
+	}
 }

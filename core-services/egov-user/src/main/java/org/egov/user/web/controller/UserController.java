@@ -261,13 +261,14 @@ public class UserController {
 //		ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
 		return userModels;
 	}
-	
-	
-	 @RequestMapping(value="/crypto/_swsdecrypt", method = RequestMethod.POST)
-	    public ResponseEntity<String> cryptoSwsDecryptPost(@Valid @RequestBody DecryptionRequestWrapper decryptionRequestWrapper) throws Exception {
+
+	@RequestMapping(value = "/crypto/_swsdecrypt", method = RequestMethod.POST)
+	public ResponseEntity<String> cryptoSwsDecryptPost(
+			@Valid @RequestBody DecryptionRequestWrapper decryptionRequestWrapper) throws Exception {
 //	    	JSONObject decryptionObject = new JSONObject(decryptionRequest);
-	    	String decryptionString = decryptionRequestWrapper.getDecryptionRequest().getEncryptedSwsUser();
-	        return new ResponseEntity<>(userService.swsDecrypt(decryptionString), HttpStatus.OK );
-	    }
+		String encryptedString = decryptionRequestWrapper.getDecryptionRequest().getEncryptedSwsUser();
+		log.info("encryptedString: " + encryptedString);
+		return new ResponseEntity<>(userService.swsDecrypt(encryptedString), HttpStatus.OK);
+	}
 
 }
