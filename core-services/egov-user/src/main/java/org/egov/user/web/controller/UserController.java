@@ -27,6 +27,7 @@ import org.egov.user.web.contract.UserSearchResponseContent;
 import org.egov.user.web.contract.UserSearchResponseContentSws;
 import org.egov.user.web.contract.UserSearchResponseSws;
 import org.egov.user.web.contract.auth.CustomUserDetails;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -36,6 +37,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -257,5 +260,13 @@ public class UserController {
 //		ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
 		return userModels;
 	}
+	
+	
+	 @RequestMapping(value="/crypto/_swsdecrypt", method = RequestMethod.POST)
+	    public ResponseEntity<String> cryptoSwsDecryptPost(@Valid @RequestBody Object decryptionRequest) throws Exception {
+	    	JSONObject decryptionObject = new JSONObject(decryptionRequest);
+	    	String decryptionString = decryptionObject.getJSONObject("decryptionRequest").getString("userDetails");
+	        return new ResponseEntity<>(userService.swsDecrypt(decryptionString), HttpStatus.OK );
+	    }
 
 }

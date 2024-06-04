@@ -41,11 +41,16 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -89,6 +94,12 @@ public class UserService {
 
 	@Value("${egov.user.pwd.pattern.max.length}")
 	private Integer pwdMaxLength;
+	
+	@Value("${sws.integration.aeskey}")
+    private String swsKey;
+    
+    @Value("${sws.integration.inialvector}")
+    private String swsIntialVector;
 
 	@Autowired
 	private RestTemplate restTemplate;
@@ -699,4 +710,23 @@ public class UserService {
 
 //		return null;
 	}
+	
+	
+	public String swsDecrypt(String decryptionRequest) throws Exception {
+    	String encryptedText = URLDecoder.decode(decryptionRequest, "UTF-8");
+    	Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
+		byte[] keyBytes = Base64.getDecoder().decode(swsKey);
+		byte[] b = Base64.getDecoder().decode(swsKey);
+		int len = b.length;
+		if (len > keyBytes.length) {
+			len = keyBytes.length;
+		}
+		System.arraycopy(b, 0, keyBytes, 0, len);
+		SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
+		IvParameterSpec ivSpec = new IvParameterSpec(Base64.getDecoder().decode(swsIntialVector));
+		cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+		byte[] results = cipher.doFinal(Base64.getDecoder().decode(encryptedText));
+		
+		return new String(results, "UTF-8");
+    }
 }
