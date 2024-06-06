@@ -67,7 +67,7 @@ const App = ({ path }) => {
         <PrivateRoute path={`${path}/sendbacktocitizen/ocbpa/:tenantId/:applicationNo`} component={OCSendBackToCitizen} />
         <PrivateRoute path={`${path}/response`} component={OBPSResponse} />
         <PrivateRoute path={`${path}/rga/edcrscrutiny/apply`} component={CreateRGAEDCR} />
-        <PrivateRoute path={`${path}/my-applications-bypass`} component={MyApplicationLoginByPass} />
+        <Route path={`${path}/my-applications-bypass`} component={MyApplicationLoginByPass} />
       </Switch>
     </React.Fragment>
   )

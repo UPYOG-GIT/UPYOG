@@ -12,8 +12,15 @@ const getServiceType = () => {
 const MyApplicationByPassLogin = () => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
+  // const [decryptionDone, setDecryptionDone] = useState(false);
   const [user, setUser] = useState(null);
   const [finalData, setFinalData] = useState([]);
+  const [swsUserDetails, setSwsUserDetails] = useState(null);
+  // const [swsUserDetails, setSwsUserDetails] = useState({
+  //   "name":"",
+  //   "mobileNumber":"",
+  //   "emailId":""
+  // });
   const location = useLocation();
   // Function to parse the query string
   const getQueryParams = (query) => {
@@ -21,7 +28,7 @@ const MyApplicationByPassLogin = () => {
   };
 
   const queryParams = getQueryParams(location.search);
-  const token = queryParams.get("token"); // Get the 'token' parameter
+  const enryptedUserDetails = queryParams.get("userDetails"); // Get the 'token' parameter
 
   const setCitizenDetail = (userObject, token, tenantId) => {
     let locale = JSON.parse(sessionStorage.getItem("Digit.initData"))?.value?.selectedLanguage;
@@ -34,25 +41,61 @@ const MyApplicationByPassLogin = () => {
     localStorage.setItem("Citizen.token", token);
     localStorage.setItem("user-info", JSON.stringify(userObject));
     localStorage.setItem("Citizen.user-info", JSON.stringify(userObject));
-
   };
+
+  useEffect(async () => {
+    const text = "cAvv1qnzPFMJfF0KW8RtfzXuv0V1/gzBDbZ9T5FEoNvbGjnH7/Vpm6eCQH87ibdBzlsbkBYUN8trJ22pkAoVvQ==";
+    // console.log("Hellooooo")
+    const decryptionRequest = {
+      encryptedSwsUser: enryptedUserDetails,
+    };
+    const decryptionResponse = await Digit.UserService.decryptForSws(decryptionRequest);
+    // const usersResponse = await Digit.OBPSService.decryptForSws(decryptionRequest);
+    // console.log("Decrypted :" + usersResponse);
+    const userDetails = decryptionResponse.split("#");
+    // console.log("users1"+users1);
+    const user1 = {
+      name: userDetails[0],
+      mobileNumber: userDetails[1],
+      emailId: userDetails[2],
+      enterpriseName: userDetails[3],
+      unitRegistrationNo: userDetails[4],
+      SwsApplicationId: userDetails[5],
+      ulbName: userDetails[6],
+    };
+    // setSwsUserDetails({
+    //   name: userDetails[0],
+    //   mobileNumber: userDetails[1],
+    //   emailId: userDetails[2]
+    // });
+    setSwsUserDetails(user1);
+    // setuserDetails(usersResponse);
+  }, []);
+
+  // console.log("userDetails" + JSON.stringify(swsUserDetails));
+
   useEffect(async () => {
     try {
+      if (!swsUserDetails) {
+        return;
+      }
+      // console.log("userDetails" + JSON.stringify(swsUserDetails));
+      // console.log(swsUserDetails.mobileNumber)
       const requestData = {
-        username: token,
+        username: swsUserDetails.mobileNumber,
         password: 123456,
         //tenantId: stateCode,
-        tenantId: "cg.birgaon",
+        tenantId: "cg." + swsUserDetails.ulbName,
         userType: "citizen",
       };
+
+      // console.log("userDetails" + JSON.stringify(userDetails));
 
       const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
 
       const usersResponse1 = await Digit.UserService.userSearch(info?.tenantId, { uuid: [info?.uuid] }, {});
 
-
       setUser({ info, ...tokens });
-
       setLoading(false);
     } catch (err) {
       // setError(err);
@@ -60,7 +103,7 @@ const MyApplicationByPassLogin = () => {
     // finally {
 
     // }
-  }, []);
+  }, [swsUserDetails]);
   // }
 
   useEffect(() => {
@@ -70,21 +113,17 @@ const MyApplicationByPassLogin = () => {
     Digit.SessionStorage.set("citizen.userRequestObject", user);
     Digit.UserService.setUser(user);
     setCitizenDetail(user?.info, user?.access_token, user?.info?.tenantId);
-    Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", ({ code: user?.info?.tenantId }));
+    Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", { code: user?.info?.tenantId });
   }, [user]);
 
   const history = useHistory();
 
   const [labelMessage, setLableMessage] = useState(false);
   const tenantId = Digit.ULBService.getCitizenCurrentTenant();
-  
+
   const userInfo = Digit.UserService.getUser();
   const requestor = userInfo?.info?.mobileNumber;
-  const {
-    data: bpaData,
-    isLoading: isBpaSearchLoading,
-    revalidate: bpaRevalidate,
-  } = Digit.Hooks.obps.useBPASearch(tenantId, {
+  const { data: bpaData, isLoading: isBpaSearchLoading, revalidate: bpaRevalidate } = Digit.Hooks.obps.useBPASearch(tenantId, {
     requestor,
     limit: -1,
     offset: 0,

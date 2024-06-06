@@ -129,4 +129,25 @@ export const UserService = {
       data: data.pageSize ? { tenantId, userTenantid, ...data } : { tenantId:userTenantid, ...data, pageSize: "100" },
     });
   },
+
+  // decryptForSws: async (data) => {
+  //   Request({
+  //     url: Urls.DecryptForSWS,
+  //     method: "POST",
+  //     data: data,
+  //     auth: false,
+  //     params: {},
+  //     userService: false,
+  //   });
+  // },
+
+  decryptForSws: (data) =>
+    Request({
+      url: Urls.DecryptForSWS,
+      data: {decryptionRequest : data},
+      userService: false,
+      method: "POST",
+      params: {},
+      auth: false,
+    }),
 };
