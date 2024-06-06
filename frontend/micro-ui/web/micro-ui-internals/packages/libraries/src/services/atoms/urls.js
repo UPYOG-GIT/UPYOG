@@ -32,6 +32,9 @@ const Urls = {
   UserSearch: "/user/_search",
   UserLogout : "/user/_logout",
 
+  // DecryptForSWS: "/egov-enc-service/crypto/v1/_swsdecrypt",
+  DecryptForSWS: "/user/crypto/_swsdecrypt",
+
   Shortener: "/egov-url-shortening/shortener",
 
   fsm: {
