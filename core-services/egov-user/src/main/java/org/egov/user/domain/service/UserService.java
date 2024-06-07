@@ -712,8 +712,8 @@ public class UserService {
 	}
 
 	public String swsDecrypt(String decryptionRequest) throws Exception {
-//		String encryptedText = URLDecoder.decode(decryptionRequest, "UTF-8");
-		String encryptedText = decryptionRequest;
+		String encryptedText = URLDecoder.decode(decryptionRequest, "UTF-8");
+//		String encryptedText = decryptionRequest;
 		Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
 		byte[] keyBytes = Base64.getDecoder().decode(swsKey);
 		byte[] b = Base64.getDecoder().decode(swsKey);
