@@ -47,7 +47,7 @@ public class BPARowMapper implements ResultSetExtractor<List<BPA>> {
 			String tenantId = rs.getString("bpa_tenantId");
 			boolean isSwsApplication = rs.getBoolean("isswsapplication");
 			Long swsApplicationId = rs.getLong("swsapplicationid");
-			Long swsUnitRegistrationNo = rs.getLong("swsunitregistrationn");
+			Long swsUnitRegistrationNo = rs.getLong("swsunitregistrationno");
 			if (currentbpa == null) {
 				Long lastModifiedTime = rs.getLong("bpa_lastModifiedTime");
 				if (rs.wasNull()) {
