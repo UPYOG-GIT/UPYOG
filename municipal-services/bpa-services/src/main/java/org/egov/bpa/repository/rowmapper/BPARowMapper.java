@@ -45,6 +45,9 @@ public class BPARowMapper implements ResultSetExtractor<List<BPA>> {
 			String approvalNo = rs.getString("approvalNo");
 			BPA currentbpa = buildingMap.get(id);
 			String tenantId = rs.getString("bpa_tenantId");
+			boolean isSwsApplication = rs.getBoolean("isswsapplication");
+			Long swsApplicationId = rs.getLong("swsapplicationid");
+			Long swsUnitRegistrationNo = rs.getLong("swsunitregistrationno");
 			if (currentbpa == null) {
 				Long lastModifiedTime = rs.getLong("bpa_lastModifiedTime");
 				if (rs.wasNull()) {
@@ -74,6 +77,9 @@ public class BPARowMapper implements ResultSetExtractor<List<BPA>> {
 						.id(id)
 						.additionalDetails(additionalDetails)
 						.businessService(rs.getString("businessService"))
+						.isSwsApplication(isSwsApplication)
+						.swsApplicationId(swsApplicationId)
+						.swsUnitRegistrationNo(swsUnitRegistrationNo)
 						.build();
 
 				buildingMap.put(id, currentbpa);
