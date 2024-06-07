@@ -202,10 +202,10 @@ public class PlanInformation implements Serializable {
 	private String additionalDetails = null;
 
 	// used for application applied through SWS
-	private Integer swsApplicationId = 0;
+	private long swsApplicationId = 0L;
 
 	// used for application applied through SWS
-	private Integer swsUnitRegistrationNumber = 0;
+	private long swsUnitRegistrationNumber = 0L;
 
 	// Application is applied through SWS or not
 	private Boolean isSwsApplication = false;
@@ -745,19 +745,19 @@ public class PlanInformation implements Serializable {
 		this.additionalDetails = additionalDetails;
 	}
 
-	public void setSwsApplicationId(Integer swsApplicationId) {
+	public void setSwsApplicationId(long swsApplicationId) {
 		this.swsApplicationId = swsApplicationId;
 	}
 
-	public Integer getSwsApplicationId() {
+	public long getSwsApplicationId() {
 		return swsApplicationId;
 	}
 
-	public void setSwsUnitRegistrationNumber(Integer unitRegistrationNumber) {
+	public void setSwsUnitRegistrationNumber(long unitRegistrationNumber) {
 		this.swsUnitRegistrationNumber = unitRegistrationNumber;
 	}
 
-	public Integer getSwsUnitRegistrationNumber() {
+	public long getSwsUnitRegistrationNumber() {
 		return swsUnitRegistrationNumber;
 	}
 
