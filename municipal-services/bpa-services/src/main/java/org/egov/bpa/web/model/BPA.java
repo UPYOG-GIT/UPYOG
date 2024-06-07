@@ -96,6 +96,15 @@ public class BPA {
 
 	@JsonProperty("architect")
 	private OwnerInfo architect = null;
+	
+	@JsonProperty("swsApplicationId")
+	private Long swsApplicationId = null;
+	
+	@JsonProperty("swsUnitRegistrationNo")
+	private Long swsUnitRegistrationNo = null;
+	
+	@JsonProperty("isSwsApplication")
+	private boolean isSwsApplication = false;
 
 	public BPA id(String id) {
 		this.id = id;
@@ -349,6 +358,8 @@ public class BPA {
 		this.status = status;
 	}
 
+	
+	
 	public BPA documents(List<Document> documents) {
 		this.documents = documents;
 		return this;
@@ -525,5 +536,29 @@ public class BPA {
 
 	public void setArchitect(OwnerInfo architect) {
 		this.architect = architect;
+	}
+
+	public Long getSwsApplicationId() {
+		return swsApplicationId;
+	}
+
+	public void setSwsApplicationId(Long swsApplicationId) {
+		this.swsApplicationId = swsApplicationId;
+	}
+
+	public Long getSwsUnitRegistrationNo() {
+		return swsUnitRegistrationNo;
+	}
+
+	public void setSwsUnitRegistrationNo(Long swsUnitRegistrationNo) {
+		this.swsUnitRegistrationNo = swsUnitRegistrationNo;
+	}
+
+	public boolean isSwsApplication() {
+		return isSwsApplication;
+	}
+
+	public void setSwsApplication(boolean isSwsApplication) {
+		this.isSwsApplication = isSwsApplication;
 	}
 }

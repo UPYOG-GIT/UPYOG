@@ -198,8 +198,17 @@ public class PlanInformation implements Serializable {
 	private transient int tenementCommercial;
 	// used for comparison in septic tank feature
 	private transient BigDecimal requiredWaterTankCapacity = BigDecimal.ZERO;
-	//used for additional details entry
+	// used for additional details entry
 	private String additionalDetails = null;
+
+	// used for application applied through SWS
+	private Integer swsApplicationId = 0;
+
+	// used for application applied through SWS
+	private Integer swsUnitRegistrationNumber = 0;
+
+	// Application is applied through SWS or not
+	private Boolean isSwsApplication = false;
 
 //	private transient BigDecimal roadArea;
 //
@@ -615,7 +624,7 @@ public class PlanInformation implements Serializable {
 	public void setPlotNo(String plotNo) {
 		this.plotNo = plotNo;
 	}
-	
+
 	public String getWardNo() {
 		return wardNo;
 	}
@@ -735,7 +744,29 @@ public class PlanInformation implements Serializable {
 	public void setAdditionalDetails(String additionalDetails) {
 		this.additionalDetails = additionalDetails;
 	}
-	
-	
+
+	public void setSwsApplicationId(Integer swsApplicationId) {
+		this.swsApplicationId = swsApplicationId;
+	}
+
+	public Integer getSwsApplicationId() {
+		return swsApplicationId;
+	}
+
+	public void setSwsUnitRegistrationNumber(Integer unitRegistrationNumber) {
+		this.swsUnitRegistrationNumber = unitRegistrationNumber;
+	}
+
+	public Integer getSwsUnitRegistrationNumber() {
+		return swsUnitRegistrationNumber;
+	}
+
+	public void setIsSwsApplication(Boolean isSwsApplication) {
+		this.isSwsApplication = isSwsApplication;
+	}
+
+	public Boolean getIsSwsApplication() {
+		return isSwsApplication;
+	}
 
 }

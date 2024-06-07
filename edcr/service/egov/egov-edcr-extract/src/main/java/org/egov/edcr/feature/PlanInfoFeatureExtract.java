@@ -795,6 +795,22 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 				pi.setTenementCommercial(Integer.valueOf(tenementCommertial));
 		}
 
+		String swsApplicationId = planInfoProperties.get(DxfFileConstants.SWS_APPLICATION_ID);
+		if (StringUtils.isNotBlank(swsApplicationId)) {
+			swsApplicationId = swsApplicationId.replaceAll(digitsRegex, "");
+			if (getNumericValue(swsApplicationId, pl, DxfFileConstants.SWS_APPLICATION_ID.toString()) != null)
+				pi.setSwsApplicationId(Integer.valueOf(swsApplicationId));
+			pi.setIsSwsApplication(true);
+		}
+
+		String swsUnitRegistrationNumber = planInfoProperties.get(DxfFileConstants.SWS_UNIT_REGISTRATION_NUMBER);
+		if (StringUtils.isNotBlank(swsUnitRegistrationNumber)) {
+			swsUnitRegistrationNumber = swsUnitRegistrationNumber.replaceAll(digitsRegex, "");
+			if (getNumericValue(swsUnitRegistrationNumber, pl,
+					DxfFileConstants.SWS_UNIT_REGISTRATION_NUMBER.toString()) != null)
+				pi.setSwsUnitRegistrationNumber(Integer.valueOf(swsUnitRegistrationNumber));
+		}
+
 		String additionalDetails = planInfoProperties.get(DxfFileConstants.ADDITIONAL_DETAILS);
 		if (StringUtils.isNotBlank(additionalDetails)) {
 //			String[] additionalDetailsArr = additionalDetails.split(";");
