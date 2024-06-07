@@ -50,7 +50,7 @@ const MyApplicationByPassLogin = () => {
       encryptedSwsUser: enryptedUserDetails,
     };
 
-    console.log("decryptionRequest"+JSON.stringify(decryptionRequest));
+    // console.log("decryptionRequest"+JSON.stringify(decryptionRequest));
     const decryptionResponse = await Digit.UserService.decryptForSws(decryptionRequest);
     // const usersResponse = await Digit.OBPSService.decryptForSws(decryptionRequest);
     // console.log("Decrypted :" + usersResponse);
@@ -84,7 +84,8 @@ const MyApplicationByPassLogin = () => {
       // console.log("userDetails" + JSON.stringify(swsUserDetails));
       // console.log(swsUserDetails.mobileNumber)
       const requestData = {
-        username: swsUserDetails.mobileNumber,
+        // username: swsUserDetails.mobileNumber,
+        username: 6464646479,
         password: 123456,
         //tenantId: stateCode,
         tenantId: swsUserDetails.ulbName,
@@ -94,6 +95,7 @@ const MyApplicationByPassLogin = () => {
       // console.log("userDetails" + JSON.stringify(userDetails));
 
       const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
+      console.log("info "+JSON.stringify(info));
 
       const usersResponse1 = await Digit.UserService.userSearch(info?.tenantId, { uuid: [info?.uuid] }, {});
 
