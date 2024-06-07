@@ -271,6 +271,11 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.applicationType = formData?.data?.applicationType;
                 payload.serviceType = formData?.data?.serviceType;
 
+                //add for sws application
+                payload.swsApplicationId = formData?.data?.edcrDetails?.planDetail?.planInformation?.swsApplicationId;
+                payload.swsUnitRegistrationNo = formData?.data?.edcrDetails?.planDetail?.planInformation?.swsUnitRegistrationNumber;
+                payload.isSwsApplication = formData?.data?.edcrDetails?.planDetail?.planInformation?.isSwsApplication;
+
                 const userInfo = Digit.UserService.getUser();
                 const accountId = userInfo?.info?.uuid;
                 payload.tenantId = formData?.address?.city?.code;

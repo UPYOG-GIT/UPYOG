@@ -595,6 +595,17 @@ export const OBPSService = {
     if (riskType == "LOW" && permitcondn.length > 0) {
       permitcondn = []; PermitConditions = {};
     }
+    if(BPA?.isSwsApplication){
+      applicationDetailsInfo?.values?.push({
+        title: "SWS Application ID",
+        value: BPA?.swsApplicationId
+      });
+
+      applicationDetailsInfo?.values?.push({
+        title: "SWS Unit Reg Number",
+        value: BPA?.swsUnitRegistrationNo
+      });
+    }
 
     if (BPA?.approvalNo) {
       const validityDate = new Date(BPA?.additionalDetails?.validityDate);
