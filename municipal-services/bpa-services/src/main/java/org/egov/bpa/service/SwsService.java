@@ -1,11 +1,14 @@
 package org.egov.bpa.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -21,12 +24,12 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class SwsService {
-	
+
 	@Autowired
 	private RestTemplate restTemplate;
 
 	public void pushDatatoSws(BPARequest bpaRequest) {
-		
+
 		BPA bpa = bpaRequest.getBPA();
 		Map<String, Object> requestBody = new HashMap<>();
 //		requestBody.put("swsAuthToken", swsAuthToken);
@@ -65,8 +68,7 @@ public class SwsService {
 		log.info("requestEntity : " + requestEntity.toString());
 		String apiUrl = "https://industries.cg.gov.in/swschhattisgarhserviceapi/api/SwsService/getswsprofile";
 	}
-	
-	
+
 	public ResponseEntity<String> pushDataToSwsDirectly(String requestData) {
 		JSONObject data = new JSONObject(requestData);
 		HashMap<String, Object> requestBody = jsonToMap(data);
@@ -79,7 +81,7 @@ public class SwsService {
 
 		log.info("requestEntity : " + requestEntity.toString());
 		String apiUrl = "https://industries.cg.gov.in/swschhattisgarhserviceapi/api/SwsService/updatestatus";
-		
+
 		try {
 			// Make the API call using RestTemplatex1x
 			ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity,
@@ -92,19 +94,40 @@ public class SwsService {
 			log.error("Error: " + error);
 			return ResponseEntity.ok(error);
 		}
-		
+
 	}
-	
-	 public static HashMap<String, Object> jsonToMap(JSONObject jsonObject) {
-	        HashMap<String, Object> map = new HashMap<>();
 
-	        Iterator<String> keys = jsonObject.keys();
-	        while (keys.hasNext()) {
-	            String key = keys.next();
-	            Object value = jsonObject.get(key);
-	            map.put(key, value);
-	        }
+	private HashMap<String, Object> jsonToMap(JSONObject jsonObject) {
+		HashMap<String, Object> map = new HashMap<>();
+		Iterator<String> keys = jsonObject.keys();
 
-	        return map;
-	    }
+		while (keys.hasNext()) {
+			String key = keys.next();
+			Object value = jsonObject.get(key);
+
+			if (value instanceof JSONArray) {
+				value = jsonArrayToList((JSONArray) value);
+			} else if (value instanceof JSONObject) {
+				value = jsonToMap((JSONObject) value);
+			}
+
+			map.put(key, value);
+		}
+
+		return map;
+	}
+
+	private Object jsonArrayToList(JSONArray array) {
+		List<Object> list = new ArrayList<>();
+		for (int i = 0; i < array.length(); i++) {
+			Object value = array.get(i);
+			if (value instanceof JSONArray) {
+				value = jsonArrayToList((JSONArray) value);
+			} else if (value instanceof JSONObject) {
+				value = jsonToMap((JSONObject) value);
+			}
+			list.add(value);
+		}
+		return list;
+	}
 }
