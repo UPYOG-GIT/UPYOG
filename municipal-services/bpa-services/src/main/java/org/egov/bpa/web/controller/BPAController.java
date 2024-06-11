@@ -605,6 +605,7 @@ public class BPAController {
 	        return null;
 	}
 	
+	@PostMapping(value = "/pushdatatoswsmanual")
 	public ResponseEntity<String> pushDatatoSws(@RequestBody String dataRequest){
 		return swsService.pushDataToSwsDirectly(dataRequest);
 //		return null;
