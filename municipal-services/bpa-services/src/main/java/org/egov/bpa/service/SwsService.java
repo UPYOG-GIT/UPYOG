@@ -71,7 +71,44 @@ public class SwsService {
 
 	public ResponseEntity<String> pushDataToSwsDirectly(String requestData) {
 		JSONObject data = new JSONObject(requestData);
-		HashMap<String, Object> requestBody = jsonToMap(data);
+//		HashMap<String, Object> requestBody = jsonToMap(data);
+		
+		Map<String, Object> requestBody = new HashMap<>();
+		requestBody.put("swsApplicationNo", 112406110758169L);
+		requestBody.put("applicationNoInProject", "CG-BP-2024-06-11-001974");
+//		requestBody.put("districtId", "");
+		requestBody.put("swsApplicationStatusCode", 5);
+		requestBody.put("statusDescriptionInProject", "Approved");
+		requestBody.put("lastAction", "");
+		requestBody.put("actionTakerName", "");
+		requestBody.put("actionTakerDesignation", "");
+		requestBody.put("applicationReceiverName", "");
+		requestBody.put("applicationReceiverDesignation", "");
+		requestBody.put("lastActionDate", "2024-06-11T12:01:44.738Z");
+		requestBody.put("anyOtherRemark", "");
+		requestBody.put("isCertificateProvided", 1);
+		requestBody.put("projectCertificateNumber", "CG-BP-2024-06-11-000502");
+		requestBody.put("inspectionDate", "");
+		requestBody.put("applicationSubmissionDate", "");
+		requestBody.put("applicationResubmissionDate", "");
+		requestBody.put("objectionDate", "");
+		requestBody.put("rejectionDate", "");
+		requestBody.put("approvalDate", "2024-06-11T12:01:44.738Z");
+		requestBody.put("isModelVerified", false);
+		requestBody.put("message", "");
+		requestBody.put("certificateAmendmentNo", 0);
+		requestBody.put("isAnySubsidyProvided", 0);
+		requestBody.put("subsidyAmountInRs", 0);
+		
+		
+		List<Map<String, Object>> documentList = new ArrayList<>();
+		Map<String, Object> documentInByteMap = new HashMap<>();
+		documentInByteMap.put("documentInByte", "[B@15db9742");
+
+		documentList.add(documentInByteMap);
+		
+		requestBody.put("documentList", documentList);
+		
 		HttpHeaders headers = new HttpHeaders();
 //		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
