@@ -153,12 +153,19 @@ public class SwsService {
 	private String getFileStoreId(BPARequest bpaRequest) {
 //		JSONObject data = new JSONObject(bpaRequest.toString1());
 //		HashMap<String, Object> requestBody = jsonToMap(data);
+		Map<String, Object> requestBody = new HashMap<>();
+		
+		List<BPA> bpaList = new ArrayList<>();
+		bpaList.add(bpaRequest.getBPA());
+		requestBody.put("Bpa", bpaList);
+		requestBody.put("RequestInfo", bpaRequest.getRequestInfo());
+		
 		HttpHeaders headers = new HttpHeaders();
 //		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 
-//		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
-		HttpEntity<BPARequest> requestEntity = new HttpEntity<>(bpaRequest, headers);
+		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+//		HttpEntity<BPARequest> requestEntity = new HttpEntity<>(bpaRequest, headers);
 
 		log.info("requestEntity : " + requestEntity.toString());
 		String apiUrl = "https://www.niwaspass.com/pdf-service/v1/_create?tenantId=" + bpaRequest.getBPA().getTenantId()
