@@ -1,6 +1,12 @@
 package org.egov.bpa.service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -28,8 +34,11 @@ public class SwsService {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	public void pushDatatoSws(BPARequest bpaRequest) {
+	public ResponseEntity<String> pushDatatoSws(BPARequest bpaRequest) {
 
+		try {
+		String fileByte = getFileStoreId(bpaRequest);
+		
 		BPA bpa = bpaRequest.getBPA();
 		Map<String, Object> requestBody = new HashMap<>();
 //		requestBody.put("swsAuthToken", swsAuthToken);
@@ -58,57 +67,26 @@ public class SwsService {
 		requestBody.put("certificateAmendmentNo", "");
 		requestBody.put("isAnySubsidyProvided", 0);
 		requestBody.put("subsidyAmountInRs", 0);
-		HttpHeaders headers = new HttpHeaders();
-//		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-		headers.set("swskey", "5227439299922");
-
-		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
-
-		log.info("requestEntity : " + requestEntity.toString());
-		String apiUrl = "https://industries.cg.gov.in/swschhattisgarhserviceapi/api/SwsService/getswsprofile";
+//		HttpHeaders headers = new HttpHeaders();
+////		headers.setContentType(MediaType.APPLICATION_JSON);
+//		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//		headers.set("swskey", "5227439299922");
+//
+//		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+//
+//		log.info("requestEntity : " + requestEntity.toString());
+//		String apiUrl = "https://industries.cg.gov.in/swschhattisgarhserviceapi/api/SwsService/getswsprofile";
+		return ResponseEntity.ok(fileByte);
+		} catch (Exception ex) {
+			String error = ex.toString();
+			log.error("Error: " + error);
+			return ResponseEntity.ok(error);
+		}
 	}
 
 	public ResponseEntity<String> pushDataToSwsDirectly(String requestData) {
 		JSONObject data = new JSONObject(requestData);
-//		HashMap<String, Object> requestBody = jsonToMap(data);
-		
-		Map<String, Object> requestBody = new HashMap<>();
-		requestBody.put("swsApplicationNo", 112406110758169L);
-		requestBody.put("applicationNoInProject", "CG-BP-2024-06-11-001974");
-//		requestBody.put("districtId", "");
-		requestBody.put("swsApplicationStatusCode", 5);
-		requestBody.put("statusDescriptionInProject", "Approved");
-		requestBody.put("lastAction", "");
-		requestBody.put("actionTakerName", "");
-		requestBody.put("actionTakerDesignation", "");
-		requestBody.put("applicationReceiverName", "");
-		requestBody.put("applicationReceiverDesignation", "");
-		requestBody.put("lastActionDate", "2024-06-11T12:01:44.738Z");
-		requestBody.put("anyOtherRemark", "");
-		requestBody.put("isCertificateProvided", 1);
-		requestBody.put("projectCertificateNumber", "CG-BP-2024-06-11-000502");
-		requestBody.put("inspectionDate", "");
-		requestBody.put("applicationSubmissionDate", "");
-		requestBody.put("applicationResubmissionDate", "");
-		requestBody.put("objectionDate", "");
-		requestBody.put("rejectionDate", "");
-		requestBody.put("approvalDate", "2024-06-11T12:01:44.738Z");
-		requestBody.put("isModelVerified", false);
-		requestBody.put("message", "");
-		requestBody.put("certificateAmendmentNo", 0);
-		requestBody.put("isAnySubsidyProvided", 0);
-		requestBody.put("subsidyAmountInRs", 0);
-		
-		
-		List<Map<String, Object>> documentList = new ArrayList<>();
-		Map<String, Object> documentInByteMap = new HashMap<>();
-		documentInByteMap.put("documentInByte", "[B@15db9742");
-
-		documentList.add(documentInByteMap);
-		
-		requestBody.put("documentList", documentList);
-		
+		HashMap<String, Object> requestBody = jsonToMap(data);
 		HttpHeaders headers = new HttpHeaders();
 //		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
@@ -132,6 +110,10 @@ public class SwsService {
 			return ResponseEntity.ok(error);
 		}
 
+	}
+
+	public ResponseEntity<String> getStatusCodeList() {
+		return null;
 	}
 
 	private HashMap<String, Object> jsonToMap(JSONObject jsonObject) {
@@ -166,5 +148,109 @@ public class SwsService {
 			list.add(value);
 		}
 		return list;
+	}
+
+	private String getFileStoreId(BPARequest bpaRequest) {
+		JSONObject data = new JSONObject(bpaRequest);
+		HashMap<String, Object> requestBody = jsonToMap(data);
+		HttpHeaders headers = new HttpHeaders();
+//		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+
+		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+		log.info("requestEntity : " + requestEntity.toString());
+		String apiUrl = "https://www.niwaspass.com/pdf-service/v1/_create?tenantId=" + bpaRequest.getBPA().getTenantId()
+				+ "&key=buildingpermit";
+
+		try {
+			// Make the API call using RestTemplatex1x
+			ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity,
+					String.class);
+
+//			log.info("response " + response.toString());
+			JSONObject responseBody = new JSONObject(response.getBody().toString());
+			String fileStoreId = responseBody.getJSONArray("filestoreIds").get(0).toString();
+			log.info("fileStoreId: " + fileStoreId);
+			String fileByte = getPermitOrder(bpaRequest.getBPA().getTenantId(), fileStoreId);
+			return fileByte;
+//			return ResponseEntity.ok(response.getBody().toString());
+		} catch (Exception ex) {
+			String error = ex.toString();
+			log.error("Error: " + error);
+			return error;
+		}
+	}
+
+	private String getPermitOrder(String tenantId, String fileStoreIds) {
+//		HashMap<String, Object> requestBody = jsonToMap(data);
+		HttpHeaders headers = new HttpHeaders();
+//		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+
+		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(headers);
+
+		log.info("requestEntity : " + requestEntity.toString());
+		String apiUrl = "https://www.niwaspass.com/filestore/v1/files/url?tenantId=" + tenantId + "&fileStoreIds="
+				+ fileStoreIds;
+
+		try {
+			// Make the API call using RestTemplatex1x
+			ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity,
+					String.class);
+
+//			log.info("response " + response.toString());
+			JSONObject responseBody = new JSONObject(response.getBody().toString());
+			String fileUrl = responseBody.getJSONArray("fileStoreIds").getJSONObject(0).get("url").toString();
+			log.info("fileUrl: " + fileUrl);
+			String fileByte = getfileByte(fileUrl);
+			
+			return fileByte;
+//			return ResponseEntity.ok(response.getBody().toString());
+		} catch (Exception ex) {
+			String error = ex.toString();
+			log.error("Error: " + error);
+			return error;
+		}
+	}
+
+	private String getfileByte(String fileUrl) {
+//		String filePath = "C:\\Users\\Entit\\Downloads\\1718267934751IKVIxksWTp.pdf";
+
+		try {
+			byte[] fileBytes = downloadFileFromUrl(fileUrl);
+
+			String base64String = encodeToBase64(fileBytes);
+
+			log.info("base64String: " + base64String);
+			
+			return base64String;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return e.toString();
+		}
+	}
+
+	public static String encodeToBase64(byte[] fileBytes) {
+		return Base64.getEncoder().encodeToString(fileBytes);
+	}
+
+	private static byte[] downloadFileFromUrl(String fileUrl) throws IOException {
+		URL url = new URL(fileUrl);
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		connection.setRequestMethod("GET");
+
+		try (InputStream inputStream = connection.getInputStream();
+				ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
+			byte[] buffer = new byte[1024];
+			int bytesRead;
+
+			while ((bytesRead = inputStream.read(buffer)) != -1) {
+				baos.write(buffer, 0, bytesRead);
+			}
+
+			return baos.toByteArray();
+		}
 	}
 }
