@@ -206,7 +206,7 @@ public class SwsService {
 
 		try {
 			// Make the API call using RestTemplatex1x
-			ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity,
+			ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.GET, requestEntity,
 					String.class);
 
 //			log.info("response " + response.toString());
