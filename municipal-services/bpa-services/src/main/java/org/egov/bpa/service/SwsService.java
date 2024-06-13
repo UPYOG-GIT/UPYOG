@@ -151,8 +151,8 @@ public class SwsService {
 	}
 
 	private String getFileStoreId(BPARequest bpaRequest) {
-		JSONObject data = new JSONObject(bpaRequest.toString1());
-		HashMap<String, Object> requestBody = jsonToMap(data);
+//		JSONObject data = new JSONObject(bpaRequest.toString1());
+//		HashMap<String, Object> requestBody = jsonToMap(data);
 		HttpHeaders headers = new HttpHeaders();
 //		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
