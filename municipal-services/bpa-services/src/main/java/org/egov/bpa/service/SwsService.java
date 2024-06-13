@@ -157,7 +157,8 @@ public class SwsService {
 //		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 
-		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+//		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+		HttpEntity<BPARequest> requestEntity = new HttpEntity<>(bpaRequest, headers);
 
 		log.info("requestEntity : " + requestEntity.toString());
 		String apiUrl = "https://www.niwaspass.com/pdf-service/v1/_create?tenantId=" + bpaRequest.getBPA().getTenantId()
