@@ -101,6 +101,15 @@ public class BPARequest   {
     return sb.toString();
   }
 
+  public String toString1() {
+	    StringBuilder sb = new StringBuilder();
+	    sb.append("{\n");
+	    
+	    sb.append("    requestInfo: ").append(toIndentedString(requestInfo)).append("\n");
+	    sb.append("    BPA: ").append(toIndentedString(BPA)).append("\n");
+	    sb.append("}");
+	    return sb.toString();
+	  }
   /**
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
