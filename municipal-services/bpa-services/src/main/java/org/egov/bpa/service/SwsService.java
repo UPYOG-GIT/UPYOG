@@ -193,12 +193,12 @@ public class SwsService {
 	}
 
 	private String getPermitOrder(String tenantId, String fileStoreIds, String msgId) {
-//		HashMap<String, Object> requestBody = jsonToMap(data);
+		HashMap<String, Object> requestBody = new HashMap<>();
 		HttpHeaders headers = new HttpHeaders();
 //		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 
-		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(headers);
+		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
 		log.info("requestEntity3 : " + requestEntity.toString());
 		String apiUrl = "https://www.niwaspass.com/filestore/v1/files/url?tenantId=" + tenantId + "&fileStoreIds="
