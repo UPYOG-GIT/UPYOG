@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
+import org.egov.bpa.web.model.user.UserDetailResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,15 @@ public class SwsService {
 			int swsStatusCode = getSwsStatusCode(bpaStatus);
 			String modifiedDate = convertDate(bpa.getAuditDetails().getLastModifiedTime());
 			String createdDate = convertDate(bpa.getAuditDetails().getCreatedTime());
+			String recieverName = "";
+			String recieverDesignation = "";
 			Map<String, Object> requestBody = new HashMap<>();
+
+			Map<String, Object> userResponse = getRecieverUserDetails(bpaRequest);
+			if (!userResponse.containsKey("error")) {
+				recieverName = userResponse.get("name").toString();
+				recieverDesignation = userResponse.get("designation").toString();
+			}
 //		requestBody.put("swsAuthToken", swsAuthToken);
 			requestBody.put("swsApplicationNo", bpa.getSwsApplicationId());
 			requestBody.put("applicationNoInProject", bpa.getApplicationNo());
@@ -56,8 +65,8 @@ public class SwsService {
 			requestBody.put("lastAction", bpa.getWorkflow().getAction());
 			requestBody.put("actionTakerName", bpaRequest.getRequestInfo().getUserInfo().getName());
 			requestBody.put("actionTakerDesignation", bpaRequest.getRequestInfo().getUserInfo().getType());
-			requestBody.put("applicationReceiverName", "");
-			requestBody.put("applicationReceiverDesignation", "");
+			requestBody.put("applicationReceiverName", recieverName);
+			requestBody.put("applicationReceiverDesignation", recieverDesignation);
 			requestBody.put("lastActionDate", modifiedDate);
 			requestBody.put("anyOtherRemark", "");
 			requestBody.put("isCertificateProvided", bpaStatus.equalsIgnoreCase("APPROVED") ? 1 : 0);
@@ -200,6 +209,49 @@ public class SwsService {
 		String formattedDate = formatter.format(instant);
 
 		return formattedDate;
+	}
+
+	public Map<String, Object> getRecieverUserDetails(BPARequest bpaRequest) {
+		String assigneeUuid = bpaRequest.getBPA().getWorkflow().getAssignes().get(0);
+
+		Map<String, Object> userReturn = new HashMap<>();
+
+		Map<String, Object> requestBody = new HashMap<>();
+		requestBody.put("pageSize", 10);
+		requestBody.put("RequestInfo", bpaRequest.getRequestInfo());
+
+		List<String> uuidList = new ArrayList<>();
+		uuidList.add(assigneeUuid);
+		requestBody.put("uuid", uuidList);
+
+		try {
+			HttpHeaders headers = new HttpHeaders();
+//			headers.setContentType(MediaType.APPLICATION_JSON);
+			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+
+			HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+			log.info("requestEntity16 : " + requestEntity.toString());
+			String apiUrl = "https://www.niwaspass.com/user/_search";
+			ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity,
+					String.class);
+
+			log.info("response16 " + response.toString());
+			JSONObject userResponse = new JSONObject(response.getBody().toString());
+			String recieverName = userResponse.getJSONArray("user").getJSONObject(0).get("name").toString();
+			String recieverDesignation = userResponse.getJSONArray("user").getJSONObject(0).get("type").toString();
+
+			userReturn.put("name", recieverName);
+			userReturn.put("designation", recieverDesignation);
+			return userReturn;
+//				return ResponseEntity.ok(response.getBody().toString());
+		} catch (Exception ex) {
+//				String error = ex.toString();
+			log.error("Error16: " + ex.toString());
+			userReturn.put("error", ex.toString());
+			return userReturn;
+//				return ResponseEntity.ok(ex.toString());
+		}
 	}
 
 	public ResponseEntity<String> pushDatatoSws(BPARequest bpaRequest) {
