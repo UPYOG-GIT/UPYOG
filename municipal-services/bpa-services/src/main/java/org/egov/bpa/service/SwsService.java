@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -33,6 +36,153 @@ public class SwsService {
 
 	@Autowired
 	private RestTemplate restTemplate;
+
+	public ResponseEntity<String> updateStatusToSws(BPARequest bpaRequest) {
+
+		try {
+			String fileByte = getFileStoreId(bpaRequest);
+
+			BPA bpa = bpaRequest.getBPA();
+			Map<String, Object> requestBody = new HashMap<>();
+//		requestBody.put("swsAuthToken", swsAuthToken);
+			requestBody.put("swsApplicationNo", bpa.getSwsApplicationId());
+			requestBody.put("applicationNoInProject", bpa.getApplicationNo());
+			requestBody.put("districtId", "");
+			requestBody.put("swsApplicationStatusCode", getSwsStatusCode(bpa.getStatus()));
+			requestBody.put("statusDescriptionInProject", "");
+			requestBody.put("lastAction", "");
+			requestBody.put("actionTakerName", "");
+			requestBody.put("actionTakerDesignation", "");
+			requestBody.put("applicationReceiverName", "");
+			requestBody.put("applicationReceiverDesignation", "");
+			requestBody.put("lastActionDate", "");
+			requestBody.put("anyOtherRemark", "");
+			requestBody.put("isCertificateProvided", 0);
+			requestBody.put("projectCertificateNumber", "");
+			requestBody.put("inspectionDate", "");
+			requestBody.put("applicationSubmissionDate", "");
+			requestBody.put("applicationResubmissionDate", "");
+			requestBody.put("objectionDate", "");
+			requestBody.put("rejectionDate", "");
+			requestBody.put("approvalDate", "");
+			requestBody.put("isModelVerified", "");
+			requestBody.put("message", "");
+			requestBody.put("certificateAmendmentNo", "");
+			requestBody.put("isAnySubsidyProvided", 0);
+			requestBody.put("subsidyAmountInRs", 0);
+//		HttpHeaders headers = new HttpHeaders();
+////		headers.setContentType(MediaType.APPLICATION_JSON);
+//		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//		headers.set("swskey", "5227439299922");
+//
+//		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+//
+//		log.info("requestEntity : " + requestEntity.toString());
+//		String apiUrl = "https://industries.cg.gov.in/swschhattisgarhserviceapi/api/SwsService/getswsprofile";
+			return ResponseEntity.ok(fileByte);
+		} catch (Exception ex) {
+			String error = ex.toString();
+			log.error("Error1: " + error);
+			return ResponseEntity.ok(error);
+		}
+	}
+
+	public ResponseEntity<String> updateStatusToSwsIntiatedApplication(BPARequest bpaRequest) {
+
+		try {
+//			String fileByte = getFileStoreId(bpaRequest);
+			
+			
+
+			BPA bpa = bpaRequest.getBPA();
+			log.info("SWS BPA: "+bpa.toString());
+			Map<String, Object> requestBody = new HashMap<>();
+//		requestBody.put("swsAuthToken", swsAuthToken);
+			requestBody.put("swsApplicationNo", bpa.getSwsApplicationId());
+			requestBody.put("applicationNoInProject", bpa.getApplicationNo());
+			requestBody.put("districtId", "");
+			requestBody.put("swsApplicationStatusCode", 11);
+			requestBody.put("statusDescriptionInProject", bpa.getWorkflow().getAction());
+			requestBody.put("lastAction", bpa.getStatus());
+			requestBody.put("actionTakerName", bpaRequest.getRequestInfo().getUserInfo().getName());
+			requestBody.put("actionTakerDesignation", "Architect");
+			requestBody.put("applicationReceiverName", bpa.getLandInfo().getOwners().get(0).getName());
+			requestBody.put("applicationReceiverDesignation", "Citizen");
+			requestBody.put("lastActionDate", convertDate(bpa.getAuditDetails().getLastModifiedTime()));
+			requestBody.put("anyOtherRemark", "");
+			requestBody.put("isCertificateProvided", 0);
+			requestBody.put("projectCertificateNumber", "");
+			requestBody.put("inspectionDate", "");
+			requestBody.put("applicationSubmissionDate", convertDate(bpa.getAuditDetails().getCreatedTime()));
+			requestBody.put("applicationResubmissionDate", "");
+			requestBody.put("objectionDate", "");
+			requestBody.put("rejectionDate", "");
+			requestBody.put("approvalDate", "");
+			requestBody.put("isModelVerified", false);
+			requestBody.put("message", "");
+			requestBody.put("documentList", "");
+			requestBody.put("certificateAmendmentNo", "");
+			requestBody.put("isAnySubsidyProvided", 0);
+			requestBody.put("subsidyAmountInRs", 0);
+			HttpHeaders headers = new HttpHeaders();
+//		headers.setContentType(MediaType.APPLICATION_JSON);
+			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.set("swskey", "5227439299922");
+
+			HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+			log.info("requestEntity14 : " + requestEntity.toString());
+			String apiUrl = "https://industries.cg.gov.in/swschhattisgarhserviceapi/api/SwsService/updatestatus";
+			ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.GET, requestEntity,
+					String.class);
+
+			log.info("response14 " + response.toString());
+			return ResponseEntity.ok(response.getBody().toString());
+		} catch (Exception ex) {
+//			String error = ex.toString();
+			log.error("Error14: " + ex.toString());
+			return ResponseEntity.ok(ex.toString());
+		}
+	}
+
+	public int getSwsStatusCode(String bpaStatus) {
+
+		if (bpaStatus.equalsIgnoreCase("INITIATED") || bpaStatus.equalsIgnoreCase("CITIZEN_APPROVAL_INPROCESS")
+				|| bpaStatus.equalsIgnoreCase("INPROGRESS") || bpaStatus.equalsIgnoreCase("PENDING_APPL_FEE")) {
+			return 11;
+		} else if (bpaStatus.equalsIgnoreCase("DOC_VERIFICATION_INPROGRESS_BY_ENGINEER")
+				|| bpaStatus.equalsIgnoreCase("DOC_VERIFICATION_INPROGRESS_BY_BUILDER")
+				|| bpaStatus.equalsIgnoreCase("APPROVAL_INPROGRESS")
+				|| bpaStatus.equalsIgnoreCase("POST_FEE_APPROVAL_INPROGRESS")
+				|| bpaStatus.equalsIgnoreCase("POST_FEE_APPROVAL_INPROGRESS_BY_BUILDER")
+				|| bpaStatus.equalsIgnoreCase("PENDING_SANC_FEE_PAYMENT")) {
+			return 1;
+		} else if (bpaStatus.equalsIgnoreCase("APPROVED")) {
+			return 5;
+		} else if (bpaStatus.equalsIgnoreCase("REJECTED")) {
+			return 6;
+		} else if (bpaStatus.equalsIgnoreCase("CITIZEN_ACTION_PENDING_AT_DOC_VERIF")) {
+			return 3;
+		}
+
+		return 0;
+	}
+
+	public String convertDate(Long millisecondDate) {
+//		long milliseconds = 1686483704738L;  // Example milliseconds
+
+		// Convert milliseconds to Instant
+		Instant instant = Instant.ofEpochMilli(millisecondDate);
+
+		// Define the desired date format and set the time zone to IST
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+				.withZone(ZoneId.of("Asia/Kolkata"));
+
+		// Format the Instant to the desired string format
+		String formattedDate = formatter.format(instant);
+
+		return formattedDate;
+	}
 
 	public ResponseEntity<String> pushDatatoSws(BPARequest bpaRequest) {
 
