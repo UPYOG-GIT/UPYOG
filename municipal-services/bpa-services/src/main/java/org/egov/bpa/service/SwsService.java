@@ -51,11 +51,12 @@ public class SwsService {
 //			log.info("modifiedDate: "+modifiedDate);
 			String createdDate = convertDate(bpa.getAuditDetails().getCreatedTime());
 //			log.info("createdDate: "+createdDate);
-			String recieverName = "";
-			String recieverDesignation = "";
+			String recieverName = "Citizen";
+			String recieverDesignation = "Citizen";
 			Map<String, Object> requestBody = new HashMap<>();
-
+			log.info("bpa.getWorkflow().getAssignes(): " + bpa.getWorkflow().getAssignes());
 			if (bpa.getWorkflow().getAssignes() != null) {
+				log.info("inside if in sws");
 				Map<String, Object> userResponse = getRecieverUserDetails(bpaRequest);
 
 				log.info("userResponse: " + userResponse.toString());
