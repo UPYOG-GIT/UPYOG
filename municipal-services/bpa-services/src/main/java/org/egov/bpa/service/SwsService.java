@@ -52,6 +52,8 @@ public class SwsService {
 			Map<String, Object> requestBody = new HashMap<>();
 
 			Map<String, Object> userResponse = getRecieverUserDetails(bpaRequest);
+
+			log.info("userResponse: " + userResponse.toString());
 			if (!userResponse.containsKey("error")) {
 				recieverName = userResponse.get("name").toString();
 				recieverDesignation = userResponse.get("designation").toString();
