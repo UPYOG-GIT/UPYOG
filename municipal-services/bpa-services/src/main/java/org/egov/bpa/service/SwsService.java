@@ -44,9 +44,13 @@ public class SwsService {
 			log.info("bpaRequest : "+bpaRequest.toString());
 			BPA bpa = bpaRequest.getBPA();
 			String bpaStatus = bpa.getStatus();
+			log.info("bpaStatus: "+bpaStatus);
 			int swsStatusCode = getSwsStatusCode(bpaStatus);
+			log.info("swsStatusCode: "+swsStatusCode);
 			String modifiedDate = convertDate(bpa.getAuditDetails().getLastModifiedTime());
+			log.info("modifiedDate: "+modifiedDate);
 			String createdDate = convertDate(bpa.getAuditDetails().getCreatedTime());
+			log.info("createdDate: "+createdDate);
 			String recieverName = "";
 			String recieverDesignation = "";
 			Map<String, Object> requestBody = new HashMap<>();
