@@ -41,7 +41,7 @@ public class SwsService {
 	public ResponseEntity<String> updateStatusToSws(BPARequest bpaRequest) {
 
 		try {
-
+			log.info("bpaRequest : "+bpaRequest.toString());
 			BPA bpa = bpaRequest.getBPA();
 			String bpaStatus = bpa.getStatus();
 			int swsStatusCode = getSwsStatusCode(bpaStatus);
