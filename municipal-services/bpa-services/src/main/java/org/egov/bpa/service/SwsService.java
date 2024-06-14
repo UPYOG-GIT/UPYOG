@@ -55,7 +55,7 @@ public class SwsService {
 			String recieverDesignation = "Citizen";
 			Map<String, Object> requestBody = new HashMap<>();
 			log.info("bpa.getWorkflow().getAssignes(): " + bpa.getWorkflow().getAssignes());
-			if (bpa.getWorkflow().getAssignes() != null) {
+			if (bpa.getWorkflow().getAssignes() != null || !bpa.getWorkflow().getAssignes().isEmpty()) {
 				log.info("inside if in sws");
 				Map<String, Object> userResponse = getRecieverUserDetails(bpaRequest);
 
