@@ -41,26 +41,28 @@ public class SwsService {
 	public ResponseEntity<String> updateStatusToSws(BPARequest bpaRequest) {
 
 		try {
-			log.info("bpaRequest : "+bpaRequest.toString());
+//			log.info("bpaRequest : "+bpaRequest.toString());
 			BPA bpa = bpaRequest.getBPA();
 			String bpaStatus = bpa.getStatus();
-			log.info("bpaStatus: "+bpaStatus);
+//			log.info("bpaStatus: "+bpaStatus);
 			int swsStatusCode = getSwsStatusCode(bpaStatus);
-			log.info("swsStatusCode: "+swsStatusCode);
+//			log.info("swsStatusCode: "+swsStatusCode);
 			String modifiedDate = convertDate(bpa.getAuditDetails().getLastModifiedTime());
-			log.info("modifiedDate: "+modifiedDate);
+//			log.info("modifiedDate: "+modifiedDate);
 			String createdDate = convertDate(bpa.getAuditDetails().getCreatedTime());
-			log.info("createdDate: "+createdDate);
+//			log.info("createdDate: "+createdDate);
 			String recieverName = "";
 			String recieverDesignation = "";
 			Map<String, Object> requestBody = new HashMap<>();
 
-			Map<String, Object> userResponse = getRecieverUserDetails(bpaRequest);
+			if (bpa.getWorkflow().getAssignes() != null) {
+				Map<String, Object> userResponse = getRecieverUserDetails(bpaRequest);
 
-			log.info("userResponse: " + userResponse.toString());
-			if (!userResponse.containsKey("error")) {
-				recieverName = userResponse.get("name").toString();
-				recieverDesignation = userResponse.get("designation").toString();
+				log.info("userResponse: " + userResponse.toString());
+				if (!userResponse.containsKey("error")) {
+					recieverName = userResponse.get("name").toString();
+					recieverDesignation = userResponse.get("designation").toString();
+				}
 			}
 //		requestBody.put("swsAuthToken", swsAuthToken);
 			requestBody.put("swsApplicationNo", bpa.getSwsApplicationId());
