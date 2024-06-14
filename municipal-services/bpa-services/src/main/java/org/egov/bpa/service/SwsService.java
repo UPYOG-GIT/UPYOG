@@ -133,7 +133,7 @@ public class SwsService {
 
 			log.info("requestEntity14 : " + requestEntity.toString());
 			String apiUrl = "https://industries.cg.gov.in/swschhattisgarhserviceapi/api/SwsService/updatestatus";
-			ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.GET, requestEntity,
+			ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity,
 					String.class);
 
 			log.info("response14 " + response.toString());
