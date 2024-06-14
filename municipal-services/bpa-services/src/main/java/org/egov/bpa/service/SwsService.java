@@ -40,49 +40,69 @@ public class SwsService {
 	public ResponseEntity<String> updateStatusToSws(BPARequest bpaRequest) {
 
 		try {
-			String fileByte = getFileStoreId(bpaRequest);
 
 			BPA bpa = bpaRequest.getBPA();
+			String bpaStatus = bpa.getStatus();
+			int swsStatusCode = getSwsStatusCode(bpaStatus);
+			String modifiedDate = convertDate(bpa.getAuditDetails().getLastModifiedTime());
+			String createdDate = convertDate(bpa.getAuditDetails().getCreatedTime());
 			Map<String, Object> requestBody = new HashMap<>();
 //		requestBody.put("swsAuthToken", swsAuthToken);
 			requestBody.put("swsApplicationNo", bpa.getSwsApplicationId());
 			requestBody.put("applicationNoInProject", bpa.getApplicationNo());
 			requestBody.put("districtId", "");
-			requestBody.put("swsApplicationStatusCode", getSwsStatusCode(bpa.getStatus()));
-			requestBody.put("statusDescriptionInProject", "");
-			requestBody.put("lastAction", "");
-			requestBody.put("actionTakerName", "");
-			requestBody.put("actionTakerDesignation", "");
+			requestBody.put("swsApplicationStatusCode", swsStatusCode);
+			requestBody.put("statusDescriptionInProject", bpaStatus);
+			requestBody.put("lastAction", bpa.getWorkflow().getAction());
+			requestBody.put("actionTakerName", bpaRequest.getRequestInfo().getUserInfo().getName());
+			requestBody.put("actionTakerDesignation", bpaRequest.getRequestInfo().getUserInfo().getType());
 			requestBody.put("applicationReceiverName", "");
 			requestBody.put("applicationReceiverDesignation", "");
-			requestBody.put("lastActionDate", "");
+			requestBody.put("lastActionDate", modifiedDate);
 			requestBody.put("anyOtherRemark", "");
-			requestBody.put("isCertificateProvided", 0);
-			requestBody.put("projectCertificateNumber", "");
+			requestBody.put("isCertificateProvided", bpaStatus.equalsIgnoreCase("APPROVED") ? 1 : 0);
+			requestBody.put("projectCertificateNumber",
+					bpaStatus.equalsIgnoreCase("APPROVED") ? bpa.getApplicationNo() : "");
 			requestBody.put("inspectionDate", "");
 			requestBody.put("applicationSubmissionDate", "");
 			requestBody.put("applicationResubmissionDate", "");
-			requestBody.put("objectionDate", "");
-			requestBody.put("rejectionDate", "");
-			requestBody.put("approvalDate", "");
+			requestBody.put("objectionDate", swsStatusCode == 3 ? modifiedDate : "");
+			requestBody.put("rejectionDate", bpaStatus.equalsIgnoreCase("REJECTED") ? modifiedDate : "");
+			requestBody.put("approvalDate", bpaStatus.equalsIgnoreCase("APPROVED") ? modifiedDate : "");
 			requestBody.put("isModelVerified", "");
 			requestBody.put("message", "");
 			requestBody.put("certificateAmendmentNo", "");
 			requestBody.put("isAnySubsidyProvided", 0);
 			requestBody.put("subsidyAmountInRs", 0);
-//		HttpHeaders headers = new HttpHeaders();
-////		headers.setContentType(MediaType.APPLICATION_JSON);
-//		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-//		headers.set("swskey", "5227439299922");
-//
-//		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
-//
-//		log.info("requestEntity : " + requestEntity.toString());
-//		String apiUrl = "https://industries.cg.gov.in/swschhattisgarhserviceapi/api/SwsService/getswsprofile";
-			return ResponseEntity.ok(fileByte);
+
+			if (bpaStatus.equalsIgnoreCase("APPROVED")) {
+				String fileByte = getFileStoreId(bpaRequest);
+				Map<String, Object> docListMap = new HashMap<>();
+				docListMap.put("documentInByte", fileByte);
+				List<Map<String, Object>> docList = new ArrayList<>();
+				docList.add(docListMap);
+				requestBody.put("documentList", docList);
+
+			} else {
+				requestBody.put("documentList", "");
+			}
+			HttpHeaders headers = new HttpHeaders();
+//			headers.setContentType(MediaType.APPLICATION_JSON);
+			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.set("swskey", "5227439299922");
+
+			HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+			log.info("requestEntity15 : " + requestEntity.toString());
+			String apiUrl = "https://industries.cg.gov.in/swschhattisgarhserviceapi/api/SwsService/updatestatus";
+			ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity,
+					String.class);
+
+			log.info("response15 " + response.toString());
+			return ResponseEntity.ok(response.getBody().toString());
 		} catch (Exception ex) {
 			String error = ex.toString();
-			log.error("Error1: " + error);
+			log.error("Error15: " + error);
 			return ResponseEntity.ok(error);
 		}
 	}
@@ -91,11 +111,9 @@ public class SwsService {
 
 		try {
 //			String fileByte = getFileStoreId(bpaRequest);
-			
-			
 
 			BPA bpa = bpaRequest.getBPA();
-			log.info("SWS BPA: "+bpa.toString());
+//			log.info("SWS BPA: "+bpa.toString());
 			Map<String, Object> requestBody = new HashMap<>();
 //		requestBody.put("swsAuthToken", swsAuthToken);
 			requestBody.put("swsApplicationNo", bpa.getSwsApplicationId());
