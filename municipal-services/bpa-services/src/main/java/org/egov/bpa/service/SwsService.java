@@ -43,6 +43,7 @@ public class SwsService {
 		try {
 //			log.info("bpaRequest : "+bpaRequest.toString());
 			BPA bpa = bpaRequest.getBPA();
+			log.info("SWS bpa : " + bpa.toString());
 			String bpaStatus = bpa.getStatus();
 //			log.info("bpaStatus: "+bpaStatus);
 			int swsStatusCode = getSwsStatusCode(bpaStatus);
@@ -54,8 +55,12 @@ public class SwsService {
 			String recieverName = "Citizen";
 			String recieverDesignation = "Citizen";
 			Map<String, Object> requestBody = new HashMap<>();
+
 			log.info("bpa.getWorkflow().getAssignes(): " + bpa.getWorkflow().getAssignes());
-			if (bpa.getWorkflow().getAssignes() != null || !bpa.getWorkflow().getAssignes().isEmpty()) {
+			log.info("bpa.getWorkflow().getAssignes().isEmpty() : " + bpa.getWorkflow().getAssignes().isEmpty());
+			log.info("bpa.getWorkflow().getAssignes().size(): " + bpa.getWorkflow().getAssignes().size());
+			if (bpa.getWorkflow().getAssignes() != null || !bpa.getWorkflow().getAssignes().isEmpty()
+					|| bpa.getWorkflow().getAssignes().size() != 0) {
 				log.info("inside if in sws");
 				Map<String, Object> userResponse = getRecieverUserDetails(bpaRequest);
 
