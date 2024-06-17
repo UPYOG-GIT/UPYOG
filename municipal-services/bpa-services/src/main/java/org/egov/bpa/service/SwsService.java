@@ -388,7 +388,7 @@ public class SwsService {
 //		JSONObject data = new JSONObject(bpaRequest.toString1());
 //		HashMap<String, Object> requestBody = jsonToMap(data);
 		Map<String, Object> requestBody = new HashMap<>();
-
+		log.info("bpaRequest: " + bpaRequest.toString());
 		List<BPA> bpaList = new ArrayList<>();
 		bpaList.add(bpaRequest.getBPA());
 		requestBody.put("Bpa", bpaList);
