@@ -622,9 +622,9 @@ public class BPAService {
 		 */
 
 		repository.update(bpaRequest, workflowService.isStateUpdatable(bpa.getStatus(), businessService));
-		if (bpa.isSwsApplication()) {
-			swsService.updateStatusToSws(bpaRequest);
-		}
+//		if (bpa.isSwsApplication()) {
+//			swsService.updateStatusToSws(bpaRequest);
+//		}
 		return bpaRequest.getBPA();
 
 	}
