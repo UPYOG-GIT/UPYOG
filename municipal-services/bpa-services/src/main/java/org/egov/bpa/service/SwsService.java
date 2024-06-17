@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
+import org.egov.bpa.web.model.BPASearchCriteria;
 import org.egov.bpa.web.model.user.UserDetailResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,6 +38,9 @@ public class SwsService {
 
 	@Autowired
 	private RestTemplate restTemplate;
+	
+	@Autowired
+	private BPAService bpaService;
 
 	public ResponseEntity<String> updateStatusToSws(BPARequest bpaRequest) {
 
@@ -387,11 +391,16 @@ public class SwsService {
 	private String getFileStoreId(BPARequest bpaRequest) {
 //		JSONObject data = new JSONObject(bpaRequest.toString1());
 //		HashMap<String, Object> requestBody = jsonToMap(data);
+		BPASearchCriteria criteria =new BPASearchCriteria();
+		String tenantId = bpaRequest.getBPA().getTenantId();
+		criteria.setTenantId(tenantId);
+		criteria.setApplicationNo(bpaRequest.getBPA().getApplicationNo());
+		List<BPA> bpas = bpaService.search(criteria, bpaRequest.getRequestInfo());
 		Map<String, Object> requestBody = new HashMap<>();
-		log.info("bpaRequest: " + bpaRequest.toString());
-		List<BPA> bpaList = new ArrayList<>();
-		bpaList.add(bpaRequest.getBPA());
-		requestBody.put("Bpa", bpaList);
+//		log.info("bpaRequest: " + bpaRequest.toString());
+//		List<BPA> bpaList = new ArrayList<>();
+//		bpaList.add(bpaRequest.getBPA());
+		requestBody.put("Bpa", bpas);
 		requestBody.put("RequestInfo", bpaRequest.getRequestInfo());
 
 		HttpHeaders headers = new HttpHeaders();
@@ -402,7 +411,7 @@ public class SwsService {
 //		HttpEntity<BPARequest> requestEntity = new HttpEntity<>(bpaRequest, headers);
 
 		log.info("requestEntity2 : " + requestEntity.toString());
-		String apiUrl = "https://www.niwaspass.com/pdf-service/v1/_create?tenantId=" + bpaRequest.getBPA().getTenantId()
+		String apiUrl = "https://www.niwaspass.com/pdf-service/v1/_create?tenantId=" + tenantId
 				+ "&key=buildingpermit";
 
 		try {
@@ -413,9 +422,9 @@ public class SwsService {
 //			log.info("response " + response.toString());
 			JSONObject responseBody = new JSONObject(response.getBody().toString());
 			String fileStoreId = responseBody.getJSONArray("filestoreIds").get(0).toString();
-			log.info("fileStoreId: " + fileStoreId);
+//			log.info("fileStoreId: " + fileStoreId);
 
-			String fileByte = getPermitOrder(bpaRequest.getBPA().getTenantId(), fileStoreId,
+			String fileByte = getPermitOrder(tenantId, fileStoreId,
 					bpaRequest.getRequestInfo().getMsgId().split("|")[0]);
 			return fileByte;
 //			return ResponseEntity.ok(response.getBody().toString());
@@ -434,7 +443,7 @@ public class SwsService {
 
 		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
-		log.info("requestEntity3 : " + requestEntity.toString());
+//		log.info("requestEntity3 : " + requestEntity.toString());
 		String apiUrl = "https://www.niwaspass.com/filestore/v1/files/url?tenantId=" + tenantId + "&fileStoreIds="
 				+ fileStoreIds + "&_=" + msgId;
 
@@ -446,7 +455,7 @@ public class SwsService {
 //			log.info("response " + response.toString());
 			JSONObject responseBody = new JSONObject(response.getBody().toString());
 			String fileUrl = responseBody.getJSONArray("fileStoreIds").getJSONObject(0).get("url").toString();
-			log.info("fileUrl: " + fileUrl);
+//			log.info("fileUrl: " + fileUrl);
 			String fileByte = getfileByte(fileUrl);
 
 			return fileByte;
