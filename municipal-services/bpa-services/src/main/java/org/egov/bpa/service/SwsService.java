@@ -43,7 +43,7 @@ public class SwsService {
 		try {
 //			log.info("bpaRequest : "+bpaRequest.toString());
 			BPA bpa = bpaRequest.getBPA();
-			log.info("SWS bpa : " + bpa.toString());
+//			log.info("SWS bpa : " + bpa.toString());
 			String bpaStatus = bpa.getStatus();
 //			log.info("bpaStatus: "+bpaStatus);
 			int swsStatusCode = getSwsStatusCode(bpaStatus);
@@ -61,10 +61,10 @@ public class SwsService {
 //			log.info("bpa.getWorkflow().getAssignes().size(): " + bpa.getWorkflow().getAssignes().size());
 			if (bpa.getWorkflow().getAssignes() != null
 					&& (!bpa.getWorkflow().getAssignes().isEmpty() || bpa.getWorkflow().getAssignes().size() != 0)) {
-				log.info("inside if in sws");
+//				log.info("inside if in sws");
 				Map<String, Object> userResponse = getRecieverUserDetails(bpaRequest);
 
-				log.info("userResponse: " + userResponse.toString());
+//				log.info("userResponse: " + userResponse.toString());
 				if (!userResponse.containsKey("error")) {
 					recieverName = userResponse.get("name").toString();
 					recieverDesignation = userResponse.get("designation").toString();
