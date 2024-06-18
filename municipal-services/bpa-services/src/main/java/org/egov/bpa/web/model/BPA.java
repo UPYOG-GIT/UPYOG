@@ -105,6 +105,8 @@ public class BPA {
 	
 	@JsonProperty("isSwsApplication")
 	private boolean isSwsApplication = false;
+	
+	private String edcrDetail = null;
 
 	public BPA id(String id) {
 		this.id = id;
@@ -561,4 +563,14 @@ public class BPA {
 	public void setSwsApplication(boolean isSwsApplication) {
 		this.isSwsApplication = isSwsApplication;
 	}
+
+	public String getEdcrDetail() {
+		return edcrDetail;
+	}
+
+	public void setEdcrDetail(String edcrDetail) {
+		this.edcrDetail = edcrDetail;
+	}
+	
+	
 }

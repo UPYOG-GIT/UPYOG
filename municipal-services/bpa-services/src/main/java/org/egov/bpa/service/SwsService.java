@@ -18,7 +18,7 @@ import java.util.Map;
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPASearchCriteria;
-import org.egov.bpa.web.model.user.UserDetailResponse;
+import org.egov.common.contract.request.RequestInfo;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class SwsService {
 
 	@Autowired
 	private RestTemplate restTemplate;
-	
+
 	@Autowired
 	private BPAService bpaService;
 
@@ -391,11 +391,14 @@ public class SwsService {
 	private String getFileStoreId(BPARequest bpaRequest) {
 //		JSONObject data = new JSONObject(bpaRequest.toString1());
 //		HashMap<String, Object> requestBody = jsonToMap(data);
-		BPASearchCriteria criteria =new BPASearchCriteria();
+		BPASearchCriteria criteria = new BPASearchCriteria();
 		String tenantId = bpaRequest.getBPA().getTenantId();
 		criteria.setTenantId(tenantId);
 		criteria.setApplicationNo(bpaRequest.getBPA().getApplicationNo());
 		List<BPA> bpas = bpaService.search(criteria, bpaRequest.getRequestInfo());
+		String edcrDetails = getEdcrDetails(bpas.get(0), bpaRequest.getRequestInfo());
+		
+		bpas.get(0).setEdcrDetail(edcrDetails);
 		Map<String, Object> requestBody = new HashMap<>();
 //		log.info("bpaRequest: " + bpaRequest.toString());
 //		List<BPA> bpaList = new ArrayList<>();
@@ -411,8 +414,7 @@ public class SwsService {
 //		HttpEntity<BPARequest> requestEntity = new HttpEntity<>(bpaRequest, headers);
 
 		log.info("requestEntity2 : " + requestEntity.toString());
-		String apiUrl = "https://www.niwaspass.com/pdf-service/v1/_create?tenantId=" + tenantId
-				+ "&key=buildingpermit";
+		String apiUrl = "https://www.niwaspass.com/pdf-service/v1/_create?tenantId=" + tenantId + "&key=buildingpermit";
 
 		try {
 			// Make the API call using RestTemplatex1x
@@ -475,7 +477,7 @@ public class SwsService {
 
 			String base64String = encodeToBase64(fileBytes);
 
-			log.info("base64String: " + base64String);
+//			log.info("base64String: " + base64String);
 
 			return base64String;
 		} catch (IOException e) {
@@ -504,6 +506,40 @@ public class SwsService {
 			}
 
 			return baos.toByteArray();
+		}
+	}
+
+	public String getEdcrDetails(BPA bpa, RequestInfo requestInfo) {
+		HashMap<String, Object> requestBody = new HashMap<>();
+		HttpHeaders headers = new HttpHeaders();
+//		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+
+		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+		requestBody.put("RequestInfo", requestInfo);
+//		log.info("requestEntity3 : " + requestEntity.toString());
+		String apiUrl = "https://www.niwaspass.com/edcr/rest/dcr/scrutinydetails?tenantId=" + bpa.getTenantId()
+				+ "&edcrNumber=" + bpa.getEdcrNumber();
+
+		try {
+			// Make the API call using RestTemplatex1x
+			ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.GET, requestEntity,
+					String.class);
+
+//			log.info("response " + response.toString());
+//			JSONObject responseBody = new JSONObject(response.getBody().toString());
+			String responseBody = response.getBody().toString();
+//			String fileUrl = responseBody.getJSONArray("fileStoreIds").getJSONObject(0).get("url").toString();
+//			log.info("fileUrl: " + fileUrl);
+//			String fileByte = getfileByte(fileUrl);
+
+			return responseBody;
+//			return ResponseEntity.ok(response.getBody().toString());
+		} catch (Exception ex) {
+			String error = ex.toString();
+			log.error("Error4: " + error);
+			return error;
 		}
 	}
 }
