@@ -514,10 +514,11 @@ public class SwsService {
 		HttpHeaders headers = new HttpHeaders();
 //		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		requestBody.put("RequestInfo", requestInfo);
 
 		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
-		requestBody.put("RequestInfo", requestInfo);
+		
 //		log.info("requestEntity3 : " + requestEntity.toString());
 		String apiUrl = "https://www.niwaspass.com/edcr/rest/dcr/scrutinydetails?tenantId=" + bpa.getTenantId()
 				+ "&edcrNumber=" + bpa.getEdcrNumber();
