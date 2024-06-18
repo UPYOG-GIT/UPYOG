@@ -403,12 +403,17 @@ public class SwsService {
 		List<String> edcrList = new ArrayList<>();
 		edcrList.add(edcrDetails);
 
-		bpaRequest.getBPA().setEdcrDetail(edcrList);
-		bpaRequest.getBPA().setLandInfo(bpas.get(0).getLandInfo());
+		log.info("edcrDetails: " + edcrDetails.toString());
+
+		BPA bpa = bpaRequest.getBPA();
+//		bpaRequest.getBPA().setEdcrDetail(edcrList);
+//		bpaRequest.getBPA().setLandInfo(bpas.get(0).getLandInfo());
+		bpa.setEdcrDetail(edcrList);
+		bpa.setLandInfo(bpas.get(0).getLandInfo());
 		Map<String, Object> requestBody = new HashMap<>();
 //		log.info("bpaRequest: " + bpaRequest.toString());
 		List<BPA> bpaList = new ArrayList<>();
-		bpaList.add(bpaRequest.getBPA());
+		bpaList.add(bpa);
 //		requestBody.put("Bpa", bpas);
 		requestBody.put("Bpa", bpaList);
 		requestBody.put("RequestInfo", bpaRequest.getRequestInfo());
