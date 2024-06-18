@@ -96,17 +96,18 @@ public class BPA {
 
 	@JsonProperty("architect")
 	private OwnerInfo architect = null;
-	
+
 	@JsonProperty("swsApplicationId")
 	private Long swsApplicationId = null;
-	
+
 	@JsonProperty("swsUnitRegistrationNo")
 	private Long swsUnitRegistrationNo = null;
-	
+
 	@JsonProperty("isSwsApplication")
 	private boolean isSwsApplication = false;
-	
-	private String edcrDetail = null;
+
+	@JsonProperty("edcrDetail")
+	private List<String> edcrDetail = null;
 
 	public BPA id(String id) {
 		this.id = id;
@@ -360,8 +361,6 @@ public class BPA {
 		this.status = status;
 	}
 
-	
-	
 	public BPA documents(List<Document> documents) {
 		this.documents = documents;
 		return this;
@@ -564,13 +563,12 @@ public class BPA {
 		this.isSwsApplication = isSwsApplication;
 	}
 
-	public String getEdcrDetail() {
+	public List<String> getEdcrDetail() {
 		return edcrDetail;
 	}
 
-	public void setEdcrDetail(String edcrDetail) {
+	public void setEdcrDetail(List<String> edcrDetail) {
 		this.edcrDetail = edcrDetail;
 	}
-	
-	
+
 }
