@@ -391,10 +391,11 @@ public class SwsService {
 	private String getFileStoreId(BPARequest bpaRequest) {
 //		JSONObject data = new JSONObject(bpaRequest.toString1());
 //		HashMap<String, Object> requestBody = jsonToMap(data);
+		BPA bpa = bpaRequest.getBPA();
 		BPASearchCriteria criteria = new BPASearchCriteria();
-		String tenantId = bpaRequest.getBPA().getTenantId();
+		String tenantId = bpa.getTenantId();
 		criteria.setTenantId(tenantId);
-		criteria.setApplicationNo(bpaRequest.getBPA().getApplicationNo());
+		criteria.setApplicationNo(bpa.getApplicationNo());
 		List<BPA> bpas = bpaService.search(criteria, bpaRequest.getRequestInfo());
 		String edcrDetailsResponse = getEdcrDetails(bpas.get(0), bpaRequest.getRequestInfo());
 
@@ -403,9 +404,9 @@ public class SwsService {
 		List<String> edcrList = new ArrayList<>();
 		edcrList.add(edcrDetails);
 
-		log.info("edcrDetails: " + edcrDetails.toString());
+//		log.info("edcrDetails: " + edcrDetails.toString());
 
-		BPA bpa = bpaRequest.getBPA();
+		
 //		bpaRequest.getBPA().setEdcrDetail(edcrList);
 //		bpaRequest.getBPA().setLandInfo(bpas.get(0).getLandInfo());
 		bpa.setEdcrDetail(edcrList);

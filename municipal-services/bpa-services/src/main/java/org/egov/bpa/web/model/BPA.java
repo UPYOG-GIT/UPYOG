@@ -516,6 +516,7 @@ public class BPA {
 		sb.append("    workflow: ").append(toIndentedString(workflow)).append("\n");
 		sb.append("    auditDetails: ").append(toIndentedString(auditDetails)).append("\n");
 		sb.append("    additionalDetails: ").append(toIndentedString(additionalDetails)).append("\n");
+		sb.append("    edcrDetail: ").append(toIndentedString(edcrDetail)).append("\n");
 		sb.append("}");
 		return sb.toString();
 	}
