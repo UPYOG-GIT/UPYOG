@@ -398,12 +398,14 @@ public class SwsService {
 		List<BPA> bpas = bpaService.search(criteria, bpaRequest.getRequestInfo());
 		String edcrDetails = getEdcrDetails(bpas.get(0), bpaRequest.getRequestInfo());
 		
-		bpas.get(0).setEdcrDetail(edcrDetails);
+		bpaRequest.getBPA().setEdcrDetail(edcrDetails);
+		bpaRequest.getBPA().setLandInfo(bpas.get(0).getLandInfo());
 		Map<String, Object> requestBody = new HashMap<>();
 //		log.info("bpaRequest: " + bpaRequest.toString());
-//		List<BPA> bpaList = new ArrayList<>();
-//		bpaList.add(bpaRequest.getBPA());
-		requestBody.put("Bpa", bpas);
+		List<BPA> bpaList = new ArrayList<>();
+		bpaList.add(bpaRequest.getBPA());
+//		requestBody.put("Bpa", bpas);
+		requestBody.put("Bpa", bpaList);
 		requestBody.put("RequestInfo", bpaRequest.getRequestInfo());
 
 		HttpHeaders headers = new HttpHeaders();
@@ -525,7 +527,7 @@ public class SwsService {
 
 		try {
 			// Make the API call using RestTemplatex1x
-			ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.GET, requestEntity,
+			ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity,
 					String.class);
 
 //			log.info("response " + response.toString());
