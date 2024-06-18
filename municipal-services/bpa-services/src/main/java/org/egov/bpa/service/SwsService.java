@@ -396,9 +396,14 @@ public class SwsService {
 		criteria.setTenantId(tenantId);
 		criteria.setApplicationNo(bpaRequest.getBPA().getApplicationNo());
 		List<BPA> bpas = bpaService.search(criteria, bpaRequest.getRequestInfo());
-		String edcrDetails = getEdcrDetails(bpas.get(0), bpaRequest.getRequestInfo());
-		
-		bpaRequest.getBPA().setEdcrDetail(edcrDetails);
+		String edcrDetailsResponse = getEdcrDetails(bpas.get(0), bpaRequest.getRequestInfo());
+
+		JSONObject edcrDetailsObject = new JSONObject(edcrDetailsResponse);
+		String edcrDetails = edcrDetailsObject.getJSONArray("edcrDetail").get(0).toString();
+		List<String> edcrList = new ArrayList<>();
+		edcrList.add(edcrDetails);
+
+		bpaRequest.getBPA().setEdcrDetail(edcrList);
 		bpaRequest.getBPA().setLandInfo(bpas.get(0).getLandInfo());
 		Map<String, Object> requestBody = new HashMap<>();
 //		log.info("bpaRequest: " + bpaRequest.toString());
@@ -520,7 +525,6 @@ public class SwsService {
 
 		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
-		
 //		log.info("requestEntity3 : " + requestEntity.toString());
 		String apiUrl = "https://www.niwaspass.com/edcr/rest/dcr/scrutinydetails?tenantId=" + bpa.getTenantId()
 				+ "&edcrNumber=" + bpa.getEdcrNumber();
