@@ -45,7 +45,7 @@ public class SwsService {
 	public ResponseEntity<String> updateStatusToSws(BPARequest bpaRequest) {
 
 		try {
-			log.info("bpaRequest : "+bpaRequest.toString());
+			log.info("bpaRequest : " + bpaRequest.toString());
 			BPA bpa = bpaRequest.getBPA();
 //			log.info("SWS bpa : " + bpa.toString());
 			String bpaStatus = bpa.getStatus();
@@ -74,10 +74,10 @@ public class SwsService {
 					recieverDesignation = userResponse.get("designation").toString();
 				}
 			} else {
-				if(swsStatusCode == 1 && !bpaStatus.equalsIgnoreCase("PENDING_SANC_FEE_PAYMENT")) {
+				if (swsStatusCode == 1 && !bpaStatus.equalsIgnoreCase("PENDING_SANC_FEE_PAYMENT")) {
 					recieverName = "Employee";
 					recieverDesignation = "Employee";
-				} else if(swsStatusCode == 5 || swsStatusCode == 6) {
+				} else if (swsStatusCode == 5 || swsStatusCode == 6) {
 					recieverName = null;
 					recieverDesignation = null;
 				}
@@ -408,17 +408,36 @@ public class SwsService {
 		String edcrDetailsResponse = getEdcrDetails(bpas.get(0), bpaRequest.getRequestInfo());
 
 		JSONObject edcrDetailsObject = new JSONObject(edcrDetailsResponse);
-		String edcrDetails = edcrDetailsObject.getJSONArray("edcrDetail").get(0).toString();
-		List<String> edcrList = new ArrayList<>();
-		edcrList.add(edcrDetails);
+//		String edcrDetails = edcrDetailsObject.getJSONArray("edcrDetail").get(0).toString();
+//		List<String> edcrList = new ArrayList<>();
+//		edcrList.add(edcrDetails);
 
 //		log.info("edcrDetails: " + edcrDetails.toString());
 
-		
 //		bpaRequest.getBPA().setEdcrDetail(edcrList);
 //		bpaRequest.getBPA().setLandInfo(bpas.get(0).getLandInfo());
-		bpa.setEdcrDetail(edcrList);
+//		bpa.setEdcrDetail(edcrList);
 		bpa.setLandInfo(bpas.get(0).getLandInfo());
+		Map<String, Object> swsAdditionalDetail = new HashMap<>();
+		JSONArray floors = edcrDetailsObject.getJSONArray("edcrDetail").getJSONObject(0).getJSONObject("planDetail")
+				.getJSONArray("blocks").getJSONObject(0).getJSONObject("building").getJSONArray("floors");
+		if (floors.length() > 1) {
+			swsAdditionalDetail.put("gFloorBA",
+					floors.getJSONObject(0).getJSONArray("occupancies").getJSONObject(0).get("builtUpArea"));
+			swsAdditionalDetail.put("fFloorBA",
+					floors.getJSONObject(1).getJSONArray("occupancies").getJSONObject(0).get("builtUpArea"));
+		} else {
+			swsAdditionalDetail.put("gFloorBA",
+					floors.getJSONObject(0).getJSONArray("occupancies").getJSONObject(0).get("builtUpArea"));
+		}
+
+//		swsAdditionalDetail.put("gFloorBA",
+//				edcrDetailsObject.getJSONArray("edcrDetail").getJSONObject(0).getJSONObject("planDetail")
+//						.getJSONArray("blocks").getJSONObject(0).getJSONObject("building").getJSONArray("floors")
+//						.getJSONObject(0).getJSONArray("occupancies").getJSONObject(0).get("builtUpArea"));
+
+		bpa.setSwsAdditionalDetails(swsAdditionalDetail);
+
 		Map<String, Object> requestBody = new HashMap<>();
 //		log.info("bpaRequest: " + bpaRequest.toString());
 		List<BPA> bpaList = new ArrayList<>();
@@ -435,7 +454,7 @@ public class SwsService {
 //		HttpEntity<BPARequest> requestEntity = new HttpEntity<>(bpaRequest, headers);
 
 		log.info("requestEntity2 : " + requestEntity.toString());
-		String apiUrl = "https://www.niwaspass.com/pdf-service/v1/_create?tenantId=" + tenantId + "&key=buildingpermit";
+		String apiUrl = "https://www.niwaspass.com/pdf-service/v1/_create?tenantId=" + tenantId + "&key=buildingpermit-sws";
 
 		try {
 			// Make the API call using RestTemplatex1x

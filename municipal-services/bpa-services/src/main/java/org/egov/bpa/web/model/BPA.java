@@ -106,8 +106,11 @@ public class BPA {
 	@JsonProperty("isSwsApplication")
 	private boolean isSwsApplication = false;
 
-	@JsonProperty("edcrDetail")
-	private List<String> edcrDetail = null;
+//	@JsonProperty("edcrDetail")
+//	private List<String> edcrDetail = null;
+	
+	@JsonProperty("swsAdditionalDetails")
+	private Object swsAdditionalDetails = null;
 
 	public BPA id(String id) {
 		this.id = id;
@@ -516,7 +519,7 @@ public class BPA {
 		sb.append("    workflow: ").append(toIndentedString(workflow)).append("\n");
 		sb.append("    auditDetails: ").append(toIndentedString(auditDetails)).append("\n");
 		sb.append("    additionalDetails: ").append(toIndentedString(additionalDetails)).append("\n");
-		sb.append("    edcrDetail: ").append(toIndentedString(edcrDetail)).append("\n");
+//		sb.append("    edcrDetail: ").append(toIndentedString(edcrDetail)).append("\n");
 		sb.append("}");
 		return sb.toString();
 	}
@@ -564,12 +567,21 @@ public class BPA {
 		this.isSwsApplication = isSwsApplication;
 	}
 
-	public List<String> getEdcrDetail() {
-		return edcrDetail;
+//	public List<String> getEdcrDetail() {
+//		return edcrDetail;
+//	}
+//
+//	public void setEdcrDetail(List<String> edcrDetail) {
+//		this.edcrDetail = edcrDetail;
+//	}
+
+	public Object getSwsAdditionalDetails() {
+		return swsAdditionalDetails;
 	}
 
-	public void setEdcrDetail(List<String> edcrDetail) {
-		this.edcrDetail = edcrDetail;
+	public void setSwsAdditionalDetails(Object swsAdditionalDetails) {
+		this.swsAdditionalDetails = swsAdditionalDetails;
 	}
 
+	
 }
