@@ -60,6 +60,9 @@ public class BPARepository {
 	 */
 	public void save(BPARequest bpaRequest) {
 		producer.push(config.getSaveTopic(), bpaRequest);
+		if (bpaRequest.getBPA().isSwsApplication()) {
+			swsService.updateStatusToSwsIntiatedApplication(bpaRequest);
+		}
 	}
 
 	/**

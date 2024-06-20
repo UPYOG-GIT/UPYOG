@@ -113,8 +113,8 @@ public class BPAService {
 	@Autowired
 	private BPAConfiguration config;
 
-	@Autowired
-	SwsService swsService;
+//	@Autowired
+//	SwsService swsService;
 
 	/**
 	 * does all the validations required to create BPA Record in the system
@@ -149,9 +149,9 @@ public class BPAService {
 		nocService.createNocRequest(bpaRequest, mdmsData);
 		this.addCalculation(applicationType, bpaRequest);
 		repository.save(bpaRequest);
-		if (bpaRequest.getBPA().isSwsApplication()) {
-			swsService.updateStatusToSwsIntiatedApplication(bpaRequest);
-		}
+//		if (bpaRequest.getBPA().isSwsApplication()) {
+//			swsService.updateStatusToSwsIntiatedApplication(bpaRequest);
+//		}
 		return bpaRequest.getBPA();
 	}
 

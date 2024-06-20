@@ -73,6 +73,14 @@ public class SwsService {
 					recieverName = userResponse.get("name").toString();
 					recieverDesignation = userResponse.get("designation").toString();
 				}
+			} else {
+				if(swsStatusCode == 1 && !bpaStatus.equalsIgnoreCase("PENDING_SANC_FEE_PAYMENT")) {
+					recieverName = "Employee";
+					recieverDesignation = "Employee";
+				} else if(swsStatusCode == 5 || swsStatusCode == 6) {
+					recieverName = null;
+					recieverDesignation = null;
+				}
 			}
 //		requestBody.put("swsAuthToken", swsAuthToken);
 			requestBody.put("swsApplicationNo", bpa.getSwsApplicationId());
