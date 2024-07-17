@@ -165,8 +165,8 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(MonumentDistance.class);
         features.add(pf);
 
-        pf = new PlanFeature(BlockDistancesService.class);
-        features.add(pf);
+//        pf = new PlanFeature(BlockDistancesService.class);
+//        features.add(pf);
 
         pf = new PlanFeature(GovtBuildingDistance.class);
         features.add(pf);
