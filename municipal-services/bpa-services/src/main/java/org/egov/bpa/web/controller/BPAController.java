@@ -14,6 +14,7 @@ import javax.validation.Valid;
 import org.egov.bpa.config.BPAConfiguration;
 import org.egov.bpa.service.BPAService;
 import org.egov.bpa.service.NationalDashboardService;
+import org.egov.bpa.service.SwsService;
 import org.egov.bpa.util.BPAConstants;
 import org.egov.bpa.util.BPAErrorConstants;
 import org.egov.bpa.util.BPAUtil;
@@ -74,6 +75,9 @@ public class BPAController {
 	
 	@Autowired
 	BPAConfiguration bpaConfig;
+	
+	@Autowired
+	SwsService swsService;
 	
 
 	LocalDate startDate = LocalDate.of(2023, 5, 28);
@@ -599,6 +603,19 @@ public class BPAController {
 	    }
 	        }
 	        return null;
+	}
+	
+	@PostMapping(value = "/pushdatatoswsmanual")
+	public ResponseEntity<String> pushDatatoSwsManual(@RequestBody String dataRequest){
+		return swsService.pushDataToSwsDirectly(dataRequest);
+//		return null;
+	}
+	
+	
+	@PostMapping(value = "/_pushdatatosws")
+	public ResponseEntity<String> pushDatatoSws(@Valid @RequestBody BPARequest bpaRequestt){
+		return swsService.pushDatatoSws(bpaRequestt);
+//		return null;
 	}
 	
 }

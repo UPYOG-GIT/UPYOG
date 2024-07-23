@@ -10,6 +10,7 @@ import org.egov.bpa.producer.Producer;
 import org.egov.bpa.repository.querybuilder.BPAQueryBuilder;
 import org.egov.bpa.repository.rowmapper.BPARowMapper;
 import org.egov.bpa.repository.rowmapper.BPASearchDataRowMapper;
+import org.egov.bpa.service.SwsService;
 import org.egov.bpa.web.model.BCategoryRequest;
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
@@ -48,6 +49,9 @@ public class BPARepository {
 
 	@Autowired
 	private BPASearchDataRowMapper searchDataRowMapper;
+	
+	@Autowired
+	SwsService swsService;
 
 	/**
 	 * Pushes the request on save topic through kafka
@@ -56,6 +60,9 @@ public class BPARepository {
 	 */
 	public void save(BPARequest bpaRequest) {
 		producer.push(config.getSaveTopic(), bpaRequest);
+		if (bpaRequest.getBPA().isSwsApplication()) {
+			swsService.updateStatusToSwsIntiatedApplication(bpaRequest);
+		}
 	}
 
 	/**
@@ -83,6 +90,10 @@ public class BPARepository {
 
 		if (bpaForStatusUpdate != null)
 			producer.push(config.getUpdateWorkflowTopic(), new BPARequest(requestInfo, bpaForStatusUpdate));
+		
+		if (bpa.isSwsApplication()) {
+			swsService.updateStatusToSws(bpaRequest);
+		}
 
 	}
 

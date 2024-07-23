@@ -113,6 +113,9 @@ public class BPAService {
 	@Autowired
 	private BPAConfiguration config;
 
+//	@Autowired
+//	SwsService swsService;
+
 	/**
 	 * does all the validations required to create BPA Record in the system
 	 * 
@@ -146,6 +149,9 @@ public class BPAService {
 		nocService.createNocRequest(bpaRequest, mdmsData);
 		this.addCalculation(applicationType, bpaRequest);
 		repository.save(bpaRequest);
+//		if (bpaRequest.getBPA().isSwsApplication()) {
+//			swsService.updateStatusToSwsIntiatedApplication(bpaRequest);
+//		}
 		return bpaRequest.getBPA();
 	}
 
@@ -253,8 +259,7 @@ public class BPAService {
 		}
 		return bpas;
 	}
-	
-	
+
 	public List<BPA> applicationSearch(BPASearchCriteria criteria, RequestInfo requestInfo) {
 		List<BPA> bpas = new LinkedList<>();
 		log.info("criteria.getTenantId():______====" + criteria.getTenantId());
@@ -263,21 +268,21 @@ public class BPAService {
 		landcriteria.setTenantId(criteria.getTenantId());
 		landcriteria.setLocality(criteria.getLocality());
 		List<String> edcrNos = null;
-		
-			bpas = getBPAFromCriteria(criteria, requestInfo, edcrNos);
-			ArrayList<String> landIds = new ArrayList<>();
-			if (!bpas.isEmpty()) {
-				for (int i = 0; i < bpas.size(); i++) {
-					landIds.add(bpas.get(i).getLandId());
-				}
-				landcriteria.setIds(landIds);
-				landcriteria.setTenantId(bpas.get(0).getTenantId());
-				log.info("Call with tenantId to Land::" + landcriteria.getTenantId());
-				ArrayList<LandInfo> landInfos = landService.searchLandInfoToBPA(requestInfo, landcriteria);
 
-				this.populateLandToBPA(bpas, landInfos, requestInfo);
+		bpas = getBPAFromCriteria(criteria, requestInfo, edcrNos);
+		ArrayList<String> landIds = new ArrayList<>();
+		if (!bpas.isEmpty()) {
+			for (int i = 0; i < bpas.size(); i++) {
+				landIds.add(bpas.get(i).getLandId());
 			}
-		
+			landcriteria.setIds(landIds);
+			landcriteria.setTenantId(bpas.get(0).getTenantId());
+			log.info("Call with tenantId to Land::" + landcriteria.getTenantId());
+			ArrayList<LandInfo> landInfos = landService.searchLandInfoToBPA(requestInfo, landcriteria);
+
+			this.populateLandToBPA(bpas, landInfos, requestInfo);
+		}
+
 //		if (criteria.getMobileNumber() != null) {
 //			bpas = this.getBPAFromMobileNumber(criteria, landcriteria, requestInfo);
 //		} else {
@@ -293,8 +298,7 @@ public class BPAService {
 //		}
 		return bpas;
 	}
-	
-	
+
 	public List<BPA> applicationDataSearch(BPASearchCriteria criteria, RequestInfo requestInfo) {
 		List<BPA> bpas = new LinkedList<>();
 		log.info("criteria.getTenantId():______====" + criteria.getTenantId());
@@ -303,32 +307,31 @@ public class BPAService {
 		landcriteria.setTenantId(criteria.getTenantId());
 		landcriteria.setLocality(criteria.getLocality());
 		List<String> edcrNos = null;
-		
-			bpas = getBPADataFromCriteria(criteria, requestInfo, edcrNos);
-			ArrayList<String> landIds = new ArrayList<>();
-			List<String> uuids = new ArrayList<>();
-			if (!bpas.isEmpty()) {
-				for (int i = 0; i < bpas.size(); i++) {
-					landIds.add(bpas.get(i).getLandId());
-					uuids.add(bpas.get(i).getAuditDetails().getCreatedBy());
-				}
-				
-				
+
+		bpas = getBPADataFromCriteria(criteria, requestInfo, edcrNos);
+		ArrayList<String> landIds = new ArrayList<>();
+		List<String> uuids = new ArrayList<>();
+		if (!bpas.isEmpty()) {
+			for (int i = 0; i < bpas.size(); i++) {
+				landIds.add(bpas.get(i).getLandId());
+				uuids.add(bpas.get(i).getAuditDetails().getCreatedBy());
+			}
+
 //				if (requestInfo.getUserInfo() != null && !StringUtils.isEmpty(requestInfo.getUserInfo().getUuid())) {
 //					uuids.add(requestInfo.getUserInfo().getUuid());
 //					criteria.setCreatedBy(uuids);
 //				}
-				
-				landcriteria.setIds(landIds);
-				landcriteria.setTenantId(bpas.get(0).getTenantId());
-//				log.info("Call with tenantId to Land::" + landcriteria.getTenantId());
-				ArrayList<LandInfo> landInfos = landService.searchLandInfoToBPA(requestInfo, landcriteria);
-				UserDetailResponse userInfo = userService.getArchitectUser(uuids, requestInfo);
 
-				this.populateLandToBPA(bpas, landInfos, requestInfo);
-				this.populateArchitectToBPA(bpas, userInfo.getUser(), requestInfo);
-			}
-		
+			landcriteria.setIds(landIds);
+			landcriteria.setTenantId(bpas.get(0).getTenantId());
+//				log.info("Call with tenantId to Land::" + landcriteria.getTenantId());
+			ArrayList<LandInfo> landInfos = landService.searchLandInfoToBPA(requestInfo, landcriteria);
+			UserDetailResponse userInfo = userService.getArchitectUser(uuids, requestInfo);
+
+			this.populateLandToBPA(bpas, landInfos, requestInfo);
+			this.populateArchitectToBPA(bpas, userInfo.getUser(), requestInfo);
+		}
+
 //		if (criteria.getMobileNumber() != null) {
 //			bpas = this.getBPAFromMobileNumber(criteria, landcriteria, requestInfo);
 //		} else {
@@ -387,7 +390,7 @@ public class BPAService {
 		this.populateLandToBPA(bpas, landInfos, requestInfo);
 		return bpas;
 	}
-	
+
 	private void populateArchitectToBPA(List<BPA> bpas, List<OwnerInfo> ownerInfos, RequestInfo requestInfo) {
 		for (int i = 0; i < bpas.size(); i++) {
 			for (int j = 0; j < ownerInfos.size(); j++) {
@@ -488,7 +491,7 @@ public class BPAService {
 			return Collections.emptyList();
 		return bpa;
 	}
-	
+
 	public List<BPA> getBPADataFromCriteria(BPASearchCriteria criteria, RequestInfo requestInfo, List<String> edcrNos) {
 		List<BPA> bpa = repository.getApplicationData(criteria);
 		if (bpa.isEmpty())
@@ -619,6 +622,9 @@ public class BPAService {
 		 */
 
 		repository.update(bpaRequest, workflowService.isStateUpdatable(bpa.getStatus(), businessService));
+//		if (bpa.isSwsApplication()) {
+//			swsService.updateStatusToSws(bpaRequest);
+//		}
 		return bpaRequest.getBPA();
 
 	}
@@ -1067,26 +1073,26 @@ public class BPAService {
 	public int deleteSlabMasterById(List<Integer> ids) {
 		return repository.deleteSlabMasterById(ids);
 	}
-	
+
 	public List<Map<String, Object>> getDataCountsForDashboard(String tenantId) {
 		List<Map<String, Object>> resultList = repository.getDataCountsForDashboard(tenantId);
 		log.info("getDataCountsForDashboard: " + resultList.toString());
 		return resultList;
 	}
-	
-	public List<BPA> getApplicationDataInDasboardForUlb(BPASearchCriteria criteria){
+
+	public List<BPA> getApplicationDataInDasboardForUlb(BPASearchCriteria criteria) {
 		List<BPA> resultList = repository.getApplicationData(criteria);
 		log.info("getApplicationDataInDasboardForUlb--: " + resultList.toString());
 		return resultList;
-		
+
 	}
-	
+
 	public List<Map<String, Object>> getListOfApplications(String tenantId) {
 		List<Map<String, Object>> resultList = repository.getListOfApplications(tenantId);
 		log.info("getDataCountsForDashboard: " + resultList.toString());
 		return resultList;
 	}
-	
+
 	public List<Map<String, Object>> getIngestData() {
 
 		List<Map<String, Object>> ingestData = repository.getIngestData();
@@ -1137,10 +1143,9 @@ public class BPAService {
 			buckets.add(createBucket("DEBIT.CARD", 15000));
 			buckets.add(createBucket("CREDIT.CARD", 8500));
 			buckets.add(createBucket("CASH", 10000));
-			
+
 			todaysCollection.add(collectionMode);
 			collectionMode.put("buckets", buckets);
-			
 
 			Map<String, Object> occupancy = new HashMap<>();
 			occupancy.put("name", "Residential");
@@ -1157,10 +1162,9 @@ public class BPAService {
 			riskTypeBuckets.add(createBucket("LOW", 150));
 			riskTypeBuckets.add(createBucket("MEDIUM", 300));
 			riskTypeBuckets.add(createBucket("HIGH", 600));
-			
+
 			permitsIssued.add(permits);
 			permits.put("buckets", riskTypeBuckets);
-			
 
 			metrics.put("todaysCollection", todaysCollection);
 			metrics.put("permitsIssued", permitsIssued);
@@ -1174,12 +1178,12 @@ public class BPAService {
 		return data;
 
 	}
+
 	private Map<String, Object> createBucket(String name, int value) {
 		Map<String, Object> bucket = new HashMap<>();
-		 bucket.put("name", name);
-		    bucket.put("value", value);
-		    return bucket;
+		bucket.put("name", name);
+		bucket.put("value", value);
+		return bucket;
 	}
-	
-	
+
 }

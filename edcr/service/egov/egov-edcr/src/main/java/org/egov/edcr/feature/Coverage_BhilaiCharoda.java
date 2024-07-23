@@ -126,6 +126,7 @@ public class Coverage_BhilaiCharoda extends Coverage {
 		BigDecimal totalCoverageArea = BigDecimal.ZERO;
 //		BigDecimal area = pl.getPlot().getArea(); // add for get total plot area
 		BigDecimal plotBoundaryArea = pl.getPlot().getPlotBndryArea(); // add for get total plot area
+		BigDecimal netPlotArea = pl.getPlot().getNetPlotArea(); 
 
 		// add for getting OccupancyType
 		OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
@@ -151,7 +152,7 @@ public class Coverage_BhilaiCharoda extends Coverage {
 //							pl.getPlanInformation().getPlotArea(), DcrConstants.DECIMALDIGITS_MEASUREMENTS,
 //							DcrConstants.ROUNDMODE_MEASUREMENTS);
 					coverage = block.getBuilding().getCoverageArea().multiply(BigDecimal.valueOf(100)).divide(
-							plotBoundaryArea, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+							netPlotArea, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
 							DcrConstants.ROUNDMODE_MEASUREMENTS);
 
 				block.getBuilding().setCoverage(coverage);
@@ -166,7 +167,7 @@ public class Coverage_BhilaiCharoda extends Coverage {
 		// pl.setCoverageArea(totalCoverageArea);
 		// use plotBoundaryArea
 		if (pl.getPlot() != null && pl.getPlot().getPlotBndryArea().doubleValue() > 0)
-			totalCoverage = totalCoverageArea.multiply(BigDecimal.valueOf(100)).divide(plotBoundaryArea,
+			totalCoverage = totalCoverageArea.multiply(BigDecimal.valueOf(100)).divide(netPlotArea,
 					DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
 //		totalCoverage = totalCoverageArea.multiply(BigDecimal.valueOf(100)).divide(
 //				pl.getPlanInformation().getPlotArea(), DcrConstants.DECIMALDIGITS_MEASUREMENTS,
@@ -187,17 +188,17 @@ public class Coverage_BhilaiCharoda extends Coverage {
 
 		// get coverage permissible value from method and store in
 		// permissibleCoverageValue
-		if (plotBoundaryArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null
+		if (netPlotArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null
 				&& developmentZone != null) {
 //			occupancyType = mostRestrictiveOccupancy.getType().getCode();
 			if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForResidential(plotBoundaryArea, developmentZone);
+				permissibleCoverageValue = getPermissibleCoverageForResidential(netPlotArea, developmentZone);
 			} else if (F.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForCommercial(plotBoundaryArea, developmentZone);
+				permissibleCoverageValue = getPermissibleCoverageForCommercial(netPlotArea, developmentZone);
 			} else if (G.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForIndustrial(plotBoundaryArea, developmentZone);
+				permissibleCoverageValue = getPermissibleCoverageForIndustrial(netPlotArea, developmentZone);
 			} else if (B.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForGovtOccupancies(plotBoundaryArea, developmentZone);
+				permissibleCoverageValue = getPermissibleCoverageForGovtOccupancies(netPlotArea, developmentZone);
 			}
 		}
 

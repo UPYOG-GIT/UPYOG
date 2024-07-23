@@ -130,6 +130,7 @@ public class Coverage_Demo extends Coverage {
 		BigDecimal totalCoverageArea = BigDecimal.ZERO;
 //		BigDecimal area = pl.getPlot().getArea(); // add for get total plot area
 		BigDecimal plotBoundaryArea = pl.getPlot().getPlotBndryArea(); // add for get total plot area
+		BigDecimal netPlotArea = pl.getPlot().getNetPlotArea();
 
 		// add for getting OccupancyType
 		OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
@@ -152,7 +153,7 @@ public class Coverage_Demo extends Coverage {
 				BigDecimal coverage = BigDecimal.ZERO;
 				if (pl.getPlot().getPlotBndryArea().doubleValue() > 0)
 					coverage = block.getBuilding().getCoverageArea().multiply(BigDecimal.valueOf(100)).divide(
-							plotBoundaryArea, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+							netPlotArea, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
 							DcrConstants.ROUNDMODE_MEASUREMENTS);
 
 				block.getBuilding().setCoverage(coverage);
@@ -167,7 +168,7 @@ public class Coverage_Demo extends Coverage {
 		// pl.setCoverageArea(totalCoverageArea);
 		// use plotBoundaryArea
 		if (pl.getPlot() != null && pl.getPlot().getPlotBndryArea().doubleValue() > 0)
-			totalCoverage = totalCoverageArea.multiply(BigDecimal.valueOf(100)).divide(plotBoundaryArea,
+			totalCoverage = totalCoverageArea.multiply(BigDecimal.valueOf(100)).divide(netPlotArea,
 					DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
 		pl.setCoverage(totalCoverage);
 		if (pl.getVirtualBuilding() != null) {
@@ -187,7 +188,7 @@ public class Coverage_Demo extends Coverage {
 
 		// get coverage permissible value from method and store in
 		// permissibleCoverageValue
-		if (plotBoundaryArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null
+		if (netPlotArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null
 				&& developmentZone != null) {
 //			occupancyType = mostRestrictiveOccupancy.getType().getCode();
 			if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
@@ -199,7 +200,7 @@ public class Coverage_Demo extends Coverage {
 
 			}
 
-			permissibleCoverageValue = getPermissibleCoverage(plotBoundaryArea, developmentZone, feature, occupancyName,
+			permissibleCoverageValue = getPermissibleCoverage(netPlotArea, developmentZone, feature, occupancyName,
 					pl.getEdcrRuleList());
 		}
 
