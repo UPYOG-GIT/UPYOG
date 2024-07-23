@@ -250,7 +250,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             label={t("BPA_TOTAL_BUILT_UP_AREA_HEADER")}
             text={
               data?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea
-                ? `${data?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea} ${t("BPA_SQ_MTRS_LABEL")}`
+                ? `${data?.planDetail?.virtualBuilding?.totalBuitUpArea} ${t("BPA_SQ_MTRS_LABEL")}`
                 : t("NA")
             }
           ></Row>

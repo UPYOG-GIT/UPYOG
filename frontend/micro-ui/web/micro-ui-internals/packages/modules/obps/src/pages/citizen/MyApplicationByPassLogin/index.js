@@ -28,7 +28,7 @@ const MyApplicationByPassLogin = () => {
   };
 
   const queryParams = getQueryParams(location.search);
-  const enryptedUserDetails = queryParams.get("userDetails"); // Get the 'token' parameter
+  const enryptedUserDetails = queryParams.get("userDetails"); // Get the 'userDetails' parameter
 
   const setCitizenDetail = (userObject, token, tenantId) => {
     let locale = JSON.parse(sessionStorage.getItem("Digit.initData"))?.value?.selectedLanguage;
