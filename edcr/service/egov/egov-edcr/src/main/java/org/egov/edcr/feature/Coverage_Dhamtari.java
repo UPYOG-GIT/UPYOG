@@ -125,6 +125,7 @@ public class Coverage_Dhamtari extends Coverage {
 		BigDecimal totalCoverageArea = BigDecimal.ZERO;
 //		BigDecimal area = pl.getPlot().getArea(); // add for get total plot area
 		BigDecimal plotBoundaryArea = pl.getPlot().getPlotBndryArea(); // add for get total plot area
+		BigDecimal netPlotArea = pl.getPlot().getNetPlotArea();
 		boolean isCenterArea = pl.getPlanInformation().isCenterArea();
 		// add for getting OccupancyType
 		OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
@@ -147,7 +148,7 @@ public class Coverage_Dhamtari extends Coverage {
 				BigDecimal coverage = BigDecimal.ZERO;
 				if (pl.getPlot().getPlotBndryArea().doubleValue() > 0)
 					coverage = block.getBuilding().getCoverageArea().multiply(BigDecimal.valueOf(100)).divide(
-							pl.getPlanInformation().getPlotArea(), DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+							netPlotArea, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
 							DcrConstants.ROUNDMODE_MEASUREMENTS);
 
 				block.getBuilding().setCoverage(coverage);
@@ -162,9 +163,8 @@ public class Coverage_Dhamtari extends Coverage {
 		// pl.setCoverageArea(totalCoverageArea);
 		// use plotBoundaryArea
 		if (pl.getPlot() != null && pl.getPlot().getPlotBndryArea().doubleValue() > 0)
-			totalCoverage = totalCoverageArea.multiply(BigDecimal.valueOf(100)).divide(
-					plotBoundaryArea, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-					DcrConstants.ROUNDMODE_MEASUREMENTS);
+			totalCoverage = totalCoverageArea.multiply(BigDecimal.valueOf(100)).divide(netPlotArea,
+					DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
 		pl.setCoverage(totalCoverage);
 		if (pl.getVirtualBuilding() != null) {
 			pl.getVirtualBuilding().setTotalCoverageArea(totalCoverageArea);
@@ -177,16 +177,16 @@ public class Coverage_Dhamtari extends Coverage {
 		// get coverage permissible value from method and store in
 		// permissibleCoverageValue
 		String ruleNo = "";
-		if (plotBoundaryArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null) {
+		if (netPlotArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null) {
 //			occupancyType = mostRestrictiveOccupancy.getType().getCode();
 			if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForResidential(plotBoundaryArea);
+				permissibleCoverageValue = getPermissibleCoverageForResidential(netPlotArea);
 				ruleNo = "Table 7-C-1";
 			} else if (F.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForCommercial(plotBoundaryArea, isCenterArea);
+				permissibleCoverageValue = getPermissibleCoverageForCommercial(netPlotArea, isCenterArea);
 				ruleNo = "Table 7-C-3";
 			} else if (G.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				permissibleCoverageValue = getPermissibleCoverageForIndustrial(plotBoundaryArea);
+				permissibleCoverageValue = getPermissibleCoverageForIndustrial(netPlotArea);
 				ruleNo = "Table 7-C-13";
 			}
 		}
