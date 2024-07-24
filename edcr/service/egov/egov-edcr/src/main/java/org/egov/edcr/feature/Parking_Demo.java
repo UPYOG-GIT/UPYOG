@@ -347,19 +347,30 @@ public class Parking_Demo extends FeatureProcess {
 //				basementParkingArea = basementParkingArea.add(floor.getParking().getBasementCars().stream() //
 //						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
 
-					occupancyTypeHelper = floor.getOccupancies().get(0).getTypeHelper();
-					if (occupancyTypeHelper == null || (occupancyTypeHelper != null
-							&& (occupancyTypeHelper.getType() == null || occupancyTypeHelper.getSubtype() == null))) {
-						Log.error("Occupany not defined properly");
-						pl.addError(OCCUPANCY, getLocaleMessage(OBJECTNOTDEFINED, OCCUPANCY + " not properly defined"));
-					} else {
-						BigDecimal floorBuiltUpArea = floor.getOccupancies().get(0).getBuiltUpArea();
+					/*
+					 * occupancyTypeHelper = floor.getOccupancies().get(0).getTypeHelper(); if
+					 * (occupancyTypeHelper == null || (occupancyTypeHelper != null &&
+					 * (occupancyTypeHelper.getType() == null || occupancyTypeHelper.getSubtype() ==
+					 * null))) { Log.error("Occupany not defined properly"); pl.addError(OCCUPANCY,
+					 * getLocaleMessage(OBJECTNOTDEFINED, OCCUPANCY + " not properly defined")); }
+					 * else { BigDecimal floorBuiltUpArea =
+					 * floor.getOccupancies().get(0).getBuiltUpArea();
+					 * 
+					 * requiredCarParkArea += getRequiredCarParkArea(floorBuiltUpArea,
+					 * occupancyTypeHelper, coverParkingArea, basementParkingArea, openParkingArea,
+					 * stiltParkingArea, lowerGroungFloorParkingArea, edcrRuleList); }
+					 */
 
-						requiredCarParkArea += getRequiredCarParkArea(floorBuiltUpArea, occupancyTypeHelper,
-								coverParkingArea, basementParkingArea, openParkingArea, stiltParkingArea,
-								lowerGroungFloorParkingArea, edcrRuleList);
-					}
+				}
+				if (occupancyTypeHelper == null || (occupancyTypeHelper != null
+						&& (occupancyTypeHelper.getType() == null || occupancyTypeHelper.getSubtype() == null))) {
+					Log.error("Occupany not defined properly");
+					pl.addError(OCCUPANCY, getLocaleMessage(OBJECTNOTDEFINED, OCCUPANCY + " not properly defined"));
+				} else {
 
+					requiredCarParkArea += getRequiredCarParkArea(totalBuiltupArea, occupancyTypeHelper,
+							coverParkingArea, basementParkingArea, openParkingArea, stiltParkingArea,
+							lowerGroungFloorParkingArea, edcrRuleList);
 				}
 			}
 		}
