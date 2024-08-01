@@ -332,7 +332,8 @@ public class Parking_Dhamtari extends FeatureProcess {
 			 * occupancyTypeHelper, coverParkingArea, basementParkingArea, openParkingArea,
 			 * stiltParkingArea, lowerGroungFloorParkingArea, noOfBeds, noOfSeats); }
 			 */
-			if (totalBuiltupArea.compareTo(BigDecimal.valueOf((50))) <= 0) {
+			BigDecimal builupArea = block.getBuilding().getTotalBuitUpArea();
+			if (builupArea.compareTo(BigDecimal.valueOf((50))) <= 0) {
 
 			} else {
 
@@ -362,7 +363,7 @@ public class Parking_Dhamtari extends FeatureProcess {
 					pl.addError(OCCUPANCY, getLocaleMessage(OBJECTNOTDEFINED, OCCUPANCY + " not properly defined"));
 				} else {
 
-					requiredCarParkArea += getRequiredCarParkArea(totalBuiltupArea, occupancyTypeHelper,
+					requiredCarParkArea += getRequiredCarParkArea(builupArea, occupancyTypeHelper,
 							coverParkingArea, basementParkingArea, openParkingArea, stiltParkingArea,
 							lowerGroungFloorParkingArea, noOfBeds, noOfSeats);
 				}

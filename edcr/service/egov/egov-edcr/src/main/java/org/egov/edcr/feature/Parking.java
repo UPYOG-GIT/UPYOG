@@ -328,8 +328,8 @@ public class Parking extends FeatureProcess {
 			 * occupancyTypeHelper, coverParkingArea, basementParkingArea, openParkingArea,
 			 * stiltParkingArea, lowerGroungFloorParkingArea); }
 			 */
-
-			if (totalBuiltupArea.compareTo(BigDecimal.valueOf((50))) <= 0) {
+			BigDecimal builupArea = block.getBuilding().getTotalBuitUpArea();
+			if (builupArea.compareTo(BigDecimal.valueOf((50))) <= 0) {
 
 			} else {
 				for (Floor floor : block.getBuilding().getFloors()) {
@@ -358,7 +358,7 @@ public class Parking extends FeatureProcess {
 					pl.addError(OCCUPANCY, getLocaleMessage(OBJECTNOTDEFINED, OCCUPANCY + " not properly defined"));
 				} else {
 
-					requiredCarParkArea += getRequiredCarParkArea(totalBuiltupArea, occupancyTypeHelper,
+					requiredCarParkArea += getRequiredCarParkArea(builupArea, occupancyTypeHelper,
 							coverParkingArea, basementParkingArea, openParkingArea, stiltParkingArea,
 							lowerGroungFloorParkingArea);
 				}
