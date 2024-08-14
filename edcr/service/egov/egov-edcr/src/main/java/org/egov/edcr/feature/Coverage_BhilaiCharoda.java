@@ -126,7 +126,7 @@ public class Coverage_BhilaiCharoda extends Coverage {
 		BigDecimal totalCoverageArea = BigDecimal.ZERO;
 //		BigDecimal area = pl.getPlot().getArea(); // add for get total plot area
 		BigDecimal plotBoundaryArea = pl.getPlot().getPlotBndryArea(); // add for get total plot area
-		BigDecimal netPlotArea = pl.getPlot().getNetPlotArea(); 
+		BigDecimal netPlotArea = pl.getPlot().getNetPlotArea();
 
 		// add for getting OccupancyType
 		OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
@@ -152,8 +152,7 @@ public class Coverage_BhilaiCharoda extends Coverage {
 //							pl.getPlanInformation().getPlotArea(), DcrConstants.DECIMALDIGITS_MEASUREMENTS,
 //							DcrConstants.ROUNDMODE_MEASUREMENTS);
 					coverage = block.getBuilding().getCoverageArea().multiply(BigDecimal.valueOf(100)).divide(
-							netPlotArea, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-							DcrConstants.ROUNDMODE_MEASUREMENTS);
+							netPlotArea, DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
 
 				block.getBuilding().setCoverage(coverage);
 
@@ -203,7 +202,7 @@ public class Coverage_BhilaiCharoda extends Coverage {
 		}
 
 		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0) {
-			processCoverage(pl, mostRestrictiveOccupancy.getType().getName(), totalCoverage, permissibleCoverageValue);
+			processCoverage(pl, mostRestrictiveOccupancy.getType().getName(), totalCoverage, permissibleCoverageValue, developmentZone);
 		}
 
 //		if (roadWidth != null && roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) >= 0
@@ -224,20 +223,72 @@ public class Coverage_BhilaiCharoda extends Coverage {
 		LOG.info("inside getPermissibleCoverageForResidential()");
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
 
-//		switch (developmentZone) {
-//
-//		case "DA-01":
-		if (area.compareTo(BigDecimal.valueOf(240)) <= 0) {
-			permissibleCoverage = BigDecimal.valueOf(60);
-		} else if (area.compareTo(BigDecimal.valueOf(240)) > 0 && area.compareTo(BigDecimal.valueOf(750)) <= 0) {
-			permissibleCoverage = BigDecimal.valueOf(50);
-		} else if (area.compareTo(BigDecimal.valueOf(750)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-			permissibleCoverage = BigDecimal.valueOf(40);
-		} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
-			permissibleCoverage = BigDecimal.valueOf(35);
+		switch (developmentZone) {
+		case "CA":
+			if (area.compareTo(BigDecimal.valueOf(150)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(75);
+			} else if (area.compareTo(BigDecimal.valueOf(150)) > 0 && area.compareTo(BigDecimal.valueOf(240)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(65);
+			} else if (area.compareTo(BigDecimal.valueOf(240)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(60);
+			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(750)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(50);
+			} else if (area.compareTo(BigDecimal.valueOf(750)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(40);
+			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
+				permissibleCoverage = BigDecimal.valueOf(35);
+			}
+			break;
+
+		case "DA-01":
+			if (area.compareTo(BigDecimal.valueOf(240)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(60);
+			} else if (area.compareTo(BigDecimal.valueOf(240)) > 0 && area.compareTo(BigDecimal.valueOf(750)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(50);
+			} else if (area.compareTo(BigDecimal.valueOf(750)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(40);
+			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
+				permissibleCoverage = BigDecimal.valueOf(35);
+			}
+			break;
+
+		case "DA-02":
+			if (area.compareTo(BigDecimal.valueOf(150)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(60);
+			} else if (area.compareTo(BigDecimal.valueOf(150)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(50);
+			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(40);
+			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
+				permissibleCoverage = BigDecimal.valueOf(35);
+			}
+			break;
+
+		case "DA-03":
+			if (area.compareTo(BigDecimal.valueOf(150)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(60);
+			} else if (area.compareTo(BigDecimal.valueOf(150)) > 0 && area.compareTo(BigDecimal.valueOf(240)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(50);
+			} else if (area.compareTo(BigDecimal.valueOf(240)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(40);
+			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(35);
+			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
+				permissibleCoverage = BigDecimal.valueOf(30);
+			}
+			break;
 		}
-//			break;
-//		}
+
+		/*
+		 * // switch (developmentZone) { // // case "DA-01": if
+		 * (area.compareTo(BigDecimal.valueOf(240)) <= 0) { permissibleCoverage =
+		 * BigDecimal.valueOf(60); } else if (area.compareTo(BigDecimal.valueOf(240)) >
+		 * 0 && area.compareTo(BigDecimal.valueOf(750)) <= 0) { permissibleCoverage =
+		 * BigDecimal.valueOf(50); } else if (area.compareTo(BigDecimal.valueOf(750)) >
+		 * 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) { permissibleCoverage =
+		 * BigDecimal.valueOf(40); } else if (area.compareTo(BigDecimal.valueOf(1000)) >
+		 * 0) { permissibleCoverage = BigDecimal.valueOf(35); } // break; // }
+		 */
 		LOG.info("return from getPermissibleCoverageForResidential()");
 		return permissibleCoverage;
 	}
@@ -250,24 +301,70 @@ public class Coverage_BhilaiCharoda extends Coverage {
 		LOG.info("inside getPermissibleCoverageForCommercial()");
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
 
-//		switch (developmentZone) {
-//
-//		case "DA-01":
-		if (area.compareTo(BigDecimal.valueOf(150)) <= 0) {
-			permissibleCoverage = BigDecimal.valueOf(60);
-		} else if (area.compareTo(BigDecimal.valueOf(150)) > 0 && area.compareTo(BigDecimal.valueOf(240)) <= 0) {
-			permissibleCoverage = BigDecimal.valueOf(55);
-		} else if (area.compareTo(BigDecimal.valueOf(240)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
-			permissibleCoverage = BigDecimal.valueOf(50);
-		} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(750)) <= 0) {
-			permissibleCoverage = BigDecimal.valueOf(45);
-		} else if (area.compareTo(BigDecimal.valueOf(750)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-			permissibleCoverage = BigDecimal.valueOf(40);
-		} else if (area.compareTo(BigDecimal.valueOf(500)) > 0) {
-			permissibleCoverage = BigDecimal.valueOf(35);
+		switch (developmentZone) {
+		case "CA":
+			if (area.compareTo(BigDecimal.valueOf(150)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(80);
+			} else if (area.compareTo(BigDecimal.valueOf(150)) > 0 && area.compareTo(BigDecimal.valueOf(240)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(75);
+			} else if (area.compareTo(BigDecimal.valueOf(240)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(60);
+			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0) {
+				permissibleCoverage = BigDecimal.valueOf(50);
+			}
+			break;
+
+		case "DA-01":
+			if (area.compareTo(BigDecimal.valueOf(150)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(60);
+			} else if (area.compareTo(BigDecimal.valueOf(150)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(50);
+			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0) {
+				permissibleCoverage = BigDecimal.valueOf(45);
+			}
+			break;
+
+		case "DA-02":
+			if (area.compareTo(BigDecimal.valueOf(150)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(60);
+			} else if (area.compareTo(BigDecimal.valueOf(150)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(50);
+			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(750)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(45);
+			} else if (area.compareTo(BigDecimal.valueOf(750)) > 0) {
+				permissibleCoverage = BigDecimal.valueOf(40);
+			}
+			break;
+
+		case "DA-03":
+			if (area.compareTo(BigDecimal.valueOf(150)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(60);
+			} else if (area.compareTo(BigDecimal.valueOf(150)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(50);
+			} else if (area.compareTo(BigDecimal.valueOf(500)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(40);
+			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0 && area.compareTo(BigDecimal.valueOf(15000)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(35);
+			} else if (area.compareTo(BigDecimal.valueOf(15000)) > 0) {
+				permissibleCoverage = BigDecimal.valueOf(30);
+			}
+			break;
 		}
-//			break;
-//		}
+
+		/*
+		 * // switch (developmentZone) { // // case "DA-01": if
+		 * (area.compareTo(BigDecimal.valueOf(150)) <= 0) { permissibleCoverage =
+		 * BigDecimal.valueOf(60); } else if (area.compareTo(BigDecimal.valueOf(150)) >
+		 * 0 && area.compareTo(BigDecimal.valueOf(240)) <= 0) { permissibleCoverage =
+		 * BigDecimal.valueOf(55); } else if (area.compareTo(BigDecimal.valueOf(240)) >
+		 * 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0) { permissibleCoverage =
+		 * BigDecimal.valueOf(50); } else if (area.compareTo(BigDecimal.valueOf(500)) >
+		 * 0 && area.compareTo(BigDecimal.valueOf(750)) <= 0) { permissibleCoverage =
+		 * BigDecimal.valueOf(45); } else if (area.compareTo(BigDecimal.valueOf(750)) >
+		 * 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) { permissibleCoverage =
+		 * BigDecimal.valueOf(40); } else if (area.compareTo(BigDecimal.valueOf(500)) >
+		 * 0) { permissibleCoverage = BigDecimal.valueOf(35); } // break; // }
+		 */
 		LOG.info("return from getPermissibleCoverageForCommercial()");
 		return permissibleCoverage;
 	}
@@ -276,16 +373,48 @@ public class Coverage_BhilaiCharoda extends Coverage {
 		LOG.info("inside getPermissibleCoverageForGovtAndSemiGovt()");
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
 
-//		switch (developmentZone) {
-//
-//		case "DA-01":
-		if (area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-			permissibleCoverage = BigDecimal.valueOf(40);
-		} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
-			permissibleCoverage = BigDecimal.valueOf(30);
+		switch (developmentZone) {
+		case "CA":
+			if (area.compareTo(BigDecimal.valueOf(150)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(50);
+			} else if (area.compareTo(BigDecimal.valueOf(150)) > 0 && area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(40);
+			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
+				permissibleCoverage = BigDecimal.valueOf(35);
+			}
+			break;
+
+		case "DA-01":
+			if (area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(40);
+			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
+				permissibleCoverage = BigDecimal.valueOf(30);
+			}
+			break;
+
+		case "DA-02":
+			if (area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(40);
+			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
+				permissibleCoverage = BigDecimal.valueOf(30);
+			}
+			break;
+
+		case "DA-03":
+			if (area.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+				permissibleCoverage = BigDecimal.valueOf(40);
+			} else if (area.compareTo(BigDecimal.valueOf(1000)) > 0) {
+				permissibleCoverage = BigDecimal.valueOf(30);
+			}
+			break;
 		}
-//			break;
-//		}
+
+		/*
+		 * // switch (developmentZone) { // // case "DA-01": if
+		 * (area.compareTo(BigDecimal.valueOf(1000)) <= 0) { permissibleCoverage =
+		 * BigDecimal.valueOf(40); } else if (area.compareTo(BigDecimal.valueOf(1000)) >
+		 * 0) { permissibleCoverage = BigDecimal.valueOf(30); } // break; // }
+		 */
 		LOG.info("return from getPermissibleCoverageForGovtAndSemiGovt()");
 		return permissibleCoverage;
 	}
@@ -300,17 +429,19 @@ public class Coverage_BhilaiCharoda extends Coverage {
 		return permissibleCoverage;
 	}
 
-	private void processCoverage(Plan pl, String occupancy, BigDecimal coverage, BigDecimal upperLimit) {
+	private void processCoverage(Plan pl, String occupancy, BigDecimal coverage, BigDecimal upperLimit,
+			String developmentZone) {
 		LOG.info("inside processCoverage()");
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.setKey("Common_Coverage");
 		scrutinyDetail.setHeading("Coverage in Percentage");
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, OCCUPANCY);
-		scrutinyDetail.addColumnHeading(4, PERMISSIBLE);
-		scrutinyDetail.addColumnHeading(5, PROVIDED);
-		scrutinyDetail.addColumnHeading(6, STATUS);
+		scrutinyDetail.addColumnHeading(2, DEVELOPMENT_ZONE);
+		scrutinyDetail.addColumnHeading(3, DESCRIPTION);
+		scrutinyDetail.addColumnHeading(4, OCCUPANCY);
+		scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
+		scrutinyDetail.addColumnHeading(6, PROVIDED);
+		scrutinyDetail.addColumnHeading(7, STATUS);
 
 		String desc = getLocaleMessage(RULE_DESCRIPTION_KEY, upperLimit.toString());
 		String actualResult = getLocaleMessage(RULE_ACTUAL_KEY, coverage.toString());
@@ -318,6 +449,7 @@ public class Coverage_BhilaiCharoda extends Coverage {
 		if (coverage.doubleValue() <= upperLimit.doubleValue()) {
 			Map<String, String> details = new HashMap<>();
 			details.put(RULE_NO, occupancy.equalsIgnoreCase("Industrial") ? RULE_48_3 : RULE_7_C_1);
+			details.put(DEVELOPMENT_ZONE, developmentZone);
 			details.put(DESCRIPTION, desc);
 			details.put(OCCUPANCY, occupancy);
 			details.put(PERMISSIBLE, expectedResult);
@@ -329,6 +461,7 @@ public class Coverage_BhilaiCharoda extends Coverage {
 		} else {
 			Map<String, String> details = new HashMap<>();
 			details.put(RULE_NO, occupancy.equalsIgnoreCase("Industrial") ? RULE_48_3 : RULE_7_C_1);
+			details.put(DEVELOPMENT_ZONE, developmentZone);
 			details.put(DESCRIPTION, desc);
 			details.put(OCCUPANCY, occupancy);
 			details.put(PERMISSIBLE, expectedResult);
