@@ -37,10 +37,8 @@ public class NationalDashboardRepository {
 	                    "  la.tenantid,\n" +
 	           //         "  SUM(CAST(la.plotarea AS numeric)) AS TotalPlotArea,\n" +
 	                    "  lm.ulb_name,\n" +
-	                    "  egpg.txn_amount,\n" +
-	                    "  COALESCE(SUM(CASE WHEN egpg.gateway_payment_mode = 'Debit Card' THEN egpg.txn_amount ELSE 0 END), 0) AS debit_amt,\n" +
-	                    "  COALESCE(SUM(CASE WHEN egpg.gateway_payment_mode = 'Credit Card' THEN egpg.txn_amount ELSE 0 END), 0) AS credit_amt,\n" +
-	                    "  COALESCE(SUM(CASE WHEN egpg.gateway_payment_mode IN ('Bharat QR', 'Unified Payments', 'Net Banking') THEN egpg.txn_amount ELSE 0 END), 0) AS upi_amt,\n" +
+//	                    "  egpg.txn_amount,\n" +
+	                    "  COALESCE(SUM(CASE WHEN egpg.gateway_payment_mode IN ('Bharat QR', 'Unified Payments', 'Net Banking', 'Debit Card', 'Credit Card') THEN egpg.txn_amount ELSE 0 END), 0) AS online_amt,\n" +
 	                    "  COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('" + formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) AS ApprovedCount, \n" +
 	                    "  COUNT(DISTINCT CASE WHEN bp.status = 'INITIATED' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('" + formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) AS InitiatedCount, \n" +
 	                    "  COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('" + formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) AS todaysApprovedApplicationsWithinSLA, \n" +
@@ -60,9 +58,9 @@ public class NationalDashboardRepository {
 	                    "    WHERE txn_status='SUCCESS' \n" +
 	                    "      AND TO_TIMESTAMP(created_time / 1000)::date = TO_DATE('" + formattedDate + "', 'YYYY-MM-DD')\n" +
 	                    "  ) AS egpg ON bp.applicationno = egpg.consumer_code\n" +
-	                    "GROUP BY \n" +
-	                    "  la.locality, la.tenantid, lm.ulb_name, egpg.txn_amount\n" +
-	                    "ORDER BY \n" +
+	                    " GROUP BY \n" +
+	                    "  la.locality, la.tenantid, lm.ulb_name\n" +
+	                    " ORDER BY \n" +
 	                    "  la.locality;\n";
 
            System.out.println("Query for date " + formattedDate + ":\n" + query1);

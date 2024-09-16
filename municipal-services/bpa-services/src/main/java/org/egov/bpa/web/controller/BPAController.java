@@ -28,6 +28,7 @@ import org.egov.bpa.web.model.BPASearchCriteria;
 import org.egov.bpa.web.model.BSCategoryRequest;
 import org.egov.bpa.web.model.BSCategoryRequestWrapper;
 import org.egov.bpa.web.model.IngestRequest;
+import org.egov.bpa.web.model.NdbResponseInfoWrapper;
 import org.egov.bpa.web.model.PayTpRateRequest;
 import org.egov.bpa.web.model.PayTpRateRequestWrapper;
 import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
@@ -63,27 +64,25 @@ public class BPAController {
 
 	@Autowired
 	private BPAService bpaService;
-	
+
 	@Autowired
-	private NationalDashboardService nationalDashboardService; 
+	private NationalDashboardService nationalDashboardService;
 
 	@Autowired
 	private BPAUtil bpaUtil;
 
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
-	
+
 	@Autowired
 	BPAConfiguration bpaConfig;
-	
+
 	@Autowired
 	SwsService swsService;
-	
 
 	LocalDate startDate = LocalDate.of(2023, 5, 28);
-    LocalDate endDate = LocalDate.of(2024, 2, 15);
-    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    
+	LocalDate endDate = LocalDate.of(2024, 2, 15);
+	DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	@PostMapping(value = "/_create")
 	public ResponseEntity<BPAResponse> create(@Valid @RequestBody BPARequest bpaRequest) {
@@ -515,7 +514,7 @@ public class BPAController {
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 
 	}
-	
+
 	@PostMapping(value = "/application/_search")
 	public ResponseEntity<BPAResponse> searchByApplication(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
 			@Valid @ModelAttribute BPASearchCriteria criteria) {
@@ -536,11 +535,10 @@ public class BPAController {
 //	    return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 
 //		List<BPA> bpas = bpaService.getApplicationDataInDasboardForUlb(criteria);applicationDataSearch
-		List<BPA> bpas = bpaService.applicationDataSearch(criteria,  requestInfoWrapper.getRequestInfo());
+		List<BPA> bpas = bpaService.applicationDataSearch(criteria, requestInfoWrapper.getRequestInfo());
 //		int count = bpaService.getBPACount(criteria, requestInfoWrapper.getRequestInfo());
-		BPAResponse response = BPAResponse
-				.builder().BPA(bpas).responseInfo(responseInfoFactory
-						.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
+		BPAResponse response = BPAResponse.builder().BPA(bpas).responseInfo(
+				responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
 				.build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
@@ -552,70 +550,64 @@ public class BPAController {
 
 	}
 
-
-	
-	@GetMapping(value = "/ingestData")   
+	@GetMapping(value = "/ingestData")
 	public ResponseEntity<List<IngestRequest>> getListOfIngestData() {
-	    
-	    List<IngestRequest> resultList = new ArrayList<>();
-	    
-	    int loopCount = 0;
-	    
-	    for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-	        String formattedDate = date.format(dateFormatter);
-	        IngestRequest request = nationalDashboardService.getIngestData(formattedDate);
-	        
-	        System.out.println("requestt(((" + request.getIngestData().toString());
-	        
-	        // Create a new instance of IngestRequest for each iteration
-	        IngestRequest newRequest = new IngestRequest();
-	        newRequest.setIngestData(request.getIngestData()); // Assuming you need to copy the data
-	        
-	        resultList.add(newRequest);
-	        loopCount++; 
-	        
-	        System.out.println("Loop ran " + loopCount + " times.");
-	    }
-	    
-	    return new ResponseEntity<>(resultList, HttpStatus.OK);
+
+		List<IngestRequest> resultList = new ArrayList<>();
+
+		int loopCount = 0;
+
+		for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+			String formattedDate = date.format(dateFormatter);
+			IngestRequest request = nationalDashboardService.getIngestData(formattedDate);
+
+			System.out.println("requestt(((" + request.getIngestData().toString());
+
+			// Create a new instance of IngestRequest for each iteration
+			IngestRequest newRequest = new IngestRequest();
+			newRequest.setIngestData(request.getIngestData()); // Assuming you need to copy the data
+
+			resultList.add(newRequest);
+			loopCount++;
+
+			System.out.println("Loop ran " + loopCount + " times.");
+		}
+
+		return new ResponseEntity<>(resultList, HttpStatus.OK);
 	}
-
-
 
 	@PostMapping(value = "/pushData")
-	public ResponseEntity<Map<String, Object>> pushDataToApi() {
-		 
+	public ResponseEntity<NdbResponseInfoWrapper> pushDataToApi() {
 
-	        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-	            String formattedDate1 = date.format(dateFormatter);
-		
-		//System.out.println("request----" + requestInfoWrapper.getRequestInfo());
-		String apiUrl = "https://upyog-test.niua.org/national-dashboard/metric/_ingest";
-	    try {
-	        Map<String, Object> response = nationalDashboardService.pushDataToApi(apiUrl);
-	        return new ResponseEntity<>(response, HttpStatus.OK);
-	    } catch (Exception e) {
-	       
-	        e.printStackTrace();
-	    
-	        return new ResponseEntity<>(Collections.singletonMap("error", "Failed to push data: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+//		for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+//			String formattedDate1 = date.format(dateFormatter);
 
-	    }
-	        }
-	        return null;
+			// System.out.println("request----" + requestInfoWrapper.getRequestInfo());
+			String apiUrl = "https://upyog-test.niua.org/national-dashboard/metric/_ingest";
+//	    try {
+			NdbResponseInfoWrapper response = nationalDashboardService.pushDataToApi(apiUrl);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+//	    } catch (Exception e) {
+//	       
+//	        e.printStackTrace();
+//	    
+//	        return new ResponseEntity<>(Collections.singletonMap("error", "Failed to push data: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+//
+//	    }
+//		}
+//	        return null;
 	}
-	
+
 	@PostMapping(value = "/pushdatatoswsmanual")
-	public ResponseEntity<String> pushDatatoSwsManual(@RequestBody String dataRequest){
+	public ResponseEntity<String> pushDatatoSwsManual(@RequestBody String dataRequest) {
 		return swsService.pushDataToSwsDirectly(dataRequest);
 //		return null;
 	}
-	
-	
+
 	@PostMapping(value = "/_pushdatatosws")
-	public ResponseEntity<String> pushDatatoSws(@Valid @RequestBody BPARequest bpaRequestt){
+	public ResponseEntity<String> pushDatatoSws(@Valid @RequestBody BPARequest bpaRequestt) {
 		return swsService.pushDatatoSws(bpaRequestt);
 //		return null;
 	}
-	
+
 }
