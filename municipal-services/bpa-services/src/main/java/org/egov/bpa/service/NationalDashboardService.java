@@ -65,7 +65,6 @@ public class NationalDashboardService {
 		LocalDate date = LocalDate.parse(formattedDate1);
 		String formattedDate = date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 //		String formattedDate = previousDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-		
 
 //		LocalDate specificDate = LocalDate.of(2023, 12, 15);
 //		String formattedDate = specificDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
@@ -135,28 +134,28 @@ public class NationalDashboardService {
 
 			HashMap<String, Object> metrics = new HashMap<>();
 
-			metrics.put("ocPlansScrutinized", 0);
-			metrics.put("plansScrutinized", nationalData.get("initiatedcount"));
-			metrics.put("ocSubmitted", 0);
-			metrics.put("applicationsSubmitted", nationalData.get("initiatedcount"));
-			metrics.put("ocIssued", 0);
-			metrics.put("landAreaAppliedInSystemForBPA", totalPlotArea1);
-			metrics.put("averageDaysToIssuePermit", avgDaysToIssueCertificate1);
-			metrics.put("averageDaysToIssueOC", 0);
-			metrics.put("todaysClosedApplicationsOC", 0);
-			metrics.put("todaysClosedApplicationsPermit", nationalData.get("todaysApprovedApplicationsWithinSLA"));
-			metrics.put("todaysCompletedApplicationsWithinSLAPermit",
-					nationalData.get("todaysApprovedApplicationsWithinSLA"));
-			metrics.put("slaComplianceOC", 0);
-			metrics.put("slaCompliancePermit", 0);
-			metrics.put("applicationsWithDeviation", 0);
-			metrics.put("averageDeviation", 0);
-			metrics.put("ocWithDeviation", 0);
-			metrics.put("todaysApprovedApplications", nationalData.get("todaysApprovedApplicationsWithinSLA"));
-			metrics.put("todaysApprovedApplicationsWithinSLA", nationalData.get("todaysApprovedApplicationsWithinSLA"));
-			metrics.put("avgDaysForApplicationApproval", avgDaysToIssueCertificate1);
-			metrics.put("StipulatedDays", 0);
-
+			/*
+			 * metrics.put("ocPlansScrutinized", 0); metrics.put("plansScrutinized",
+			 * nationalData.get("initiatedcount")); metrics.put("ocSubmitted", 0);
+			 * metrics.put("applicationsSubmitted", nationalData.get("initiatedcount"));
+			 * metrics.put("ocIssued", 0); metrics.put("landAreaAppliedInSystemForBPA",
+			 * totalPlotArea1); metrics.put("averageDaysToIssuePermit",
+			 * avgDaysToIssueCertificate1); metrics.put("averageDaysToIssueOC", 0);
+			 * metrics.put("todaysClosedApplicationsOC", 0);
+			 * metrics.put("todaysClosedApplicationsPermit",
+			 * nationalData.get("todaysApprovedApplicationsWithinSLA"));
+			 * metrics.put("todaysCompletedApplicationsWithinSLAPermit",
+			 * nationalData.get("todaysApprovedApplicationsWithinSLA"));
+			 * metrics.put("slaComplianceOC", 0); metrics.put("slaCompliancePermit", 0);
+			 * metrics.put("applicationsWithDeviation", 0); metrics.put("averageDeviation",
+			 * 0); metrics.put("ocWithDeviation", 0);
+			 * metrics.put("todaysApprovedApplications",
+			 * nationalData.get("todaysApprovedApplicationsWithinSLA"));
+			 * metrics.put("todaysApprovedApplicationsWithinSLA",
+			 * nationalData.get("todaysApprovedApplicationsWithinSLA"));
+			 * metrics.put("avgDaysForApplicationApproval", avgDaysToIssueCertificate1);
+			 * metrics.put("StipulatedDays", 0);
+			 */
 			List<Map<String, Object>> todaysCollection = new ArrayList<>();
 
 			Map<String, Object> collectionMode = new LinkedHashMap<>();
@@ -222,6 +221,33 @@ public class NationalDashboardService {
 			if (hasNonZeroMetric) {
 
 				log.info("countt==" + dataList.size());
+				HashMap<String, Object> extraMetrics = data.getMetrics();
+
+				extraMetrics.put("ocPlansScrutinized", 0);
+				extraMetrics.put("plansScrutinized", nationalData.get("initiatedcount"));
+				extraMetrics.put("ocSubmitted", 0);
+				extraMetrics.put("applicationsSubmitted", nationalData.get("initiatedcount"));
+				extraMetrics.put("ocIssued", 0);
+				extraMetrics.put("landAreaAppliedInSystemForBPA", totalPlotArea1);
+				extraMetrics.put("averageDaysToIssuePermit", avgDaysToIssueCertificate1);
+				extraMetrics.put("averageDaysToIssueOC", 0);
+				extraMetrics.put("todaysClosedApplicationsOC", 0);
+				extraMetrics.put("todaysClosedApplicationsPermit",
+						nationalData.get("todaysApprovedApplicationsWithinSLA"));
+				extraMetrics.put("todaysCompletedApplicationsWithinSLAPermit",
+						nationalData.get("todaysApprovedApplicationsWithinSLA"));
+				extraMetrics.put("slaComplianceOC", 0);
+				extraMetrics.put("slaCompliancePermit", 0);
+				extraMetrics.put("applicationsWithDeviation", 0);
+				extraMetrics.put("averageDeviation", 0);
+				extraMetrics.put("ocWithDeviation", 0);
+				extraMetrics.put("todaysApprovedApplications", nationalData.get("todaysApprovedApplicationsWithinSLA"));
+				extraMetrics.put("todaysApprovedApplicationsWithinSLA",
+						nationalData.get("todaysApprovedApplicationsWithinSLA"));
+				extraMetrics.put("avgDaysForApplicationApproval", avgDaysToIssueCertificate1);
+				extraMetrics.put("StipulatedDays", 0);
+
+				data.setMetrics(extraMetrics);
 				dataList.add(data);
 			}
 
@@ -291,7 +317,7 @@ public class NationalDashboardService {
 	public NdbResponseInfoWrapper pushDataToApi(String apiUrl) {
 //		String formattedDate1 = "";
 		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		LocalDate specificDate = LocalDate.of(2024, 9, 15);
+		LocalDate specificDate = LocalDate.of(2024, 9, 14);
 		String formattedDate1 = specificDate.format(dateFormatter);
 		IngestRequest body = getIngestData(formattedDate1);
 		// log.info("bodyy---====" + body);
@@ -448,7 +474,7 @@ public class NationalDashboardService {
 	}
 
 //    @Scheduled(cron = "0 */5 * * * ?")
-	@Scheduled(cron = "0 35 16 * * *")
+	@Scheduled(cron = "0 58 16 * * *")
 	public void scheduleDataPush() {
 
 		log.info("Scheduled task started...");
