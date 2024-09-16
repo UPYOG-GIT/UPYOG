@@ -61,7 +61,10 @@ public class NationalDashboardService {
 
 //
 		LocalDate currentDate = LocalDate.now();
-		String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+		LocalDate previousDate = currentDate.minusDays(1);
+//		String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+		String formattedDate = previousDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		
 
 //		LocalDate specificDate = LocalDate.of(2023, 12, 15);
 //		String formattedDate = specificDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
@@ -82,7 +85,8 @@ public class NationalDashboardService {
 //		LocalDate specificDate = LocalDate.of(targetYear, Month.JANUARY, 1);
 //		String formattedDate = specificDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 
-		Map<String, Object> ingestDataResult = repository.getIngestData(formattedDate);
+//		Map<String, Object> ingestDataResult = repository.getIngestData(formattedDate);
+		Map<String, Object> ingestDataResult = repository.getIngestData(formattedDate1);
 		// log.info("ingestttt_____" + ingestDataResult.get("result1"));
 		List<Map<String, Object>> ingestData = (List<Map<String, Object>>) ingestDataResult.get("result1");
 		String avgDaysToIssueCertificate = ingestDataResult.get("avg_days_to_issue_certificate").toString();
@@ -443,7 +447,7 @@ public class NationalDashboardService {
 	}
 
 //    @Scheduled(cron = "0 */5 * * * ?")
-	@Scheduled(cron = "0 30 15 * * *")
+	@Scheduled(cron = "0 55 15 * * *")
 	public void scheduleDataPush() {
 
 		log.info("Scheduled task started...");
