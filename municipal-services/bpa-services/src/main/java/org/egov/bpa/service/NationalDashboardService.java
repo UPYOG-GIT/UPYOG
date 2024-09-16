@@ -62,8 +62,9 @@ public class NationalDashboardService {
 //
 		LocalDate currentDate = LocalDate.now();
 		LocalDate previousDate = currentDate.minusDays(1);
-//		String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-		String formattedDate = previousDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		LocalDate date = LocalDate.parse(formattedDate1);
+		String formattedDate = date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+//		String formattedDate = previousDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		
 
 //		LocalDate specificDate = LocalDate.of(2023, 12, 15);
@@ -126,7 +127,7 @@ public class NationalDashboardService {
 
 			// log.info("ulbbb" + ulb);
 			data.setUlb(ulb);
-			data.setDate(formattedDate1);
+			data.setDate(formattedDate);
 			data.setModule("OBPS");
 			data.setWard((String) nationalData.get("locality"));
 			data.setRegion((String) nationalData.get("tenantId"));
