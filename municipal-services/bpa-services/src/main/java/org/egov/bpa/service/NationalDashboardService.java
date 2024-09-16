@@ -443,7 +443,7 @@ public class NationalDashboardService {
 	}
 
 //    @Scheduled(cron = "0 */5 * * * ?")
-	@Scheduled(cron = "0 55 12 * * *")
+	@Scheduled(cron = "0 15 7 * * *")
 	public void scheduleDataPush() {
 
 		log.info("Scheduled task started...");
