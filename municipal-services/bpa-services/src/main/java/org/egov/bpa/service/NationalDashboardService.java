@@ -60,8 +60,8 @@ public class NationalDashboardService {
 		List<Data> dataList = new ArrayList<>();
 
 //
-		LocalDate currentDate = LocalDate.now();
-		LocalDate previousDate = currentDate.minusDays(1);
+//		LocalDate currentDate = LocalDate.now();
+//		LocalDate previousDate = currentDate.minusDays(1);
 		LocalDate date = LocalDate.parse(formattedDate1);
 		String formattedDate = date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 //		String formattedDate = previousDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -317,8 +317,13 @@ public class NationalDashboardService {
 	public NdbResponseInfoWrapper pushDataToApi(String apiUrl) {
 //		String formattedDate1 = "";
 		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		LocalDate specificDate = LocalDate.of(2024, 9, 14);
-		String formattedDate1 = specificDate.format(dateFormatter);
+//		LocalDate specificDate = LocalDate.of(2024, 9, 14);
+		
+		LocalDate currentDate = LocalDate.now();
+		LocalDate previousDate = currentDate.minusDays(1);
+		
+//		String formattedDate1 = specificDate.format(dateFormatter);
+		String formattedDate1 = previousDate.format(dateFormatter);
 		IngestRequest body = getIngestData(formattedDate1);
 		// log.info("bodyy---====" + body);
 
@@ -393,7 +398,7 @@ public class NationalDashboardService {
 //			System.out.println("HTTP Status Code: " + statusCodeValue);
 //			System.out.println("responseEntity: " + responseEntity.toString());
 //
-//			System.out.println("----Data Pushed Successfully----");
+			System.out.println("----Data Pushed Successfully----");
 			log.info("ndbResponseInfoWrapper: " + ndbResponseInfoWrapper.toString());
 //
 //			returnResponse.put("ResponseInfo", ndbResponseInfoWrapper.getResponseHash());
@@ -474,7 +479,7 @@ public class NationalDashboardService {
 	}
 
 //    @Scheduled(cron = "0 */5 * * * ?")
-	@Scheduled(cron = "0 58 16 * * *")
+	@Scheduled(cron = "0 30 00 * * *")
 	public void scheduleDataPush() {
 
 		log.info("Scheduled task started...");
