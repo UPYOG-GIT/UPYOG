@@ -320,10 +320,10 @@ public class NationalDashboardService {
 //		LocalDate specificDate = LocalDate.of(2024, 9, 14);
 		
 		LocalDate currentDate = LocalDate.now();
-		LocalDate previousDate = currentDate.minusDays(1);
+//		LocalDate previousDate = currentDate.minusDays(1);
 		
 //		String formattedDate1 = specificDate.format(dateFormatter);
-		String formattedDate1 = previousDate.format(dateFormatter);
+		String formattedDate1 = currentDate.format(dateFormatter);
 		IngestRequest body = getIngestData(formattedDate1);
 		// log.info("bodyy---====" + body);
 
@@ -479,7 +479,7 @@ public class NationalDashboardService {
 	}
 
 //    @Scheduled(cron = "0 */5 * * * ?")
-	@Scheduled(cron = "0 30 00 * * *")
+	@Scheduled(cron = "0 58 23 * * *")
 	public void scheduleDataPush() {
 
 		log.info("Scheduled task started...");
