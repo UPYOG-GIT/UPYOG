@@ -320,7 +320,7 @@ public class NationalDashboardService {
 //		LocalDate specificDate = LocalDate.of(2024, 9, 14);
 		
 		LocalDate currentDate = LocalDate.now();
-		LocalDate previousDate = currentDate.minusDays(1);
+		//LocalDate previousDate = currentDate.minusDays(1);
 		
 //		String formattedDate1 = specificDate.format(dateFormatter);
 		String formattedDate1 = currentDate.format(dateFormatter);
