@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.bpa.producer.Producer;
-import org.egov.bpa.web.model.NdbResponseInfoWrapper;
 import org.egov.ndb.config.NationalDashboardConfig;
+import org.egov.ndb.web.model.NdbResponseInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
