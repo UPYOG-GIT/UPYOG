@@ -1,9 +1,12 @@
-package org.egov.bpa.repository;
+package org.egov.ndb.repository;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.bpa.producer.Producer;
+import org.egov.bpa.web.model.NdbResponseInfoWrapper;
+import org.egov.ndb.config.NationalDashboardConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -20,7 +23,17 @@ public class NationalDashboardRepository {
     public NationalDashboardRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+    
+    @Autowired
+	private Producer producer;
 
+	@Autowired
+	private NationalDashboardConfig nationalDashboardConfig;
+
+	public void savePushDataRecord(NdbResponseInfoWrapper ndbResponseInfoWrapper) {
+		producer.push(nationalDashboardConfig.getNdbSaveTopic(), ndbResponseInfoWrapper);
+	}
+	
     public Map<String, Object> getIngestData(String formattedDate) {
 //        LocalDate startDate = LocalDate.of(2023, 1, 1);
 //        LocalDate endDate = LocalDate.of(2024, 2, 14);

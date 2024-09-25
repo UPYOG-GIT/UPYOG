@@ -1,5 +1,6 @@
 package org.egov.bpa.web.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
@@ -30,4 +31,7 @@ public class NdbResponseInfoWrapper {
 	
 	@JsonProperty("Errors")
 	private List<NdbErrorMap> errors;
+	
+	@JsonProperty("PushedDate")
+	private LocalDateTime pushedDate;
 }
