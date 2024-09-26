@@ -39,8 +39,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NationalDashboardService {
 
-//	@Autowired
-//	private NationalDashboardRepository repository;
+	@Autowired
+	private NationalDashboardRepository repository;
 
 	private IngestRequest ingestRequest = new IngestRequest();
 
@@ -90,7 +90,7 @@ public class NationalDashboardService {
 //		String formattedDate = specificDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 
 //		Map<String, Object> ingestDataResult = repository.getIngestData(formattedDate);
-		Map<String, Object> ingestDataResult = nationalDashboardRepository.getIngestData(formattedDate1);
+		Map<String, Object> ingestDataResult = repository.getIngestData(formattedDate1);
 		// log.info("ingestttt_____" + ingestDataResult.get("result1"));
 		List<Map<String, Object>> ingestData = (List<Map<String, Object>>) ingestDataResult.get("result1");
 		String avgDaysToIssueCertificate = ingestDataResult.get("avg_days_to_issue_certificate").toString();
