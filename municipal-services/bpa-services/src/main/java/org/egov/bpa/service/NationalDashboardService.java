@@ -518,6 +518,7 @@ public class NationalDashboardService {
 
 //
 			log.info("responseEntity: " + responseEntity.toString());
+			log.info("ndbResponse: " + ndbResponse.toString());
 			log.info("----Data Pushed Successfully----");
 
 			ndbResponseInfoWrapper.getNdbResponseInfo().setResponseHash(ndbResponse.getResponseHash());
@@ -530,7 +531,7 @@ public class NationalDashboardService {
 //			returnResponse.put("ResponseInfo", ndbResponseInfoWrapper.getResponseHash());
 			return ndbResponseInfoWrapper;
 		} catch (Exception ex) {
-//			System.out.println("Exception : " + ex);
+			log.error("Exception : " + ex);
 			log.error("ex.getMessage() : " + ex.getMessage());
 			Map<String, String> errorMap = new HashMap<>();
 			String jsonPart = ex.getMessage().split(" : ")[1].replace("\"", "");
