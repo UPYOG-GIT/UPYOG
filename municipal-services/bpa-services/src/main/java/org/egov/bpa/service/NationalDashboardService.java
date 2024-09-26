@@ -1,7 +1,6 @@
-package org.egov.ndb.service;
+package org.egov.bpa.service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.bpa.config.NationalDashboardConfig;
+import org.egov.bpa.repository.NationalDashboardRepository;
 import org.egov.bpa.web.model.Data;
 import org.egov.bpa.web.model.IngestRequest;
 import org.egov.bpa.web.model.NdbErrorMap;
@@ -17,8 +18,6 @@ import org.egov.bpa.web.model.NdbResponseInfoWrapper;
 import org.egov.bpa.web.model.ResponseInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
-import org.egov.ndb.config.NationalDashboardConfig;
-import org.egov.ndb.repository.NationalDashboardRepository;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -40,15 +39,12 @@ import lombok.extern.slf4j.Slf4j;
 public class NationalDashboardService {
 
 	@Autowired
-	private NationalDashboardRepository repository;
+	NationalDashboardRepository repository;
 
-	private IngestRequest ingestRequest = new IngestRequest();
+	IngestRequest ingestRequest = new IngestRequest();
 
 	@Autowired
-	private NationalDashboardConfig nationalDashboardConfig;
-	
-	@Autowired
-	private NationalDashboardRepository nationalDashboardRepository;
+	NationalDashboardConfig nationalDashboardConfig;
 
 //	@Primary
 //	@Bean
@@ -322,10 +318,10 @@ public class NationalDashboardService {
 //		String formattedDate1 = "";
 		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 //		LocalDate specificDate = LocalDate.of(2024, 9, 14);
-
+		
 		LocalDate currentDate = LocalDate.now();
-		// LocalDate previousDate = currentDate.minusDays(1);
-
+		//LocalDate previousDate = currentDate.minusDays(1);
+		
 //		String formattedDate1 = specificDate.format(dateFormatter);
 		String formattedDate1 = currentDate.format(dateFormatter);
 		IngestRequest body = getIngestData(formattedDate1);
@@ -391,13 +387,10 @@ public class NationalDashboardService {
 
 		Map<String, Object> returnResponse = new HashMap<>();
 //		System.out.println("requestEntity: " + requestEntity);
-		LocalDateTime date = LocalDateTime.now();
 		try {
 			ResponseEntity<NdbResponseInfoWrapper> responseEntity = this.restTemplate.exchange(apiUrl, HttpMethod.POST,
 					requestEntity, NdbResponseInfoWrapper.class);
 			NdbResponseInfoWrapper ndbResponseInfoWrapper = responseEntity.getBody();
-
-			ndbResponseInfoWrapper.setPushedDate(date);
 
 //			HttpStatus statusCode = (HttpStatus) responseEntity.getStatusCode();
 //			int statusCodeValue = statusCode.value();
@@ -429,8 +422,6 @@ public class NationalDashboardService {
 			List<NdbErrorMap> errorDetailList = new ArrayList<>();
 			errorDetailList.add(ndbErrorMap);
 			ndbResponseInfoWrapper.setErrors(errorDetailList);
-
-			ndbResponseInfoWrapper.setPushedDate(date);
 
 			returnResponse.put("ResponseInfo", errorMap);
 			return ndbResponseInfoWrapper;
@@ -492,8 +483,7 @@ public class NationalDashboardService {
 	public void scheduleDataPush() {
 
 		log.info("Scheduled task started...");
-		NdbResponseInfoWrapper ndbResponseInfoWrapper = pushDataToApi(nationalDashboardConfig.getIngestApi());
-		nationalDashboardRepository.savePushDataRecord(ndbResponseInfoWrapper);
+		pushDataToApi(nationalDashboardConfig.getIngestApi());
 		log.info("Scheduled task completed.");
 	}
 //		    
