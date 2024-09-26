@@ -458,6 +458,147 @@ public class NationalDashboardService {
 		 */
 
 	}
+	
+	public NdbResponseInfoWrapper pushDataToApiManually(String apiUrl, String formattedDate1) {
+//		String formattedDate1 = "";
+		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//		LocalDate specificDate = LocalDate.of(2024, 9, 14);
+
+		LocalDate currentDate = LocalDate.now();
+		// LocalDate previousDate = currentDate.minusDays(1);
+
+//		String formattedDate1 = specificDate.format(dateFormatter);
+//		String formattedDate1 = currentDate.format(dateFormatter);
+		IngestRequest body = getIngestData(formattedDate1);
+		// log.info("bodyy---====" + body);
+
+		ResponseInfoWrapper responseInfoWrapper = getAuthToken(nationalDashboardConfig.getUsername(),
+				nationalDashboardConfig.getPassword(), nationalDashboardConfig.getGrantType(),
+				nationalDashboardConfig.getScope(), nationalDashboardConfig.getTenantId(),
+				nationalDashboardConfig.getType());
+//		Map<String, Object> requestData = new HashMap<>();
+		RequestInfo requestInfo = new RequestInfo();
+
+		// log.info("requestInfoData" + requestInfoData);
+
+//		Map<String, Object> userRequest = (Map<String, Object>) requestInfoData.get("UserRequest");
+		User userRequest = responseInfoWrapper.getUserRequest();
+
+//		String access_token = (String) requestInfoData.get("access_token");
+//		String accessToken = requestInfoData.getAccessToken();
+
+//		User userInfo = new User();
+
+		/*
+		 * userInfo.setUserName((String) userRequest.get("userName")); //
+		 * userInfo.setId((Long) userRequest.get("id")); userInfo.setUuid((String)
+		 * userRequest.get("uuid")); userInfo.setName((String) userRequest.get("name"));
+		 * userInfo.setMobileNumber((String) userRequest.get("mobileNumber"));
+		 * userInfo.setType((String) userRequest.get("type"));
+		 * 
+		 * List<Map<String, Object>> roles = (List<Map<String, Object>>)
+		 * userRequest.get("roles");
+		 * 
+		 * List<Role> userRole = new ArrayList<>();
+		 * 
+		 * for (Map<String, Object> role : roles) {
+		 * 
+		 * log.info("inside for loop -- " + role.toString());
+		 * 
+		 * Role rolee = new Role(); rolee.setName(role.get("name").toString());
+		 * rolee.setCode(role.get("code").toString());
+		 * rolee.setTenantId(role.get("tenantId").toString());
+		 * 
+		 * userRole.add(rolee); }
+		 * 
+		 * userInfo.setRoles(userRole);
+		 */
+
+		requestInfo.setAuthToken(responseInfoWrapper.getAccessToken());
+		requestInfo.setApiId("asset-services");
+		requestInfo.setUserInfo(userRequest);
+
+		ingestRequest.setRequestInfo(requestInfo);
+		// ingestRequest.setRequestInfo((RequestInfo) requestInfoData);
+//		log.info("rolesss" + roles.toString());
+//		log.info("getRoles--" + userInfo.getRoles().toString());
+
+		log.info("requesttInfoo ______ " + ingestRequest.getRequestInfo().toString());
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		HttpEntity<IngestRequest> requestEntity = new HttpEntity<IngestRequest>(body, headers);
+
+		Map<String, Object> returnResponse = new HashMap<>();
+//		System.out.println("requestEntity: " + requestEntity);
+		LocalDateTime date = LocalDateTime.now();
+		try {
+			ResponseEntity<NdbResponseInfoWrapper> responseEntity = this.restTemplate.exchange(apiUrl, HttpMethod.POST,
+					requestEntity, NdbResponseInfoWrapper.class);
+			NdbResponseInfoWrapper ndbResponseInfoWrapper = responseEntity.getBody();
+
+			ndbResponseInfoWrapper.getNdbResponseInfo().setPushedDate(date);
+
+//			HttpStatus statusCode = (HttpStatus) responseEntity.getStatusCode();
+//			int statusCodeValue = statusCode.value();
+
+//			System.out.println("HTTP Status Code: " + statusCodeValue);
+//			System.out.println("responseEntity: " + responseEntity.toString());
+//
+			System.out.println("----Data Pushed Successfully----");
+			log.info("ndbResponseInfoWrapper: " + ndbResponseInfoWrapper.toString());
+//
+//			returnResponse.put("ResponseInfo", ndbResponseInfoWrapper.getResponseHash());
+			return ndbResponseInfoWrapper;
+		} catch (Exception ex) {
+//			System.out.println("Exception : " + ex);
+			log.error("ex.getMessage() : " + ex.getMessage());
+			Map<String, String> errorMap = new HashMap<>();
+			String jsonPart = ex.getMessage().split(" : ")[1].replace("\"", "");
+			JSONObject jsonObject = new JSONObject(jsonPart);
+			JSONObject error = jsonObject.getJSONArray("Errors").getJSONObject(0);
+			NdbResponseInfoWrapper ndbResponseInfoWrapper = new NdbResponseInfoWrapper();
+			NdbErrorMap ndbErrorMap = new NdbErrorMap();
+//			System.out.println("error: " + error);
+			errorMap.put("code", error.getString("code"));
+			errorMap.put("message", error.getString("message"));
+			errorMap.put("description", error.optString("description", "No description provided"));
+
+			ndbErrorMap.setCode(error.getString("code"));
+			ndbErrorMap.setMessage(error.getString("message"));
+			List<NdbErrorMap> errorDetailList = new ArrayList<>();
+			errorDetailList.add(ndbErrorMap);
+			ndbResponseInfoWrapper.getNdbResponseInfo().setErrors(errorDetailList);
+
+			ndbResponseInfoWrapper.getNdbResponseInfo().setPushedDate(date);
+
+			returnResponse.put("ResponseInfo", errorMap);
+			return ndbResponseInfoWrapper;
+
+		}
+
+		/*
+		 * ResponseEntity<Map> responseEntity = this.restTemplate.exchange(apiUrl,
+		 * HttpMethod.POST, requestEntity, Map.class);
+		 * 
+		 * Map<String, Object> responseBody = responseEntity.getBody();
+		 * 
+		 * HttpStatus statusCode = (HttpStatus) responseEntity.getStatusCode(); int
+		 * statusCodeValue = statusCode.value();
+		 * 
+		 * log.info("HTTP Status Code: " + statusCodeValue);
+		 * 
+		 * // You can also check the status code to take appropriate actions if
+		 * (statusCode.is2xxSuccessful()) {
+		 * log.info("----Data Pushed Successfully----"); } else if
+		 * (statusCode.is4xxClientError()) { log.info("----4xx error----"); } else if
+		 * (statusCode.is5xxServerError()) {
+		 * log.info("----Internal server error---- or Duplicate data found"); } return
+		 * responseBody;
+		 */
+
+	}
 
 	public ResponseInfoWrapper getAuthToken(String username, String password, String grantType, String scope,
 			String tenantId, String userType) {
@@ -495,6 +636,10 @@ public class NationalDashboardService {
 		NdbResponseInfoWrapper ndbResponseInfoWrapper = pushDataToApi(nationalDashboardConfig.getIngestApi());
 		nationalDashboardRepository.savePushDataRecord(ndbResponseInfoWrapper);
 		log.info("Scheduled task completed.");
+	}
+	
+	public void savePushDataRecord(NdbResponseInfoWrapper ndbResponseInfoWrapper) {
+		nationalDashboardRepository.savePushDataRecord(ndbResponseInfoWrapper);
 	}
 //		    
 
