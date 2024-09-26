@@ -28,15 +28,15 @@ public class NdbResponseInfoWrapper {
 	@JsonProperty("NdbResponseInfo")
 	NdbResponseInfo ndbResponseInfo;
 
-//	@JsonProperty("responseHash")
-//	private List<Integer> responseHash;
-//
-//	@JsonProperty("Errors")
-//	private List<NdbErrorMap> errors;
-//
-//	@JsonProperty("Date")
-//	private LocalDate date;
-//
-//	@JsonProperty("environment")
-//	String environment;
+	@JsonProperty("responseHash")
+	private List<Integer> responseHash;
+
+	@JsonProperty("Errors")
+	private List<NdbErrorMap> errors;
+
+	@JsonProperty("Date")
+	private LocalDate date;
+
+	@JsonProperty("environment")
+	String environment;
 }
