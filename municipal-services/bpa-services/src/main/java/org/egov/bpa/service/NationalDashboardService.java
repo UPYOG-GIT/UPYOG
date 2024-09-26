@@ -517,11 +517,13 @@ public class NationalDashboardService {
 			NdbResponseInfoWrapper ndbResponseInfoWrapper = new NdbResponseInfoWrapper();
 
 //
-			System.out.println("----Data Pushed Successfully----");
-			log.info("ndbResponseInfoWrapper: " + ndbResponseInfoWrapper.toString());
+			log.info("responseEntity: " + responseEntity.toString());
+			log.info("----Data Pushed Successfully----");
+
 			ndbResponseInfoWrapper.getNdbResponseInfo().setResponseHash(ndbResponse.getResponseHash());
 			ndbResponseInfoWrapper.getNdbResponseInfo().setDate(dateInserted);
 			ndbResponseInfoWrapper.getNdbResponseInfo().setEnvironment(environment);
+			log.info("ndbResponseInfoWrapper: " + ndbResponseInfoWrapper.toString());
 
 			bpaRepository.saveDashboardPushRecord(ndbResponseInfoWrapper);
 //`
