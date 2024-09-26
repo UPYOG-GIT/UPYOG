@@ -511,17 +511,18 @@ public class NationalDashboardService {
 		String environment = apiUrl.contains("upyog.niua.org") ? "Production" : "Testing";
 //		System.out.println("requestEntity: " + requestEntity);
 		try {
-			ResponseEntity<NdbResponse> responseEntity = this.restTemplate.exchange(apiUrl, HttpMethod.POST,
-					requestEntity, NdbResponse.class);
-			NdbResponse ndbResponse = responseEntity.getBody();
-			NdbResponseInfoWrapper ndbResponseInfoWrapper = new NdbResponseInfoWrapper();
+			ResponseEntity<NdbResponseInfoWrapper> responseEntity = this.restTemplate.exchange(apiUrl, HttpMethod.POST,
+					requestEntity, NdbResponseInfoWrapper.class);
+//			NdbResponse ndbResponse = responseEntity.getBody();
+//			NdbResponseInfoWrapper ndbResponseInfoWrapper = new NdbResponseInfoWrapper();
+			NdbResponseInfoWrapper ndbResponseInfoWrapper = responseEntity.getBody();
 
 //
 			log.info("responseEntity: " + responseEntity.toString());
-			log.info("ndbResponse: " + ndbResponse.toString());
+//			log.info("ndbResponse: " + ndbResponse.toString());
 			log.info("----Data Pushed Successfully----");
 
-			ndbResponseInfoWrapper.getNdbResponseInfo().setResponseHash(ndbResponse.getResponseHash());
+//			ndbResponseInfoWrapper.getNdbResponseInfo().setResponseHash(ndbResponse.getResponseHash());
 			ndbResponseInfoWrapper.getNdbResponseInfo().setDate(dateInserted);
 			ndbResponseInfoWrapper.getNdbResponseInfo().setEnvironment(environment);
 			log.info("ndbResponseInfoWrapper: " + ndbResponseInfoWrapper.toString());
