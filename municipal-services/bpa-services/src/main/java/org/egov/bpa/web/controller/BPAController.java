@@ -577,16 +577,16 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/pushData")
-	public ResponseEntity<NdbResponseInfoWrapper> pushDataToApi() {
+	public ResponseEntity<NdbResponseInfoWrapper> pushDataToApi(String apiUrl, String date) {
 
 //		for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
 //			String formattedDate1 = date.format(dateFormatter);
 
-			// System.out.println("request----" + requestInfoWrapper.getRequestInfo());
-			String apiUrl = "https://upyog-test.niua.org/national-dashboard/metric/_ingest";
+		// System.out.println("request----" + requestInfoWrapper.getRequestInfo());
+//			String apiUrl = "https://upyog-test.niua.org/national-dashboard/metric/_ingest";
 //	    try {
-			NdbResponseInfoWrapper response = nationalDashboardService.pushDataToApi(apiUrl);
-			return new ResponseEntity<>(response, HttpStatus.OK);
+		NdbResponseInfoWrapper response = nationalDashboardService.pushDataToApiManually(apiUrl, date);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 //	    } catch (Exception e) {
 //	       
 //	        e.printStackTrace();

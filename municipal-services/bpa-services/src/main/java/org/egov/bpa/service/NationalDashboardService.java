@@ -1,6 +1,7 @@
 package org.egov.bpa.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.bpa.config.NationalDashboardConfig;
+import org.egov.bpa.repository.BPARepository;
 import org.egov.bpa.repository.NationalDashboardRepository;
 import org.egov.bpa.web.model.Data;
 import org.egov.bpa.web.model.IngestRequest;
@@ -23,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -40,6 +41,9 @@ public class NationalDashboardService {
 
 	@Autowired
 	NationalDashboardRepository repository;
+
+	@Autowired
+	BPARepository bpaRepository;
 
 	IngestRequest ingestRequest = new IngestRequest();
 
@@ -318,10 +322,10 @@ public class NationalDashboardService {
 //		String formattedDate1 = "";
 		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 //		LocalDate specificDate = LocalDate.of(2024, 9, 14);
-		
+
 		LocalDate currentDate = LocalDate.now();
-		//LocalDate previousDate = currentDate.minusDays(1);
-		
+		// LocalDate previousDate = currentDate.minusDays(1);
+
 //		String formattedDate1 = specificDate.format(dateFormatter);
 		String formattedDate1 = currentDate.format(dateFormatter);
 		IngestRequest body = getIngestData(formattedDate1);
@@ -386,6 +390,7 @@ public class NationalDashboardService {
 		HttpEntity<IngestRequest> requestEntity = new HttpEntity<IngestRequest>(body, headers);
 
 		Map<String, Object> returnResponse = new HashMap<>();
+		String environment = apiUrl.contains("upyog.niua.org") ? "Production" : "Testing";
 //		System.out.println("requestEntity: " + requestEntity);
 		try {
 			ResponseEntity<NdbResponseInfoWrapper> responseEntity = this.restTemplate.exchange(apiUrl, HttpMethod.POST,
@@ -398,6 +403,9 @@ public class NationalDashboardService {
 //			System.out.println("HTTP Status Code: " + statusCodeValue);
 //			System.out.println("responseEntity: " + responseEntity.toString());
 //
+			ndbResponseInfoWrapper.setDate(currentDate);
+			ndbResponseInfoWrapper.setEnvironment(environment);
+
 			System.out.println("----Data Pushed Successfully----");
 			log.info("ndbResponseInfoWrapper: " + ndbResponseInfoWrapper.toString());
 //
@@ -423,6 +431,9 @@ public class NationalDashboardService {
 			errorDetailList.add(ndbErrorMap);
 			ndbResponseInfoWrapper.setErrors(errorDetailList);
 
+			ndbResponseInfoWrapper.setDate(currentDate);
+			ndbResponseInfoWrapper.setEnvironment(environment);
+
 			returnResponse.put("ResponseInfo", errorMap);
 			return ndbResponseInfoWrapper;
 
@@ -447,6 +458,99 @@ public class NationalDashboardService {
 		 * log.info("----Internal server error---- or Duplicate data found"); } return
 		 * responseBody;
 		 */
+
+	}
+
+	public NdbResponseInfoWrapper pushDataToApiManually(String apiUrl, String date) {
+//		String formattedDate1 = "";
+		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//		LocalDate specificDate = LocalDate.of(2024, 9, 14);
+
+		LocalDate currentDate = LocalDate.now();
+		// LocalDate previousDate = currentDate.minusDays(1);
+
+//		String formattedDate1 = specificDate.format(dateFormatter);
+//		String formattedDate1 = currentDate.format(dateFormatter);
+		String formattedDate1 = date;
+		IngestRequest body = getIngestData(formattedDate1);
+		// log.info("bodyy---====" + body);
+
+		ResponseInfoWrapper responseInfoWrapper = getAuthToken(nationalDashboardConfig.getUsername(),
+				nationalDashboardConfig.getPassword(), nationalDashboardConfig.getGrantType(),
+				nationalDashboardConfig.getScope(), nationalDashboardConfig.getTenantId(),
+				nationalDashboardConfig.getType());
+//		Map<String, Object> requestData = new HashMap<>();
+		RequestInfo requestInfo = new RequestInfo();
+
+		// log.info("requestInfoData" + requestInfoData);
+
+//		Map<String, Object> userRequest = (Map<String, Object>) requestInfoData.get("UserRequest");
+		User userRequest = responseInfoWrapper.getUserRequest();
+
+		requestInfo.setAuthToken(responseInfoWrapper.getAccessToken());
+		requestInfo.setApiId("asset-services");
+		requestInfo.setUserInfo(userRequest);
+
+		ingestRequest.setRequestInfo(requestInfo);
+		// ingestRequest.setRequestInfo((RequestInfo) requestInfoData);
+//		log.info("rolesss" + roles.toString());
+//		log.info("getRoles--" + userInfo.getRoles().toString());
+
+		log.info("requesttInfoo ______ " + ingestRequest.getRequestInfo().toString());
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		HttpEntity<IngestRequest> requestEntity = new HttpEntity<IngestRequest>(body, headers);
+
+		Map<String, Object> returnResponse = new HashMap<>();
+
+		LocalDate dateInserted = LocalDate.parse(date);
+		String environment = apiUrl.contains("upyog.niua.org") ? "Production" : "Testing";
+//		System.out.println("requestEntity: " + requestEntity);
+		try {
+			ResponseEntity<NdbResponseInfoWrapper> responseEntity = this.restTemplate.exchange(apiUrl, HttpMethod.POST,
+					requestEntity, NdbResponseInfoWrapper.class);
+			NdbResponseInfoWrapper ndbResponseInfoWrapper = responseEntity.getBody();
+
+//
+			System.out.println("----Data Pushed Successfully----");
+			log.info("ndbResponseInfoWrapper: " + ndbResponseInfoWrapper.toString());
+			ndbResponseInfoWrapper.setDate(dateInserted);
+			ndbResponseInfoWrapper.setEnvironment(environment);
+
+			bpaRepository.saveDashboardPushRecord(ndbResponseInfoWrapper);
+//`
+//			returnResponse.put("ResponseInfo", ndbResponseInfoWrapper.getResponseHash());
+			return ndbResponseInfoWrapper;
+		} catch (Exception ex) {
+//			System.out.println("Exception : " + ex);
+			log.error("ex.getMessage() : " + ex.getMessage());
+			Map<String, String> errorMap = new HashMap<>();
+			String jsonPart = ex.getMessage().split(" : ")[1].replace("\"", "");
+			JSONObject jsonObject = new JSONObject(jsonPart);
+			JSONObject error = jsonObject.getJSONArray("Errors").getJSONObject(0);
+			NdbResponseInfoWrapper ndbResponseInfoWrapper = new NdbResponseInfoWrapper();
+			NdbErrorMap ndbErrorMap = new NdbErrorMap();
+//			System.out.println("error: " + error);
+			errorMap.put("code", error.getString("code"));
+			errorMap.put("message", error.getString("message"));
+			errorMap.put("description", error.optString("description", "No description provided"));
+
+			ndbErrorMap.setCode(error.getString("code"));
+			ndbErrorMap.setMessage(error.getString("message"));
+			List<NdbErrorMap> errorDetailList = new ArrayList<>();
+			errorDetailList.add(ndbErrorMap);
+			ndbResponseInfoWrapper.setErrors(errorDetailList);
+
+			ndbResponseInfoWrapper.setDate(dateInserted);
+			ndbResponseInfoWrapper.setEnvironment(environment);
+
+			returnResponse.put("ResponseInfo", errorMap);
+			bpaRepository.saveDashboardPushRecord(ndbResponseInfoWrapper);
+			return ndbResponseInfoWrapper;
+
+		}
 
 	}
 
@@ -483,9 +587,11 @@ public class NationalDashboardService {
 	public void scheduleDataPush() {
 
 		log.info("Scheduled task started...");
-		pushDataToApi(nationalDashboardConfig.getIngestApi());
+		NdbResponseInfoWrapper ndbResponseInfoWrapper = pushDataToApi(nationalDashboardConfig.getIngestApi());
+		bpaRepository.saveDashboardPushRecord(ndbResponseInfoWrapper);
 		log.info("Scheduled task completed.");
 	}
+
 //		    
 
 }
