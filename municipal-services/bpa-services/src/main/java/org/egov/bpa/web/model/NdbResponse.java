@@ -25,9 +25,6 @@ public class NdbResponse {
 	@JsonProperty("ResponseInfo")
 	private ResponseInfo responseInfo;
 
-	@JsonProperty("NdbResponseInfo")
-	NdbResponseInfo ndbResponseInfo;
-
 	@JsonProperty("responseHash")
 	private List<Integer> responseHash;
 
