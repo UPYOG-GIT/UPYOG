@@ -16,6 +16,7 @@ import org.egov.bpa.web.model.Data;
 import org.egov.bpa.web.model.IngestRequest;
 import org.egov.bpa.web.model.NdbErrorMap;
 import org.egov.bpa.web.model.NdbResponse;
+import org.egov.bpa.web.model.NdbResponseInfo;
 import org.egov.bpa.web.model.NdbResponseInfoWrapper;
 import org.egov.bpa.web.model.ResponseInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
@@ -511,20 +512,27 @@ public class NationalDashboardService {
 		String environment = apiUrl.contains("upyog.niua.org") ? "Production" : "Testing";
 //		System.out.println("requestEntity: " + requestEntity);
 		try {
-			ResponseEntity<NdbResponseInfoWrapper> responseEntity = this.restTemplate.exchange(apiUrl, HttpMethod.POST,
-					requestEntity, NdbResponseInfoWrapper.class);
-//			NdbResponse ndbResponse = responseEntity.getBody();
-//			NdbResponseInfoWrapper ndbResponseInfoWrapper = new NdbResponseInfoWrapper();
-			NdbResponseInfoWrapper ndbResponseInfoWrapper = responseEntity.getBody();
+			ResponseEntity<NdbResponse> responseEntity = this.restTemplate.exchange(apiUrl, HttpMethod.POST,
+					requestEntity, NdbResponse.class);
+			NdbResponse ndbResponse = responseEntity.getBody();
+			NdbResponseInfoWrapper ndbResponseInfoWrapper = new NdbResponseInfoWrapper();
+
+			NdbResponseInfo ndbResponseInfo = new NdbResponseInfo();
+
+			ndbResponseInfo.setResponseHash(ndbResponse.getResponseHash());
+			ndbResponseInfo.setDate(dateInserted);
+			ndbResponseInfo.setEnvironment(environment);
 
 //
 			log.info("responseEntity: " + responseEntity.toString());
-//			log.info("ndbResponse: " + ndbResponse.toString());
+			log.info("ndbResponse: " + ndbResponse.toString());
 			log.info("----Data Pushed Successfully----");
 
 //			ndbResponseInfoWrapper.getNdbResponseInfo().setResponseHash(ndbResponse.getResponseHash());
-			ndbResponseInfoWrapper.getNdbResponseInfo().setDate(dateInserted);
-			ndbResponseInfoWrapper.getNdbResponseInfo().setEnvironment(environment);
+//			ndbResponseInfoWrapper.getNdbResponseInfo().setDate(dateInserted);
+//			ndbResponseInfoWrapper.getNdbResponseInfo().setEnvironment(environment);
+			ndbResponseInfoWrapper.setNdbResponseInfo(ndbResponseInfo);
+			ndbResponseInfoWrapper.setResponseInfo(ndbResponse.getResponseInfo());
 			log.info("ndbResponseInfoWrapper: " + ndbResponseInfoWrapper.toString());
 
 			bpaRepository.saveDashboardPushRecord(ndbResponseInfoWrapper);
@@ -539,6 +547,9 @@ public class NationalDashboardService {
 			JSONObject jsonObject = new JSONObject(jsonPart);
 			JSONObject error = jsonObject.getJSONArray("Errors").getJSONObject(0);
 			NdbResponseInfoWrapper ndbResponseInfoWrapper = new NdbResponseInfoWrapper();
+
+			NdbResponseInfo ndbResponseInfo = new NdbResponseInfo();
+			
 			NdbErrorMap ndbErrorMap = new NdbErrorMap();
 //			System.out.println("error: " + error);
 			errorMap.put("code", error.getString("code"));
@@ -549,10 +560,11 @@ public class NationalDashboardService {
 			ndbErrorMap.setMessage(error.getString("message"));
 			List<NdbErrorMap> errorDetailList = new ArrayList<>();
 			errorDetailList.add(ndbErrorMap);
-			ndbResponseInfoWrapper.getNdbResponseInfo().setErrors(errorDetailList);
+			ndbResponseInfo.setErrors(errorDetailList);
 
-			ndbResponseInfoWrapper.getNdbResponseInfo().setDate(dateInserted);
-			ndbResponseInfoWrapper.getNdbResponseInfo().setEnvironment(environment);
+			ndbResponseInfo.setDate(dateInserted);
+			ndbResponseInfo.setEnvironment(environment);
+			ndbResponseInfoWrapper.setNdbResponseInfo(ndbResponseInfo);
 
 			returnResponse.put("ResponseInfo", errorMap);
 			bpaRepository.saveDashboardPushRecord(ndbResponseInfoWrapper);
