@@ -1,4 +1,4 @@
-package org.egov.ndb.web.model;
+package org.egov.bpa.web.model;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,15 +26,12 @@ public class NdbResponseInfoWrapper {
 	@JsonProperty("ResponseInfo")
 	private ResponseInfo responseInfo;
 	
-	@JsonProperty("NDB")
-	private NdbResponseInfo ndbResponseInfo;
+	@JsonProperty("responseHash")
+	private List<Integer> responseHash;
 	
-//	@JsonProperty("responseHash")
-//	private List<Integer> responseHash;
-//	
-//	@JsonProperty("Errors")
-//	private List<NdbErrorMap> errors;
-//	
-//	@JsonProperty("PushedDate")
-//	private LocalDateTime pushedDate;
+	@JsonProperty("Errors")
+	private List<NdbErrorMap> errors;
+	
+	@JsonProperty("PushedDate")
+	private LocalDateTime pushedDate;
 }

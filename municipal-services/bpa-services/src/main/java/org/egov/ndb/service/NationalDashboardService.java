@@ -12,13 +12,13 @@ import java.util.Map;
 
 import org.egov.bpa.web.model.Data;
 import org.egov.bpa.web.model.IngestRequest;
+import org.egov.bpa.web.model.NdbErrorMap;
+import org.egov.bpa.web.model.NdbResponseInfoWrapper;
 import org.egov.bpa.web.model.ResponseInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.ndb.config.NationalDashboardConfig;
 import org.egov.ndb.repository.NationalDashboardRepository;
-import org.egov.ndb.web.model.NdbErrorMap;
-import org.egov.ndb.web.model.NdbResponseInfoWrapper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -46,7 +46,7 @@ public class NationalDashboardService {
 
 	@Autowired
 	private NationalDashboardConfig nationalDashboardConfig;
-
+	
 	@Autowired
 	private NationalDashboardRepository nationalDashboardRepository;
 
@@ -397,7 +397,7 @@ public class NationalDashboardService {
 					requestEntity, NdbResponseInfoWrapper.class);
 			NdbResponseInfoWrapper ndbResponseInfoWrapper = responseEntity.getBody();
 
-			ndbResponseInfoWrapper.getNdbResponseInfo().setPushedDate(date);
+			ndbResponseInfoWrapper.setPushedDate(date);
 
 //			HttpStatus statusCode = (HttpStatus) responseEntity.getStatusCode();
 //			int statusCodeValue = statusCode.value();
@@ -428,9 +428,9 @@ public class NationalDashboardService {
 			ndbErrorMap.setMessage(error.getString("message"));
 			List<NdbErrorMap> errorDetailList = new ArrayList<>();
 			errorDetailList.add(ndbErrorMap);
-			ndbResponseInfoWrapper.getNdbResponseInfo().setErrors(errorDetailList);
+			ndbResponseInfoWrapper.setErrors(errorDetailList);
 
-			ndbResponseInfoWrapper.getNdbResponseInfo().setPushedDate(date);
+			ndbResponseInfoWrapper.setPushedDate(date);
 
 			returnResponse.put("ResponseInfo", errorMap);
 			return ndbResponseInfoWrapper;
