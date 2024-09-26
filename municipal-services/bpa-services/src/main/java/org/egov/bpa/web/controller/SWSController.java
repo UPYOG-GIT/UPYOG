@@ -13,6 +13,7 @@ import javax.validation.Valid;
 
 import org.egov.bpa.config.BPAConfiguration;
 import org.egov.bpa.service.BPAService;
+import org.egov.bpa.service.NationalDashboardService;
 import org.egov.bpa.service.SwsService;
 import org.egov.bpa.util.BPAConstants;
 import org.egov.bpa.util.BPAErrorConstants;
@@ -38,7 +39,6 @@ import org.egov.bpa.web.model.ProposalTypeRequestWrapper;
 import org.egov.bpa.web.model.RequestInfoWrapper;
 import org.egov.bpa.web.model.SlabMasterRequest;
 import org.egov.bpa.web.model.SlabMasterRequestWrapper;
-import org.egov.ndb.service.NationalDashboardService;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;

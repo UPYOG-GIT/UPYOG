@@ -1,5 +1,8 @@
 package org.egov.bpa.web.model;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.egov.common.contract.response.ResponseInfo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,19 +22,18 @@ import lombok.ToString;
 @ToString
 public class NdbResponseInfoWrapper {
 
-	
 	@JsonProperty("ResponseInfo")
 	private ResponseInfo responseInfo;
-	
-	@JsonProperty("NDB")
-	private NdbResponseInfo ndbResponseInfo;
-	
-//	@JsonProperty("responseHash")
-//	private List<Integer> responseHash;
-//	
-//	@JsonProperty("Errors")
-//	private List<NdbErrorMap> errors;
-//	
-//	@JsonProperty("PushedDate")
-//	private LocalDateTime pushedDate;
+
+	@JsonProperty("responseHash")
+	private List<Integer> responseHash;
+
+	@JsonProperty("Errors")
+	private List<NdbErrorMap> errors;
+
+	@JsonProperty("Date")
+	private LocalDate date;
+
+	@JsonProperty("environment")
+	String environment;
 }

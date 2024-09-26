@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -585,7 +586,6 @@ public class BPAController {
 //			String apiUrl = "https://upyog-test.niua.org/national-dashboard/metric/_ingest";
 //	    try {
 		NdbResponseInfoWrapper response = nationalDashboardService.pushDataToApiManually(apiUrl, date);
-		nationalDashboardService.savePushDataRecord(response);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 //	    } catch (Exception e) {
 //	       

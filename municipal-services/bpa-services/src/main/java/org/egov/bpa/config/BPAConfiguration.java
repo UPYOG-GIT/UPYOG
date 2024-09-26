@@ -373,6 +373,10 @@ public class BPAConfiguration {
 	private String ingestApi;
 	
 	
+	@Value("${persister.save.dashboardpushrecord.topic}")
+	private String pushRecordTopic;
+	
+	
 
 	
 	
