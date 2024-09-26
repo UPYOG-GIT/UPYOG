@@ -20,23 +20,17 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @ToString
-public class NdbResponseInfoWrapper {
+public class NdbResponseInfo {
 
-	@JsonProperty("ResponseInfo")
-	private ResponseInfo responseInfo;
+	@JsonProperty("responseHash")
+	private List<Integer> responseHash;
 
-	@JsonProperty("NdbResponseInfo")
-	NdbResponseInfo ndbResponseInfo;
+	@JsonProperty("Errors")
+	private List<NdbErrorMap> errors;
 
-//	@JsonProperty("responseHash")
-//	private List<Integer> responseHash;
-//
-//	@JsonProperty("Errors")
-//	private List<NdbErrorMap> errors;
-//
-//	@JsonProperty("Date")
-//	private LocalDate date;
-//
-//	@JsonProperty("environment")
-//	String environment;
+	@JsonProperty("Date")
+	private LocalDate date;
+
+	@JsonProperty("environment")
+	String environment;
 }
