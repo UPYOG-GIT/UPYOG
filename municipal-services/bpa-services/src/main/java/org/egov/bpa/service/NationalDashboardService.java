@@ -1,7 +1,6 @@
 package org.egov.bpa.service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +15,7 @@ import org.egov.bpa.repository.NationalDashboardRepository;
 import org.egov.bpa.web.model.Data;
 import org.egov.bpa.web.model.IngestRequest;
 import org.egov.bpa.web.model.NdbErrorMap;
+import org.egov.bpa.web.model.NdbResponse;
 import org.egov.bpa.web.model.NdbResponseInfoWrapper;
 import org.egov.bpa.web.model.ResponseInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
@@ -393,9 +393,10 @@ public class NationalDashboardService {
 		String environment = apiUrl.contains("upyog.niua.org") ? "Production" : "Testing";
 //		System.out.println("requestEntity: " + requestEntity);
 		try {
-			ResponseEntity<NdbResponseInfoWrapper> responseEntity = this.restTemplate.exchange(apiUrl, HttpMethod.POST,
-					requestEntity, NdbResponseInfoWrapper.class);
-			NdbResponseInfoWrapper ndbResponseInfoWrapper = responseEntity.getBody();
+			ResponseEntity<NdbResponse> responseEntity = this.restTemplate.exchange(apiUrl, HttpMethod.POST,
+					requestEntity, NdbResponse.class);
+			NdbResponse ndbResponse = responseEntity.getBody();
+			NdbResponseInfoWrapper ndbResponseInfoWrapper = new NdbResponseInfoWrapper();
 
 //			HttpStatus statusCode = (HttpStatus) responseEntity.getStatusCode();
 //			int statusCodeValue = statusCode.value();
@@ -403,8 +404,9 @@ public class NationalDashboardService {
 //			System.out.println("HTTP Status Code: " + statusCodeValue);
 //			System.out.println("responseEntity: " + responseEntity.toString());
 //
-			ndbResponseInfoWrapper.setDate(currentDate);
-			ndbResponseInfoWrapper.setEnvironment(environment);
+			ndbResponseInfoWrapper.getNdbResponseInfo().setDate(currentDate);
+			ndbResponseInfoWrapper.getNdbResponseInfo().setResponseHash(ndbResponse.getResponseHash());
+			ndbResponseInfoWrapper.getNdbResponseInfo().setEnvironment(environment);
 
 			System.out.println("----Data Pushed Successfully----");
 			log.info("ndbResponseInfoWrapper: " + ndbResponseInfoWrapper.toString());
@@ -429,10 +431,10 @@ public class NationalDashboardService {
 			ndbErrorMap.setMessage(error.getString("message"));
 			List<NdbErrorMap> errorDetailList = new ArrayList<>();
 			errorDetailList.add(ndbErrorMap);
-			ndbResponseInfoWrapper.setErrors(errorDetailList);
+			ndbResponseInfoWrapper.getNdbResponseInfo().setErrors(errorDetailList);
 
-			ndbResponseInfoWrapper.setDate(currentDate);
-			ndbResponseInfoWrapper.setEnvironment(environment);
+			ndbResponseInfoWrapper.getNdbResponseInfo().setDate(currentDate);
+			ndbResponseInfoWrapper.getNdbResponseInfo().setEnvironment(environment);
 
 			returnResponse.put("ResponseInfo", errorMap);
 			return ndbResponseInfoWrapper;
@@ -516,8 +518,8 @@ public class NationalDashboardService {
 //
 			System.out.println("----Data Pushed Successfully----");
 			log.info("ndbResponseInfoWrapper: " + ndbResponseInfoWrapper.toString());
-			ndbResponseInfoWrapper.setDate(dateInserted);
-			ndbResponseInfoWrapper.setEnvironment(environment);
+			ndbResponseInfoWrapper.getNdbResponseInfo().setDate(dateInserted);
+			ndbResponseInfoWrapper.getNdbResponseInfo().setEnvironment(environment);
 
 			bpaRepository.saveDashboardPushRecord(ndbResponseInfoWrapper);
 //`
@@ -541,10 +543,10 @@ public class NationalDashboardService {
 			ndbErrorMap.setMessage(error.getString("message"));
 			List<NdbErrorMap> errorDetailList = new ArrayList<>();
 			errorDetailList.add(ndbErrorMap);
-			ndbResponseInfoWrapper.setErrors(errorDetailList);
+			ndbResponseInfoWrapper.getNdbResponseInfo().setErrors(errorDetailList);
 
-			ndbResponseInfoWrapper.setDate(dateInserted);
-			ndbResponseInfoWrapper.setEnvironment(environment);
+			ndbResponseInfoWrapper.getNdbResponseInfo().setDate(dateInserted);
+			ndbResponseInfoWrapper.getNdbResponseInfo().setEnvironment(environment);
 
 			returnResponse.put("ResponseInfo", errorMap);
 			bpaRepository.saveDashboardPushRecord(ndbResponseInfoWrapper);
