@@ -5,7 +5,6 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +27,7 @@ import org.egov.bpa.web.model.BPASearchCriteria;
 import org.egov.bpa.web.model.BSCategoryRequest;
 import org.egov.bpa.web.model.BSCategoryRequestWrapper;
 import org.egov.bpa.web.model.IngestRequest;
-import org.egov.bpa.web.model.NdbResponseInfoWrapper;
+import org.egov.bpa.web.model.NdbResponse;
 import org.egov.bpa.web.model.PayTpRateRequest;
 import org.egov.bpa.web.model.PayTpRateRequestWrapper;
 import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
@@ -577,7 +576,7 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/pushData")
-	public ResponseEntity<NdbResponseInfoWrapper> pushDataToApi(String apiUrl, String date) {
+	public ResponseEntity<NdbResponse> pushDataToApi(String apiUrl, String date) {
 
 //		for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
 //			String formattedDate1 = date.format(dateFormatter);
@@ -585,7 +584,7 @@ public class BPAController {
 		// System.out.println("request----" + requestInfoWrapper.getRequestInfo());
 //			String apiUrl = "https://upyog-test.niua.org/national-dashboard/metric/_ingest";
 //	    try {
-		NdbResponseInfoWrapper response = nationalDashboardService.pushDataToApiManually(apiUrl, date);
+		NdbResponse response = nationalDashboardService.pushDataToApiManually(apiUrl, date);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 //	    } catch (Exception e) {
 //	       
