@@ -30,16 +30,19 @@ public class NdbResponse {
 
 	@JsonProperty("Errors")
 	private List<NdbErrorMap> errors;
-	
+
 	@JsonProperty("errorMessage")
 	private String errorMessage;
-	
+
 	@JsonProperty("Date")
 	private LocalDate date;
 
 	@JsonProperty("environment")
 	String environment;
-	
+
 	@JsonProperty("messageDescription")
 	String messageDescription;
+
+	@JsonProperty("noOfRecordsPushed")
+	private int noOfRecordsPushed = 0;
 }

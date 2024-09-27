@@ -14,14 +14,10 @@ import org.egov.bpa.repository.BPARepository;
 import org.egov.bpa.repository.NationalDashboardRepository;
 import org.egov.bpa.web.model.Data;
 import org.egov.bpa.web.model.IngestRequest;
-import org.egov.bpa.web.model.NdbErrorMap;
 import org.egov.bpa.web.model.NdbResponse;
-import org.egov.bpa.web.model.NdbResponseInfo;
-import org.egov.bpa.web.model.NdbResponseInfoWrapper;
 import org.egov.bpa.web.model.ResponseInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -319,7 +315,7 @@ public class NationalDashboardService {
 		return bucket;
 	}
 
-	public NdbResponseInfoWrapper pushDataToApi(String apiUrl) {
+	public NdbResponse pushDataToApi(String apiUrl) {
 //		String formattedDate1 = "";
 		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 //		LocalDate specificDate = LocalDate.of(2024, 9, 14);
@@ -330,137 +326,108 @@ public class NationalDashboardService {
 //		String formattedDate1 = specificDate.format(dateFormatter);
 		String formattedDate1 = currentDate.format(dateFormatter);
 		IngestRequest body = getIngestData(formattedDate1);
+		int noOfRecords = body.getIngestData().size();
+		log.info("body.getIngestData().size(): " + noOfRecords);
 		// log.info("bodyy---====" + body);
 
-		ResponseInfoWrapper responseInfoWrapper = getAuthToken(nationalDashboardConfig.getUsername(),
-				nationalDashboardConfig.getPassword(), nationalDashboardConfig.getGrantType(),
-				nationalDashboardConfig.getScope(), nationalDashboardConfig.getTenantId(),
-				nationalDashboardConfig.getType());
-//		Map<String, Object> requestData = new HashMap<>();
-		RequestInfo requestInfo = new RequestInfo();
+//		LocalDate recordPushedDate = LocalDate.parse(formattedDate1);
+		String environment = apiUrl.contains("upyog.niua.org") ? "Production" : "Testing";
+		if (noOfRecords > 0) {
 
-		// log.info("requestInfoData" + requestInfoData);
+			try {
+//				ResponseInfoWrapper responseInfoWrapper = getAuthToken(nationalDashboardConfig.getUsername(),
+//						nationalDashboardConfig.getPassword(), nationalDashboardConfig.getGrantType(),
+//						nationalDashboardConfig.getScope(), nationalDashboardConfig.getTenantId(),
+//						nationalDashboardConfig.getType());
+				ResponseInfoWrapper responseInfoWrapper = getAuthToken();
+//		Map<String, Object> requestData = new HashMap<>();
+				RequestInfo requestInfo = new RequestInfo();
+
+				// log.info("requestInfoData" + requestInfoData);
 
 //		Map<String, Object> userRequest = (Map<String, Object>) requestInfoData.get("UserRequest");
-		User userRequest = responseInfoWrapper.getUserRequest();
+				User userRequest = responseInfoWrapper.getUserRequest();
 
 //		String access_token = (String) requestInfoData.get("access_token");
 //		String accessToken = requestInfoData.getAccessToken();
 
-//		User userInfo = new User();
+				requestInfo.setAuthToken(responseInfoWrapper.getAccessToken());
+				requestInfo.setApiId("asset-services");
+				requestInfo.setUserInfo(userRequest);
 
-		/*
-		 * userInfo.setUserName((String) userRequest.get("userName")); //
-		 * userInfo.setId((Long) userRequest.get("id")); userInfo.setUuid((String)
-		 * userRequest.get("uuid")); userInfo.setName((String) userRequest.get("name"));
-		 * userInfo.setMobileNumber((String) userRequest.get("mobileNumber"));
-		 * userInfo.setType((String) userRequest.get("type"));
-		 * 
-		 * List<Map<String, Object>> roles = (List<Map<String, Object>>)
-		 * userRequest.get("roles");
-		 * 
-		 * List<Role> userRole = new ArrayList<>();
-		 * 
-		 * for (Map<String, Object> role : roles) {
-		 * 
-		 * log.info("inside for loop -- " + role.toString());
-		 * 
-		 * Role rolee = new Role(); rolee.setName(role.get("name").toString());
-		 * rolee.setCode(role.get("code").toString());
-		 * rolee.setTenantId(role.get("tenantId").toString());
-		 * 
-		 * userRole.add(rolee); }
-		 * 
-		 * userInfo.setRoles(userRole);
-		 */
-
-		requestInfo.setAuthToken(responseInfoWrapper.getAccessToken());
-		requestInfo.setApiId("asset-services");
-		requestInfo.setUserInfo(userRequest);
-
-		ingestRequest.setRequestInfo(requestInfo);
-		// ingestRequest.setRequestInfo((RequestInfo) requestInfoData);
+				ingestRequest.setRequestInfo(requestInfo);
+				// ingestRequest.setRequestInfo((RequestInfo) requestInfoData);
 //		log.info("rolesss" + roles.toString());
 //		log.info("getRoles--" + userInfo.getRoles().toString());
 
-		log.info("requesttInfoo ______ " + ingestRequest.getRequestInfo().toString());
+				log.info("requesttInfoo ______ " + ingestRequest.getRequestInfo().toString());
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_JSON);
 
-		HttpEntity<IngestRequest> requestEntity = new HttpEntity<IngestRequest>(body, headers);
+				HttpEntity<IngestRequest> requestEntity = new HttpEntity<IngestRequest>(body, headers);
 
-		Map<String, Object> returnResponse = new HashMap<>();
-		String environment = apiUrl.contains("upyog.niua.org") ? "Production" : "Testing";
+//				Map<String, Object> returnResponse = new HashMap<>();
+//		String environment = apiUrl.contains("upyog.niua.org") ? "Production" : "Testing";
 //		System.out.println("requestEntity: " + requestEntity);
-		try {
-			ResponseEntity<NdbResponse> responseEntity = this.restTemplate.exchange(apiUrl, HttpMethod.POST,
-					requestEntity, NdbResponse.class);
-			NdbResponse ndbResponse = responseEntity.getBody();
-			NdbResponseInfoWrapper ndbResponseInfoWrapper = new NdbResponseInfoWrapper();
 
-//			HttpStatus statusCode = (HttpStatus) responseEntity.getStatusCode();
-//			int statusCodeValue = statusCode.value();
+				ResponseEntity<NdbResponse> responseEntity = this.restTemplate.exchange(apiUrl, HttpMethod.POST,
+						requestEntity, NdbResponse.class);
+				NdbResponse ndbResponse = responseEntity.getBody();
 
-//			System.out.println("HTTP Status Code: " + statusCodeValue);
-//			System.out.println("responseEntity: " + responseEntity.toString());
-//
-			ndbResponseInfoWrapper.getNdbResponseInfo().setDate(currentDate);
-			ndbResponseInfoWrapper.getNdbResponseInfo().setResponseHash(ndbResponse.getResponseHash());
-			ndbResponseInfoWrapper.getNdbResponseInfo().setEnvironment(environment);
+				ndbResponse.setDate(currentDate);
+				ndbResponse.setEnvironment(environment);
+				ndbResponse.setNoOfRecordsPushed(noOfRecords);
+				ndbResponse.setMessageDescription("Record successfully pushed");
 
-			System.out.println("----Data Pushed Successfully----");
-			log.info("ndbResponseInfoWrapper: " + ndbResponseInfoWrapper.toString());
+				log.info("responseEntity: " + responseEntity.toString());
+				log.info("ndbResponse: " + ndbResponse.toString());
+
+				/*
+				 * NdbResponseInfoWrapper ndbResponseInfoWrapper = new NdbResponseInfoWrapper();
+				 * 
+				 * // HttpStatus statusCode = (HttpStatus) responseEntity.getStatusCode(); //
+				 * int statusCodeValue = statusCode.value();
+				 * 
+				 * // System.out.println("HTTP Status Code: " + statusCodeValue); //
+				 * System.out.println("responseEntity: " + responseEntity.toString()); //
+				 * ndbResponseInfoWrapper.getNdbResponseInfo().setDate(currentDate);
+				 * ndbResponseInfoWrapper.getNdbResponseInfo().setResponseHash(ndbResponse.
+				 * getResponseHash());
+				 * ndbResponseInfoWrapper.getNdbResponseInfo().setEnvironment(environment);
+				 * 
+				 * System.out.println("----Data Pushed Successfully----");
+				 * log.info("ndbResponseInfoWrapper: " + ndbResponseInfoWrapper.toString());
+				 */
 //
 //			returnResponse.put("ResponseInfo", ndbResponseInfoWrapper.getResponseHash());
-			return ndbResponseInfoWrapper;
-		} catch (Exception ex) {
+
+				log.info("----Data Pushed Successfully----");
+				return ndbResponse;
+			} catch (Exception ex) {
 //			System.out.println("Exception : " + ex);
-			log.error("ex.getMessage() : " + ex.getMessage());
-			Map<String, String> errorMap = new HashMap<>();
-			String jsonPart = ex.getMessage().split(" : ")[1].replace("\"", "");
-			JSONObject jsonObject = new JSONObject(jsonPart);
-			JSONObject error = jsonObject.getJSONArray("Errors").getJSONObject(0);
-			NdbResponseInfoWrapper ndbResponseInfoWrapper = new NdbResponseInfoWrapper();
-			NdbErrorMap ndbErrorMap = new NdbErrorMap();
-//			System.out.println("error: " + error);
-			errorMap.put("code", error.getString("code"));
-			errorMap.put("message", error.getString("message"));
-			errorMap.put("description", error.optString("description", "No description provided"));
+				log.error("ex.getMessage() : " + ex.getMessage());
 
-			ndbErrorMap.setCode(error.getString("code"));
-			ndbErrorMap.setMessage(error.getString("message"));
-			List<NdbErrorMap> errorDetailList = new ArrayList<>();
-			errorDetailList.add(ndbErrorMap);
-			ndbResponseInfoWrapper.getNdbResponseInfo().setErrors(errorDetailList);
+				NdbResponse ndbResponse = new NdbResponse();
+				ndbResponse.setDate(currentDate);
+				ndbResponse.setEnvironment(environment);
+//			ndbResponse.setErrorMessage(error.getString("message"));
+				ndbResponse.setErrorMessage(ex.getMessage());
+				ndbResponse.setNoOfRecordsPushed(0);
+				ndbResponse.setMessageDescription("Exception while pushing data");
+//			bpaRepository.saveDashboardPushRecord(ndbResponseInfoWrapper);
+				return ndbResponse;
+			}
+		} else {
+			NdbResponse ndbResponse = new NdbResponse();
 
-			ndbResponseInfoWrapper.getNdbResponseInfo().setDate(currentDate);
-			ndbResponseInfoWrapper.getNdbResponseInfo().setEnvironment(environment);
-
-			returnResponse.put("ResponseInfo", errorMap);
-			return ndbResponseInfoWrapper;
-
+			ndbResponse.setEnvironment(environment);
+			ndbResponse.setMessageDescription("No Record Available");
+			ndbResponse.setDate(currentDate);
+			ndbResponse.setNoOfRecordsPushed(0);
+//			repository.saveDashboardPushedRecord(ndbResponse);
+			return ndbResponse;
 		}
-
-		/*
-		 * ResponseEntity<Map> responseEntity = this.restTemplate.exchange(apiUrl,
-		 * HttpMethod.POST, requestEntity, Map.class);
-		 * 
-		 * Map<String, Object> responseBody = responseEntity.getBody();
-		 * 
-		 * HttpStatus statusCode = (HttpStatus) responseEntity.getStatusCode(); int
-		 * statusCodeValue = statusCode.value();
-		 * 
-		 * log.info("HTTP Status Code: " + statusCodeValue);
-		 * 
-		 * // You can also check the status code to take appropriate actions if
-		 * (statusCode.is2xxSuccessful()) {
-		 * log.info("----Data Pushed Successfully----"); } else if
-		 * (statusCode.is4xxClientError()) { log.info("----4xx error----"); } else if
-		 * (statusCode.is5xxServerError()) {
-		 * log.info("----Internal server error---- or Duplicate data found"); } return
-		 * responseBody;
-		 */
 
 	}
 
@@ -482,14 +449,16 @@ public class NationalDashboardService {
 
 		IngestRequest body = getIngestData(formattedDate1);
 		// log.info("bodyy---====" + body);
+		int noOfRecords = body.getIngestData().size();
 		log.info("body.getIngestData().size(): " + body.getIngestData().size());
 
-		if (body.getIngestData().size() > 0) {
+		if (noOfRecords > 0) {
 
-			ResponseInfoWrapper responseInfoWrapper = getAuthToken(nationalDashboardConfig.getUsername(),
-					nationalDashboardConfig.getPassword(), nationalDashboardConfig.getGrantType(),
-					nationalDashboardConfig.getScope(), nationalDashboardConfig.getTenantId(),
-					nationalDashboardConfig.getType());
+//			ResponseInfoWrapper responseInfoWrapper = getAuthToken(nationalDashboardConfig.getUsername(),
+//					nationalDashboardConfig.getPassword(), nationalDashboardConfig.getGrantType(),
+//					nationalDashboardConfig.getScope(), nationalDashboardConfig.getTenantId(),
+//					nationalDashboardConfig.getType());
+			ResponseInfoWrapper responseInfoWrapper = getAuthToken();
 //		Map<String, Object> requestData = new HashMap<>();
 			RequestInfo requestInfo = new RequestInfo();
 
@@ -514,7 +483,7 @@ public class NationalDashboardService {
 
 			HttpEntity<IngestRequest> requestEntity = new HttpEntity<IngestRequest>(body, headers);
 
-			Map<String, Object> returnResponse = new HashMap<>();
+//			Map<String, Object> returnResponse = new HashMap<>();
 
 //		System.out.println("requestEntity: " + requestEntity);
 			try {
@@ -523,6 +492,7 @@ public class NationalDashboardService {
 				NdbResponse ndbResponse = responseEntity.getBody();
 				ndbResponse.setDate(recordPushedDate);
 				ndbResponse.setEnvironment(environment);
+				ndbResponse.setNoOfRecordsPushed(noOfRecords);
 				ndbResponse.setMessageDescription("Record successfully pushed");
 
 				log.info("responseEntity: " + responseEntity.toString());
@@ -587,6 +557,7 @@ public class NationalDashboardService {
 				ndbResponse.setEnvironment(environment);
 //				ndbResponse.setErrorMessage(error.getString("message"));
 				ndbResponse.setErrorMessage(ex.getMessage());
+				ndbResponse.setNoOfRecordsPushed(0);
 				ndbResponse.setMessageDescription("Exception while pushing data");
 				repository.saveDashboardPushedRecord(ndbResponse);
 //				bpaRepository.saveDashboardPushRecord(ndbResponseInfoWrapper);
@@ -599,16 +570,23 @@ public class NationalDashboardService {
 			ndbResponse.setEnvironment(environment);
 			ndbResponse.setMessageDescription("No Record Available");
 			ndbResponse.setDate(recordPushedDate);
+			ndbResponse.setNoOfRecordsPushed(0);
 			repository.saveDashboardPushedRecord(ndbResponse);
 			return ndbResponse;
 		}
 
 	}
 
-	public ResponseInfoWrapper getAuthToken(String username, String password, String grantType, String scope,
-			String tenantId, String userType) {
-
+//	public ResponseInfoWrapper getAuthToken(String username, String password, String grantType, String scope,
+//			String tenantId, String userType) {
+	public ResponseInfoWrapper getAuthToken() {
 		String authApi = nationalDashboardConfig.getAuthApi();
+		String username = nationalDashboardConfig.getUsername();
+		String password = nationalDashboardConfig.getPassword();
+		String grantType = nationalDashboardConfig.getGrantType();
+		String scope = nationalDashboardConfig.getScope();
+		String tenantId = nationalDashboardConfig.getTenantId();
+		String userType = nationalDashboardConfig.getType();
 
 		MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<String, String>();
 
@@ -638,8 +616,9 @@ public class NationalDashboardService {
 	public void scheduleDataPush() {
 
 		log.info("Scheduled task started...");
-		NdbResponseInfoWrapper ndbResponseInfoWrapper = pushDataToApi(nationalDashboardConfig.getIngestApi());
-		bpaRepository.saveDashboardPushRecord(ndbResponseInfoWrapper);
+		NdbResponse ndbResponse = pushDataToApi(nationalDashboardConfig.getIngestApi());
+		repository.saveDashboardPushedRecord(ndbResponse);
+//		bpaRepository.saveDashboardPushRecord(ndbResponseInfoWrapper);
 		log.info("Scheduled task completed.");
 	}
 
