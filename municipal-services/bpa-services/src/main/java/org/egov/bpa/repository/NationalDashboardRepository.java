@@ -111,7 +111,7 @@ public class NationalDashboardRepository {
 //				+ "defunt,createdby,createddate) values (?,?,?,?,?,'" + date + "')";
 		String insertQuery = "INSERT INTO eg_ndb_push_status(response_hash, error, environment, message_description, data_pushed_date) values ('"
 				+ ndbResponse.getResponseHash() + "','" + ndbResponse.getErrorMessage() + "','"
-				+ ndbResponse.getEnvironment() + "','" + ndbResponse.getErrorMessage() + "','" + ndbResponse.getDate()
+				+ ndbResponse.getEnvironment() + "','" + ndbResponse.getMessageDescription() + "','" + ndbResponse.getDate()
 				+ "')";
 
 		int insertResult = jdbcTemplate.update(insertQuery);
