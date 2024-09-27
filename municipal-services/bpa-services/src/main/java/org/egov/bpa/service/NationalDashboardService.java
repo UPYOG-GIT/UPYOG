@@ -553,10 +553,12 @@ public class NationalDashboardService {
 			} catch (Exception ex) {
 				log.error("Exception : " + ex);
 				log.error("ex.getMessage() : " + ex.getMessage());
-				Map<String, String> errorMap = new HashMap<>();
-				String jsonPart = ex.getMessage().split(" : ")[1].replace("\"", "");
-				JSONObject jsonObject = new JSONObject(jsonPart);
-				JSONObject error = jsonObject.getJSONArray("Errors").getJSONObject(0);
+				/*
+				 * Map<String, String> errorMap = new HashMap<>(); String jsonPart =
+				 * ex.getMessage().split(" : ")[1].replace("\"", ""); JSONObject jsonObject =
+				 * new JSONObject(jsonPart); JSONObject error =
+				 * jsonObject.getJSONArray("Errors").getJSONObject(0);
+				 */
 				/*
 				 * NdbResponseInfoWrapper ndbResponseInfoWrapper = new NdbResponseInfoWrapper();
 				 * 
