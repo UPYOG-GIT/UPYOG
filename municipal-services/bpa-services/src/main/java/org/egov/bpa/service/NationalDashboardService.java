@@ -464,112 +464,141 @@ public class NationalDashboardService {
 
 	}
 
-	public NdbResponseInfoWrapper pushDataToApiManually(String apiUrl, String date) {
+	public NdbResponse pushDataToApiManually(String apiUrl, String date) {
 //		String formattedDate1 = "";
-		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 //		LocalDate specificDate = LocalDate.of(2024, 9, 14);
 
-		LocalDate currentDate = LocalDate.now();
+//		LocalDate currentDate = LocalDate.now();
 		// LocalDate previousDate = currentDate.minusDays(1);
 
 //		String formattedDate1 = specificDate.format(dateFormatter);
 //		String formattedDate1 = currentDate.format(dateFormatter);
+		log.info("Environment URL : " + apiUrl + ", Date : " + date);
 		String formattedDate1 = date;
+
+		LocalDate recordPushedDate = LocalDate.parse(date);
+		String environment = apiUrl.contains("upyog.niua.org") ? "Production" : "Testing";
+
 		IngestRequest body = getIngestData(formattedDate1);
 		// log.info("bodyy---====" + body);
+		log.info("body.getIngestData().size(): " + body.getIngestData().size());
 
-		ResponseInfoWrapper responseInfoWrapper = getAuthToken(nationalDashboardConfig.getUsername(),
-				nationalDashboardConfig.getPassword(), nationalDashboardConfig.getGrantType(),
-				nationalDashboardConfig.getScope(), nationalDashboardConfig.getTenantId(),
-				nationalDashboardConfig.getType());
+		if (body.getIngestData().size() > 0) {
+
+			ResponseInfoWrapper responseInfoWrapper = getAuthToken(nationalDashboardConfig.getUsername(),
+					nationalDashboardConfig.getPassword(), nationalDashboardConfig.getGrantType(),
+					nationalDashboardConfig.getScope(), nationalDashboardConfig.getTenantId(),
+					nationalDashboardConfig.getType());
 //		Map<String, Object> requestData = new HashMap<>();
-		RequestInfo requestInfo = new RequestInfo();
+			RequestInfo requestInfo = new RequestInfo();
 
-		// log.info("requestInfoData" + requestInfoData);
+			// log.info("requestInfoData" + requestInfoData);
 
 //		Map<String, Object> userRequest = (Map<String, Object>) requestInfoData.get("UserRequest");
-		User userRequest = responseInfoWrapper.getUserRequest();
+			User userRequest = responseInfoWrapper.getUserRequest();
 
-		requestInfo.setAuthToken(responseInfoWrapper.getAccessToken());
-		requestInfo.setApiId("asset-services");
-		requestInfo.setUserInfo(userRequest);
+			requestInfo.setAuthToken(responseInfoWrapper.getAccessToken());
+			requestInfo.setApiId("asset-services");
+			requestInfo.setUserInfo(userRequest);
 
-		ingestRequest.setRequestInfo(requestInfo);
-		// ingestRequest.setRequestInfo((RequestInfo) requestInfoData);
+			ingestRequest.setRequestInfo(requestInfo);
+			// ingestRequest.setRequestInfo((RequestInfo) requestInfoData);
 //		log.info("rolesss" + roles.toString());
 //		log.info("getRoles--" + userInfo.getRoles().toString());
 
-		log.info("requesttInfoo ______ " + ingestRequest.getRequestInfo().toString());
+			log.info("requesttInfoo ______ " + ingestRequest.getRequestInfo().toString());
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
 
-		HttpEntity<IngestRequest> requestEntity = new HttpEntity<IngestRequest>(body, headers);
+			HttpEntity<IngestRequest> requestEntity = new HttpEntity<IngestRequest>(body, headers);
 
-		Map<String, Object> returnResponse = new HashMap<>();
+			Map<String, Object> returnResponse = new HashMap<>();
 
-		LocalDate dateInserted = LocalDate.parse(date);
-		String environment = apiUrl.contains("upyog.niua.org") ? "Production" : "Testing";
 //		System.out.println("requestEntity: " + requestEntity);
-		try {
-			ResponseEntity<NdbResponse> responseEntity = this.restTemplate.exchange(apiUrl, HttpMethod.POST,
-					requestEntity, NdbResponse.class);
-			NdbResponse ndbResponse = responseEntity.getBody();
-			NdbResponseInfoWrapper ndbResponseInfoWrapper = new NdbResponseInfoWrapper();
+			try {
+				ResponseEntity<NdbResponse> responseEntity = this.restTemplate.exchange(apiUrl, HttpMethod.POST,
+						requestEntity, NdbResponse.class);
+				NdbResponse ndbResponse = responseEntity.getBody();
+				ndbResponse.setDate(recordPushedDate);
+				ndbResponse.setEnvironment(environment);
+				ndbResponse.setMessageDescription("Record successfully pushed");
 
-			NdbResponseInfo ndbResponseInfo = new NdbResponseInfo();
+				log.info("responseEntity: " + responseEntity.toString());
+				log.info("ndbResponse: " + ndbResponse.toString());
 
-			ndbResponseInfo.setResponseHash(ndbResponse.getResponseHash());
-			ndbResponseInfo.setDate(dateInserted);
-			ndbResponseInfo.setEnvironment(environment);
+				/*
+				 * NdbResponseInfoWrapper ndbResponseInfoWrapper = new NdbResponseInfoWrapper();
+				 * 
+				 * NdbResponseInfo ndbResponseInfo = new NdbResponseInfo();
+				 * 
+				 * ndbResponseInfo.setResponseHash(ndbResponse.getResponseHash());
+				 * ndbResponseInfo.setDate(recordPushedDate);
+				 * ndbResponseInfo.setEnvironment(environment);
+				 * 
+				 * 
+				 * 
+				 * ndbResponseInfoWrapper.setNdbResponseInfo(ndbResponseInfo);
+				 * ndbResponseInfoWrapper.setResponseInfo(ndbResponse.getResponseInfo());
+				 * log.info("ndbResponseInfoWrapper: " + ndbResponseInfoWrapper.toString());
+				 */
 
-//
-			log.info("responseEntity: " + responseEntity.toString());
-			log.info("ndbResponse: " + ndbResponse.toString());
-			log.info("----Data Pushed Successfully----");
-
-//			ndbResponseInfoWrapper.getNdbResponseInfo().setResponseHash(ndbResponse.getResponseHash());
-//			ndbResponseInfoWrapper.getNdbResponseInfo().setDate(dateInserted);
-//			ndbResponseInfoWrapper.getNdbResponseInfo().setEnvironment(environment);
-			ndbResponseInfoWrapper.setNdbResponseInfo(ndbResponseInfo);
-			ndbResponseInfoWrapper.setResponseInfo(ndbResponse.getResponseInfo());
-			log.info("ndbResponseInfoWrapper: " + ndbResponseInfoWrapper.toString());
-
-			bpaRepository.saveDashboardPushRecord(ndbResponseInfoWrapper);
+//				bpaRepository.saveDashboardPushRecord(ndbResponseInfoWrapper);
+				repository.saveDashboardPushedRecord(ndbResponse);
+				log.info("----Data Pushed Successfully----");
 //`
 //			returnResponse.put("ResponseInfo", ndbResponseInfoWrapper.getResponseHash());
-			return ndbResponseInfoWrapper;
-		} catch (Exception ex) {
-			log.error("Exception : " + ex);
-			log.error("ex.getMessage() : " + ex.getMessage());
-			Map<String, String> errorMap = new HashMap<>();
-			String jsonPart = ex.getMessage().split(" : ")[1].replace("\"", "");
-			JSONObject jsonObject = new JSONObject(jsonPart);
-			JSONObject error = jsonObject.getJSONArray("Errors").getJSONObject(0);
-			NdbResponseInfoWrapper ndbResponseInfoWrapper = new NdbResponseInfoWrapper();
+				return ndbResponse;
+			} catch (Exception ex) {
+				log.error("Exception : " + ex);
+				log.error("ex.getMessage() : " + ex.getMessage());
+				Map<String, String> errorMap = new HashMap<>();
+				String jsonPart = ex.getMessage().split(" : ")[1].replace("\"", "");
+				JSONObject jsonObject = new JSONObject(jsonPart);
+				JSONObject error = jsonObject.getJSONArray("Errors").getJSONObject(0);
+				/*
+				 * NdbResponseInfoWrapper ndbResponseInfoWrapper = new NdbResponseInfoWrapper();
+				 * 
+				 * NdbResponseInfo ndbResponseInfo = new NdbResponseInfo();
+				 * 
+				 * NdbErrorMap ndbErrorMap = new NdbErrorMap(); // System.out.println("error: "
+				 * + error); errorMap.put("code", error.getString("code"));
+				 * errorMap.put("message", error.getString("message"));
+				 * errorMap.put("description", error.optString("description",
+				 * "No description provided"));
+				 * 
+				 * ndbErrorMap.setCode(error.getString("code"));
+				 * ndbErrorMap.setMessage(error.getString("message")); List<NdbErrorMap>
+				 * errorDetailList = new ArrayList<>(); errorDetailList.add(ndbErrorMap);
+				 * ndbResponseInfo.setErrors(errorDetailList);
+				 * 
+				 * ndbResponseInfo.setDate(recordPushedDate);
+				 * ndbResponseInfo.setEnvironment(environment);
+				 * ndbResponseInfoWrapper.setNdbResponseInfo(ndbResponseInfo);
+				 * 
+				 * returnResponse.put("ResponseInfo", errorMap);
+				 */
 
-			NdbResponseInfo ndbResponseInfo = new NdbResponseInfo();
-			
-			NdbErrorMap ndbErrorMap = new NdbErrorMap();
-//			System.out.println("error: " + error);
-			errorMap.put("code", error.getString("code"));
-			errorMap.put("message", error.getString("message"));
-			errorMap.put("description", error.optString("description", "No description provided"));
+				NdbResponse ndbResponse = new NdbResponse();
+				ndbResponse.setDate(recordPushedDate);
+				ndbResponse.setEnvironment(environment);
+//				ndbResponse.setErrorMessage(error.getString("message"));
+				ndbResponse.setErrorMessage(ex.getMessage());
+				ndbResponse.setMessageDescription("Exception while pushing data");
+				repository.saveDashboardPushedRecord(ndbResponse);
+//				bpaRepository.saveDashboardPushRecord(ndbResponseInfoWrapper);
+				return ndbResponse;
 
-			ndbErrorMap.setCode(error.getString("code"));
-			ndbErrorMap.setMessage(error.getString("message"));
-			List<NdbErrorMap> errorDetailList = new ArrayList<>();
-			errorDetailList.add(ndbErrorMap);
-			ndbResponseInfo.setErrors(errorDetailList);
+			}
+		} else {
+			NdbResponse ndbResponse = new NdbResponse();
 
-			ndbResponseInfo.setDate(dateInserted);
-			ndbResponseInfo.setEnvironment(environment);
-			ndbResponseInfoWrapper.setNdbResponseInfo(ndbResponseInfo);
-
-			returnResponse.put("ResponseInfo", errorMap);
-			bpaRepository.saveDashboardPushRecord(ndbResponseInfoWrapper);
-			return ndbResponseInfoWrapper;
-
+			ndbResponse.setEnvironment(environment);
+			ndbResponse.setMessageDescription("No Record Available");
+			ndbResponse.setDate(recordPushedDate);
+			repository.saveDashboardPushedRecord(ndbResponse);
+			return ndbResponse;
 		}
 
 	}
