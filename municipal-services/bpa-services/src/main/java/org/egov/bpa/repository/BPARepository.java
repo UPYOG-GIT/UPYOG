@@ -581,8 +581,8 @@ public class BPARepository {
 		}
 		query1 += ") AS counts";
 
-		log.info("query1---" + query1);
-		log.info("query2---" + query2);
+//		log.info("query1---" + query1);
+//		log.info("query2---" + query2);
 
 		List<Map<String, Object>> result = new ArrayList<>();
 

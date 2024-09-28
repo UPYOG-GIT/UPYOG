@@ -219,38 +219,37 @@ public class NationalDashboardService {
 			data.setMetrics(metrics);
 
 			boolean hasNonZeroMetric = hasNonZeroMetric(metrics);
-			if (hasNonZeroMetric) {
+//			if (hasNonZeroMetric) {
 
-				log.info("countt==" + dataList.size());
-				HashMap<String, Object> extraMetrics = data.getMetrics();
+			log.info("countt==" + dataList.size());
+			HashMap<String, Object> extraMetrics = data.getMetrics();
 
-				extraMetrics.put("ocPlansScrutinized", 0);
-				extraMetrics.put("plansScrutinized", nationalData.get("initiatedcount"));
-				extraMetrics.put("ocSubmitted", 0);
-				extraMetrics.put("applicationsSubmitted", nationalData.get("initiatedcount"));
-				extraMetrics.put("ocIssued", 0);
-				extraMetrics.put("landAreaAppliedInSystemForBPA", totalPlotArea1);
-				extraMetrics.put("averageDaysToIssuePermit", avgDaysToIssueCertificate1);
-				extraMetrics.put("averageDaysToIssueOC", 0);
-				extraMetrics.put("todaysClosedApplicationsOC", 0);
-				extraMetrics.put("todaysClosedApplicationsPermit",
-						nationalData.get("todaysApprovedApplicationsWithinSLA"));
-				extraMetrics.put("todaysCompletedApplicationsWithinSLAPermit",
-						nationalData.get("todaysApprovedApplicationsWithinSLA"));
-				extraMetrics.put("slaComplianceOC", 0);
-				extraMetrics.put("slaCompliancePermit", 0);
-				extraMetrics.put("applicationsWithDeviation", 0);
-				extraMetrics.put("averageDeviation", 0);
-				extraMetrics.put("ocWithDeviation", 0);
-				extraMetrics.put("todaysApprovedApplications", nationalData.get("todaysApprovedApplicationsWithinSLA"));
-				extraMetrics.put("todaysApprovedApplicationsWithinSLA",
-						nationalData.get("todaysApprovedApplicationsWithinSLA"));
-				extraMetrics.put("avgDaysForApplicationApproval", avgDaysToIssueCertificate1);
-				extraMetrics.put("StipulatedDays", 0);
+			extraMetrics.put("ocPlansScrutinized", 0);
+			extraMetrics.put("plansScrutinized", nationalData.get("initiatedcount"));
+			extraMetrics.put("ocSubmitted", 0);
+			extraMetrics.put("applicationsSubmitted", nationalData.get("initiatedcount"));
+			extraMetrics.put("ocIssued", 0);
+			extraMetrics.put("landAreaAppliedInSystemForBPA", totalPlotArea1);
+			extraMetrics.put("averageDaysToIssuePermit", avgDaysToIssueCertificate1);
+			extraMetrics.put("averageDaysToIssueOC", 0);
+			extraMetrics.put("todaysClosedApplicationsOC", 0);
+			extraMetrics.put("todaysClosedApplicationsPermit", nationalData.get("ApprovedCount"));
+			extraMetrics.put("todaysCompletedApplicationsWithinSLAPermit",
+					nationalData.get("todaysApprovedApplicationsWithinSLA1"));
+			extraMetrics.put("slaComplianceOC", 0);
+			extraMetrics.put("slaCompliancePermit", 0);
+			extraMetrics.put("applicationsWithDeviation", 0);
+			extraMetrics.put("averageDeviation", 0);
+			extraMetrics.put("ocWithDeviation", 0);
+			extraMetrics.put("todaysApprovedApplications", nationalData.get("ApprovedCount"));
+			extraMetrics.put("todaysApprovedApplicationsWithinSLA",
+					nationalData.get("todaysApprovedApplicationsWithinSLA1"));
+			extraMetrics.put("avgDaysForApplicationApproval", avgDaysToIssueCertificate1);
+			extraMetrics.put("StipulatedDays", 0);
 
-				data.setMetrics(extraMetrics);
-				dataList.add(data);
-			}
+			data.setMetrics(extraMetrics);
+			dataList.add(data);
+//			}
 
 		}
 		// log.info("dataList--" + dataList);
