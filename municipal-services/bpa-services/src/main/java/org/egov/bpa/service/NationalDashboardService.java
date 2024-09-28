@@ -225,9 +225,9 @@ public class NationalDashboardService {
 			HashMap<String, Object> extraMetrics = data.getMetrics();
 
 			extraMetrics.put("ocPlansScrutinized", 0);
-			extraMetrics.put("plansScrutinized", nationalData.get("initiatedcount"));
+			extraMetrics.put("plansScrutinized", nationalData.get("todaysApplicationSubmitted"));
 			extraMetrics.put("ocSubmitted", 0);
-			extraMetrics.put("applicationsSubmitted", nationalData.get("initiatedcount"));
+			extraMetrics.put("applicationsSubmitted", nationalData.get("todaysApplicationSubmitted"));
 			extraMetrics.put("ocIssued", 0);
 			extraMetrics.put("landAreaAppliedInSystemForBPA", totalPlotArea1);
 			extraMetrics.put("averageDaysToIssuePermit", avgDaysToIssueCertificate1);
@@ -457,35 +457,36 @@ public class NationalDashboardService {
 //					nationalDashboardConfig.getPassword(), nationalDashboardConfig.getGrantType(),
 //					nationalDashboardConfig.getScope(), nationalDashboardConfig.getTenantId(),
 //					nationalDashboardConfig.getType());
-			ResponseInfoWrapper responseInfoWrapper = getAuthToken();
+			try {
+				ResponseInfoWrapper responseInfoWrapper = getAuthToken();
 //		Map<String, Object> requestData = new HashMap<>();
-			RequestInfo requestInfo = new RequestInfo();
+				RequestInfo requestInfo = new RequestInfo();
 
-			// log.info("requestInfoData" + requestInfoData);
+				// log.info("requestInfoData" + requestInfoData);
 
 //		Map<String, Object> userRequest = (Map<String, Object>) requestInfoData.get("UserRequest");
-			User userRequest = responseInfoWrapper.getUserRequest();
+				User userRequest = responseInfoWrapper.getUserRequest();
 
-			requestInfo.setAuthToken(responseInfoWrapper.getAccessToken());
-			requestInfo.setApiId("asset-services");
-			requestInfo.setUserInfo(userRequest);
+				requestInfo.setAuthToken(responseInfoWrapper.getAccessToken());
+				requestInfo.setApiId("asset-services");
+				requestInfo.setUserInfo(userRequest);
 
-			ingestRequest.setRequestInfo(requestInfo);
-			// ingestRequest.setRequestInfo((RequestInfo) requestInfoData);
+				ingestRequest.setRequestInfo(requestInfo);
+				// ingestRequest.setRequestInfo((RequestInfo) requestInfoData);
 //		log.info("rolesss" + roles.toString());
 //		log.info("getRoles--" + userInfo.getRoles().toString());
 
-			log.info("requesttInfoo ______ " + ingestRequest.getRequestInfo().toString());
+				log.info("requesttInfoo ______ " + ingestRequest.getRequestInfo().toString());
 
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_JSON);
 
-			HttpEntity<IngestRequest> requestEntity = new HttpEntity<IngestRequest>(body, headers);
+				HttpEntity<IngestRequest> requestEntity = new HttpEntity<IngestRequest>(body, headers);
 
 //			Map<String, Object> returnResponse = new HashMap<>();
 
 //		System.out.println("requestEntity: " + requestEntity);
-			try {
+
 				ResponseEntity<NdbResponse> responseEntity = this.restTemplate.exchange(apiUrl, HttpMethod.POST,
 						requestEntity, NdbResponse.class);
 				NdbResponse ndbResponse = responseEntity.getBody();
