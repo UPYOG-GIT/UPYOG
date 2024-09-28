@@ -41,6 +41,8 @@ public class NationalDashboardRepository {
 				"  COALESCE(SUM(DISTINCT CASE WHEN egpg.gateway_payment_mode IN ('Bharat QR', 'Unified Payments', 'Net Banking', 'Debit Card', 'Credit Card') THEN egpg.txn_amount ELSE 0 END), 0) AS online_amt,\n"
 				+ "  COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('"
 				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) AS ApprovedCount, \n"
+				+ " COUNT(DISTINCT CASE WHEN TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('" + formattedDate
+				+ "', 'YYYY-MM-DD') THEN bp.applicationno END) AS todaysApplicationSubmitted, "
 				+ "  COUNT(DISTINCT CASE WHEN bp.status = 'INITIATED' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
 				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) AS InitiatedCount, \n"
 				+ "  COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('"
@@ -72,6 +74,8 @@ public class NationalDashboardRepository {
 				+ "  COALESCE(SUM(DISTINCT CASE WHEN egpg.gateway_payment_mode IN ('Bharat QR', 'Unified Payments', 'Net Banking', 'Debit Card', 'Credit Card') THEN egpg.txn_amount ELSE 0 END), 0) > 0\n"
 				+ "  OR COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('"
 				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0\n"
+				+ " OR COUNT(DISTINCT CASE WHEN TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('" + formattedDate
+				+ "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0 "
 				+ "  OR COUNT(DISTINCT CASE WHEN bp.status = 'INITIATED' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
 				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0\n"
 				+ "  OR COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('"
