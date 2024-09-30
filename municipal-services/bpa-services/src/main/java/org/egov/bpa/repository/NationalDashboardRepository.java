@@ -62,8 +62,11 @@ public class NationalDashboardRepository {
 				+ "    WHEN wf.businessservicesla >= 0 \r\n" + "      AND bp.status = 'APPROVED' \r\n"
 				+ "      AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('" + formattedDate
 				+ "', 'YYYY-MM-DD') \r\n" + "    THEN bp.applicationno \r\n"
-				+ "  END) AS todaysApprovedApplicationsWithinSLA1 " + "FROM \n" + "  eg_land_address AS la \n"
-				+ "  LEFT JOIN logo_master AS lm ON la.tenantid = lm.tenantid \n"
+				+ "  END) AS todaysApprovedApplicationsWithinSLA1, COUNT(DISTINCT CASE\n"
+				+ "    WHEN wf.businessservicesla < 0\n"
+				+ "      AND bp.status NOT IN ('APPROVED','REJECTED', 'INITIATED', 'CITIZEN_APPROVAL_INPROCESS', 'INPROGRESS', 'PENDING_APPL_FEE', 'PENDING_SANC_FEE_PAYMENT', 'CITIZEN_ACTION_PENDING_AT_DOC_VERIF')\n"
+				+ "    THEN bp.applicationno \n" + "  END) AS pendingApplicationsBeyondTimeline " + " FROM \n"
+				+ "  eg_land_address AS la \n" + "  LEFT JOIN logo_master AS lm ON la.tenantid = lm.tenantid \n"
 				+ "  LEFT JOIN eg_bpa_buildingplan AS bp ON bp.landid = la.landinfoid\n" + "  LEFT JOIN (\n"
 				+ "    SELECT DISTINCT txn_amount, consumer_code, gateway_payment_mode\n"
 				+ "    FROM eg_pg_transactions\n" + "    WHERE txn_status='SUCCESS' \n"
@@ -89,8 +92,14 @@ public class NationalDashboardRepository {
 				+ "  OR COUNT(DISTINCT CASE WHEN la.occupancy = 'Industrial' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
 				+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) > 0\n"
 				+ "  OR COUNT(DISTINCT CASE WHEN la.occupancy = 'Mercantile / Commercial' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
-				+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) > 0\n"
-				+ "  OR COUNT(egpg.gateway_payment_mode) > 0" + " ORDER BY la.locality;\n";
+				+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) > 0\n" + " OR COUNT(DISTINCT CASE\n "
+				+ "    WHEN wf.businessservicesla >= 0 \n" + "      AND bp.status = 'APPROVED'  \n"
+				+ "      AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('" + formattedDate
+				+ "', 'YYYY-MM-DD') \n" + "    THEN bp.applicationno \n" + "  END) > 0 " + "  OR COUNT(DISTINCT CASE \n"
+				+ "    WHEN wf.businessservicesla < 0 \n"
+				+ "      AND bp.status NOT IN ('APPROVED','REJECTED', 'INITIATED', 'CITIZEN_APPROVAL_INPROCESS', 'INPROGRESS', 'PENDING_APPL_FEE', 'PENDING_SANC_FEE_PAYMENT', 'CITIZEN_ACTION_PENDING_AT_DOC_VERIF') \n"
+				+ "    THEN bp.applicationno \n" + "  END) > 0" + "  OR COUNT(egpg.gateway_payment_mode) > 0"
+				+ " ORDER BY la.locality;\n";
 
 		System.out.println("Query for date " + formattedDate + ":\n" + query1);
 
