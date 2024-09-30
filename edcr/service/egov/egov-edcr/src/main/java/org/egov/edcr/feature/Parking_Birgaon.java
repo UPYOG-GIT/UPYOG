@@ -329,7 +329,8 @@ public class Parking_Birgaon extends FeatureProcess {
 			 * occupancyTypeHelper, coverParkingArea, basementParkingArea, openParkingArea,
 			 * stiltParkingArea, lowerGroungFloorParkingArea); }
 			 */
-			if (totalBuiltupArea.compareTo(BigDecimal.valueOf((50))) <= 0) {
+			BigDecimal builupArea = block.getBuilding().getTotalBuitUpArea();
+			if (builupArea.compareTo(BigDecimal.valueOf((50))) <= 0) {
 
 			} else {
 
@@ -339,19 +340,30 @@ public class Parking_Birgaon extends FeatureProcess {
 //				basementParkingArea = basementParkingArea.add(floor.getParking().getBasementCars().stream() //
 //						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
 
-					occupancyTypeHelper = floor.getOccupancies().get(0).getTypeHelper();
-					if (occupancyTypeHelper == null || (occupancyTypeHelper != null
-							&& (occupancyTypeHelper.getType() == null || occupancyTypeHelper.getSubtype() == null))) {
-						Log.error("Occupany not defined properly");
-						pl.addError(OCCUPANCY, getLocaleMessage(OBJECTNOTDEFINED, OCCUPANCY + " not properly defined"));
-					} else {
-						BigDecimal floorBuiltUpArea = floor.getOccupancies().get(0).getBuiltUpArea();
+					/*
+					 * occupancyTypeHelper = floor.getOccupancies().get(0).getTypeHelper(); if
+					 * (occupancyTypeHelper == null || (occupancyTypeHelper != null &&
+					 * (occupancyTypeHelper.getType() == null || occupancyTypeHelper.getSubtype() ==
+					 * null))) { Log.error("Occupany not defined properly"); pl.addError(OCCUPANCY,
+					 * getLocaleMessage(OBJECTNOTDEFINED, OCCUPANCY + " not properly defined")); }
+					 * else { BigDecimal floorBuiltUpArea =
+					 * floor.getOccupancies().get(0).getBuiltUpArea();
+					 * 
+					 * requiredCarParkArea += getRequiredCarParkArea(floorBuiltUpArea,
+					 * occupancyTypeHelper, coverParkingArea, basementParkingArea, openParkingArea,
+					 * stiltParkingArea, lowerGroungFloorParkingArea); }
+					 */
 
-						requiredCarParkArea += getRequiredCarParkArea(floorBuiltUpArea, occupancyTypeHelper,
-								coverParkingArea, basementParkingArea, openParkingArea, stiltParkingArea,
-								lowerGroungFloorParkingArea);
-					}
+				}
+				if (occupancyTypeHelper == null || (occupancyTypeHelper != null
+						&& (occupancyTypeHelper.getType() == null || occupancyTypeHelper.getSubtype() == null))) {
+					Log.error("Occupany not defined properly");
+					pl.addError(OCCUPANCY, getLocaleMessage(OBJECTNOTDEFINED, OCCUPANCY + " not properly defined"));
+				} else {
 
+					requiredCarParkArea += getRequiredCarParkArea(builupArea, occupancyTypeHelper,
+							coverParkingArea, basementParkingArea, openParkingArea, stiltParkingArea,
+							lowerGroungFloorParkingArea);
 				}
 			}
 		}

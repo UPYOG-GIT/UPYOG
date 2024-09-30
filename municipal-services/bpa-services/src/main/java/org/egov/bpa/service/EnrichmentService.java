@@ -207,7 +207,7 @@ public class EnrichmentService {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void postStatusEnrichment(BPARequest bpaRequest) {
-		log.info("hyyyyyyyyyyyyyyy");
+//		log.info("hyyyyyyyyyyyyyyy");
 		BPA bpa = bpaRequest.getBPA();
 		String tenantId = bpaRequest.getBPA().getTenantId().split("\\.")[0];
 		Object mdmsData = util.mDMSCall(bpaRequest.getRequestInfo(), tenantId);
@@ -306,7 +306,7 @@ public class EnrichmentService {
 	 * @param state
 	 */
 	private void generateApprovalNo(BPARequest bpaRequest, String state) {
-		log.info("hii");
+//		log.info("hii");
 		BPA bpa = bpaRequest.getBPA();
 		if ((bpa.getBusinessService().equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE)
 				&& bpa.getStatus().equalsIgnoreCase(BPAConstants.APPROVED_STATE))

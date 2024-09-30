@@ -16,6 +16,7 @@ import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPASearchCriteria;
 import org.egov.bpa.web.model.BSCategoryRequest;
+import org.egov.bpa.web.model.NdbResponseInfoWrapper;
 import org.egov.bpa.web.model.PayTpRateRequest;
 import org.egov.bpa.web.model.PayTypeFeeDetailRequest;
 import org.egov.bpa.web.model.PayTypeRequest;
@@ -49,7 +50,7 @@ public class BPARepository {
 
 	@Autowired
 	private BPASearchDataRowMapper searchDataRowMapper;
-	
+
 	@Autowired
 	SwsService swsService;
 
@@ -63,6 +64,10 @@ public class BPARepository {
 		if (bpaRequest.getBPA().isSwsApplication()) {
 			swsService.updateStatusToSwsIntiatedApplication(bpaRequest);
 		}
+	}
+
+	public void saveDashboardPushRecord(NdbResponseInfoWrapper ndbResponseInfoWrapper) {
+		producer.push(config.getPushRecordTopic(), ndbResponseInfoWrapper);
 	}
 
 	/**
@@ -90,7 +95,7 @@ public class BPARepository {
 
 		if (bpaForStatusUpdate != null)
 			producer.push(config.getUpdateWorkflowTopic(), new BPARequest(requestInfo, bpaForStatusUpdate));
-		
+
 		if (bpa.isSwsApplication()) {
 			swsService.updateStatusToSws(bpaRequest);
 		}
@@ -576,8 +581,8 @@ public class BPARepository {
 		}
 		query1 += ") AS counts";
 
-		log.info("query1---" + query1);
-		log.info("query2---" + query2);
+//		log.info("query1---" + query1);
+//		log.info("query2---" + query2);
 
 		List<Map<String, Object>> result = new ArrayList<>();
 
