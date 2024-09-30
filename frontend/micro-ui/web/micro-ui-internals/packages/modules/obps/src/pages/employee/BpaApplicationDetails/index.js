@@ -144,9 +144,19 @@ const BpaApplicationDetail = () => {
 
   const [feeDetails, setFeeDetails] = useState([]);
 
-  useEffect(async () => {
-    const feeDetails = await Digit.OBPSAdminService.getFeeDetails(data?.applicationData?.applicationNo);
-    setFeeDetails(feeDetails);
+  // useEffect(async () => {
+  //   console.log("data"+data?.applicationData?.applicationNo);
+  //   const feeDetails = await Digit.OBPSAdminService.getFeeDetails(data?.applicationData?.applicationNo);
+  //   setFeeDetails(feeDetails);
+  // }, [data]);
+
+  useEffect(() => {
+    if (data?.applicationData?.applicationNo) {
+      (async () => {
+        const feeDetails = await Digit.OBPSAdminService.getFeeDetails(data.applicationData.applicationNo);
+        setFeeDetails(feeDetails);
+      })();
+    }
   }, [data]);
 
 
