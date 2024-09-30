@@ -42,4 +42,10 @@ public class NationalDashboardConfig {
 
 	@Value("${egov.nationalDashboard.ingestApi}")
 	private String ingestApi;
+	
+	
+	@Value("${egov.nationalDashboard.environment}")
+	private String environment;
+	
+	
 }

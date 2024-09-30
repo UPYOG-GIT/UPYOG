@@ -332,7 +332,8 @@ public class NationalDashboardService {
 		// log.info("bodyy---====" + body);
 
 //		LocalDate recordPushedDate = LocalDate.parse(formattedDate1);
-		String environment = apiUrl.contains("upyog.niua.org") ? "Production" : "Testing";
+//		String environment = apiUrl.contains("upyog.niua.org") ? "Production" : "Testing";
+		String environment = nationalDashboardConfig.getEnvironment();
 		if (noOfRecords > 0) {
 
 			try {
@@ -446,7 +447,8 @@ public class NationalDashboardService {
 		String formattedDate1 = date;
 
 		LocalDate recordPushedDate = LocalDate.parse(date);
-		String environment = apiUrl.contains("upyog.niua.org") ? "Production" : "Testing";
+//		String environment = apiUrl.contains("upyog.niua.org") ? "Production" : "Testing";
+		String environment = nationalDashboardConfig.getEnvironment();
 
 		IngestRequest body = getIngestData(formattedDate1);
 		// log.info("bodyy---====" + body);
