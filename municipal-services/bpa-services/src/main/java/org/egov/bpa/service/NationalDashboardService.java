@@ -244,8 +244,8 @@ public class NationalDashboardService {
 			extraMetrics.put("todaysApprovedApplications", nationalData.get("ApprovedCount"));
 			extraMetrics.put("todaysApprovedApplicationsWithinSLA",
 					nationalData.get("todaysApprovedApplicationsWithinSLA1"));
-			extraMetrics.put("pendingApplicationsBeyondTimeline",
-					nationalData.get("pendingApplicationsBeyondTimeline"));
+//			extraMetrics.put("pendingApplicationsBeyondTimeline",
+//					nationalData.get("pendingApplicationsBeyondTimeline"));
 			extraMetrics.put("avgDaysForApplicationApproval", avgDaysToIssueCertificate1);
 			extraMetrics.put("StipulatedDays", 0);
 
