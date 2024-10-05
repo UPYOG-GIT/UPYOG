@@ -179,10 +179,10 @@ public class NationalDashboardService {
 
 			List<Map<String, Object>> occupancyBuckets = new ArrayList<>();
 			occupancyBuckets.add(createBucket("RESIDENTIAL", nationalData.get("residential")));
-			occupancyBuckets.add(createBucket("INSTITUTIONAL", nationalData.get("institutional")));
-			occupancyBuckets.add(createBucket("COMMERCIAL", 0));
+			occupancyBuckets.add(createBucket("INSTITUTIONAL", 0));
+			occupancyBuckets.add(createBucket("COMMERCIAL", nationalData.get("Commercial")));
 			occupancyBuckets.add(createBucket("INDUSTRIAL", nationalData.get("industrial")));
-			occupancyBuckets.add(createBucket("Mixed Use", 0));
+			occupancyBuckets.add(createBucket("Mixed Use", nationalData.get("Mix")));
 
 			occupancy.put("buckets", occupancyBuckets);
 
@@ -191,14 +191,14 @@ public class NationalDashboardService {
 
 			List<Map<String, Object>> subOccupancyBuckets = new ArrayList<>();
 			subOccupancyBuckets.add(createBucket("RESIDENTIAL.INDIVIDUAL", nationalData.get("residential")));
-			subOccupancyBuckets.add(createBucket("RESIDENTIAL.SHARED", nationalData.get("residential")));
+			subOccupancyBuckets.add(createBucket("RESIDENTIAL.SHARED", 0));
 			subOccupancyBuckets.add(createBucket("INSTITUTIONAL.SHARED", 0));
 			subOccupancyBuckets.add(createBucket("INSTITUTIONAL.INDIVIDUAL", 0));
 			subOccupancyBuckets.add(createBucket("COMMERCIAL.SHARED", 0));
-			subOccupancyBuckets.add(createBucket("COMMERCIAL.INDIVIDUAL", 0));
-			subOccupancyBuckets.add(createBucket("INDUSTRIAL.INDIVIDUAL", 0));
+			subOccupancyBuckets.add(createBucket("COMMERCIAL.INDIVIDUAL", nationalData.get("Commercial")));
+			subOccupancyBuckets.add(createBucket("INDUSTRIAL.INDIVIDUAL", nationalData.get("industrial")));
 			subOccupancyBuckets.add(createBucket("INDUSTRIAL.SHARED", 0));
-			subOccupancyBuckets.add(createBucket("MIXED.INDIVIDUAL", 0));
+			subOccupancyBuckets.add(createBucket("MIXED.INDIVIDUAL", nationalData.get("Mix")));
 			subOccupancyBuckets.add(createBucket("MIXED.SHARED", 0));
 
 			subOccupancy.put("buckets", subOccupancyBuckets);
@@ -245,7 +245,7 @@ public class NationalDashboardService {
 			extraMetrics.put("todaysApprovedApplicationsWithinSLA",
 					nationalData.get("todaysApprovedApplicationsWithinSLA1"));
 //			extraMetrics.put("pendingApplicationsBeyondTimeline",
-//					nationalData.get("pendingApplicationsBeyondTimeline"));
+//					nationalData.get("	"));
 			extraMetrics.put("avgDaysForApplicationApproval", avgDaysToIssueCertificate1);
 			extraMetrics.put("StipulatedDays", 0);
 
