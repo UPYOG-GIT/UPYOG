@@ -35,74 +35,70 @@ public class NationalDashboardRepository {
 //        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
 //            String formattedDate = date.format(dateFormatter);
 		String query1 = "SELECT \n" + "  la.locality,\n" + "  la.tenantid,\n" +
-		// " SUM(CAST(la.plotarea AS numeric)) AS TotalPlotArea,\n" +
-				"  lm.ulb_name,\n" +
-//	                    "  egpg.txn_amount,\n" +
-				"  COALESCE(SUM(DISTINCT CASE WHEN egpg.gateway_payment_mode IN ('Bharat QR', 'Unified Payments', 'Net Banking', 'Debit Card', 'Credit Card') THEN egpg.txn_amount ELSE 0 END), 0) AS online_amt,\n"
-				+ "  COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('"
-				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) AS ApprovedCount, \n"
-				+ " COUNT(DISTINCT CASE WHEN TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('" + formattedDate
-				+ "', 'YYYY-MM-DD') THEN bp.applicationno END) AS todaysApplicationSubmitted, "
-				+ "  COUNT(DISTINCT CASE WHEN bp.status = 'INITIATED' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
-				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) AS InitiatedCount, \n"
-				+ "  COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('"
-				+ formattedDate
-				+ "', 'YYYY-MM-DD') THEN bp.applicationno END) AS todaysApprovedApplicationsWithinSLA, \n"
-				+ "  COUNT(DISTINCT CASE WHEN bp.businessservice = 'BPA_LOW' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
-				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) AS LOW, \n"
-				+ "  COUNT(DISTINCT CASE WHEN bp.businessservice = 'BPA' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
-				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) AS MEDHIGH, \n"
-				+ "  COUNT(DISTINCT CASE WHEN la.occupancy = 'Residential' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
-				+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) AS Residential, \n"
-				+ "  COUNT(DISTINCT CASE WHEN la.occupancy = 'Industrial' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
-				+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) AS Industrial, \n"
-				+ "  COUNT(DISTINCT CASE WHEN la.occupancy = 'Mercantile / Commercial' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
-				+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) AS Institutional, \n"
-				+ "  COUNT(DISTINCT egpg.gateway_payment_mode) AS Payment_Mode,\n" + " COUNT(DISTINCT CASE \r\n"
-				+ "    WHEN wf.businessservicesla >= 0 \r\n" + "      AND bp.status = 'APPROVED' \r\n"
-				+ "      AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('" + formattedDate
-				+ "', 'YYYY-MM-DD') \r\n" + "    THEN bp.applicationno \r\n"
-				+ "  END) AS todaysApprovedApplicationsWithinSLA1, COUNT(DISTINCT CASE\n"
-				+ "    WHEN bp.status NOT IN ('APPROVED','REJECTED', 'INITIATED', 'CITIZEN_APPROVAL_INPROCESS', 'INPROGRESS', 'PENDING_APPL_FEE', 'PENDING_SANC_FEE_PAYMENT', 'CITIZEN_ACTION_PENDING_AT_DOC_VERIF')\n"
-				+ " AND TO_TIMESTAMP(bp.createdtime / 1000)::date < TO_DATE('" + formattedDate
-				+ "', 'YYYY-MM-DD') - INTERVAL '60 days' " + "    THEN bp.applicationno \n"
-				+ "  END) AS pendingApplicationsBeyondTimeline " + " FROM \n" + "  eg_land_address AS la \n"
-				+ "  LEFT JOIN logo_master AS lm ON la.tenantid = lm.tenantid \n"
-				+ "  LEFT JOIN eg_bpa_buildingplan AS bp ON bp.landid = la.landinfoid\n" + "  LEFT JOIN (\n"
-				+ "    SELECT DISTINCT txn_amount, consumer_code, gateway_payment_mode\n"
-				+ "    FROM eg_pg_transactions\n" + "    WHERE txn_status='SUCCESS' \n"
-				+ "      AND TO_TIMESTAMP(created_time / 1000)::date = TO_DATE('" + formattedDate + "', 'YYYY-MM-DD')\n"
-				+ "  ) AS egpg ON bp.applicationno = egpg.consumer_code\n"
-				+ " LEFT JOIN eg_wf_processinstance_v2 AS wf ON wf.businessid = bp.applicationno " + " GROUP BY \n"
-				+ "  la.locality, la.tenantid, lm.ulb_name\n" + " HAVING \n"
-				+ "  COALESCE(SUM(DISTINCT CASE WHEN egpg.gateway_payment_mode IN ('Bharat QR', 'Unified Payments', 'Net Banking', 'Debit Card', 'Credit Card') THEN egpg.txn_amount ELSE 0 END), 0) > 0\n"
-				+ "  OR COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('"
-				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0\n"
-				+ " OR COUNT(DISTINCT CASE WHEN TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('" + formattedDate
-				+ "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0 "
-				+ "  OR COUNT(DISTINCT CASE WHEN bp.status = 'INITIATED' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
-				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0\n"
-				+ "  OR COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('"
-				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0\n"
-				+ "  OR COUNT(DISTINCT CASE WHEN bp.businessservice = 'BPA_LOW' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
-				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0\n"
-				+ "  OR COUNT(DISTINCT CASE WHEN bp.businessservice = 'BPA' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
-				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0\n"
-				+ "  OR COUNT(DISTINCT CASE WHEN la.occupancy = 'Residential' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
-				+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) > 0\n"
-				+ "  OR COUNT(DISTINCT CASE WHEN la.occupancy = 'Industrial' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
-				+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) > 0\n"
-				+ "  OR COUNT(DISTINCT CASE WHEN la.occupancy = 'Mercantile / Commercial' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
-				+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) > 0\n" + " OR COUNT(DISTINCT CASE\n "
-				+ "    WHEN wf.businessservicesla >= 0 \n" + "      AND bp.status = 'APPROVED'  \n"
-				+ "      AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('" + formattedDate
-				+ "', 'YYYY-MM-DD') \n" + "    THEN bp.applicationno \n" + "  END) > 0 " + "  OR COUNT(DISTINCT CASE \n"
-				+ "    WHEN bp.status NOT IN ('APPROVED','REJECTED', 'INITIATED', 'CITIZEN_APPROVAL_INPROCESS', 'INPROGRESS', 'PENDING_APPL_FEE', 'PENDING_SANC_FEE_PAYMENT', 'CITIZEN_ACTION_PENDING_AT_DOC_VERIF') \n"
-				+ "  AND TO_TIMESTAMP(bp.createdtime / 1000)::date < TO_DATE('" + formattedDate
-				+ "', 'YYYY-MM-DD') - INTERVAL '60 days'" + "    THEN bp.applicationno \n" + "  END) > 0"
-				+ "  OR COUNT(egpg.gateway_payment_mode) > 0" + " ORDER BY la.locality;\n";
+				// " SUM(CAST(la.plotarea AS numeric)) AS TotalPlotArea,\n" +
+						"  lm.ulb_name,\n"
+//						+ "  egpg.txn_amount,\n"
+						+ "  COALESCE(SUM(DISTINCT CASE WHEN egpg.gateway_payment_mode IN ('Bharat QR', 'Unified Payments', 'Net Banking', 'Debit Card', 'Credit Card') THEN egpg.txn_amount ELSE 0 END), 0) AS online_amt,\n"
+						+ "  COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('"
+						+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) AS ApprovedCount, \n"
+						+ " COUNT(DISTINCT CASE WHEN TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('" + formattedDate
+						+ "', 'YYYY-MM-DD') THEN bp.applicationno END) AS todaysApplicationSubmitted, "
+						+ "  COUNT(DISTINCT CASE WHEN bp.status = 'INITIATED' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
+						+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) AS InitiatedCount, \n"
+						+ "  COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('"
+						+ formattedDate
+						+ "', 'YYYY-MM-DD') THEN bp.applicationno END) AS todaysApprovedApplicationsWithinSLA, \n"
+						+ "  COUNT(DISTINCT CASE WHEN bp.businessservice = 'BPA_LOW' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
+						+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) AS LOW, \n"
+						+ "  COUNT(DISTINCT CASE WHEN bp.businessservice = 'BPA' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
+						+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) AS MEDHIGH, \n"
+						+ "  COUNT(DISTINCT CASE WHEN la.occupancy = 'Residential' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
+						+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) AS Residential, \n"
+						+ "  COUNT(DISTINCT CASE WHEN la.occupancy = 'Industrial' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
+						+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) AS Industrial, \n"
+						+ "  COUNT(DISTINCT CASE WHEN la.occupancy = 'Mercantile / Commercial' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
+						+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) AS Commercial, \n"
+						+ "  COUNT(DISTINCT CASE WHEN la.occupancy like ('%,%') AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
+						+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) AS Mix, \n"
+						+ "  COUNT(DISTINCT egpg.gateway_payment_mode) AS Payment_Mode,\n" + "  COUNT(DISTINCT CASE \n"
+						+ "    WHEN wf.businessservicesla >= 0 \n" + "      AND bp.status = 'APPROVED' \n"
+						+ "      AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('" + formattedDate
+						+ "', 'YYYY-MM-DD') \n" + "    THEN bp.applicationno \n"
+						+ "  END) AS todaysApprovedApplicationsWithinSLA1 " + " FROM \n" + "  eg_land_address AS la \n"
+						+ "  LEFT JOIN logo_master AS lm ON la.tenantid = lm.tenantid \n"
+						+ "  LEFT JOIN eg_bpa_buildingplan AS bp ON bp.landid = la.landinfoid\n" + "  LEFT JOIN (\n"
+						+ "    SELECT DISTINCT txn_amount, consumer_code, gateway_payment_mode\n"
+						+ "    FROM eg_pg_transactions\n" + "    WHERE txn_status='SUCCESS' \n"
+						+ "      AND TO_TIMESTAMP(created_time / 1000)::date = TO_DATE('" + formattedDate + "', 'YYYY-MM-DD')\n"
+						+ "  ) AS egpg ON bp.applicationno = egpg.consumer_code \n"
+						+ " LEFT JOIN eg_wf_processinstance_v2 AS wf ON wf.businessid = bp.applicationno " + " GROUP BY \n"
+						+ "  la.locality, la.tenantid, lm.ulb_name " + "HAVING \n"
+						+ "  COALESCE(SUM(DISTINCT CASE WHEN egpg.gateway_payment_mode IN ('Bharat QR', 'Unified Payments', 'Net Banking', 'Debit Card', 'Credit Card') THEN egpg.txn_amount ELSE 0 END), 0) > 0\n"
+						+ "  OR COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('"
+						+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0\n"
+						+ " OR COUNT(DISTINCT CASE WHEN TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('" + formattedDate
+						+ "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0 "
+						+ "  OR COUNT(DISTINCT CASE WHEN bp.status = 'INITIATED' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
+						+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0\n"
+						+ "  OR COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('"
+						+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0\n"
+						+ "  OR COUNT(DISTINCT CASE WHEN bp.businessservice = 'BPA_LOW' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
+						+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0\n"
+						+ "  OR COUNT(DISTINCT CASE WHEN bp.businessservice = 'BPA' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
+						+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0\n"
+						+ "  OR COUNT(DISTINCT CASE WHEN la.occupancy = 'Residential' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
+						+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) > 0\n"
+						+ "  OR COUNT(DISTINCT CASE WHEN la.occupancy = 'Industrial' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
+						+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) > 0\n"
+						+ "  OR COUNT(DISTINCT CASE WHEN la.occupancy = 'Mercantile / Commercial' AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
+						+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) > 0\n" + "  OR COUNT(DISTINCT CASE WHEN la.occupancy like('%,%') AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
+						+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) > 0\n" + " OR COUNT(DISTINCT CASE \n"
+						+ "    WHEN wf.businessservicesla >= 0 \n" + "      AND bp.status = 'APPROVED'  \n"
+						+ "      AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('" + formattedDate
+						+ "', 'YYYY-MM-DD') \n" + "    THEN bp.applicationno \n" + "  END) > 0 " 
+						+ "  OR COUNT(egpg.gateway_payment_mode) > 0" + " ORDER BY \n" + "  la.locality;\n";
 
-		System.out.println("Query for date " + formattedDate + ":\n" + query1);
+		log.info("Query for date " + formattedDate + ":\n" + query1);
 
 		List<Map<String, Object>> result1 = jdbcTemplate.queryForList(query1);
 		resultMap.put("result1", result1); // Store results for each date
