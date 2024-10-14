@@ -63,6 +63,7 @@ public class NationalDashboardRepository {
 						+ "  COUNT(DISTINCT egpg.gateway_payment_mode) AS Payment_Mode,\n" 
 						+ "  COALESCE(SUM(DISTINCT CASE WHEN TO_TIMESTAMP(la.createdtime / 1000)::date = TO_DATE('"
 						+ formattedDate + "', 'YYYY-MM-DD') THEN CAST(la.plotarea AS numeric) ELSE 0 END), 0) AS TotalPlotArea, "
+						+ "  COALESCE(AVG(DISTINCT CASE WHEN approvaldate IS NOT NULL and approvaldate != 0 THEN ((bp.approvaldate - bp.createdtime) / 86400000.0) ELSE 0 END), 0) AS avg_days_to_issue_certificate, "
 						+ "  COUNT(DISTINCT CASE \n"
 						+ "    WHEN wf.businessservicesla >= 0 \n" + "      AND bp.status = 'APPROVED' \n"
 						+ "      AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('" + formattedDate
@@ -107,14 +108,14 @@ public class NationalDashboardRepository {
 		resultMap.put("result1", result1); // Store results for each date
 
 		// Execute query2 and query3 and store their results in the resultMap
-		String query2 = "SELECT AVG((approvaldate - createdtime) / 86400000.0) AS avg_days_to_issue_certificate FROM eg_bpa_buildingplan WHERE approvaldate IS NOT NULL and approvaldate != 0;";
-		Double avgDaysToIssueCertificate = jdbcTemplate.queryForObject(query2, Double.class);
+//		String query2 = "SELECT AVG((approvaldate - createdtime) / 86400000.0) AS avg_days_to_issue_certificate FROM eg_bpa_buildingplan WHERE approvaldate IS NOT NULL and approvaldate != 0;";
+//		Double avgDaysToIssueCertificate = jdbcTemplate.queryForObject(query2, Double.class);
 
 //		String query3 = " SELECT SUM(CAST(plotarea AS numeric)) AS TotalPlotArea FROM eg_land_address";
 //
 //		Double totalPlotArea = jdbcTemplate.queryForObject(query3, Double.class);
 
-		resultMap.put("avg_days_to_issue_certificate", avgDaysToIssueCertificate);
+//		resultMap.put("avg_days_to_issue_certificate", avgDaysToIssueCertificate);
 //		resultMap.put("totalPlotArea", totalPlotArea);
 
 		// If you have more queries, execute them similarly and store their results in
