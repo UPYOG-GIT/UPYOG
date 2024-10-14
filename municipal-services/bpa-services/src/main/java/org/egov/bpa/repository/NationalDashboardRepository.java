@@ -60,7 +60,10 @@ public class NationalDashboardRepository {
 						+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) AS Commercial, \n"
 						+ "  COUNT(DISTINCT CASE WHEN la.occupancy like ('%,%') AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
 						+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) AS Mix, \n"
-						+ "  COUNT(DISTINCT egpg.gateway_payment_mode) AS Payment_Mode,\n" + "  COUNT(DISTINCT CASE \n"
+						+ "  COUNT(DISTINCT egpg.gateway_payment_mode) AS Payment_Mode,\n" 
+						+ "  COALESCE(SUM(DISTINCT CASE WHEN TO_TIMESTAMP(la.createdtime / 1000)::date = TO_DATE('"
+						+ formattedDate + "', 'YYYY-MM-DD') THEN CAST(la.plotarea AS numeric) ELSE 0 END), 0) AS TotalPlotArea, "
+						+ "  COUNT(DISTINCT CASE \n"
 						+ "    WHEN wf.businessservicesla >= 0 \n" + "      AND bp.status = 'APPROVED' \n"
 						+ "      AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('" + formattedDate
 						+ "', 'YYYY-MM-DD') \n" + "    THEN bp.applicationno \n"
@@ -107,12 +110,12 @@ public class NationalDashboardRepository {
 		String query2 = "SELECT AVG((approvaldate - createdtime) / 86400000.0) AS avg_days_to_issue_certificate FROM eg_bpa_buildingplan WHERE approvaldate IS NOT NULL and approvaldate != 0;";
 		Double avgDaysToIssueCertificate = jdbcTemplate.queryForObject(query2, Double.class);
 
-		String query3 = " SELECT SUM(CAST(plotarea AS numeric)) AS TotalPlotArea FROM eg_land_address";
-
-		Double totalPlotArea = jdbcTemplate.queryForObject(query3, Double.class);
+//		String query3 = " SELECT SUM(CAST(plotarea AS numeric)) AS TotalPlotArea FROM eg_land_address";
+//
+//		Double totalPlotArea = jdbcTemplate.queryForObject(query3, Double.class);
 
 		resultMap.put("avg_days_to_issue_certificate", avgDaysToIssueCertificate);
-		resultMap.put("totalPlotArea", totalPlotArea);
+//		resultMap.put("totalPlotArea", totalPlotArea);
 
 		// If you have more queries, execute them similarly and store their results in
 		// the resultMap

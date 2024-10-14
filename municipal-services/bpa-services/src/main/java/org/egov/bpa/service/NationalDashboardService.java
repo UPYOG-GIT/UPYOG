@@ -91,8 +91,8 @@ public class NationalDashboardService {
 		// log.info("ingestttt_____" + ingestDataResult.get("result1"));
 		List<Map<String, Object>> ingestData = (List<Map<String, Object>>) ingestDataResult.get("result1");
 		String avgDaysToIssueCertificate = ingestDataResult.get("avg_days_to_issue_certificate").toString();
-		String totalPlotArea = ingestDataResult.get("totalPlotArea").toString();
-		double totalPlotArea1 = Double.valueOf(totalPlotArea);
+//		String totalPlotArea = ingestDataResult.get("totalPlotArea").toString();
+//		double totalPlotArea1 = Double.valueOf(totalPlotArea);
 		// String landAreaAppliedInSystemForBPA =
 		// ingestDataResult.get("land_area_applied_in_system_for_bpa").toString();
 
@@ -120,6 +120,8 @@ public class NationalDashboardService {
 
 			// log.info("nationalData--" + nationalData);
 			String ulbName = (String) nationalData.get("ulb_name");
+			String totalPlotArea = nationalData.get("TotalPlotArea").toString();
+			double totalPlotArea1 = Double.valueOf(totalPlotArea);
 			// log.info("ulbName--" + ulbName);
 			// log.info("date__&**" + nationalData.get("avg_days_to_issue_certificate"));
 
