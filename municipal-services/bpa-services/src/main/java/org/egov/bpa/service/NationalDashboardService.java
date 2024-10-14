@@ -90,7 +90,7 @@ public class NationalDashboardService {
 		Map<String, Object> ingestDataResult = repository.getIngestData(formattedDate1);
 		// log.info("ingestttt_____" + ingestDataResult.get("result1"));
 		List<Map<String, Object>> ingestData = (List<Map<String, Object>>) ingestDataResult.get("result1");
-		String avgDaysToIssueCertificate = ingestDataResult.get("avg_days_to_issue_certificate").toString();
+		/*String avgDaysToIssueCertificate = ingestDataResult.get("avg_days_to_issue_certificate").toString();
 //		String totalPlotArea = ingestDataResult.get("totalPlotArea").toString();
 //		double totalPlotArea1 = Double.valueOf(totalPlotArea);
 		// String landAreaAppliedInSystemForBPA =
@@ -106,7 +106,7 @@ public class NationalDashboardService {
 			avgDaysToIssueCertificate = avgDaysToIssueCertificate.split("\\.")[0];
 		}
 
-		int avgDaysToIssueCertificate1 = Integer.parseInt(avgDaysToIssueCertificate);
+		int avgDaysToIssueCertificate1 = Integer.parseInt(avgDaysToIssueCertificate);*/
 //		if (landAreaAppliedInSystemForBPA.startsWith("[") && landAreaAppliedInSystemForBPA.endsWith("]")) {
 //			landAreaAppliedInSystemForBPA = landAreaAppliedInSystemForBPA.substring(1, landAreaAppliedInSystemForBPA.length() - 1);
 //		}
@@ -122,6 +122,8 @@ public class NationalDashboardService {
 			String ulbName = (String) nationalData.get("ulb_name");
 			String totalPlotArea = nationalData.get("TotalPlotArea").toString();
 			double totalPlotArea1 = Double.valueOf(totalPlotArea);
+			String avgDaysToIssueCertificate = nationalData.get("avg_days_to_issue_certificate").toString();
+			int avgDaysToIssueCertificate1 = (int) Double.parseDouble(avgDaysToIssueCertificate);
 			// log.info("ulbName--" + ulbName);
 			// log.info("date__&**" + nationalData.get("avg_days_to_issue_certificate"));
 
