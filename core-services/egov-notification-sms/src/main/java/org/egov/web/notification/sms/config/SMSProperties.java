@@ -87,8 +87,8 @@ public class SMSProperties {
     @Value("${sms.enabled:false}")
     private boolean smsEnabled;
     
-    @Value("${sms.msdg.ssl.fileurl}")
-    private String sslFileUrl;
+//    @Value("${sms.msdg.ssl.fileurl}")
+//    private String sslFileUrl;
 
     @Setter(AccessLevel.PROTECTED) private List<Pattern> whitelistPatterns;
     @Setter(AccessLevel.PROTECTED) private List<Pattern> blacklistPatterns;
