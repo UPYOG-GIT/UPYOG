@@ -259,61 +259,64 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
 
 //			SSLContext ctx = null;
 			try {
-				
+
 				SSLContext ctx = SSLContext.getInstance("TLSv1.2");
-				
+
 				KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-                //File file = new File(System.getenv("JAVA_HOME")+"/lib/security/cacerts");
+				// File file = new File(System.getenv("JAVA_HOME")+"/lib/security/cacerts");
 //                File file = new File("E:\\msdgweb-mgov-gov-in.crt");
 //                File file = new File("https:\\try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb-mgov-gov-in.crt");
 				ClassPathResource resource = new ClassPathResource("msdbweb-2023-2024.cer");
 //				File file = resource.getFile();
-				
+
 //				File file =new File("https:\\\\try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb-mgov-gov-in.crt");
 //				File file = new ClassPathResource("msdgweb-mgov-gov-in11.cer").getFile();
 //                byte[] keystoreData = Files.readAllBytes(Paths.get("E:\\msdgweb-mgov-gov-in.crt"));
 //				File file = new File(getClass().getClassLoader().getResource("msdgweb-mgov-gov-in.crt").getFile());
 //                File file = new ClassPathResource("https:\\try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb-mgov-gov-in.crt").getFile();
-                
-				String fileUrl = "https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdbweb-2023-2024.cer";
+
+//				String fileUrl = "https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdbweb-2023-2024.cer";
+				String fileUrl = smsProperties.getSslFileUrl();
+				log.info("SSL File Name : " + fileUrl.split("amazonaws.com/")[1]);
 //		        String destinationFilePath = "C:/example/folder/msdgweb-mgov-gov-in.crt";
 
-		        URL url = new URL(fileUrl);
-		        URLConnection connection = url.openConnection();
-		        InputStream is = connection.getInputStream();
-		        
-//				InputStream is = new FileInputStream(file);
-                
-                CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-                X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(is);
+				URL url = new URL(fileUrl);
+				URLConnection connection = url.openConnection();
+				InputStream is = connection.getInputStream();
 
-                trustStore.load(null, null); // Initialize an empty keystore
-                trustStore.setCertificateEntry("alias", certificate);
-                
+//				InputStream is = new FileInputStream(file);
+
+				CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+				X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(is);
+
+				trustStore.load(null, null); // Initialize an empty keystore
+				trustStore.setCertificateEntry("alias", certificate);
+
 //                ByteArrayInputStream is = new ByteArrayInputStream(keystoreData);
 //                trustStore.load(is, "changeit".toCharArray());
-                
-                TrustManagerFactory trustFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-                
+
+				TrustManagerFactory trustFactory = TrustManagerFactory
+						.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+
 //                TrustManagerFactory trustFactory = TrustManagerFactory
 //                        .getInstance(TrustManagerFactory.getDefaultAlgorithm());
-                trustFactory.init(trustStore);
+				trustFactory.init(trustStore);
 
-                TrustManager[] trustManagers = trustFactory.getTrustManagers();
-                ctx.init(null, trustManagers, null);
-                SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(ctx, new NoopHostnameVerifier());
-    			CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
-    			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-    			requestFactory.setHttpClient(httpClient);
-    			restTemplate.setRequestFactory(requestFactory);
-                
+				TrustManager[] trustManagers = trustFactory.getTrustManagers();
+				ctx.init(null, trustManagers, null);
+				SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(ctx, new NoopHostnameVerifier());
+				CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
+				HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+				requestFactory.setHttpClient(httpClient);
+				restTemplate.setRequestFactory(requestFactory);
+
 //				ctx.init(null, null, SecureRandom.getInstance("SHA1PRNG"));
 
 			} catch (NoSuchAlgorithmException e) {
 				e.printStackTrace();
 			} catch (KeyManagementException e) {
 				e.printStackTrace();
-			}catch(Exception ex) {
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 //			SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(ctx, new NoopHostnameVerifier());
