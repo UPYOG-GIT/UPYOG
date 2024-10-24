@@ -364,19 +364,23 @@ const BpaApplicationDetail = () => {
 
   }
 
+  // console.log("data : "+JSON.stringify(data?.applicationData?.landInfo?.address?.occupancy));
+
   if (data && data?.applicationData?.businessService === "BPA_LOW" && data?.collectionBillDetails?.length > 0) {
     const bpaPayments = data?.collectionBillDetails;
-    console.log("bpaPayments: " + bpaPayments.length);
+    // console.log("bpaPayments: " + bpaPayments.length);
 
 
     if (bpaPayments.length === 1) {
 
+      if(data?.applicationData?.landInfo?.address?.occupancy === 'Residential'){
 
       !(data?.applicationData?.status.includes("REVOCATION")) && dowloadOptions.push({
         order: 3,
         label: t("Direct Bhavan Anugya"),
         onClick: () => getPermitOccupancyOrderSearch({ tenantId: data?.applicationData?.tenantId }, "buildingpermit-low"),
       });
+    }
       // ...
     } else {
 
@@ -415,16 +419,18 @@ const BpaApplicationDetail = () => {
   //   });
 
   // } 
+  
   else
 
   if (data && data?.applicationData?.businessService === "BPA" && data?.collectionBillDetails?.length > 0) {
+    
     if (data?.applicationData?.status === "APPROVED") {
       dowloadOptions.push({
         order: 3,
         label: t("BPA_PERMIT_ORDER"),
         onClick: () => getPermitOccupancyOrderSearch({ tenantId: data?.applicationData?.tenantId }, "buildingpermit"),
       });
-    } else if (data?.applicationData?.riskType === 'VLOW') {
+    } else if (data?.applicationData?.riskType === 'VLOW' && data?.applicationData?.landInfo?.address?.occupancy ==='Residential') {
       dowloadOptions.push({
         order: 3,
         label: t("Direct Bhavan Anugya"),
