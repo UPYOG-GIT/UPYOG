@@ -90,9 +90,9 @@ public class NationalDashboardService {
 		Map<String, Object> ingestDataResult = repository.getIngestData(formattedDate1);
 		// log.info("ingestttt_____" + ingestDataResult.get("result1"));
 		List<Map<String, Object>> ingestData = (List<Map<String, Object>>) ingestDataResult.get("result1");
-		String avgDaysToIssueCertificate = ingestDataResult.get("avg_days_to_issue_certificate").toString();
-		String totalPlotArea = ingestDataResult.get("totalPlotArea").toString();
-		double totalPlotArea1 = Double.valueOf(totalPlotArea);
+		/*String avgDaysToIssueCertificate = ingestDataResult.get("avg_days_to_issue_certificate").toString();
+//		String totalPlotArea = ingestDataResult.get("totalPlotArea").toString();
+//		double totalPlotArea1 = Double.valueOf(totalPlotArea);
 		// String landAreaAppliedInSystemForBPA =
 		// ingestDataResult.get("land_area_applied_in_system_for_bpa").toString();
 
@@ -106,7 +106,7 @@ public class NationalDashboardService {
 			avgDaysToIssueCertificate = avgDaysToIssueCertificate.split("\\.")[0];
 		}
 
-		int avgDaysToIssueCertificate1 = Integer.parseInt(avgDaysToIssueCertificate);
+		int avgDaysToIssueCertificate1 = Integer.parseInt(avgDaysToIssueCertificate);*/
 //		if (landAreaAppliedInSystemForBPA.startsWith("[") && landAreaAppliedInSystemForBPA.endsWith("]")) {
 //			landAreaAppliedInSystemForBPA = landAreaAppliedInSystemForBPA.substring(1, landAreaAppliedInSystemForBPA.length() - 1);
 //		}
@@ -120,6 +120,10 @@ public class NationalDashboardService {
 
 			// log.info("nationalData--" + nationalData);
 			String ulbName = (String) nationalData.get("ulb_name");
+			String totalPlotArea = nationalData.get("TotalPlotArea").toString();
+			double totalPlotArea1 = Double.valueOf(totalPlotArea);
+			String avgDaysToIssueCertificate = nationalData.get("avg_days_to_issue_certificate").toString();
+			int avgDaysToIssueCertificate1 = (int) Double.parseDouble(avgDaysToIssueCertificate);
 			// log.info("ulbName--" + ulbName);
 			// log.info("date__&**" + nationalData.get("avg_days_to_issue_certificate"));
 
@@ -179,10 +183,10 @@ public class NationalDashboardService {
 
 			List<Map<String, Object>> occupancyBuckets = new ArrayList<>();
 			occupancyBuckets.add(createBucket("RESIDENTIAL", nationalData.get("residential")));
-			occupancyBuckets.add(createBucket("INSTITUTIONAL", nationalData.get("institutional")));
-			occupancyBuckets.add(createBucket("COMMERCIAL", 0));
+			occupancyBuckets.add(createBucket("INSTITUTIONAL", 0));
+			occupancyBuckets.add(createBucket("COMMERCIAL", nationalData.get("Commercial")));
 			occupancyBuckets.add(createBucket("INDUSTRIAL", nationalData.get("industrial")));
-			occupancyBuckets.add(createBucket("Mixed Use", 0));
+			occupancyBuckets.add(createBucket("Mixed Use", nationalData.get("Mix")));
 
 			occupancy.put("buckets", occupancyBuckets);
 
@@ -191,14 +195,14 @@ public class NationalDashboardService {
 
 			List<Map<String, Object>> subOccupancyBuckets = new ArrayList<>();
 			subOccupancyBuckets.add(createBucket("RESIDENTIAL.INDIVIDUAL", nationalData.get("residential")));
-			subOccupancyBuckets.add(createBucket("RESIDENTIAL.SHARED", nationalData.get("residential")));
+			subOccupancyBuckets.add(createBucket("RESIDENTIAL.SHARED", 0));
 			subOccupancyBuckets.add(createBucket("INSTITUTIONAL.SHARED", 0));
 			subOccupancyBuckets.add(createBucket("INSTITUTIONAL.INDIVIDUAL", 0));
 			subOccupancyBuckets.add(createBucket("COMMERCIAL.SHARED", 0));
-			subOccupancyBuckets.add(createBucket("COMMERCIAL.INDIVIDUAL", 0));
-			subOccupancyBuckets.add(createBucket("INDUSTRIAL.INDIVIDUAL", 0));
+			subOccupancyBuckets.add(createBucket("COMMERCIAL.INDIVIDUAL", nationalData.get("Commercial")));
+			subOccupancyBuckets.add(createBucket("INDUSTRIAL.INDIVIDUAL", nationalData.get("industrial")));
 			subOccupancyBuckets.add(createBucket("INDUSTRIAL.SHARED", 0));
-			subOccupancyBuckets.add(createBucket("MIXED.INDIVIDUAL", 0));
+			subOccupancyBuckets.add(createBucket("MIXED.INDIVIDUAL", nationalData.get("Mix")));
 			subOccupancyBuckets.add(createBucket("MIXED.SHARED", 0));
 
 			subOccupancy.put("buckets", subOccupancyBuckets);
@@ -244,8 +248,8 @@ public class NationalDashboardService {
 			extraMetrics.put("todaysApprovedApplications", nationalData.get("ApprovedCount"));
 			extraMetrics.put("todaysApprovedApplicationsWithinSLA",
 					nationalData.get("todaysApprovedApplicationsWithinSLA1"));
-			extraMetrics.put("pendingApplicationsBeyondTimeline",
-					nationalData.get("pendingApplicationsBeyondTimeline"));
+//			extraMetrics.put("pendingApplicationsBeyondTimeline",
+//					nationalData.get("	"));
 			extraMetrics.put("avgDaysForApplicationApproval", avgDaysToIssueCertificate1);
 			extraMetrics.put("StipulatedDays", 0);
 
@@ -332,7 +336,8 @@ public class NationalDashboardService {
 		// log.info("bodyy---====" + body);
 
 //		LocalDate recordPushedDate = LocalDate.parse(formattedDate1);
-		String environment = apiUrl.contains("upyog.niua.org") ? "Production" : "Testing";
+//		String environment = apiUrl.contains("upyog.niua.org") ? "Production" : "Testing";
+		String environment = nationalDashboardConfig.getEnvironment();
 		if (noOfRecords > 0) {
 
 			try {
@@ -446,7 +451,8 @@ public class NationalDashboardService {
 		String formattedDate1 = date;
 
 		LocalDate recordPushedDate = LocalDate.parse(date);
-		String environment = apiUrl.contains("upyog.niua.org") ? "Production" : "Testing";
+//		String environment = apiUrl.contains("upyog.niua.org") ? "Production" : "Testing";
+		String environment = nationalDashboardConfig.getEnvironment();
 
 		IngestRequest body = getIngestData(formattedDate1);
 		// log.info("bodyy---====" + body);
@@ -613,8 +619,7 @@ public class NationalDashboardService {
 
 	}
 
-//    @Scheduled(cron = "0 */5 * * * ?")
-	@Scheduled(cron = "0 58 23 * * *")
+//	@Scheduled(cron = "0 58 23 * * *")
 	public void scheduleDataPush() {
 
 		log.info("Scheduled task started...");
