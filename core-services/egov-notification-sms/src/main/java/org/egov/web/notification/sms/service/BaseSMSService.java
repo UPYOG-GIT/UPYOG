@@ -276,8 +276,8 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
 //                File file = new ClassPathResource("https:\\try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb-mgov-gov-in.crt").getFile();
 
 //				String fileUrl = "https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdbweb-2023-2024.cer";
-				String fileUrl = "https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb_ssl.cer";
-//				String fileUrl = smsProperties.getSslFileUrl();
+//				String fileUrl = "https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/msdgweb_ssl.cer";
+				String fileUrl = smsProperties.getSslFileUrl();
 				log.info("SSL File Name : " + fileUrl.split("amazonaws.com/")[1]);
 //		        String destinationFilePath = "C:/example/folder/msdgweb-mgov-gov-in.crt";
 
