@@ -90,23 +90,26 @@ public class NationalDashboardService {
 		Map<String, Object> ingestDataResult = repository.getIngestData(formattedDate1);
 		// log.info("ingestttt_____" + ingestDataResult.get("result1"));
 		List<Map<String, Object>> ingestData = (List<Map<String, Object>>) ingestDataResult.get("result1");
-		/*String avgDaysToIssueCertificate = ingestDataResult.get("avg_days_to_issue_certificate").toString();
-//		String totalPlotArea = ingestDataResult.get("totalPlotArea").toString();
-//		double totalPlotArea1 = Double.valueOf(totalPlotArea);
-		// String landAreaAppliedInSystemForBPA =
-		// ingestDataResult.get("land_area_applied_in_system_for_bpa").toString();
-
-		// Remove square brackets if present
-		if (avgDaysToIssueCertificate.startsWith("[") && avgDaysToIssueCertificate.endsWith("]")) {
-			avgDaysToIssueCertificate = avgDaysToIssueCertificate.substring(1, avgDaysToIssueCertificate.length() - 1);
-		}
-
-		// Remove everything after the decimal point
-		if (avgDaysToIssueCertificate.contains(".")) {
-			avgDaysToIssueCertificate = avgDaysToIssueCertificate.split("\\.")[0];
-		}
-
-		int avgDaysToIssueCertificate1 = Integer.parseInt(avgDaysToIssueCertificate);*/
+		/*
+		 * String avgDaysToIssueCertificate =
+		 * ingestDataResult.get("avg_days_to_issue_certificate").toString(); // String
+		 * totalPlotArea = ingestDataResult.get("totalPlotArea").toString(); // double
+		 * totalPlotArea1 = Double.valueOf(totalPlotArea); // String
+		 * landAreaAppliedInSystemForBPA = //
+		 * ingestDataResult.get("land_area_applied_in_system_for_bpa").toString();
+		 * 
+		 * // Remove square brackets if present if
+		 * (avgDaysToIssueCertificate.startsWith("[") &&
+		 * avgDaysToIssueCertificate.endsWith("]")) { avgDaysToIssueCertificate =
+		 * avgDaysToIssueCertificate.substring(1, avgDaysToIssueCertificate.length() -
+		 * 1); }
+		 * 
+		 * // Remove everything after the decimal point if
+		 * (avgDaysToIssueCertificate.contains(".")) { avgDaysToIssueCertificate =
+		 * avgDaysToIssueCertificate.split("\\.")[0]; }
+		 * 
+		 * int avgDaysToIssueCertificate1 = Integer.parseInt(avgDaysToIssueCertificate);
+		 */
 //		if (landAreaAppliedInSystemForBPA.startsWith("[") && landAreaAppliedInSystemForBPA.endsWith("]")) {
 //			landAreaAppliedInSystemForBPA = landAreaAppliedInSystemForBPA.substring(1, landAreaAppliedInSystemForBPA.length() - 1);
 //		}
@@ -379,12 +382,22 @@ public class NationalDashboardService {
 
 				ResponseEntity<NdbResponse> responseEntity = this.restTemplate.exchange(apiUrl, HttpMethod.POST,
 						requestEntity, NdbResponse.class);
+
+				int totalApplicationsSubmitted = body.getIngestData().stream()
+						.mapToInt(item -> ((Number) item.getMetrics().get("applicationsSubmitted")).intValue()).sum();
+
+				int totalApprovedApplications = body.getIngestData().stream()
+						.mapToInt(item -> ((Number) item.getMetrics().get("todaysApprovedApplications")).intValue())
+						.sum();
+
 				NdbResponse ndbResponse = responseEntity.getBody();
 
 				ndbResponse.setDate(currentDate);
 				ndbResponse.setEnvironment(environment);
 				ndbResponse.setNoOfRecordsPushed(noOfRecords);
 				ndbResponse.setMessageDescription("Record successfully pushed");
+				ndbResponse.setTotalNoOfApplications(totalApplicationsSubmitted);
+				ndbResponse.setTotalApprovedApplications(totalApprovedApplications);
 
 				log.info("responseEntity: " + responseEntity.toString());
 				log.info("ndbResponse: " + ndbResponse.toString());
@@ -497,11 +510,21 @@ public class NationalDashboardService {
 
 				ResponseEntity<NdbResponse> responseEntity = this.restTemplate.exchange(apiUrl, HttpMethod.POST,
 						requestEntity, NdbResponse.class);
+
+				int totalApplicationsSubmitted = body.getIngestData().stream()
+						.mapToInt(item -> ((Number) item.getMetrics().get("applicationsSubmitted")).intValue()).sum();
+
+				int totalApprovedApplications = body.getIngestData().stream()
+						.mapToInt(item -> ((Number) item.getMetrics().get("todaysApprovedApplications")).intValue())
+						.sum();
+
 				NdbResponse ndbResponse = responseEntity.getBody();
 				ndbResponse.setDate(recordPushedDate);
 				ndbResponse.setEnvironment(environment);
 				ndbResponse.setNoOfRecordsPushed(noOfRecords);
 				ndbResponse.setMessageDescription("Record successfully pushed");
+				ndbResponse.setTotalNoOfApplications(totalApplicationsSubmitted);
+				ndbResponse.setTotalApprovedApplications(totalApprovedApplications);
 
 				log.info("responseEntity: " + responseEntity.toString());
 				log.info("ndbResponse: " + ndbResponse.toString());

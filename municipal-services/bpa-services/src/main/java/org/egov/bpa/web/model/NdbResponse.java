@@ -45,4 +45,10 @@ public class NdbResponse {
 
 	@JsonProperty("noOfRecordsPushed")
 	private int noOfRecordsPushed = 0;
+	
+	@JsonProperty("totalNoOfApplications")
+	private int totalNoOfApplications = 0;
+	
+	@JsonProperty("totalApprovedApplications")
+	private int totalApprovedApplications = 0;
 }
