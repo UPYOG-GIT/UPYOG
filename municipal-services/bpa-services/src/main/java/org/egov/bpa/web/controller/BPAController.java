@@ -550,29 +550,38 @@ public class BPAController {
 	}
 
 	@GetMapping(value = "/ingestData")
-	public ResponseEntity<List<IngestRequest>> getListOfIngestData() {
+	public ResponseEntity<IngestRequest> getListOfIngestData(String date) {
 
-		List<IngestRequest> resultList = new ArrayList<>();
+//		List<IngestRequest> resultList = new ArrayList<>();
 
-		int loopCount = 0;
+//		int loopCount = 0;
 
-		for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-			String formattedDate = date.format(dateFormatter);
-			IngestRequest request = nationalDashboardService.getIngestData(formattedDate);
+//		for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+//			String formattedDate = date.format(dateFormatter);
+		IngestRequest request = nationalDashboardService.getIngestData(date);
 
-			System.out.println("requestt(((" + request.getIngestData().toString());
+//			System.out.println("requestt(((" + request.getIngestData().toString());
 
-			// Create a new instance of IngestRequest for each iteration
-			IngestRequest newRequest = new IngestRequest();
-			newRequest.setIngestData(request.getIngestData()); // Assuming you need to copy the data
+		// Create a new instance of IngestRequest for each iteration
+//		IngestRequest newRequest = new IngestRequest();
+//		newRequest.setIngestData(request.getIngestData()); // Assuming you need to copy the data
+//
+//		resultList.add(newRequest);
+		int totalApplicationsSubmitted = request.getIngestData().stream()
+				.mapToInt(item -> ((Number) item.getMetrics().get("applicationsSubmitted")).intValue()).sum();
 
-			resultList.add(newRequest);
-			loopCount++;
+		int totalApprovedApplications = request.getIngestData().stream()
+				.mapToInt(item -> ((Number) item.getMetrics().get("todaysApprovedApplications")).intValue()).sum();
 
-			System.out.println("Loop ran " + loopCount + " times.");
-		}
+		log.info("totalApplicationsSubmitted: " + totalApplicationsSubmitted);
+		log.info("totalApprovedApplications: " + totalApprovedApplications);
+//			loopCount++;
 
-		return new ResponseEntity<>(resultList, HttpStatus.OK);
+//			System.out.println("Loop ran " + loopCount + " times.");
+//		}
+
+//		return new ResponseEntity<>(resultList, HttpStatus.OK);
+		return new ResponseEntity<>(request, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/pushData")
