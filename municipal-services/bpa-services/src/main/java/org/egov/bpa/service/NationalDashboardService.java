@@ -126,7 +126,9 @@ public class NationalDashboardService {
 			String totalPlotArea = nationalData.get("TotalPlotArea").toString();
 			double totalPlotArea1 = Double.valueOf(totalPlotArea);
 			String avgDaysToIssueCertificate = nationalData.get("avg_days_to_issue_certificate").toString();
+			String avgDaysToIssueOCCertificate = nationalData.get("avg_days_to_issue_oc_certificate").toString();
 			int avgDaysToIssueCertificate1 = (int) Double.parseDouble(avgDaysToIssueCertificate);
+			int avgDaysToIssueOCCertificate1 = (int) Double.parseDouble(avgDaysToIssueOCCertificate);
 			// log.info("ulbName--" + ulbName);
 			// log.info("date__&**" + nationalData.get("avg_days_to_issue_certificate"));
 
@@ -231,15 +233,15 @@ public class NationalDashboardService {
 			log.info("countt==" + dataList.size());
 			HashMap<String, Object> extraMetrics = data.getMetrics();
 
-			extraMetrics.put("ocPlansScrutinized", 0);
+			extraMetrics.put("ocPlansScrutinized", nationalData.get("todaysOCApplicationSubmitted"));
 			extraMetrics.put("plansScrutinized", nationalData.get("todaysApplicationSubmitted"));
-			extraMetrics.put("ocSubmitted", 0);
+			extraMetrics.put("ocSubmitted", nationalData.get("todaysOCApplicationSubmitted"));
 			extraMetrics.put("applicationsSubmitted", nationalData.get("todaysApplicationSubmitted"));
-			extraMetrics.put("ocIssued", 0);
+			extraMetrics.put("ocIssued", nationalData.get("OCApprovedCount"));
 			extraMetrics.put("landAreaAppliedInSystemForBPA", totalPlotArea1);
 			extraMetrics.put("averageDaysToIssuePermit", avgDaysToIssueCertificate1);
-			extraMetrics.put("averageDaysToIssueOC", 0);
-			extraMetrics.put("todaysClosedApplicationsOC", 0);
+			extraMetrics.put("averageDaysToIssueOC", avgDaysToIssueOCCertificate1);
+			extraMetrics.put("todaysClosedApplicationsOC", nationalData.get("OCApprovedCount"));
 			extraMetrics.put("todaysClosedApplicationsPermit", nationalData.get("ApprovedCount"));
 			extraMetrics.put("todaysCompletedApplicationsWithinSLAPermit",
 					nationalData.get("todaysApprovedApplicationsWithinSLA1"));
