@@ -56,9 +56,9 @@ public class MezzanineFloorService extends FeatureProcess {
 				scrutinyDetail.addColumnHeading(1, RULE_NO);
 				scrutinyDetail.addColumnHeading(2, DESCRIPTION);
 				scrutinyDetail.addColumnHeading(3, FLOOR);
-//				scrutinyDetail.addColumnHeading(4, REQUIRED);
-				scrutinyDetail.addColumnHeading(4, PROVIDED);
-				scrutinyDetail.addColumnHeading(5, STATUS);
+				scrutinyDetail.addColumnHeading(4, REQUIRED);
+				scrutinyDetail.addColumnHeading(5, PROVIDED);
+				scrutinyDetail.addColumnHeading(6, STATUS);
 				scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Mezzanine Floor");
 				if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
 					BigDecimal totalBuiltupArea = BigDecimal.ZERO;
@@ -104,19 +104,19 @@ public class MezzanineFloorService extends FeatureProcess {
 											getLocaleMessage(HEIGHTNOTDEFINED,
 													"Mezzanine floor " + mezzanineFloor.getMezzanineNumber(),
 													block.getName(), String.valueOf(floor.getNumber())));
-								}
-//								else if (height.compareTo(HEIGHT_2_POINT_2) >= 0) {
-								else {
+								} else if (height.compareTo(HEIGHT_2_POINT_2) >= 0) {
+//								else {
 									setReportOutputDetails(pl, subRule,
 											RULE46_DIM_DESC + " " + mezzanineFloor.getMezzanineNumber(), floorNo,
 											HEIGHT_2_POINT_2 + IN_METER, height + IN_METER,
 											Result.Accepted.getResultVal());
+								} else {
+									setReportOutputDetails(pl, subRule,
+											RULE46_DIM_DESC + " " + mezzanineFloor.getMezzanineNumber(), floorNo,
+											HEIGHT_2_POINT_2 + IN_METER, height + IN_METER,
+											Result.Not_Accepted.getResultVal());
 								}
-								/*
-								 * else { setReportOutputDetails(pl, subRule, RULE46_DIM_DESC + " " +
-								 * mezzanineFloor.getMezzanineNumber(), floorNo, HEIGHT_2_POINT_2 + IN_METER,
-								 * height + IN_METER, Result.Not_Accepted.getResultVal()); }
-								 */
+
 								/*
 								 * if (mezzanineFloor.getBuiltUpArea().compareTo(AREA_9_POINT_5) >= 0) {
 								 * setReportOutputDetails(pl, subRule, RULE46_MINAREA_DESC + " " +
@@ -129,10 +129,12 @@ public class MezzanineFloorService extends FeatureProcess {
 								 */
 
 //                                if (valid) {
-								setReportOutputDetails(pl, subRule,
-										RULE46_MAXAREA_DESC + " " + mezzanineFloor.getMezzanineNumber(), floorNo,
-										oneThirdOfBuiltup + SQMTRS, mezzanineFloorArea + SQMTRS,
-										Result.Accepted.getResultVal());
+								// hide built-up area showing in report
+								/*
+								 * setReportOutputDetails(pl, subRule, RULE46_MAXAREA_DESC + " " +
+								 * mezzanineFloor.getMezzanineNumber(), floorNo, oneThirdOfBuiltup + SQMTRS,
+								 * mezzanineFloorArea + SQMTRS, Result.Accepted.getResultVal());
+								 */
 								/*
 								 * } else { setReportOutputDetails(pl, subRule, RULE46_MAXAREA_DESC + " " +
 								 * mezzanineFloor.getMezzanineNumber(), floorNo, oneThirdOfBuiltup + SQMTRS,
@@ -196,7 +198,7 @@ public class MezzanineFloorService extends FeatureProcess {
 		details.put(RULE_NO, ruleNo);
 		details.put(DESCRIPTION, ruleDesc);
 		details.put(FLOOR, floor);
-//		details.put(REQUIRED, expected);
+		details.put(REQUIRED, expected);
 		details.put(PROVIDED, actual);
 		details.put(STATUS, status);
 		scrutinyDetail.getDetail().add(details);
