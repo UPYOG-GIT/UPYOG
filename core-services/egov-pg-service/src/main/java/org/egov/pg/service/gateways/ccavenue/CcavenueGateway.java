@@ -442,7 +442,7 @@ public class CcavenueGateway implements Gateway {
 		String orderNo = currentStatus.getTxnId();
 
 //		String orderStatusQueryJson = "{ \"reference_no\":\"" + refNo + "\", \"order_no\":\"" + orderNo + "\" }";
-		String orderStatusQueryJson = "{ \"order_no\":\"" + orderNo + "\" }";
+		String orderStatusQueryJson = "{ \"order_no\":\"" + orderNo + "\",\"order_status\":\"Shipped\" }";
 
 		String encryptedJsonData = "";
 
@@ -458,9 +458,12 @@ public class CcavenueGateway implements Gateway {
 		URL url = null;
 		HttpURLConnection vHttpUrlConnection = null;
 		DataInputStream vInput = null;
+//		String urlStr = "https://login.ccavenue.com/apis/servlet/DoWebTrans?enc_request=" + encryptedJsonData
+//				+ "&access_code=" + ACCESS_CODE
+//				+ "&request_type=JSON&response_type=JSON&command=orderStatusTracker&version=1.2";
 		String urlStr = "https://login.ccavenue.com/apis/servlet/DoWebTrans?enc_request=" + encryptedJsonData
 				+ "&access_code=" + ACCESS_CODE
-				+ "&request_type=JSON&response_type=JSON&command=orderStatusTracker&version=1.2";
+				+ "&request_type=JSON&response_type=JSON&command=orderLookup&version=1.2";
 //		String urlStr = "https://logintest.ccavenue.com/apis/servlet/DoWebTrans?enc_request=" + encryptedJsonData
 //				+ "&access_code=" + ACCESS_CODE
 //				+ "&request_type=JSON&response_type=JSON&command=orderStatusTracker&version=1.2";
