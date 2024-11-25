@@ -27,16 +27,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class PaymentsService {
-	
+
 	@Autowired
 	private ServiceCallRepository repository;
-	
+
 	@Autowired
 	private AppProperties props;
-	
+
 	@Autowired
 	private ObjectMapper mapper;
-	
+
 	public CollectionPayment registerPayment(TransactionRequest request) {
 		CollectionPayment payment = getPaymentFromTransaction(request);
 		payment.setInstrumentDate(request.getTransaction().getAuditDetails().getCreatedTime());
@@ -47,73 +47,73 @@ public class PaymentsService {
 		CollectionPaymentRequest paymentRequest = CollectionPaymentRequest.builder()
 				.requestInfo(request.getRequestInfo()).payment(payment).build();
 		String uri = props.getCollectionServiceHost() + props.getPaymentCreatePath();
-		Optional<Object> response =  repository.fetchResult(uri, paymentRequest);
-		if(response.isPresent()) {
+		log.info("paymentRequest : " + paymentRequest.toString());
+		Optional<Object> response = repository.fetchResult(uri, paymentRequest);
+		log.info("respone : " + response.toString());
+		if (response.isPresent()) {
 			try {
-				CollectionPaymentResponse paymentResponse = mapper.convertValue(response.get(), CollectionPaymentResponse.class);
-				if(!CollectionUtils.isEmpty(paymentResponse.getPayments()))
+				CollectionPaymentResponse paymentResponse = mapper.convertValue(response.get(),
+						CollectionPaymentResponse.class);
+				if (!CollectionUtils.isEmpty(paymentResponse.getPayments()))
 					return paymentResponse.getPayments().get(0);
 				else
-					throw new CustomException("PAYMENT_REGISTRATION_FAILED", "Failed to register this payment at collection-service");						
-			}catch(Exception e) {
-				log.error("Failed to parse the payment response: ",e);
+					throw new CustomException("PAYMENT_REGISTRATION_FAILED",
+							"Failed to register this payment at collection-service");
+			} catch (Exception e) {
+				log.error("Failed to parse the payment response: ", e);
 				throw new CustomException("RESPONSE_PARSE_ERROR", "Failed to parse the payment response");
 			}
 
-		}else {
-			throw new CustomException("PAYMENT_REGISTRATION_FAILED", "Failed to register this payment at collection-service");
+		} else {
+			throw new CustomException("PAYMENT_REGISTRATION_FAILED",
+					"Failed to register this payment at collection-service");
 		}
-		
+
 	}
-	
-	
+
 	public CollectionPayment validatePayment(TransactionRequest request) {
 		CollectionPayment payment = getPaymentFromTransaction(request);
 		CollectionPaymentRequest paymentRequest = CollectionPaymentRequest.builder()
 				.requestInfo(request.getRequestInfo()).payment(payment).build();
 		String uri = props.getCollectionServiceHost() + props.getPaymentValidatePath();
-		Optional<Object> response =  repository.fetchResult(uri, paymentRequest);
-		if(response.isPresent()) {
+		Optional<Object> response = repository.fetchResult(uri, paymentRequest);
+		if (response.isPresent()) {
 			try {
-				CollectionPaymentResponse paymentResponse = mapper.convertValue(response.get(), CollectionPaymentResponse.class);
-				if(!CollectionUtils.isEmpty(paymentResponse.getPayments()))
+				CollectionPaymentResponse paymentResponse = mapper.convertValue(response.get(),
+						CollectionPaymentResponse.class);
+				if (!CollectionUtils.isEmpty(paymentResponse.getPayments()))
 					return paymentResponse.getPayments().get(0);
 				else
-					throw new CustomException("PAYMENT_VALIDATION_FAILED", "Failed to validate this payment at collection-service");						
-			}catch(Exception e) {
-				log.error("Failed to parse the payment response: ",e);
+					throw new CustomException("PAYMENT_VALIDATION_FAILED",
+							"Failed to validate this payment at collection-service");
+			} catch (Exception e) {
+				log.error("Failed to parse the payment response: ", e);
 				throw new CustomException("RESPONSE_PARSE_ERROR", "Failed to parse the payment response");
 			}
 
-		}else {
-			throw new CustomException("PAYMENT_VALIDATION_FAILED", "Failed to validate this payment at collection-service");						
+		} else {
+			throw new CustomException("PAYMENT_VALIDATION_FAILED",
+					"Failed to validate this payment at collection-service");
 		}
-		
+
 	}
-	
-	
-	
+
 	public CollectionPayment getPaymentFromTransaction(TransactionRequest request) {
 		List<CollectionPaymentDetail> paymentDetails = new ArrayList<>();
-		for(TaxAndPayment taxAndPayment: request.getTransaction().getTaxAndPayments()) {
+		for (TaxAndPayment taxAndPayment : request.getTransaction().getTaxAndPayments()) {
 			CollectionPaymentDetail detail = CollectionPaymentDetail.builder()
-					.tenantId(request.getTransaction().getTenantId())
-					.billId(taxAndPayment.getBillId())
-					.totalAmountPaid(taxAndPayment.getAmountPaid())
-					.build();
+					.tenantId(request.getTransaction().getTenantId()).billId(taxAndPayment.getBillId())
+					.totalAmountPaid(taxAndPayment.getAmountPaid()).build();
 			paymentDetails.add(detail);
 		}
-				
+
 		return CollectionPayment.builder().paymentDetails(paymentDetails)
 				.tenantId(request.getTransaction().getTenantId())
 				.totalAmountPaid(new BigDecimal(request.getTransaction().getTxnAmount()))
-				.paymentMode(CollectionPaymentModeEnum.ONLINE)
-				.paidBy(request.getTransaction().getUser().getName())
+				.paymentMode(CollectionPaymentModeEnum.ONLINE).paidBy(request.getTransaction().getUser().getName())
 				.mobileNumber(request.getTransaction().getUser().getMobileNumber())
-				.instrumentDate(System.currentTimeMillis())
-				.instrumentNumber("PROV_PAYMENT_VALIDATION")
-				.transactionNumber("PROV_PAYMENT_VALIDATION")
-				.payerName(request.getTransaction().getUser().getName())
+				.instrumentDate(System.currentTimeMillis()).instrumentNumber("PROV_PAYMENT_VALIDATION")
+				.transactionNumber("PROV_PAYMENT_VALIDATION").payerName(request.getTransaction().getUser().getName())
 				.build();
 	}
 
