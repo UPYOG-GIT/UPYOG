@@ -331,6 +331,7 @@ public class PaymentRepository {
 	public List<String> fetchPaymentIdsByCriteria(PaymentSearchCriteria paymentSearchCriteria) {
 		Map<String, Object> preparedStatementValues = new HashMap<>();
 		String query = paymentQueryBuilder.getIdQuery(paymentSearchCriteria, preparedStatementValues);
+		log.info(" fetchPaymentIdsByCriteria query: " + query);
 		return namedParameterJdbcTemplate.query(query, preparedStatementValues,
 				new SingleColumnRowMapper<>(String.class));
 	}
