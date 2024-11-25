@@ -144,6 +144,8 @@ public class TransactionService {
 			enrichmentService.enrichUpdateTransaction(new TransactionRequest(requestInfo, currentTxnStatus), newTxn);
 		}
 
+		log.info("currentTxnStatus : "+currentTxnStatus.toString());
+		log.info("newTxn : "+newTxn.toString());
 		// Check if transaction is successful, amount matches etc
 		if (validator.shouldGenerateReceipt(currentTxnStatus, newTxn)) {
 			TransactionRequest request = TransactionRequest.builder().requestInfo(requestInfo).transaction(newTxn)
