@@ -68,7 +68,7 @@ public class CcavenueGateway implements Gateway {
 	private final String REQUEST_TYPE;
 	private final String RESPONSE_TYPE;
 	private final String RETURN_URL;
-	private final String WS_URL;
+	private String WS_URL;
 	private final boolean ACTIVE;
 
 	private RestTemplate restTemplate;
@@ -119,7 +119,7 @@ public class CcavenueGateway implements Gateway {
 		this.MERCHANT_PATH_PAY = environment.getRequiredProperty("payu.path.pay");
 		this.MERCHANT_PATH_STATUS = environment.getRequiredProperty("payu.path.status");
 //		this.MERCHANT_ID = environment.getRequiredProperty("ccavenue.merchant.id");
-		this.WS_URL = environment.getRequiredProperty("ccavenue.path.wsurl");
+//		this.WS_URL = environment.getRequiredProperty("ccavenue.path.wsurl");
 		this.RETURN_URL = environment.getRequiredProperty("ccavenue.redirect.url");
 		this.REDIRECT_URL = environment.getRequiredProperty("ccavenue.redirect.url");
 		this.MESSAGE_TYPE = environment.getRequiredProperty("ccavenue.messagetype");
@@ -747,21 +747,20 @@ public class CcavenueGateway implements Gateway {
 //			this.WORKING_KEY = "7B3E3FF7D56888F44E1A7D46DF24CF52";
 //		}
 
-		this.MERCHANT_ID = "1941257";
-		this.ACCESS_CODE = "ATII96KA89BB16IIBB";
-		this.WORKING_KEY = "D682025F99E01FA0F0FAA079B1B3F793";
+		//Testing Details
+//		this.MERCHANT_ID = "1941257";
+//		this.ACCESS_CODE = "ATII96KA89BB16IIBB";
+//		this.WORKING_KEY = "D682025F99E01FA0F0FAA079B1B3F793";
 		
 		
-//		this.MERCHANT_ID = "2996783";
-//		this.ACCESS_CODE = "AVCC61LB26BF70CCFB";
-//		this.WORKING_KEY = "FEC003B7AE237C0D954AC2DB24B1B201";
 //		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId);
 //		Map<String, Object> ccAvenueDetails = transactionsApiController.getCcavenueDetails(tenantId);
 		
-//		Map<String, Object> ccAvenueDetails = pgDetailRepository.getCcavenueDetails(tenantId);
-//		this.MERCHANT_ID = ccAvenueDetails.get("merchant_id").toString();
-//		this.ACCESS_CODE = ccAvenueDetails.get("access_code").toString();
-//		this.WORKING_KEY = ccAvenueDetails.get("working_key").toString();
+		Map<String, Object> ccAvenueDetails = pgDetailRepository.getCcavenueDetails(tenantId);
+		this.MERCHANT_ID = ccAvenueDetails.get("merchant_id").toString();
+		this.ACCESS_CODE = ccAvenueDetails.get("access_code").toString();
+		this.WORKING_KEY = ccAvenueDetails.get("working_key").toString();
+		this.WS_URL = ccAvenueDetails.get("gateway_url").toString();
 	}
 
 }
