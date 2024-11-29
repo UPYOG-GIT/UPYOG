@@ -222,19 +222,19 @@ public class RedirectController {
 
 	private void getWorkingKey(String tenantId) {
 		log.info("inside getWorkingKey..... tenantId: " + tenantId);
-		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId);
+//		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId);
 		
 //		String sqlQuery = "SELECT merchant_id,access_code,working_key FROM eg_pg_ccavenue_details WHERE tenant_id='"
 //				+ tenantId + "'";
 //		log.info("sqlQuery: "+sqlQuery);
 ////		return jdbcTemplate.queryForList(sql, new Object[] { tenantId });
 //		Map<String, Object> ccAvenueDetails =  jdbcTemplate.queryForMap(sqlQuery);
-		this.workingKey = ccAvenueDetails.get("working_key").toString();
+//		this.workingKey = ccAvenueDetails.get("working_key").toString();
 		
 //		if (tenantId.equals("cg.birgaon")) {
 //			this.workingKey = "B27E5242E8FC395A07F65AB900F021FA";
 //		} else if (tenantId.equals("cg.dhamtari")) {
-//			this.workingKey = "D682025F99E01FA0F0FAA079B1B3F793";
+			this.workingKey = "D682025F99E01FA0F0FAA079B1B3F793";
 //		} else if (tenantId.equals("cg.bhilaicharoda")) {
 //			this.workingKey = "7B3E3FF7D56888F44E1A7D46DF24CF52";
 //		}
