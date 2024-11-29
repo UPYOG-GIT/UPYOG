@@ -70,7 +70,7 @@ public class PgDetailRepository {
     }
     
     public Map<String, Object> getCcavenueDetails(String tenantId) {
-		String sqlQuery = "SELECT merchant_id,access_code,working_key FROM eg_pg_ccavenue_details WHERE tenant_id='"
+		String sqlQuery = "SELECT merchant_id,access_code,working_key, environment, gateway_url FROM eg_pg_ccavenue_details WHERE tenant_id='"
 				+ tenantId + "'";
 		log.info("sqlQuery: "+sqlQuery);
 //		return jdbcTemplate.queryForList(sql, new Object[] { tenantId });
