@@ -747,12 +747,14 @@ public class CcavenueGateway implements Gateway {
 //			this.WORKING_KEY = "7B3E3FF7D56888F44E1A7D46DF24CF52";
 //		}
 
+		this.MERCHANT_ID = "1941257";
+		this.ACCESS_CODE = "ATII96KA89BB16IIBB";
+		this.WORKING_KEY = "D682025F99E01FA0F0FAA079B1B3F793";
+		
+		
 //		this.MERCHANT_ID = "2996783";
 //		this.ACCESS_CODE = "AVCC61LB26BF70CCFB";
 //		this.WORKING_KEY = "FEC003B7AE237C0D954AC2DB24B1B201";
-		this.MERCHANT_ID = "1941257";
-		this.ACCESS_CODE = "AVII96KA89BB16IIBB";
-		this.WORKING_KEY = "D682025F99E01FA0F0FAA079B1B3F793";
 //		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId);
 //		Map<String, Object> ccAvenueDetails = transactionsApiController.getCcavenueDetails(tenantId);
 		
