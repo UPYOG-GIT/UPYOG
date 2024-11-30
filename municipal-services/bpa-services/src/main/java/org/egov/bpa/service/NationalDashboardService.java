@@ -245,8 +245,8 @@ public class NationalDashboardService {
 			extraMetrics.put("todaysClosedApplicationsPermit", nationalData.get("ApprovedCount"));
 			extraMetrics.put("todaysCompletedApplicationsWithinSLAPermit",
 					nationalData.get("todaysApprovedApplicationsWithinSLA1"));
-			extraMetrics.put("slaComplianceOC", 0);
-			extraMetrics.put("slaCompliancePermit", 0);
+			extraMetrics.put("slaComplianceOC", nationalData.get("todaysApprovedOCApplicationsWithinSLA"));
+			extraMetrics.put("slaCompliancePermit", nationalData.get("todaysApprovedApplicationsWithinSLA1"));
 			extraMetrics.put("applicationsWithDeviation", 0);
 			extraMetrics.put("averageDeviation", 0);
 			extraMetrics.put("ocWithDeviation", 0);
@@ -256,7 +256,7 @@ public class NationalDashboardService {
 //			extraMetrics.put("pendingApplicationsBeyondTimeline",
 //					nationalData.get("	"));
 			extraMetrics.put("avgDaysForApplicationApproval", avgDaysToIssueCertificate1);
-			extraMetrics.put("StipulatedDays", 0);
+			extraMetrics.put("StipulatedDays", 60);
 
 			data.setMetrics(extraMetrics);
 			dataList.add(data);
