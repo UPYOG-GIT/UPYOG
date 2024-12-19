@@ -70,6 +70,15 @@ public class EDCRService {
 
 		BPASearchCriteria criteria = new BPASearchCriteria();
 		criteria.setEdcrNumber(bpa.getEdcrNumber());
+		
+		Map<String, String> additionalDetails = bpa.getAdditionalDetails() != null
+				? (Map<String, String>) bpa.getAdditionalDetails()
+				: new HashMap<String, String>();
+		
+		if(additionalDetails.get(BPAConstants.APPLICATIONTYPE).equals("BUILDING_OC_PLAN_SCRUTINY")) {
+			criteria.setApplicationType("BUILDING_OC_PLAN_SCRUTINY");
+		}
+		
 		List<BPA> bpas = bpaRepository.getBPAData(criteria, null);
 		if (bpas.size() > 0) {
 			for (int i = 0; i < bpas.size(); i++) {
@@ -108,8 +117,8 @@ public class EDCRService {
 				.read("edcrDetail.*.planDetail.virtualBuilding.occupancyTypes.*.type.code");
 		TypeRef<List<Double>> typeRef = new TypeRef<List<Double>>() {
 		};
-		Map<String, String> additionalDetails = bpa.getAdditionalDetails() != null ? (Map) bpa.getAdditionalDetails()
-				: new HashMap<String, String>();
+//		Map<String, String> additionalDetails = bpa.getAdditionalDetails() != null ? (Map) bpa.getAdditionalDetails()
+//				: new HashMap<String, String>();
 		LinkedList<String> serviceType = context.read("edcrDetail.*.applicationSubType");
 		if (serviceType != null && !serviceType.isEmpty() && additionalDetails.get(BPAConstants.SERVICETYPE) != null
 				&& !serviceType.get(0).equalsIgnoreCase(additionalDetails.get(BPAConstants.SERVICETYPE))) {
