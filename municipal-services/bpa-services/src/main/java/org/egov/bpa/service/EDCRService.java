@@ -75,7 +75,8 @@ public class EDCRService {
 				? (Map<String, String>) bpa.getAdditionalDetails()
 				: new HashMap<String, String>();
 		
-		if(additionalDetails.get(BPAConstants.APPLICATIONTYPE).equals("BUILDING_OC_PLAN_SCRUTINY")) {
+		String bpaApplicationType =additionalDetails.get(BPAConstants.APPLICATIONTYPE);
+		if(bpaApplicationType.equals("BUILDING_OC_PLAN_SCRUTINY")) {
 			criteria.setApplicationType("BUILDING_OC_PLAN_SCRUTINY");
 		}
 		
@@ -132,7 +133,7 @@ public class EDCRService {
 		LinkedList<String> applicationType = context.read("edcrDetail.*.appliactionType");
 		if (applicationType != null && !applicationType.isEmpty()
 				&& additionalDetails.get(BPAConstants.APPLICATIONTYPE) != null
-				&& !applicationType.get(0).equalsIgnoreCase(additionalDetails.get(BPAConstants.APPLICATIONTYPE))) {
+				&& !applicationType.get(0).equalsIgnoreCase(additionalDetails.get(BPAConstants.APPLICATIONTYPE))&& !bpaApplicationType.equals("BUILDING_OC_PLAN_SCRUTINY")) {
 			throw new CustomException(BPAErrorConstants.INVALID_APPLN_TYPE,
 					"The application type is invalid, it is not matching with scrutinized plan application type "
 							+ applicationType.get(0));
