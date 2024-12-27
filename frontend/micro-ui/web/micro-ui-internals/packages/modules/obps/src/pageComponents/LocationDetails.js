@@ -2,6 +2,7 @@ import { CardLabel, FormStep, LinkButton, RadioOrSelect, TextArea, TextInput } f
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import GIS from "./GIS";
+import MapBoxGIS from "./MapBoxGIS";
 import Timeline from "../components/Timeline";
 import { stringReplaceAll } from "../utils";
 
@@ -218,7 +219,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
       t={t}
       config={config}
       onSelect={handleSubmit}
-      isDisabled={!selectedCity || !selectedLocality || Pinerror }
+      isDisabled={!selectedCity || !selectedLocality || Pinerror || !siteAddress }
       isMultipleAllow={true}
       forcedError={t(Pinerror)}
     >
@@ -233,9 +234,9 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
           //value={geoLocation && geoLocation.latitude && geoLocation.longitude?`${geoLocation.latitude},${geoLocation.longitude}`:""}
           value={isEditApplication || isSendBackTOCitizen?(geoLocation.latitude !== null?`${geoLocation.latitude}, ${geoLocation.longitude}`:""):placeName}
           onChange={selectGeolocation}
-          disabled={true}
+          disabled={false}
         />
-        {/* <LinkButton
+        <LinkButton
           label={
             <div>
               <span>
@@ -247,7 +248,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
           }
           style={{ }}
           onClick={(e) => handleGIS()}
-        /> */}
+        />
       </div>
       {/* {isOpen && <GIS t={t} onSelect={onSelect} formData={formData} handleRemove={handleRemove} onSave={onSave} />} */}
       <CardLabel>{`${t("BPA_DETAILS_PIN_LABEL")}`}</CardLabel>
