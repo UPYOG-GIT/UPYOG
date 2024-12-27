@@ -214,7 +214,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
   return (
     <div>
       {!isOpen && <Timeline />}
-      {isOpen && <GIS t={t} onSelect={onSelect} formData={formData} handleRemove={handleRemove} onSave={onSave} />}   
+      {isOpen && <MapBoxGIS t={t} onSelect={onSelect} formData={formData} handleRemove={handleRemove} onSave={onSave} />}   
     {!isOpen && <FormStep
       t={t}
       config={config}
