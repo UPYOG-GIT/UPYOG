@@ -70,6 +70,16 @@ public class EDCRService {
 
 		BPASearchCriteria criteria = new BPASearchCriteria();
 		criteria.setEdcrNumber(bpa.getEdcrNumber());
+		
+		Map<String, String> additionalDetails = bpa.getAdditionalDetails() != null
+				? (Map<String, String>) bpa.getAdditionalDetails()
+				: new HashMap<String, String>();
+		
+		String bpaApplicationType =additionalDetails.get(BPAConstants.APPLICATIONTYPE);
+		if(bpaApplicationType.equals("BUILDING_OC_PLAN_SCRUTINY")) {
+			criteria.setApplicationType("BUILDING_OC_PLAN_SCRUTINY");
+		}
+		
 		List<BPA> bpas = bpaRepository.getBPAData(criteria, null);
 		if (bpas.size() > 0) {
 			for (int i = 0; i < bpas.size(); i++) {
@@ -108,8 +118,8 @@ public class EDCRService {
 				.read("edcrDetail.*.planDetail.virtualBuilding.occupancyTypes.*.type.code");
 		TypeRef<List<Double>> typeRef = new TypeRef<List<Double>>() {
 		};
-		Map<String, String> additionalDetails = bpa.getAdditionalDetails() != null ? (Map) bpa.getAdditionalDetails()
-				: new HashMap<String, String>();
+//		Map<String, String> additionalDetails = bpa.getAdditionalDetails() != null ? (Map) bpa.getAdditionalDetails()
+//				: new HashMap<String, String>();
 		LinkedList<String> serviceType = context.read("edcrDetail.*.applicationSubType");
 		if (serviceType != null && !serviceType.isEmpty() && additionalDetails.get(BPAConstants.SERVICETYPE) != null
 				&& !serviceType.get(0).equalsIgnoreCase(additionalDetails.get(BPAConstants.SERVICETYPE))) {
@@ -123,7 +133,7 @@ public class EDCRService {
 		LinkedList<String> applicationType = context.read("edcrDetail.*.appliactionType");
 		if (applicationType != null && !applicationType.isEmpty()
 				&& additionalDetails.get(BPAConstants.APPLICATIONTYPE) != null
-				&& !applicationType.get(0).equalsIgnoreCase(additionalDetails.get(BPAConstants.APPLICATIONTYPE))) {
+				&& !applicationType.get(0).equalsIgnoreCase(additionalDetails.get(BPAConstants.APPLICATIONTYPE))&& !bpaApplicationType.equals("BUILDING_OC_PLAN_SCRUTINY")) {
 			throw new CustomException(BPAErrorConstants.INVALID_APPLN_TYPE,
 					"The application type is invalid, it is not matching with scrutinized plan application type "
 							+ applicationType.get(0));
@@ -133,16 +143,36 @@ public class EDCRService {
 			applicationType.add("permit");
 		}
 		LinkedList<String> permitNumber = context.read("edcrDetail.*.permitNumber");
+		List<String> far = context.read("edcrDetail.*.planDetail.farDetails.providedFar");
+		List<String> coverage = context.read("edcrDetail.*.planDetail.coverage");
+		List<String> buildingHeight = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight");
+		List<String> plotArea = context.read("edcrDetail.*.planDetail.plot.plotBndryArea");
+		List<String> totalBuitUpArea = context.read("edcrDetail.*.planDetail.virtualBuilding.totalBuitUpArea");  
+		
+		additionalDetails.put("far",far.get(0));
+		additionalDetails.put("coverage",coverage.get(0));
+		additionalDetails.put("buildingHeight",buildingHeight.get(0));
+		additionalDetails.put("plotArea",plotArea.get(0));
+		additionalDetails.put("totalBuitUpArea",totalBuitUpArea.get(0));
+		
+		
+		
 		additionalDetails.put(BPAConstants.SERVICETYPE, serviceType.get(0));
-		additionalDetails.put(BPAConstants.APPLICATIONTYPE, applicationType.get(0));
-		if (!permitNumber.isEmpty()) {
-			/*
-			 * Validating OC application, with submitted permit number is any OC submitted
-			 * without rejection. Using a permit number only one OC application submission
-			 * should allowed otherwise needs to throw validation message for more one
-			 * submission. If the OC application is rejected for a permit then we need
-			 * allow.
-			 */
+		if(bpaApplicationType.equals("BUILDING_OC_PLAN_SCRUTINY")) {
+			additionalDetails.put(BPAConstants.APPLICATIONTYPE, bpaApplicationType);
+		}else {
+			additionalDetails.put(BPAConstants.APPLICATIONTYPE, applicationType.get(0));
+		}
+			
+		/*
+		 * Validating OC application, with submitted permit number is any OC submitted
+		 * without rejection. Using a permit number only one OC application submission
+		 * should allowed otherwise needs to throw validation message for more one
+		 * submission. If the OC application is rejected for a permit then we need
+		 * allow.
+		 */
+		/*if (!permitNumber.isEmpty()) {
+			
 			BPASearchCriteria ocCriteria = new BPASearchCriteria();
 			ocCriteria.setPermitNumber(permitNumber.get(0));
 			ocCriteria.setTenantId(bpa.getTenantId());
@@ -157,7 +187,7 @@ public class EDCRService {
 				}
 			}
 			additionalDetails.put(BPAConstants.PERMIT_NO, permitNumber.get(0));
-		}
+		}*/
 		List<Double> plotAreas = context.read("edcrDetail.*.planDetail.plot.area", typeRef);
 		List<Double> buildingHeights = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight",
 				typeRef);
