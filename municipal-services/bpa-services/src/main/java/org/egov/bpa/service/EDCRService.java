@@ -143,16 +143,36 @@ public class EDCRService {
 			applicationType.add("permit");
 		}
 		LinkedList<String> permitNumber = context.read("edcrDetail.*.permitNumber");
+		List<String> far = context.read("edcrDetail.*.planDetail.farDetails.providedFar");
+		List<String> coverage = context.read("edcrDetail.*.planDetail.coverage");
+		List<String> buildingHeight = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight");
+		List<String> plotArea = context.read("edcrDetail.*.planDetail.plot.plotBndryArea");
+		List<String> totalBuitUpArea = context.read("edcrDetail.*.planDetail.virtualBuilding.totalBuitUpArea");  
+		
+		additionalDetails.put("far",far.get(0));
+		additionalDetails.put("coverage",coverage.get(0));
+		additionalDetails.put("buildingHeight",buildingHeight.get(0));
+		additionalDetails.put("plotArea",plotArea.get(0));
+		additionalDetails.put("totalBuitUpArea",totalBuitUpArea.get(0));
+		
+		
+		
 		additionalDetails.put(BPAConstants.SERVICETYPE, serviceType.get(0));
-		additionalDetails.put(BPAConstants.APPLICATIONTYPE, applicationType.get(0));
-		if (!permitNumber.isEmpty()) {
-			/*
-			 * Validating OC application, with submitted permit number is any OC submitted
-			 * without rejection. Using a permit number only one OC application submission
-			 * should allowed otherwise needs to throw validation message for more one
-			 * submission. If the OC application is rejected for a permit then we need
-			 * allow.
-			 */
+		if(bpaApplicationType.equals("BUILDING_OC_PLAN_SCRUTINY")) {
+			additionalDetails.put(BPAConstants.APPLICATIONTYPE, bpaApplicationType);
+		}else {
+			additionalDetails.put(BPAConstants.APPLICATIONTYPE, applicationType.get(0));
+		}
+			
+		/*
+		 * Validating OC application, with submitted permit number is any OC submitted
+		 * without rejection. Using a permit number only one OC application submission
+		 * should allowed otherwise needs to throw validation message for more one
+		 * submission. If the OC application is rejected for a permit then we need
+		 * allow.
+		 */
+		/*if (!permitNumber.isEmpty()) {
+			
 			BPASearchCriteria ocCriteria = new BPASearchCriteria();
 			ocCriteria.setPermitNumber(permitNumber.get(0));
 			ocCriteria.setTenantId(bpa.getTenantId());
@@ -167,7 +187,7 @@ public class EDCRService {
 				}
 			}
 			additionalDetails.put(BPAConstants.PERMIT_NO, permitNumber.get(0));
-		}
+		}*/
 		List<Double> plotAreas = context.read("edcrDetail.*.planDetail.plot.area", typeRef);
 		List<Double> buildingHeights = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight",
 				typeRef);
