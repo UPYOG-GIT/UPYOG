@@ -70,16 +70,16 @@ public class EDCRService {
 
 		BPASearchCriteria criteria = new BPASearchCriteria();
 		criteria.setEdcrNumber(bpa.getEdcrNumber());
-		
+
 		Map<String, String> additionalDetails = bpa.getAdditionalDetails() != null
 				? (Map<String, String>) bpa.getAdditionalDetails()
 				: new HashMap<String, String>();
-		
-		String bpaApplicationType =additionalDetails.get(BPAConstants.APPLICATIONTYPE);
-		if(bpaApplicationType.equals("BUILDING_OC_PLAN_SCRUTINY")) {
+
+		String bpaApplicationType = additionalDetails.get(BPAConstants.APPLICATIONTYPE);
+		if (bpaApplicationType.equals("BUILDING_OC_PLAN_SCRUTINY")) {
 			criteria.setApplicationType("BUILDING_OC_PLAN_SCRUTINY");
 		}
-		
+
 		List<BPA> bpas = bpaRepository.getBPAData(criteria, null);
 		if (bpas.size() > 0) {
 			for (int i = 0; i < bpas.size(); i++) {
@@ -133,7 +133,8 @@ public class EDCRService {
 		LinkedList<String> applicationType = context.read("edcrDetail.*.appliactionType");
 		if (applicationType != null && !applicationType.isEmpty()
 				&& additionalDetails.get(BPAConstants.APPLICATIONTYPE) != null
-				&& !applicationType.get(0).equalsIgnoreCase(additionalDetails.get(BPAConstants.APPLICATIONTYPE))&& !bpaApplicationType.equals("BUILDING_OC_PLAN_SCRUTINY")) {
+				&& !applicationType.get(0).equalsIgnoreCase(additionalDetails.get(BPAConstants.APPLICATIONTYPE))
+				&& !bpaApplicationType.equals("BUILDING_OC_PLAN_SCRUTINY")) {
 			throw new CustomException(BPAErrorConstants.INVALID_APPLN_TYPE,
 					"The application type is invalid, it is not matching with scrutinized plan application type "
 							+ applicationType.get(0));
@@ -147,42 +148,46 @@ public class EDCRService {
 		List<String> coverage = context.read("edcrDetail.*.planDetail.coverage");
 		List<String> buildingHeight = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight");
 		List<String> plotArea = context.read("edcrDetail.*.planDetail.plot.plotBndryArea");
-		List<String> totalBuitUpArea = context.read("edcrDetail.*.planDetail.virtualBuilding.totalBuitUpArea");  
-		//List<String> distanceToRoad = context.read("edcrDetail.*.planDetail.roadReserves[].shortestDistanceToRoad");
+		List<String> totalBuitUpArea = context.read("edcrDetail.*.planDetail.virtualBuilding.totalBuitUpArea");
+		// List<String> distanceToRoad =
+		// context.read("edcrDetail.*.planDetail.roadReserves[].shortestDistanceToRoad");
 		List<String> frontSetback = context.read("$.edcrDetail[*].planDetail.blocks[*].setBacks[*].frontYard.mean");
-	    List<String> rearSetback = context.read( "$.edcrDetail[*].planDetail.blocks[*].setBacks[*].rearYard.mean" );
-	    List<String> leftSetback = context.read( "$.edcrDetail[*].planDetail.blocks[*].setBacks[*].sideYard1.mean" );
-	    List<String> rightSetback = context.read( "$.edcrDetail[*].planDetail.blocks[*].setBacks[*].sideYard2.mean" );
-	    List<String> parkingProvided = context.read("$.edcrDetail[*].planDetail.reportOutput.scrutinyDetails[?(@.key == 'Common_Parking')].detail[*].Provided");
-	    Map<String,Object> edcrDetails =new HashMap<>();
-		
-		edcrDetails.put("far",far.get(0));
-		edcrDetails.put("coverage",coverage.get(0));
-		edcrDetails.put("buildingHeight",buildingHeight.get(0));
-		edcrDetails.put("plotArea",plotArea.get(0));
-		edcrDetails.put("totalBuitUpArea",totalBuitUpArea.get(0));
-		edcrDetails.put("parking", parkingProvided.get(0));
-		edcrDetails.put("frontSetback", frontSetback.get(0));
-		edcrDetails.put("rearSetback", rearSetback.get(0));
-		edcrDetails.put("leftSetback", leftSetback.get(0));
-		edcrDetails.put("rightSetback", rightSetback.get(0));
-		
-		additionalDetails.put("edcrDetails",edcrDetails.toString());
-		
+		List<String> rearSetback = context.read("$.edcrDetail[*].planDetail.blocks[*].setBacks[*].rearYard.mean");
+		List<String> leftSetback = context.read("$.edcrDetail[*].planDetail.blocks[*].setBacks[*].sideYard1.mean");
+		List<String> rightSetback = context.read("$.edcrDetail[*].planDetail.blocks[*].setBacks[*].sideYard2.mean");
+		List<String> parkingProvided = context.read(
+				"$.edcrDetail[*].planDetail.reportOutput.scrutinyDetails[?(@.key == 'Common_Parking')].detail[*].Provided");
+		Map<String, Object> edcrDetails = new HashMap<>();
+
+		edcrDetails.put("far", (far == null || far.size() != 0) ? 0 : far.get(0));
+		edcrDetails.put("coverage", (coverage == null || coverage.size() != 0) ? 0 : coverage.get(0));
+		edcrDetails.put("buildingHeight",
+				(buildingHeight == null || buildingHeight.size() != 0) ? 0 : buildingHeight.get(0));
+		edcrDetails.put("plotArea", (plotArea == null || plotArea.size() != 0) ? 0 : plotArea.get(0));
+		edcrDetails.put("totalBuitUpArea",
+				(totalBuitUpArea == null || totalBuitUpArea.size() != 0) ? 0 : totalBuitUpArea.get(0));
+		edcrDetails.put("parking",
+				(parkingProvided == null || parkingProvided.size() != 0) ? 0 : parkingProvided.get(0));
+		edcrDetails.put("frontSetback", (frontSetback == null || frontSetback.size() != 0) ? 0 : frontSetback.get(0));
+		edcrDetails.put("rearSetback", (rearSetback == null || rearSetback.size() != 0) ? 0 : rearSetback.get(0));
+		edcrDetails.put("leftSetback", (leftSetback == null || leftSetback.size() != 0) ? 0 : leftSetback.get(0));
+		edcrDetails.put("rightSetback", (rightSetback == null || rightSetback.size() != 0) ? 0 : rightSetback.get(0));
+
+		additionalDetails.put("edcrDetails", edcrDetails.toString());
+
 //		additionalDetails.put("far",far.get(0));
 //		additionalDetails.put("coverage",coverage.get(0));
 //		additionalDetails.put("buildingHeight",buildingHeight.get(0));
 //		additionalDetails.put("plotArea",plotArea.get(0));
 //		additionalDetails.put("totalBuitUpArea",totalBuitUpArea.get(0));
-		
-		
+
 		additionalDetails.put(BPAConstants.SERVICETYPE, serviceType.get(0));
-		if(bpaApplicationType.equals("BUILDING_OC_PLAN_SCRUTINY")) {
+		if (bpaApplicationType.equals("BUILDING_OC_PLAN_SCRUTINY")) {
 			additionalDetails.put(BPAConstants.APPLICATIONTYPE, bpaApplicationType);
-		}else {
+		} else {
 			additionalDetails.put(BPAConstants.APPLICATIONTYPE, applicationType.get(0));
 		}
-			
+
 		/*
 		 * Validating OC application, with submitted permit number is any OC submitted
 		 * without rejection. Using a permit number only one OC application submission
@@ -190,23 +195,20 @@ public class EDCRService {
 		 * submission. If the OC application is rejected for a permit then we need
 		 * allow.
 		 */
-		/*if (!permitNumber.isEmpty()) {
-			
-			BPASearchCriteria ocCriteria = new BPASearchCriteria();
-			ocCriteria.setPermitNumber(permitNumber.get(0));
-			ocCriteria.setTenantId(bpa.getTenantId());
-			List<BPA> ocApplns = bpaRepository.getBPAData(ocCriteria, null);
-			if (!ocApplns.isEmpty()) {
-				for (int i = 0; i < ocApplns.size(); i++) {
-					if (!ocApplns.get(i).getStatus().equalsIgnoreCase(BPAConstants.STATUS_REJECTED)) {
-						throw new CustomException(BPAErrorConstants.DUPLICATE_OC,
-								"Occupancy certificate application is already exists with permit approval Number "
-										+ permitNumber.get(0));
-					}
-				}
-			}
-			additionalDetails.put(BPAConstants.PERMIT_NO, permitNumber.get(0));
-		}*/
+		/*
+		 * if (!permitNumber.isEmpty()) {
+		 * 
+		 * BPASearchCriteria ocCriteria = new BPASearchCriteria();
+		 * ocCriteria.setPermitNumber(permitNumber.get(0));
+		 * ocCriteria.setTenantId(bpa.getTenantId()); List<BPA> ocApplns =
+		 * bpaRepository.getBPAData(ocCriteria, null); if (!ocApplns.isEmpty()) { for
+		 * (int i = 0; i < ocApplns.size(); i++) { if
+		 * (!ocApplns.get(i).getStatus().equalsIgnoreCase(BPAConstants.STATUS_REJECTED))
+		 * { throw new CustomException(BPAErrorConstants.DUPLICATE_OC,
+		 * "Occupancy certificate application is already exists with permit approval Number "
+		 * + permitNumber.get(0)); } } } additionalDetails.put(BPAConstants.PERMIT_NO,
+		 * permitNumber.get(0)); }
+		 */
 		List<Double> plotAreas = context.read("edcrDetail.*.planDetail.plot.area", typeRef);
 		List<Double> buildingHeights = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight",
 				typeRef);
