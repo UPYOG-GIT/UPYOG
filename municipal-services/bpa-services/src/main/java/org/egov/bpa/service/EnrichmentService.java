@@ -102,7 +102,7 @@ public class EnrichmentService {
 		String applicationType = values.get(BPAConstants.APPLICATIONTYPE);
 		if (applicationType.equalsIgnoreCase(BPAConstants.BUILDING_PLAN)) {
 			if (bpaRequest.getBPA().getRiskType().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)
-				    || bpaRequest.getBPA().getRiskType().equalsIgnoreCase(BPAConstants.VLOW_RISKTYPE)){
+					|| bpaRequest.getBPA().getRiskType().equalsIgnoreCase(BPAConstants.VLOW_RISKTYPE)) {
 				bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_LOW_MODULE_CODE);
 			} else {
 				bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_MODULE_CODE);
@@ -133,9 +133,14 @@ public class EnrichmentService {
 		RequestInfo requestInfo = request.getRequestInfo();
 		String tenantId = request.getBPA().getTenantId();
 		BPA bpa = request.getBPA();
-
-		List<String> applicationNumbers = getIdList(requestInfo, tenantId, config.getApplicationNoIdgenName(),
-				config.getApplicationNoIdgenFormat(), 1);
+		List<String> applicationNumbers = new ArrayList<>();
+		if (bpa.getBusinessService().equals("BPA_OC")) {
+			applicationNumbers = getIdList(requestInfo, tenantId, config.getOcApplicationNoIdgenName(),
+					config.getOcApplicationNoIdgenFormat(), 1);
+		} else {
+			applicationNumbers = getIdList(requestInfo, tenantId, config.getApplicationNoIdgenName(),
+					config.getApplicationNoIdgenFormat(), 1);
+		}
 		ListIterator<String> itr = applicationNumbers.listIterator();
 
 		Map<String, String> errorMap = new HashMap<>();
@@ -313,12 +318,12 @@ public class EnrichmentService {
 				|| (!bpa.getBusinessService().equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE)
 						&& ((!bpa.getRiskType().toString().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)
 								&& state.equalsIgnoreCase(BPAConstants.APPROVED_STATE))
-								|| (state.equalsIgnoreCase(BPAConstants.APPROVED_STATE) && bpa.getRiskType()
-										.toString().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE))))) {
+								|| (state.equalsIgnoreCase(BPAConstants.APPROVED_STATE) && bpa.getRiskType().toString()
+										.equalsIgnoreCase(BPAConstants.LOW_RISKTYPE))))) {
 			int vailidityInMonths = config.getValidityInMonths();
 			Calendar calendar = Calendar.getInstance();
 			bpa.setApprovalDate(Calendar.getInstance().getTimeInMillis());
-			
+
 			// Adding 3years (36 months) to Current Date
 			calendar.add(Calendar.MONTH, vailidityInMonths);
 			Map<String, Object> additionalDetail = null;
