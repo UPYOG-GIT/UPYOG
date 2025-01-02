@@ -148,13 +148,32 @@ public class EDCRService {
 		List<String> buildingHeight = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight");
 		List<String> plotArea = context.read("edcrDetail.*.planDetail.plot.plotBndryArea");
 		List<String> totalBuitUpArea = context.read("edcrDetail.*.planDetail.virtualBuilding.totalBuitUpArea");  
+		//List<String> distanceToRoad = context.read("edcrDetail.*.planDetail.roadReserves[].shortestDistanceToRoad");
+		List<String> frontSetback = context.read("$.edcrDetail[*].planDetail.blocks[*].setBacks[*].frontYard.mean");
+	    List<String> rearSetback = context.read( "$.edcrDetail[*].planDetail.blocks[*].setBacks[*].rearYard.mean" );
+	    List<String> leftSetback = context.read( "$.edcrDetail[*].planDetail.blocks[*].setBacks[*].sideYard1.mean" );
+	    List<String> rightSetback = context.read( "$.edcrDetail[*].planDetail.blocks[*].setBacks[*].sideYard2.mean" );
+	    List<String> parkingProvided = context.read("$.edcrDetail[*].planDetail.reportOutput.scrutinyDetails[?(@.key == 'Common_Parking')].detail[*].Provided");
+	    Map<String,Object> edcrDetails =new HashMap<>();
 		
-		additionalDetails.put("far",far.get(0));
-		additionalDetails.put("coverage",coverage.get(0));
-		additionalDetails.put("buildingHeight",buildingHeight.get(0));
-		additionalDetails.put("plotArea",plotArea.get(0));
-		additionalDetails.put("totalBuitUpArea",totalBuitUpArea.get(0));
+		edcrDetails.put("far",far.get(0));
+		edcrDetails.put("coverage",coverage.get(0));
+		edcrDetails.put("buildingHeight",buildingHeight.get(0));
+		edcrDetails.put("plotArea",plotArea.get(0));
+		edcrDetails.put("totalBuitUpArea",totalBuitUpArea.get(0));
+		edcrDetails.put("parking", parkingProvided.get(0));
+		edcrDetails.put("frontSetback", frontSetback.get(0));
+		edcrDetails.put("rearSetback", rearSetback.get(0));
+		edcrDetails.put("leftSetback", leftSetback.get(0));
+		edcrDetails.put("rightSetback", rightSetback.get(0));
 		
+		additionalDetails.put("edcrDetails",edcrDetails.toString());
+		
+//		additionalDetails.put("far",far.get(0));
+//		additionalDetails.put("coverage",coverage.get(0));
+//		additionalDetails.put("buildingHeight",buildingHeight.get(0));
+//		additionalDetails.put("plotArea",plotArea.get(0));
+//		additionalDetails.put("totalBuitUpArea",totalBuitUpArea.get(0));
 		
 		
 		additionalDetails.put(BPAConstants.SERVICETYPE, serviceType.get(0));
