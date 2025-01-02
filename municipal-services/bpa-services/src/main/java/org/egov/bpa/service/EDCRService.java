@@ -159,19 +159,19 @@ public class EDCRService {
 				"$.edcrDetail[*].planDetail.reportOutput.scrutinyDetails[?(@.key == 'Common_Parking')].detail[*].Provided");
 		Map<String, Object> edcrDetails = new HashMap<>();
 
-		edcrDetails.put("far", (far == null || far.size() != 0) ? 0 : far.get(0));
-		edcrDetails.put("coverage", (coverage == null || coverage.size() != 0) ? 0 : coverage.get(0));
+		edcrDetails.put("far", (far == null || far.size() == 0) ? 0 : far.get(0));
+		edcrDetails.put("coverage", (coverage == null || coverage.size() == 0) ? 0 : coverage.get(0));
 		edcrDetails.put("buildingHeight",
-				(buildingHeight == null || buildingHeight.size() != 0) ? 0 : buildingHeight.get(0));
-		edcrDetails.put("plotArea", (plotArea == null || plotArea.size() != 0) ? 0 : plotArea.get(0));
+				(buildingHeight == null || buildingHeight.size() == 0) ? 0 : buildingHeight.get(0));
+		edcrDetails.put("plotArea", (plotArea == null || plotArea.size() == 0) ? 0 : plotArea.get(0));
 		edcrDetails.put("totalBuitUpArea",
-				(totalBuitUpArea == null || totalBuitUpArea.size() != 0) ? 0 : totalBuitUpArea.get(0));
+				(totalBuitUpArea == null || totalBuitUpArea.size() == 0) ? 0 : totalBuitUpArea.get(0));
 		edcrDetails.put("parking",
-				(parkingProvided == null || parkingProvided.size() != 0) ? 0 : parkingProvided.get(0));
-		edcrDetails.put("frontSetback", (frontSetback == null || frontSetback.size() != 0) ? 0 : frontSetback.get(0));
-		edcrDetails.put("rearSetback", (rearSetback == null || rearSetback.size() != 0) ? 0 : rearSetback.get(0));
-		edcrDetails.put("leftSetback", (leftSetback == null || leftSetback.size() != 0) ? 0 : leftSetback.get(0));
-		edcrDetails.put("rightSetback", (rightSetback == null || rightSetback.size() != 0) ? 0 : rightSetback.get(0));
+				(parkingProvided == null || parkingProvided.size() == 0) ? 0 : parkingProvided.get(0));
+		edcrDetails.put("frontSetback", (frontSetback == null || frontSetback.size() == 0) ? 0 : frontSetback.get(0));
+		edcrDetails.put("rearSetback", (rearSetback == null || rearSetback.size() == 0) ? 0 : rearSetback.get(0));
+		edcrDetails.put("leftSetback", (leftSetback == null || leftSetback.size() == 0) ? 0 : leftSetback.get(0));
+		edcrDetails.put("rightSetback", (rightSetback == null || rightSetback.size() == 0) ? 0 : rightSetback.get(0));
 
 		additionalDetails.put("edcrDetails", edcrDetails.toString());
 
