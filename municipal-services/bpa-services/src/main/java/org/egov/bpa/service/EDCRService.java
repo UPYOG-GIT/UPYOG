@@ -144,36 +144,41 @@ public class EDCRService {
 			applicationType.add("permit");
 		}
 		LinkedList<String> permitNumber = context.read("edcrDetail.*.permitNumber");
-		List<String> far = context.read("edcrDetail.*.planDetail.farDetails.providedFar");
-		List<String> coverage = context.read("edcrDetail.*.planDetail.coverage");
-		List<String> buildingHeight = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight");
-		List<String> plotArea = context.read("edcrDetail.*.planDetail.plot.plotBndryArea");
-		List<String> totalBuitUpArea = context.read("edcrDetail.*.planDetail.virtualBuilding.totalBuitUpArea");
-		// List<String> distanceToRoad =
-		// context.read("edcrDetail.*.planDetail.roadReserves[].shortestDistanceToRoad");
-		List<String> frontSetback = context.read("$.edcrDetail[*].planDetail.blocks[*].setBacks[*].frontYard.mean");
-		List<String> rearSetback = context.read("$.edcrDetail[*].planDetail.blocks[*].setBacks[*].rearYard.mean");
-		List<String> leftSetback = context.read("$.edcrDetail[*].planDetail.blocks[*].setBacks[*].sideYard1.mean");
-		List<String> rightSetback = context.read("$.edcrDetail[*].planDetail.blocks[*].setBacks[*].sideYard2.mean");
-		List<String> parkingProvided = context.read(
-				"$.edcrDetail[*].planDetail.reportOutput.scrutinyDetails[?(@.key == 'Common_Parking')].detail[*].Provided");
-		Map<String, Object> edcrDetails = new HashMap<>();
 
-		edcrDetails.put("far", (far == null || far.size() == 0) ? 0 : far.get(0));
-		edcrDetails.put("coverage", (coverage == null || coverage.size() == 0) ? 0 : coverage.get(0));
-		edcrDetails.put("buildingHeight",
-				(buildingHeight == null || buildingHeight.size() == 0) ? 0 : buildingHeight.get(0));
-		edcrDetails.put("plotArea", (plotArea == null || plotArea.size() == 0) ? 0 : plotArea.get(0));
-		edcrDetails.put("totalBuitUpArea",
-				(totalBuitUpArea == null || totalBuitUpArea.size() == 0) ? 0 : totalBuitUpArea.get(0));
-		edcrDetails.put("parking",
-				(parkingProvided == null || parkingProvided.size() == 0) ? 0 : parkingProvided.get(0));
-		edcrDetails.put("frontSetback", (frontSetback == null || frontSetback.size() == 0) ? 0 : frontSetback.get(0));
-		edcrDetails.put("rearSetback", (rearSetback == null || rearSetback.size() == 0) ? 0 : rearSetback.get(0));
-		edcrDetails.put("leftSetback", (leftSetback == null || leftSetback.size() == 0) ? 0 : leftSetback.get(0));
-		edcrDetails.put("rightSetback", (rightSetback == null || rightSetback.size() == 0) ? 0 : rightSetback.get(0));
+		if (bpaApplicationType.equals("BUILDING_OC_PLAN_SCRUTINY")) {
+			List<String> far = context.read("edcrDetail.*.planDetail.farDetails.providedFar");
+			List<String> coverage = context.read("edcrDetail.*.planDetail.coverage");
+			List<String> buildingHeight = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight");
+			List<String> plotArea = context.read("edcrDetail.*.planDetail.plot.plotBndryArea");
+			List<String> totalBuitUpArea = context.read("edcrDetail.*.planDetail.virtualBuilding.totalBuitUpArea");
+			// List<String> distanceToRoad =
+			// context.read("edcrDetail.*.planDetail.roadReserves[].shortestDistanceToRoad");
+			List<String> frontSetback = context.read("$.edcrDetail[*].planDetail.blocks[*].setBacks[*].frontYard.mean");
+			List<String> rearSetback = context.read("$.edcrDetail[*].planDetail.blocks[*].setBacks[*].rearYard.mean");
+			List<String> leftSetback = context.read("$.edcrDetail[*].planDetail.blocks[*].setBacks[*].sideYard1.mean");
+			List<String> rightSetback = context.read("$.edcrDetail[*].planDetail.blocks[*].setBacks[*].sideYard2.mean");
+			List<String> parkingProvided = context.read(
+					"$.edcrDetail[*].planDetail.reportOutput.scrutinyDetails[?(@.key == 'Common_Parking')].detail[*].Provided");
+			Map<String, Object> edcrDetails = new HashMap<>();
 
-		additionalDetails.put("edcrDetails", edcrDetails.toString());
+			edcrDetails.put("far", (far == null || far.size() == 0) ? 0 : far.get(0));
+			edcrDetails.put("coverage", (coverage == null || coverage.size() == 0) ? 0 : coverage.get(0));
+			edcrDetails.put("buildingHeight",
+					(buildingHeight == null || buildingHeight.size() == 0) ? 0 : buildingHeight.get(0));
+			edcrDetails.put("plotArea", (plotArea == null || plotArea.size() == 0) ? 0 : plotArea.get(0));
+			edcrDetails.put("totalBuitUpArea",
+					(totalBuitUpArea == null || totalBuitUpArea.size() == 0) ? 0 : totalBuitUpArea.get(0));
+			edcrDetails.put("parking",
+					(parkingProvided == null || parkingProvided.size() == 0) ? 0 : parkingProvided.get(0));
+			edcrDetails.put("frontSetback",
+					(frontSetback == null || frontSetback.size() == 0) ? 0 : frontSetback.get(0));
+			edcrDetails.put("rearSetback", (rearSetback == null || rearSetback.size() == 0) ? 0 : rearSetback.get(0));
+			edcrDetails.put("leftSetback", (leftSetback == null || leftSetback.size() == 0) ? 0 : leftSetback.get(0));
+			edcrDetails.put("rightSetback",
+					(rightSetback == null || rightSetback.size() == 0) ? 0 : rightSetback.get(0));
+
+			additionalDetails.put("edcrDetails", edcrDetails.toString());
+		}
 
 //		additionalDetails.put("far",far.get(0));
 //		additionalDetails.put("coverage",coverage.get(0));
