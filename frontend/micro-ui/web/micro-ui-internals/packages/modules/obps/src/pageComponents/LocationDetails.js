@@ -219,7 +219,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
       t={t}
       config={config}
       onSelect={handleSubmit}
-      isDisabled={!selectedCity || !selectedLocality || Pinerror }
+      isDisabled={!selectedCity || !selectedLocality || Pinerror || !siteAddress }
       isMultipleAllow={true}
       forcedError={t(Pinerror)}
     >
@@ -234,7 +234,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
           //value={geoLocation && geoLocation.latitude && geoLocation.longitude?`${geoLocation.latitude},${geoLocation.longitude}`:""}
           value={isEditApplication || isSendBackTOCitizen?(geoLocation.latitude !== null?`${geoLocation.latitude}, ${geoLocation.longitude}`:""):placeName}
           onChange={selectGeolocation}
-          disabled={true}
+          disabled={false}
         />
         { <LinkButton
           label={
