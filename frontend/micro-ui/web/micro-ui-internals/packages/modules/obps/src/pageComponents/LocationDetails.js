@@ -234,9 +234,9 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
           //value={geoLocation && geoLocation.latitude && geoLocation.longitude?`${geoLocation.latitude},${geoLocation.longitude}`:""}
           value={isEditApplication || isSendBackTOCitizen?(geoLocation.latitude !== null?`${geoLocation.latitude}, ${geoLocation.longitude}`:""):placeName}
           onChange={selectGeolocation}
-          disabled={false}
+          disabled={true}
         />
-        { <LinkButton
+        {/* { <LinkButton
           label={
             <div>
               <span>
@@ -248,7 +248,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
           }
           style={{ }}
           onClick={(e) => handleGIS()}
-        /> }
+        /> } */}
       </div>
       {/* {isOpen && <MapBoxGIS t={t} onSelect={onSelect} formData={formData} handleRemove={handleRemove} onSave={onSave} />} */}
       <CardLabel>{`${t("BPA_DETAILS_PIN_LABEL")}`}</CardLabel>
