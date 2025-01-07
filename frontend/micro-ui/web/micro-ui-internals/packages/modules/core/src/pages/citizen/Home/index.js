@@ -46,7 +46,7 @@ const Home = () => {
       {
         name: t("ES_PGR_HEADER_COMPLAINT"),
         Icon: <ComplaintIcon />,
-        onClick: () => history.push("/digit-ui/citizen/pgr-home"),
+        onClick: () => history.push("/digit-ui/citizen/obps-search"),
       },
       // {
       //   name: t("MODULE_PT"),

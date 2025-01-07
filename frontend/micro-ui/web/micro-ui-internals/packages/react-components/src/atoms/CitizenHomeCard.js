@@ -31,7 +31,7 @@ const CitizenHomeCard = ({ header, links, state, Icon, Info, isInfo = false, sty
 
       {location.pathname === "/digit-ui/citizen/obps-home" && (
         <div className="links">
-          <a href="/digit-ui/citizen/pgr-home">Search By Application Number</a>
+          <a href="/digit-ui/citizen/obps-search">Search By Application Number</a>
          
 
         </div>

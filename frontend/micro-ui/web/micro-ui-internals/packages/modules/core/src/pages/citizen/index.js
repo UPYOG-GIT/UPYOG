@@ -403,7 +403,7 @@ const Home = ({
           <Route path={`${path}/user/profile`}>
             <UserProfile stateCode={stateCode} userType={"citizen"} cityDetails={cityDetails} />
           </Route>
-          <Route path={`${path}/pgr-home`}>
+          <Route path={`${path}/obps-search`}>
             <DashboardApplicationSearch />
           </Route>
 
