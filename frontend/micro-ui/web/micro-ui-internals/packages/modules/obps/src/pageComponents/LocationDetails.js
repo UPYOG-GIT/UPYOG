@@ -2,6 +2,7 @@ import { CardLabel, FormStep, LinkButton, RadioOrSelect, TextArea, TextInput } f
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import GIS from "./GIS";
+import MapBoxGIS from "./MapBoxGIS";
 import Timeline from "../components/Timeline";
 import { stringReplaceAll } from "../utils";
 
@@ -213,7 +214,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
   return (
     <div>
       {!isOpen && <Timeline />}
-      {isOpen && <GIS t={t} onSelect={onSelect} formData={formData} handleRemove={handleRemove} onSave={onSave} />}   
+      {isOpen && <MapBoxGIS t={t} onSelect={onSelect} formData={formData} handleRemove={handleRemove} onSave={onSave} />}   
     {!isOpen && <FormStep
       t={t}
       config={config}
@@ -235,7 +236,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
           onChange={selectGeolocation}
           disabled={true}
         />
-        {/* <LinkButton
+        { <LinkButton
           label={
             <div>
               <span>
@@ -247,9 +248,9 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
           }
           style={{ }}
           onClick={(e) => handleGIS()}
-        /> */}
+        /> }
       </div>
-      {/* {isOpen && <GIS t={t} onSelect={onSelect} formData={formData} handleRemove={handleRemove} onSave={onSave} />} */}
+      {/* {isOpen && <MapBoxGIS t={t} onSelect={onSelect} formData={formData} handleRemove={handleRemove} onSave={onSave} />} */}
       <CardLabel>{`${t("BPA_DETAILS_PIN_LABEL")}`}</CardLabel>
       {!isOpen && <TextInput
         isMandatory={false}
