@@ -58,9 +58,16 @@ public class BPAConfiguration {
 
 	@Value("${egov.idgen.bpa.applicationNum.name}")
 	private String applicationNoIdgenName;
+	
+	@Value("${egov.idgen.oc.applicationNum.name}")
+	private String ocApplicationNoIdgenName;
 
 	@Value("${egov.idgen.bpa.applicationNum.format}")
 	private String applicationNoIdgenFormat;
+	
+	
+	@Value("${egov.idgen.oc.applicationNum.format}")
+	private String ocApplicationNoIdgenFormat;
 
 	@Value("${egov.idgen.bpa.permitNum.name}")
 	private String permitNoIdgenName;
