@@ -19,6 +19,7 @@ import NOCDetails from "./pageComponents/NOCDetails";
 import LocationDetails from "./pageComponents/LocationDetails";
 import StakeholderDocsRequired  from "./pageComponents/StakeholderDocsRequired";
 import GIS from "./pageComponents/GIS";
+import MapBoxGIS from "./pageComponents/MapBoxGIS";
 import OCEDCRDocsRequired from "./pageComponents/OCEDCRDocsRequired";
 import OCeDCRScrutiny from "./pageComponents/OCeDCRScrutiny";
 import OCUploadPlanDiagram from "./pageComponents/OCUploadPlanDiagram";
@@ -130,6 +131,7 @@ const componentsToRegister = {
   NOCDetails,
   LocationDetails,
   GIS,
+  MapBoxGIS,
   OCEDCRDocsRequired,
   OCeDCRScrutiny,
   OCUploadPlanDiagram,
