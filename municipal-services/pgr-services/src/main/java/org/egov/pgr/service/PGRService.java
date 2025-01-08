@@ -64,9 +64,13 @@ public class PGRService {
 	 * @return
 	 */
 	public ServiceRequest create(ServiceRequest request) {
+		log.info("Inside PGRService create()......");
 		Object mdmsData = mdmsUtils.mDMSCall(request);
+		log.info("After mdmsCall()....");
 		validator.validateCreate(request, mdmsData);
+		log.info("After validateCreate()....");
 		enrichmentService.enrichCreateRequest(request);
+		log.info("After enrichCreateRequest()....");
 		workflowService.updateWorkflowStatus(request);
 		log.info("Create Request : " + config.getCreateTopic() + "\n" + request.toString());
 		producer.push(config.getCreateTopic(), request);

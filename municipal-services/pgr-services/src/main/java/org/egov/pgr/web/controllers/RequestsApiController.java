@@ -41,7 +41,7 @@ public class RequestsApiController {
 	@RequestMapping(value = "/request/_create", method = RequestMethod.POST)
 	public ResponseEntity<ServiceResponse> requestsCreatePost(@Valid @RequestBody ServiceRequest request)
 			throws IOException {
-
+		log.info("request : " +request.getService().toString());
 		ServiceRequest enrichedReq = pgrService.create(request);
 		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
 				true);
@@ -49,7 +49,7 @@ public class RequestsApiController {
 				.workflow(enrichedReq.getWorkflow()).build();
 		ServiceResponse response = ServiceResponse.builder().responseInfo(responseInfo)
 				.serviceWrappers(Collections.singletonList(serviceWrapper)).build();
-		log.info("Response : " + response.toString());
+		log.info("Response : " + response.getServiceWrappers().get(0).getService().toString());
 		return new ResponseEntity<>(response, HttpStatus.OK);
 
 	}
