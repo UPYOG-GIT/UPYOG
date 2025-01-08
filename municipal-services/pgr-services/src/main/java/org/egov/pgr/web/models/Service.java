@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Builder;
+import lombok.Data;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
@@ -28,6 +29,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Data
 public class Service   {
 
         @JsonProperty("active")
