@@ -79,7 +79,8 @@ public class UserService {
         User userServiceResponse = null;
 
         // Search on mobile number as user name
-        UserDetailResponse userDetailResponse = searchUser(userUtils.getStateLevelTenant(tenantId),null, user.getMobileNumber());
+//        UserDetailResponse userDetailResponse = searchUser(userUtils.getStateLevelTenant(tenantId),null, user.getMobileNumber());
+        UserDetailResponse userDetailResponse = searchUser(tenantId,null, user.getMobileNumber());
         if (!userDetailResponse.getUser().isEmpty()) {
             User userFromSearch = userDetailResponse.getUser().get(0);
             if(!user.getName().equalsIgnoreCase(userFromSearch.getName())){
@@ -106,7 +107,8 @@ public class UserService {
         String accountId = request.getService().getAccountId();
         String tenantId = request.getService().getTenantId();
 
-        UserDetailResponse userDetailResponse = searchUser(userUtils.getStateLevelTenant(tenantId),accountId,null);
+//        UserDetailResponse userDetailResponse = searchUser(userUtils.getStateLevelTenant(tenantId),accountId,null);
+        UserDetailResponse userDetailResponse = searchUser(tenantId,accountId,null);
 
         if(userDetailResponse.getUser().isEmpty())
             throw new CustomException("INVALID_ACCOUNTID","No user exist for the given accountId");
