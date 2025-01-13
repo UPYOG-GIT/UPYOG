@@ -72,7 +72,7 @@ public class PGRService {
 		enrichmentService.enrichCreateRequest(request);
 		log.info("After enrichCreateRequest()....");
 		workflowService.updateWorkflowStatus(request);
-		log.info("Create Request : " + config.getCreateTopic() + "\n" + request.toString());
+		log.info("Create Request : " + config.getCreateTopic() + "\n" + request.getService().toString());
 		producer.push(config.getCreateTopic(), request);
 		return request;
 	}
