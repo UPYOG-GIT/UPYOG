@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { initPGRComponents, PGRReducers } from "@egovernments/digit-ui-module-pgr";
-import { initFSMComponents } from "@upoegovernmentsg/digit-ui-module-fsm";
+import { initFSMComponents } from "@egovernments/digit-ui-module-fsm";
 import { PTModule, PTLinks, PTComponents } from "@egovernments/digit-ui-module-pt";
 import { MCollectModule, MCollectLinks, initMCollectComponents } from "@egovernments/digit-ui-module-mcollect";
 import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
