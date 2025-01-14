@@ -68,6 +68,7 @@
     "dev1:example": "cd example && yarn start",
     "dev1:hrms": "cd packages/modules/hrms && yarn start",
     "dev1:obps": "cd packages/modules/obps && yarn start",
+    "dev1:pgr": "cd packages/modules/pgr && yarn start",
     "build1": "run-p build1:**",
     "build1:libraries": "cd packages/libraries && yarn build",
     "build1:components": "cd packages/react-components && yarn build",
@@ -75,7 +76,8 @@
     "build1:commonPt": "cd packages/modules/commonPt && yarn build",
     "build1:core": "cd packages/modules/core && yarn build",
     "build1:hrms": "cd packages/modules/hrms && yarn build",
-    "build1:obps": "cd packages/modules/obps && yarn build"
+    "build1:obps": "cd packages/modules/obps && yarn build",
+    "build1:pgr": "cd packages/modules/pgr && yarn build"
   },
   "devDependencies": {
     "husky": "7.0.4",
