@@ -212,12 +212,12 @@ const CheckPage = ({ onSubmit, value }) => {
         <StatusTable style={{ border: "none" }}>
           <Row className="border-none" label={`${t("BPA_OC_EDCR_NO_LABEL")}`} text={data?.scrutinyNumber?.edcrNumber}></Row>
           {/* <Row className="border-none" label={`${t("BPA_UPLOADED_PLAN_DIAGRAM")}`}></Row> */}
-          <CardSubHeader>{t("BPA_UPLOADED_PLAN_DIAGRAM")}</CardSubHeader>
+          {/* <CardSubHeader>{t("BPA_UPLOADED_PLAN_DIAGRAM")}</CardSubHeader>
           <LinkButton
             label={ <PDFSvg /> }
             onClick={() => routeTo(datafromAPI?.updatedDxfFile)}
           />
-           <p style={{ marginTop: "8px", marginBottom: "20px", textAlign:"Left", fontSize: "16px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>{t(`BPA_UPLOADED_PLAN_DXF`)}</p>
+           <p style={{ marginTop: "8px", marginBottom: "20px", textAlign:"Left", fontSize: "16px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>{t(`BPA_UPLOADED_PLAN_DXF`)}</p> */}
           {/* <Row className="border-none" label={`${t("BPA_SCRUNTINY_REPORT_OUTPUT")}`} ></Row> */}
           <CardSubHeader>{t("BPA_SCRUNTINY_REPORT_OUTPUT")}</CardSubHeader>
           <LinkButton
