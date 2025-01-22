@@ -151,11 +151,11 @@ public class NationalDashboardRepository {
 
 //		String insertQuery = "insert into paytype_master(ulb_tenantid,charges_type_name,payment_type,"
 //				+ "defunt,createdby,createddate) values (?,?,?,?,?,'" + date + "')";
-		String insertQuery = "INSERT INTO eg_ndb_push_status(response_hash, no_of_reccords, error, environment, message_description, no_of_applications, approved_applications, data_pushed_date) values ('"
+		String insertQuery = "INSERT INTO eg_ndb_push_status(response_hash, no_of_reccords, error, environment, message_description, no_of_applications, approved_applications, totalPlotArea, totalCollection, data_pushed_date) values ('"
 				+ ndbResponse.getResponseHash() + "','" + ndbResponse.getNoOfRecordsPushed() + "','"
 				+ ndbResponse.getErrorMessage() + "','" + ndbResponse.getEnvironment() + "','"
 				+ ndbResponse.getMessageDescription() + "','" + ndbResponse.getTotalNoOfApplications() + "','"
-				+ ndbResponse.getTotalApprovedApplications() + "','" + ndbResponse.getDate() + "')";
+				+ ndbResponse.getTotalApprovedApplications() + "','" + ndbResponse.getTotalPlotArea() + "','" +ndbResponse.getTotalCollection() + "','" + ndbResponse.getDate() + "')";
 
 		log.info("Dashboard insertQuery: " + insertQuery);
 		int insertResult = jdbcTemplate.update(insertQuery);
