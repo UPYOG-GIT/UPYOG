@@ -9,7 +9,8 @@ import Complaint from "../../components/Complaint";
 export const ComplaintsList = (props) => {
   const User = Digit.UserService.getUser();
   const mobileNumber = User.mobileNumber || User?.info?.mobileNumber || User?.info?.userInfo?.mobileNumber;
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  // const tenantId = Digit.ULBService.getCurrentTenantId();
+  let tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const { t } = useTranslation();
   const { path, url } = useRouteMatch();
   let { isLoading, error, data, revalidate } = Digit.Hooks.pgr.useComplaintsListByMobile(tenantId, mobileNumber);
