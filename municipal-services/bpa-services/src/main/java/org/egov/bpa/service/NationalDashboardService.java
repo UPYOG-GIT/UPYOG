@@ -391,7 +391,37 @@ public class NationalDashboardService {
 				int totalApprovedApplications = body.getIngestData().stream()
 						.mapToInt(item -> ((Number) item.getMetrics().get("todaysApprovedApplications")).intValue())
 						.sum();
+				
+				double totalPlotArea = body.getIngestData().stream()
+					    .mapToDouble(item -> {
+					        Object metricValue = item.getMetrics().get("landAreaAppliedInSystemForBPA");
+					        return metricValue instanceof Number ? ((Number) metricValue).doubleValue() : 0.0;
+					    })
+					    .sum();
 
+				double totalCollection = body.getIngestData().stream()
+					    .mapToDouble(item -> {
+					        @SuppressWarnings("unchecked")
+					        List<Map<String, Object>> todaysCollection = (List<Map<String, Object>>) item.getMetrics().get("todaysCollection");
+
+					        // Get the first collection's buckets
+					        @SuppressWarnings("unchecked")
+					        List<Map<String, Object>> buckets = (List<Map<String, Object>>) todaysCollection.get(0).get("buckets");
+
+					        // Sum up the values for "Digital" and "Non Digital"
+					        return buckets.stream()
+					            .filter(bucket -> {
+					                String name = (String) bucket.get("name");
+					                return "Digital".equals(name) || "Non Digital".equals(name);
+					            })
+					            .mapToDouble(bucket -> {
+					                Object value = bucket.get("value");
+					                return value instanceof Number ? ((Number) value).doubleValue() : 0.0;
+					            })
+					            .sum();
+					    })
+					    .sum();
+				
 				NdbResponse ndbResponse = responseEntity.getBody();
 
 				ndbResponse.setDate(currentDate);
@@ -400,6 +430,8 @@ public class NationalDashboardService {
 				ndbResponse.setMessageDescription("Record successfully pushed");
 				ndbResponse.setTotalNoOfApplications(totalApplicationsSubmitted);
 				ndbResponse.setTotalApprovedApplications(totalApprovedApplications);
+				ndbResponse.setTotalPlotArea(totalPlotArea);
+				ndbResponse.setTotalCollection(totalCollection);
 
 				log.info("responseEntity: " + responseEntity.toString());
 				log.info("ndbResponse: " + ndbResponse.toString());

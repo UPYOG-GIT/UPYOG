@@ -51,4 +51,12 @@ public class NdbResponse {
 	
 	@JsonProperty("totalApprovedApplications")
 	private int totalApprovedApplications = 0;
+	
+	@JsonProperty("totalApprovedApplications")
+	private double totalPlotArea = 0;
+	
+	@JsonProperty("totalApprovedApplications")
+	private double totalCollection = 0;
+	
+	
 }

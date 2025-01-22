@@ -41,8 +41,8 @@ public class NationalDashboardRepository {
 				+ "  COALESCE(SUM(DISTINCT CASE WHEN egpg.gateway_payment_mode IN ('Bharat QR', 'Unified Payments', 'Net Banking', 'Debit Card', 'Credit Card') THEN egpg.txn_amount ELSE 0 END), 0) AS online_amt,\n"
 				+ "  COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND bp.businessservice IN ('BPA','BPA_LOW') AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('"
 				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) AS ApprovedCount, \n"
-				+ " COUNT(DISTINCT CASE WHEN bp.businessservice IN ('BPA','BPA_LOW') AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('" + formattedDate
-				+ "', 'YYYY-MM-DD') THEN bp.applicationno END) AS todaysApplicationSubmitted, "
+				+ " COUNT(DISTINCT CASE WHEN bp.businessservice IN ('BPA','BPA_LOW') AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
+				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) AS todaysApplicationSubmitted, "
 				+ "  COUNT(DISTINCT CASE WHEN bp.status = 'INITIATED' AND bp.businessservice IN ('BPA','BPA_LOW') AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
 				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) AS InitiatedCount, \n"
 				+ "  COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND bp.businessservice IN ('BPA','BPA_LOW') AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('"
@@ -66,21 +66,19 @@ public class NationalDashboardRepository {
 				+ "', 'YYYY-MM-DD') THEN CAST(la.plotarea AS numeric) ELSE 0 END), 0) AS TotalPlotArea, "
 				+ "  COALESCE(AVG(DISTINCT CASE WHEN bp.businessservice IN ('BPA','BPA_LOW') AND approvaldate IS NOT NULL and approvaldate != 0 THEN ((bp.approvaldate - bp.createdtime) / 86400000.0) ELSE 0 END), 0) AS avg_days_to_issue_certificate, "
 				+ "  COUNT(DISTINCT CASE \n" + "    WHEN wf.businessservicesla >= 0 \n"
-				+ "      AND bp.status = 'APPROVED' \n"
-				+ " 	 AND bp.businessservice IN ('BPA','BPA_LOW') "
+				+ "      AND bp.status = 'APPROVED' \n" + " 	 AND bp.businessservice IN ('BPA','BPA_LOW') "
 				+ "      AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('" + formattedDate
 				+ "', 'YYYY-MM-DD') \n" + "    THEN bp.applicationno \n"
-				+ "  END) AS todaysApprovedApplicationsWithinSLA1, " 
-				+ "  COUNT(DISTINCT CASE \n" + "    WHEN wf.businessservicesla >= 0 \n"
-				+ "      AND bp.status = 'APPROVED' \n"
+				+ "  END) AS todaysApprovedApplicationsWithinSLA1, " + "  COUNT(DISTINCT CASE \n"
+				+ "    WHEN wf.businessservicesla >= 0 \n" + "      AND bp.status = 'APPROVED' \n"
 				+ " 	 AND bp.businessservice IN ('BPA_OC') "
 				+ "      AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('" + formattedDate
 				+ "', 'YYYY-MM-DD') \n" + "    THEN bp.applicationno \n"
 				+ "  END) AS todaysApprovedOCApplicationsWithinSLA, "
 				+ "  COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND bp.businessservice IN ('BPA_OC') AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('"
 				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) AS OCApprovedCount, \n"
-				+ " COUNT(DISTINCT CASE WHEN bp.businessservice IN ('BPA_OC') AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('" + formattedDate
-				+ "', 'YYYY-MM-DD') THEN bp.applicationno END) AS todaysOCApplicationSubmitted, "
+				+ " COUNT(DISTINCT CASE WHEN bp.businessservice IN ('BPA_OC') AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
+				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) AS todaysOCApplicationSubmitted, "
 				+ "  COALESCE(AVG(DISTINCT CASE WHEN bp.businessservice IN ('BPA_OC') AND approvaldate IS NOT NULL and approvaldate != 0 THEN ((bp.approvaldate - bp.createdtime) / 86400000.0) ELSE 0 END), 0) AS avg_days_to_issue_oc_certificate "
 				+ "  FROM \n" + "  eg_land_address AS la \n"
 				+ "  LEFT JOIN logo_master AS lm ON la.tenantid = lm.tenantid \n"
@@ -89,14 +87,13 @@ public class NationalDashboardRepository {
 				+ "    FROM eg_pg_transactions\n" + "    WHERE txn_status='SUCCESS' \n"
 				+ "      AND TO_TIMESTAMP(created_time / 1000)::date = TO_DATE('" + formattedDate + "', 'YYYY-MM-DD')\n"
 				+ "  ) AS egpg ON bp.applicationno = egpg.consumer_code \n"
-				+ " LEFT JOIN eg_wf_processinstance_v2 AS wf ON wf.businessid = bp.applicationno WHERE bp.tenantid != 'cg.citya'\n " 
-				+ " GROUP BY \n"
-				+ "  la.locality, la.tenantid, lm.ulb_name " + "HAVING \n"
+				+ " LEFT JOIN eg_wf_processinstance_v2 AS wf ON wf.businessid = bp.applicationno WHERE bp.tenantid != 'cg.citya'\n "
+				+ " GROUP BY \n" + "  la.locality, la.tenantid, lm.ulb_name " + "HAVING \n"
 				+ "  COALESCE(SUM(DISTINCT CASE WHEN egpg.gateway_payment_mode IN ('Bharat QR', 'Unified Payments', 'Net Banking', 'Debit Card', 'Credit Card') THEN egpg.txn_amount ELSE 0 END), 0) > 0\n"
 				+ "  OR COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND bp.businessservice IN ('BPA','BPA_LOW') AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('"
 				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0\n"
-				+ " OR COUNT(DISTINCT CASE WHEN bp.businessservice IN ('BPA','BPA_LOW') AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('" + formattedDate
-				+ "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0 "
+				+ " OR COUNT(DISTINCT CASE WHEN bp.businessservice IN ('BPA','BPA_LOW') AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
+				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0 "
 				+ "  OR COUNT(DISTINCT CASE WHEN bp.status = 'INITIATED' AND bp.businessservice IN ('BPA','BPA_LOW') AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
 				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0\n"
 				+ "  OR COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND bp.businessservice IN ('BPA','BPA_LOW') AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('"
@@ -113,19 +110,20 @@ public class NationalDashboardRepository {
 				+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) > 0\n"
 				+ "  OR COUNT(DISTINCT CASE WHEN la.occupancy like('%,%') AND bp.businessservice IN ('BPA','BPA_LOW') AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('"
 				+ formattedDate + "', 'YYYY-MM-DD') THEN la.landinfoid END) > 0\n" + " OR COUNT(DISTINCT CASE \n"
-				+ "    WHEN wf.businessservicesla >= 0 \n" + "      AND bp.status = 'APPROVED' AND bp.businessservice IN ('BPA','BPA_LOW')  \n"
+				+ "    WHEN wf.businessservicesla >= 0 \n"
+				+ "      AND bp.status = 'APPROVED' AND bp.businessservice IN ('BPA','BPA_LOW')  \n"
+				+ "      AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('" + formattedDate
+				+ "', 'YYYY-MM-DD') \n" + "    THEN bp.applicationno \n" + "  END) > 0 " + " OR COUNT(DISTINCT CASE \n"
+				+ "    WHEN wf.businessservicesla >= 0 \n"
+				+ "      AND bp.status = 'APPROVED' AND bp.businessservice IN ('BPA_OC')  \n"
 				+ "      AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('" + formattedDate
 				+ "', 'YYYY-MM-DD') \n" + "    THEN bp.applicationno \n" + "  END) > 0 "
-				+ " OR COUNT(DISTINCT CASE \n"
-				+ "    WHEN wf.businessservicesla >= 0 \n" + "      AND bp.status = 'APPROVED' AND bp.businessservice IN ('BPA_OC')  \n"
-				+ "      AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('" + formattedDate
-				+ "', 'YYYY-MM-DD') \n" + "    THEN bp.applicationno \n" + "  END) > 0 "
-				+ "  OR COUNT(egpg.gateway_payment_mode) > 0" 
+				+ "  OR COUNT(egpg.gateway_payment_mode) > 0"
 				+ "  OR COUNT(DISTINCT CASE WHEN bp.status = 'APPROVED' AND bp.businessservice IN ('BPA_OC') AND TO_TIMESTAMP(bp.approvaldate / 1000)::date = TO_DATE('"
 				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0\n"
-				+ " OR COUNT(DISTINCT CASE WHEN bp.businessservice IN ('BPA_OC') AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('" + formattedDate
-				+ "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0 "
-				+ " ORDER BY \n" + "  la.locality;\n";
+				+ " OR COUNT(DISTINCT CASE WHEN bp.businessservice IN ('BPA_OC') AND TO_TIMESTAMP(bp.createdtime / 1000)::date = TO_DATE('"
+				+ formattedDate + "', 'YYYY-MM-DD') THEN bp.applicationno END) > 0 " + " ORDER BY \n"
+				+ "  la.locality;\n";
 
 		log.info("Query for date " + formattedDate + ":\n" + query1);
 
@@ -159,6 +157,7 @@ public class NationalDashboardRepository {
 				+ ndbResponse.getMessageDescription() + "','" + ndbResponse.getTotalNoOfApplications() + "','"
 				+ ndbResponse.getTotalApprovedApplications() + "','" + ndbResponse.getDate() + "')";
 
+		log.info("Dashboard insertQuery: " + insertQuery);
 		int insertResult = jdbcTemplate.update(insertQuery);
 		log.info("eg_ndb_push_status Result : " + insertResult + " Data inserted");
 	}
