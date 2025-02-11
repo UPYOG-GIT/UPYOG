@@ -673,7 +673,7 @@ public class BPARepository {
 
 	public int updateBillAmount(String applicationNo, String businessService, String feeType) {
 		
-		String updateQuery = "WITH WITH get_amount AS ("
+		String updateQuery = "WITH get_amount AS ("
 				+ "    SELECT SUM(amount) AS amount"
 				+ "    FROM fee_details"
 				+ "    WHERE application_no = '" + applicationNo + "'"
