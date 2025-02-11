@@ -506,6 +506,22 @@ public class BPAController {
 		}
 	}
 
+	@PostMapping(value = "/_updatebillamount")
+	public ResponseEntity<Object> updateBillAmount(@RequestParam String applicationNo,
+			@RequestParam String businessService, @RequestParam String amount) {
+		try {
+			int updateResult = bpaService.updateBillAmount(applicationNo, businessService, amount);
+			if (updateResult > 0) {
+				return new ResponseEntity<>("Updated Successfully " + updateResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>("No Record updated " + updateResult, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in updateBillAmount: " + ex);
+			return new ResponseEntity<>("Exception while update bill amount", HttpStatus.EXPECTATION_FAILED);
+		}
+	}
+
 	@PostMapping(value = "/dashboard/count")
 	public ResponseEntity<List<Map<String, Object>>> getDataCountsForDashboard(String tenantId) {
 
