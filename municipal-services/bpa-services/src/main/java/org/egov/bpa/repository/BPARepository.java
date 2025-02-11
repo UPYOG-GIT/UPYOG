@@ -559,7 +559,7 @@ public class BPARepository {
 				+ "    Rejected,\n" + "    Reassign,\n" + "    Inprogress,\n" + "    appl_fee,\n"
 				+ "    sanc_fee_pending,\n" + "    department_inprocess,\n"
 				+ "    (Initiated + CITIZEN_APPROVAL_INPROCESS + Approved + Rejected + Reassign + Inprogress + appl_fee + sanc_fee_pending + department_inprocess) AS Total\n"
-				+ "FROM (\n" + "    SELECT\n"
+				+ " FROM (\n" + "    SELECT\n"
 				+ "        COUNT(CASE WHEN bp.status = 'INITIATED' THEN 1 END) AS Initiated,\n"
 				+ "        COUNT(CASE WHEN bp.status IN ('CITIZEN_APPROVAL_INPROCESS','CITIZEN_ACTION_PENDING_AT_DOC_VERIF') THEN 1 END) AS CITIZEN_APPROVAL_INPROCESS,\n"
 				+ "        COUNT(CASE WHEN bp.status = 'APPROVED' THEN 1 END) AS Approved,\n"
@@ -569,14 +569,14 @@ public class BPARepository {
 				+ "        COUNT(CASE WHEN bp.status = 'PENDING_APPL_FEE' THEN 1 END) AS appl_fee,\n"
 				+ "        COUNT(CASE WHEN bp.status = 'PENDING_SANC_FEE_PAYMENT' THEN 1 END) AS sanc_fee_pending,\n"
 				+ "        COUNT(CASE WHEN bp.status IN ('DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'DOC_VERIFICATION_INPROGRESS_BY_BUILDER', 'POST_FEE_APPROVAL_INPROGRESS', 'APPROVAL_INPROGRESS') THEN 1 END) AS department_inprocess\n"
-				+ "    FROM eg_bpa_buildingplan bp\n";
+				+ "    FROM eg_bpa_buildingplan bp WHERE bp.tenantid !='cg.citya'\n";
 
 		String query2 = "SELECT "
 				+ "COUNT(CASE WHEN (bp.status != 'INITIATED' AND bp.status != 'PENDING_APPL_FEE' AND bp.status != 'CITIZEN_APPROVAL_INPROCESS' AND txn_status = 'SUCCESS' AND txn_amount = 1.00) THEN 1 END) AS direct_bhawan_anugya "
-				+ "FROM eg_bpa_buildingplan bp, eg_pg_transactions bd " + "WHERE bp.applicationno = bd.consumer_code";
+				+ "FROM eg_bpa_buildingplan bp, eg_pg_transactions bd " + "WHERE bp.applicationno = bd.consumer_code AND bp.tenantid !='cg.citya' ";
 
 		if (tenantId != null) {
-			query1 += " WHERE bp.tenantid = '" + tenantId + "'";
+			query1 += " AND bp.tenantid = '" + tenantId + "'";
 			query2 += " AND bp.tenantid = '" + tenantId + "'";
 		}
 		query1 += ") AS counts";
