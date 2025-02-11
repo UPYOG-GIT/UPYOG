@@ -671,4 +671,43 @@ public class BPARepository {
 		return resultList;
 	}
 
+	public int updateBillAmount(String applicationNo, String businessService, String amount) {
+		
+		String updateQuery = "WITH updated_billdetail AS ("
+				+ "    UPDATE egbs_billdetail_v1"
+				+ "    SET totalamount = '" + amount + "'"
+				+ "    WHERE consumercode = '" + applicationNo + "'"
+				+ "      AND businessservice = '" + businessService + "'"
+				+ "    RETURNING id"
+				+ "),"
+				+ "updated_demanddetail AS ("
+				+ "    UPDATE egbs_demanddetail_v1"
+				+ "    SET taxamount = '" + amount + "'"
+				+ "    WHERE demandid IN ("
+				+ "        SELECT id"
+				+ "        FROM egbs_demand_v1"
+				+ "        WHERE consumercode = '" + applicationNo + "'"
+				+ "          AND businessservice = '" + businessService + "'"
+				+ "    )"
+				+ "    RETURNING id"
+				+ "),"
+				+ "updated_billacountdetail AS ("
+				+ "    UPDATE egbs_billaccountdetail_v1"
+				+ "    SET amount = '" + amount + "'"
+				+ "    WHERE demanddetailid IN ("
+				+ "        SELECT id FROM updated_demanddetail"
+				+ "    )"
+				+ "    RETURNING id"
+				+ ")"
+				+ "UPDATE egbs_demanddetail_v1_audit"
+				+ "SET taxamount = '" + amount + "'"
+				+ "WHERE demanddetailid IN ("
+				+ "    SELECT id FROM updated_demanddetail"
+				+ ")";
+		
+		int updateResult = jdbcTemplate.update(updateQuery);
+		
+		log.info("BPARepository.updateBillAmount: Bill Amount updated. Result " + updateResult);
+		return updateResult;
+	}
 }
