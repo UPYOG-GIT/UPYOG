@@ -671,18 +671,24 @@ public class BPARepository {
 		return resultList;
 	}
 
-	public int updateBillAmount(String applicationNo, String businessService, String amount) {
+	public int updateBillAmount(String applicationNo, String businessService, String feeType) {
 		
-		String updateQuery = "WITH updated_billdetail AS ("
+		String updateQuery = "WITH WITH get_amount AS ("
+				+ "    SELECT SUM(amount) AS amount"
+				+ "    FROM fee_details"
+				+ "    WHERE application_no = '" + applicationNo + "'"
+				+ "      AND feetype = '" + feeType + "'"
+				+ "), "
+				+ " updated_billdetail AS ("
 				+ "    UPDATE egbs_billdetail_v1"
-				+ "    SET totalamount = '" + amount + "'"
+				+ "    SET totalamount = (SELECT amount FROM get_amount) "
 				+ "    WHERE consumercode = '" + applicationNo + "'"
 				+ "      AND businessservice = '" + businessService + "'"
 				+ "    RETURNING id"
-				+ "),"
-				+ "updated_demanddetail AS ("
+				+ "), "
+				+ " updated_demanddetail AS ("
 				+ "    UPDATE egbs_demanddetail_v1"
-				+ "    SET taxamount = '" + amount + "'"
+				+ "    SET taxamount = (SELECT amount FROM get_amount) "
 				+ "    WHERE demandid IN ("
 				+ "        SELECT id"
 				+ "        FROM egbs_demand_v1"
@@ -690,20 +696,20 @@ public class BPARepository {
 				+ "          AND businessservice = '" + businessService + "'"
 				+ "    )"
 				+ "    RETURNING id"
-				+ "),"
-				+ "updated_billacountdetail AS ("
+				+ "), "
+				+ " updated_billacountdetail AS ("
 				+ "    UPDATE egbs_billaccountdetail_v1"
-				+ "    SET amount = '" + amount + "'"
+				+ "    SET amount = (SELECT amount FROM get_amount) "
 				+ "    WHERE demanddetailid IN ("
 				+ "        SELECT id FROM updated_demanddetail"
 				+ "    )"
 				+ "    RETURNING id"
-				+ ")"
-				+ "UPDATE egbs_demanddetail_v1_audit"
-				+ "SET taxamount = '" + amount + "'"
-				+ "WHERE demanddetailid IN ("
+				+ ") "
+				+ " UPDATE egbs_demanddetail_v1_audit"
+				+ " SET taxamount = (SELECT amount FROM get_amount) "
+				+ " WHERE demanddetailid IN ("
 				+ "    SELECT id FROM updated_demanddetail"
-				+ ")";
+				+ ") ";
 		
 		int updateResult = jdbcTemplate.update(updateQuery);
 		

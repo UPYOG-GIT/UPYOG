@@ -1093,8 +1093,8 @@ public class BPAService {
 		return resultList;
 	}
 	
-	public int updateBillAmount(String applicationNo, String businessService, String amount) {
-		return repository.updateBillAmount(applicationNo, businessService, amount);
+	public int updateBillAmount(String applicationNo, String businessService, String feeType) {
+		return repository.updateBillAmount(applicationNo, businessService, feeType);
 	}
 
 	public List<Map<String, Object>> getIngestData() {

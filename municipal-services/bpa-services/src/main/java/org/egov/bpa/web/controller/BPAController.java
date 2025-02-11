@@ -508,9 +508,9 @@ public class BPAController {
 
 	@PostMapping(value = "/_updatebillamount")
 	public ResponseEntity<Object> updateBillAmount(@RequestParam String applicationNo,
-			@RequestParam String businessService, @RequestParam String amount) {
+			@RequestParam String businessService, @RequestParam String feeType) {
 		try {
-			int updateResult = bpaService.updateBillAmount(applicationNo, businessService, amount);
+			int updateResult = bpaService.updateBillAmount(applicationNo, businessService, feeType);
 			if (updateResult > 0) {
 				return new ResponseEntity<>("Updated Successfully " + updateResult, HttpStatus.OK);
 			} else {
