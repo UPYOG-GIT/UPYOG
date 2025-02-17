@@ -555,7 +555,7 @@ public class BPARepository {
 	}
 
 	public List<Map<String, Object>> getDataCountsForDashboard(String tenantId) {
-		String query1 = "SELECT\n" + "    Initiated,\n" + "    CITIZEN_APPROVAL_INPROCESS,\n" + "    Approved,\n"
+		/*String query1 = "SELECT\n" + "    Initiated,\n" + "    CITIZEN_APPROVAL_INPROCESS,\n" + "    Approved,\n"
 				+ "    Rejected,\n" + "    Reassign,\n" + "    Inprogress,\n" + "    appl_fee,\n"
 				+ "    sanc_fee_pending,\n" + "    department_inprocess,\n"
 				+ "    (Initiated + CITIZEN_APPROVAL_INPROCESS + Approved + Rejected + Reassign + Inprogress + appl_fee + sanc_fee_pending + department_inprocess) AS Total\n"
@@ -579,15 +579,65 @@ public class BPARepository {
 			query1 += " AND bp.tenantid = '" + tenantId + "'";
 			query2 += " AND bp.tenantid = '" + tenantId + "'";
 		}
-		query1 += ") AS counts";
+		query1 += ") AS counts";*/
+		
+		String countQuery = "SELECT " +
+			    "    counts.Initiated, " +
+			    "    counts.CITIZEN_APPROVAL_INPROCESS, " +
+			    "    counts.Approved, " +
+			    "    counts.Rejected, " +
+			    "    counts.Reassign, " +
+			    "    counts.Inprogress, " +
+			    "    counts.appl_fee, " +
+			    "    counts.sanc_fee_pending, " +
+			    "    counts.department_inprocess, " +
+			    "    COALESCE(bhawan.direct_bhawan_anugya, 0) AS direct_bhawan_anugya, " +
+			    "    (counts.Initiated + counts.CITIZEN_APPROVAL_INPROCESS + counts.Approved + counts.Rejected + counts.Reassign + counts.Inprogress + counts.appl_fee + counts.sanc_fee_pending + counts.department_inprocess) AS Total " +
+			    " FROM (" +
+			    "    SELECT " +
+			    "        COUNT(CASE WHEN bp.status = 'INITIATED' THEN 1 END) AS Initiated, " +
+			    "        COUNT(CASE WHEN bp.status IN ('CITIZEN_APPROVAL_INPROCESS','CITIZEN_ACTION_PENDING_AT_DOC_VERIF') THEN 1 END) AS CITIZEN_APPROVAL_INPROCESS, " +
+			    "        COUNT(CASE WHEN bp.status = 'APPROVED' THEN 1 END) AS Approved, " +
+			    "        COUNT(CASE WHEN bp.status = 'REJECTED' THEN 1 END) AS Rejected, " +
+			    "        COUNT(CASE WHEN bp.status = 'REASSIGN' THEN 1 END) AS Reassign, " +
+			    "        COUNT(CASE WHEN bp.status = 'INPROGRESS' THEN 1 END) AS Inprogress, " +
+			    "        COUNT(CASE WHEN bp.status = 'PENDING_APPL_FEE' THEN 1 END) AS appl_fee, " +
+			    "        COUNT(CASE WHEN bp.status = 'PENDING_SANC_FEE_PAYMENT' THEN 1 END) AS sanc_fee_pending, " +
+			    "        COUNT(CASE WHEN bp.status IN ('DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'DOC_VERIFICATION_INPROGRESS_BY_BUILDER', 'POST_FEE_APPROVAL_INPROGRESS', 'APPROVAL_INPROGRESS') THEN 1 END) AS department_inprocess " +
+			    "    FROM eg_bpa_buildingplan bp " +
+			    "    WHERE bp.tenantid != 'cg.citya'";
+
+			if (tenantId != null) {
+			    countQuery += " AND bp.tenantid = '" + tenantId + "'";
+			}
+
+			countQuery += ") AS counts " +
+			    " LEFT JOIN (" +
+			    "    SELECT COUNT(DISTINCT bp.applicationno) AS direct_bhawan_anugya " +
+			    "    FROM eg_bpa_buildingplan bp " +
+			    "    JOIN (" +
+			    "        SELECT DISTINCT consumer_code " +
+			    "        FROM eg_pg_transactions " +
+			    "        WHERE txn_status = 'SUCCESS' " +
+			    "        AND txn_amount = 1.00 " +
+			    "    ) bd ON bp.applicationno = bd.consumer_code " +
+			    "    WHERE bp.tenantid != 'cg.citya' " +
+			    "    AND bp.status NOT IN ('INITIATED', 'PENDING_APPL_FEE', 'CITIZEN_APPROVAL_INPROCESS')";
+
+			if (tenantId != null) {
+			    countQuery += " AND bp.tenantid = '" + tenantId + "'";
+			}
+
+			countQuery += ") AS bhawan ON 1=1";
+
 
 //		log.info("query1---" + query1);
 //		log.info("query2---" + query2);
 
-		List<Map<String, Object>> result = new ArrayList<>();
+		List<Map<String, Object>> result = jdbcTemplate.queryForList(countQuery);
 
-		result.add(jdbcTemplate.queryForMap(query1));
-		result.add(jdbcTemplate.queryForMap(query2));
+//		result.add(jdbcTemplate.queryForMap(countQuery));
+//		result.add(jdbcTemplate.queryForMap(query2));
 
 		return result;
 	}
