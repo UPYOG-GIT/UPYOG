@@ -1100,6 +1100,10 @@ public class BPAService {
 	public int deleteApplication(String applicationNo) {
 		return repository.deleteApplication(applicationNo);
 	}
+	
+	public int applicationStepBack(String applicationNo, String applicationStatus, int stepsBack) {
+		return repository.applicationStepBack(applicationNo, applicationStatus, stepsBack);
+	}
 
 	public List<Map<String, Object>> getIngestData() {
 

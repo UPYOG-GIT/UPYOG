@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.egov.bpa.config.BPAConfiguration;
 import org.egov.bpa.producer.Producer;
@@ -763,6 +764,36 @@ public class BPARepository {
 
 		log.info("BPARepository.deleteApplication: Application Deleted. Application No : " + applicationNo + ", Result "
 				+ deleteResult);
+		return deleteResult;
+	}
+
+	public int applicationStepBack(String applicationNo, String applicationStatus, int stepsBack) {
+
+		String updateStatusQuery = "update  eg_bpa_buildingplan set status='" + applicationStatus
+				+ "' where applicationno ='" + applicationNo + "'";
+
+		int updateStatusResult = jdbcTemplate.update(updateStatusQuery);
+
+		log.info("BPARepository.applicationStepBack:  Application No : " + applicationNo + " Status : "
+				+ applicationStatus + " updated. Result " + updateStatusResult);
+
+		String fetchIdForDeleteQuery = "select id from eg_wf_processinstance_v2 where businessid ='" + applicationNo
+				+ "' ORDER BY createdtime DESC LIMIT " + stepsBack;
+
+		List<Map<String, Object>> processInstanceIdList = jdbcTemplate.queryForList(fetchIdForDeleteQuery);
+
+		String idListWithQuotes = processInstanceIdList.stream().map(row -> "'" + row.get("id").toString() + "'")
+				.collect(Collectors.joining(","));
+
+		String deleteProcessInstanceQuery = "DELETE FROM eg_wf_processinstance_v2 WHERE id IN (" + idListWithQuotes
+				+ ")";
+
+		int deleteResult = jdbcTemplate.update(deleteProcessInstanceQuery);
+
+		log.info("BPARepository.applicationStepBack: Application No : " + applicationNo + ", +" + stepsBack
+				+ " step back, Result " + deleteResult);
+
+//		return "Application No : " + applicationNo + ", +" + stepsBack + " back";
 		return deleteResult;
 	}
 }
