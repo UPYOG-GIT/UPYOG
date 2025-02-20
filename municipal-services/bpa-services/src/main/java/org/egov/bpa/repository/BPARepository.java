@@ -769,31 +769,45 @@ public class BPARepository {
 
 	public int applicationStepBack(String applicationNo, String applicationStatus, int stepsBack) {
 
-		String updateStatusQuery = "update  eg_bpa_buildingplan set status='" + applicationStatus
-				+ "' where applicationno ='" + applicationNo + "'";
+		/*
+		 * String updateStatusQuery = "update  eg_bpa_buildingplan set status='" +
+		 * applicationStatus + "' where applicationno ='" + applicationNo + "'";
+		 * 
+		 * int updateStatusResult = jdbcTemplate.update(updateStatusQuery);
+		 * 
+		 * log.info("BPARepository.applicationStepBack:  Application No : " +
+		 * applicationNo + " Status : " + applicationStatus + " updated. Result " +
+		 * updateStatusResult);
+		 * 
+		 * String fetchIdForDeleteQuery =
+		 * "select id from eg_wf_processinstance_v2 where businessid ='" + applicationNo
+		 * + "' ORDER BY createdtime DESC LIMIT " + stepsBack;
+		 * 
+		 * List<Map<String, Object>> processInstanceIdList =
+		 * jdbcTemplate.queryForList(fetchIdForDeleteQuery);
+		 * 
+		 * String idListWithQuotes = processInstanceIdList.stream().map(row -> "'" +
+		 * row.get("id").toString() + "'") .collect(Collectors.joining(","));
+		 * 
+		 * String deleteProcessInstanceQuery =
+		 * "DELETE FROM eg_wf_processinstance_v2 WHERE id IN (" + idListWithQuotes +
+		 * ")";
+		 * 
+		 * int deleteResult = jdbcTemplate.update(deleteProcessInstanceQuery);
+		 * 
+		 * log.info("BPARepository.applicationStepBack: Application No : " +
+		 * applicationNo + ", +" + stepsBack + " step back, Result " + deleteResult);
+		 */
 
-		int updateStatusResult = jdbcTemplate.update(updateStatusQuery);
+		String queryString = "WITH deleted_ids AS (" + "    DELETE FROM eg_wf_processinstance_v2 "
+				+ "    WHERE id IN (SELECT id FROM eg_wf_processinstance_v2 WHERE businessid = ? ORDER BY createdtime DESC LIMIT ? ) "
+				+ "    RETURNING id " + ") " + " UPDATE eg_bpa_buildingplan " + "SET status = ? "
+				+ " WHERE applicationno = ?";
 
-		log.info("BPARepository.applicationStepBack:  Application No : " + applicationNo + " Status : "
-				+ applicationStatus + " updated. Result " + updateStatusResult);
+		int queryResult = jdbcTemplate.update(queryString, applicationNo, stepsBack, applicationStatus, applicationNo);
+		log.info("Update & Delete executed for Application No: {}, Result: {}, Step Back: {}", applicationNo,
+				queryResult, stepsBack);
 
-		String fetchIdForDeleteQuery = "select id from eg_wf_processinstance_v2 where businessid ='" + applicationNo
-				+ "' ORDER BY createdtime DESC LIMIT " + stepsBack;
-
-		List<Map<String, Object>> processInstanceIdList = jdbcTemplate.queryForList(fetchIdForDeleteQuery);
-
-		String idListWithQuotes = processInstanceIdList.stream().map(row -> "'" + row.get("id").toString() + "'")
-				.collect(Collectors.joining(","));
-
-		String deleteProcessInstanceQuery = "DELETE FROM eg_wf_processinstance_v2 WHERE id IN (" + idListWithQuotes
-				+ ")";
-
-		int deleteResult = jdbcTemplate.update(deleteProcessInstanceQuery);
-
-		log.info("BPARepository.applicationStepBack: Application No : " + applicationNo + ", +" + stepsBack
-				+ " step back, Result " + deleteResult);
-
-//		return "Application No : " + applicationNo + ", +" + stepsBack + " back";
-		return deleteResult;
+		return queryResult;
 	}
 }

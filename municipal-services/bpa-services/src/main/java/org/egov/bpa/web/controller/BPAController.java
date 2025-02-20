@@ -545,7 +545,7 @@ public class BPAController {
 		try {
 			int deleteResult = bpaService.applicationStepBack(applicationNo, applicationStatus, stepsBack);
 			if (deleteResult > 0) {
-				return new ResponseEntity<>("Application No : " + applicationNo + ", +" + stepsBack + " step back",
+				return new ResponseEntity<>("Application No : " + applicationNo + ", " + stepsBack + " step back",
 						HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>("Applicatio No : " + applicationNo + " not found ", HttpStatus.OK);
