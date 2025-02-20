@@ -54,7 +54,7 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
         },
         {
             Header: t("ES_INBOX_SLA_DAYS_REMAINING"),
-            accessor: row => GetStatusCell(row?.sla),
+            accessor: row => row?.status === "APPROVED" ? "-" : row?.sla,
         },
         {
             Header: t("Payment Verification"),
