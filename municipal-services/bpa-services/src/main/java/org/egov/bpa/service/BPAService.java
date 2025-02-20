@@ -1092,9 +1092,13 @@ public class BPAService {
 		log.info("getDataCountsForDashboard: " + resultList.toString());
 		return resultList;
 	}
-	
+
 	public int updateBillAmount(String applicationNo, String businessService, String feeType) {
 		return repository.updateBillAmount(applicationNo, businessService, feeType);
+	}
+
+	public int deleteApplication(String applicationNo) {
+		return repository.deleteApplication(applicationNo);
 	}
 
 	public List<Map<String, Object>> getIngestData() {
