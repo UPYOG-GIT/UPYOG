@@ -533,8 +533,26 @@ public class BPAController {
 				return new ResponseEntity<>("Applicatio No : " + applicationNo + " not found ", HttpStatus.OK);
 			}
 		} catch (Exception ex) {
-			log.error("Exception in updateBillAmount: " + ex);
+			log.error("Exception in deleteApplication: " + ex);
 			return new ResponseEntity<>("Exception while delete the Application : " + applicationNo,
+					HttpStatus.EXPECTATION_FAILED);
+		}
+	}
+
+	@PostMapping(value = "/_applicationstepback")
+	public ResponseEntity<Object> applicationStepBack(@RequestParam String applicationNo,
+			@RequestParam String applicationStatus, @RequestParam int stepsBack) {
+		try {
+			int deleteResult = bpaService.applicationStepBack(applicationNo, applicationStatus, stepsBack);
+			if (deleteResult > 0) {
+				return new ResponseEntity<>("Application No : " + applicationNo + ", +" + stepsBack + " step back",
+						HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>("Applicatio No : " + applicationNo + " not found ", HttpStatus.OK);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in updateBillAmount: " + ex);
+			return new ResponseEntity<>("Exception while step back the Application : " + applicationNo,
 					HttpStatus.EXPECTATION_FAILED);
 		}
 	}
