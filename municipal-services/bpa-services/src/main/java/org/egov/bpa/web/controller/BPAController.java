@@ -522,6 +522,23 @@ public class BPAController {
 		}
 	}
 
+	@PostMapping(value = "/_deleteapplication")
+	public ResponseEntity<Object> deleteApplication(@RequestParam String applicationNo) {
+		try {
+			int deleteResult = bpaService.deleteApplication(applicationNo);
+			if (deleteResult > 0) {
+				return new ResponseEntity<>(
+						"Applicatio No : " + applicationNo + " is deleted, Result : " + deleteResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>("Applicatio No : " + applicationNo + " not found ", HttpStatus.OK);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in updateBillAmount: " + ex);
+			return new ResponseEntity<>("Exception while delete the Application : " + applicationNo,
+					HttpStatus.EXPECTATION_FAILED);
+		}
+	}
+
 	@PostMapping(value = "/dashboard/count")
 	public ResponseEntity<List<Map<String, Object>>> getDataCountsForDashboard(String tenantId) {
 
