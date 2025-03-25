@@ -12,7 +12,7 @@ const useInboxMobileCardsData = ({ parentRoute, table }) => {
         [t("CS_APPLICATION_DETAILS_APPLICATION_DATE")]: format(new Date(date), 'dd/MM/yyyy'),
         [t("EVENTS_STATUS_LABEL")]: t(`WF_${businessService}_${status}`),
         [t("WF_INBOX_HEADER_CURRENT_OWNER")]: owner,
-        [t("ES_INBOX_SLA_DAYS_REMAINING")]: sla
+        [t("ES_INBOX_SLA_DAYS_REMAINING")]: status === "APPROVED" ? "-" : sla,
     }))
 
     const MobileSortFormValues = () => {
