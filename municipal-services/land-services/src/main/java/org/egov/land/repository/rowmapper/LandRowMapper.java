@@ -57,11 +57,14 @@ public class LandRowMapper implements ResultSetExtractor<List<LandInfo>> {
 
 				Double latitude = (Double) rs.getObject("latitude");
 				Double longitude = (Double) rs.getObject("longitude");
+				Object geoLocationAdditionalDetails = new Gson().fromJson(rs.getString("geolocationadditionaldetails").equals("{}")
+						|| rs.getString("geolocationadditionaldetails").equals("null") ? null : rs.getString("geolocationadditionaldetails"),
+						Object.class);
 
 				Boundary locality = Boundary.builder().code(rs.getString("locality")).build();
 
 				GeoLocation geoLocation = GeoLocation.builder().id(rs.getString("landInfo_geo_loc")).latitude(latitude)
-						.longitude(longitude).build();
+						.longitude(longitude).additionalDetails(geoLocationAdditionalDetails).build();
 
 				Address address = Address.builder().buildingName(rs.getString("buildingName"))
 						.city(rs.getString("city")).plotNo(rs.getString("plotno")).district(rs.getString("district"))
