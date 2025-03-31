@@ -758,7 +758,11 @@ public class BPARepository {
 				+ "), deleted_landaddressaudit AS (\r\n" + "  DELETE FROM eg_land_address_auditdetails\r\n"
 				+ "  WHERE landinfoid IN (SELECT landid from delete_buildingplan)\r\n" + "  RETURNING id\r\n" + ") \r\n"
 				+ "  DELETE FROM eg_land_unit_auditdetails\r\n"
-				+ "  WHERE landinfoid IN (SELECT landid from delete_buildingplan)\r\n";
+				+ "  WHERE landinfoid IN (SELECT landid from delete_buildingplan\r\n"
+				+ "), deleted_landgeolocation AS (\r\n" + "  DELETE FROM eg_land_geolocation\r\n"
+				+ "  WHERE addressid IN (SELECT id from deleted_landaddress)\r\n" + "  RETURNING id\r\n"
+				+ "), deleted_landgeolocationaudit AS (\r\n" + "  DELETE FROM eg_land_geolocation_auditdetails\r\n"
+				+ "  WHERE addressid IN (SELECT id from deleted_landaddress)\r\n" + "  RETURNING id\r\n" + ")\r\n";
 
 		int deleteResult = jdbcTemplate.update(deleteQuery);
 
