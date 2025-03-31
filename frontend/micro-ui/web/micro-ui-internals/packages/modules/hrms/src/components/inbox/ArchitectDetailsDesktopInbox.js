@@ -40,7 +40,7 @@ const ArchitectDetailsDesktopInbox = ({ tableConfig, filterComponent, ...props }
     // const minutes = String(date.getMinutes()).padStart(2, "0");
     // const seconds = String(date.getSeconds()).padStart(2, "0");
 
-    return `${day}-${month}-${year} 00:00:00`;
+    return `${day}-${month}-${year} 23:59:59`;
   };
 
   const GetSlaCell = (value) => {
