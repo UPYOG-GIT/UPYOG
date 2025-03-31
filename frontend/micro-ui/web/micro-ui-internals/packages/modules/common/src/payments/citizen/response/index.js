@@ -52,12 +52,9 @@ const WrapPaymentComponent = (props) => {
     // Create the next 31st March date at 23:59:59
     const nextMarch31st = new Date(year, 2, 31, 23, 59, 59);
 
-    // Format as "YYYY-MM-DD HH:mm:ss"
-    const formattedDate = `${nextMarch31st.getFullYear()}-${String(nextMarch31st.getMonth() + 1).padStart(2, "0")}-${String(
-      nextMarch31st.getDate()
-    ).padStart(2, "0")} ${String(nextMarch31st.getHours()).padStart(2, "0")}:${String(nextMarch31st.getMinutes()).padStart(2, "0")}:${String(
-      nextMarch31st.getSeconds()
-    ).padStart(2, "0")}`;
+  // Format as "DD-MM-YYYY HH:mm:ss"
+  const formattedDate = `${String(nextMarch31st.getDate()).padStart(2, "0")}-${String(nextMarch31st.getMonth() + 1).padStart(2, "0")}-${nextMarch31st.getFullYear()} ${String(nextMarch31st.getHours()).padStart(2, "0")}:${String(nextMarch31st.getMinutes()).padStart(2, "0")}:${String(nextMarch31st.getSeconds()).padStart(2, "0")}`;
+
 
     const architectId = data?.payments?.Payments[0]?.auditDetails?.createdBy;
     const architectUuid = data?.payments?.Payments[0]?.payerId;
