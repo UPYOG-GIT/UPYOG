@@ -108,7 +108,7 @@ public class TLRepository {
 
 	            LocalDateTime currentDateTime = LocalDateTime.now();
 	            int currentYear = currentDateTime.getYear();
-	            LocalDateTime targetDateTime = LocalDateTime.of(currentYear, Month.MARCH, 31, 0, 0, 0);
+	            LocalDateTime targetDateTime = LocalDateTime.of(currentYear, Month.MARCH, 31, 23, 59, 59);
 
 	            if (targetDateTime.isBefore(currentDateTime)) {
 	                targetDateTime = targetDateTime.plusYears(1);
