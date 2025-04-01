@@ -171,6 +171,9 @@ public class  TradeLicense   {
 
         @JsonProperty("validTo")
         private Long validTo = null;
+        
+        @JsonProperty("licenseYear")
+        private int licenseYear;
 
               /**
    * 1. Perform action to change the state of the trade license. 2. INITIATE, if application is getting submitted without required document. 3. APPLY, if application is getting submitted with application documents, in that case api will validate all the required application document. 4. APPROVE action is only applicable for specific role, that role has to be configurable at service level. Employee can approve a application only if application is in APPLIED state and Licesance fees is paid.
