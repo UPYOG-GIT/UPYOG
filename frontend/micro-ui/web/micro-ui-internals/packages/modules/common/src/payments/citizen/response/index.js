@@ -4,16 +4,15 @@ import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Link, useParams } from "react-router-dom";
 
-export const SuccessfulPayment = (props)=>{
-  if(localStorage.getItem("BillPaymentEnabled")!=="true"){
+export const SuccessfulPayment = (props) => {
+  if (localStorage.getItem("BillPaymentEnabled") !== "true") {
     window.history.forward();
-   return null;
- }
- return <WrapPaymentComponent {...props}/>
-}
+    return null;
+  }
+  return <WrapPaymentComponent {...props} />;
+};
 
-
- const WrapPaymentComponent = (props) => {
+const WrapPaymentComponent = (props) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { eg_pg_txnid: egId, workflow: workflw } = Digit.Hooks.useQueryParams();
@@ -21,16 +20,61 @@ export const SuccessfulPayment = (props)=>{
   const [allowFetchBill, setallowFetchBill] = useState(false);
   const { businessService: business_service, consumerCode, tenantId } = useParams();
   const { data: bpaData = {}, isLoading: isBpaSearchLoading, isSuccess: isBpaSuccess, error: bpaerror } = Digit.Hooks.obps.useOBPSSearch(
-    "", {}, tenantId, { applicationNo: consumerCode }, {}, {enabled:(window.location.href.includes("bpa") || window.location.href.includes("BPA"))}
+    "",
+    {},
+    tenantId,
+    { applicationNo: consumerCode },
+    {},
+    { enabled: window.location.href.includes("bpa") || window.location.href.includes("BPA") }
   );
-  
+
   const { isLoading, data, isError } = Digit.Hooks.usePaymentUpdate({ egId }, business_service, {
     retry: false,
     staleTime: Infinity,
     refetchOnWindowFocus: false,
   });
   // console.log("data "+JSON.stringify(data));
+  // console.log(data?.payments?.Payments[0]?.paymentDetails[0]?.businessService);
+  // console.log("data?.txnStatus: "+data?.txnStatus);
+  const txnStatus = data?.txnStatus;
+
   const { label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService: business_service }, { enabled: false });
+
+  if (business_service === "BPAREN" && txnStatus === "SUCCESS") {
+    const today = new Date();
+    let year = today.getFullYear();
+
+    // If today is past March 31st, use next year's March 31st
+    if (today.getMonth() > 2 || (today.getMonth() === 2 && today.getDate() >= 31)) {
+      year += 1;
+    }
+
+    // Create the next 31st March date at 23:59:59
+    const nextMarch31st = new Date(year, 2, 31, 23, 59, 59);
+
+  // Format as "DD-MM-YYYY HH:mm:ss"
+  const formattedDate = `${String(nextMarch31st.getDate()).padStart(2, "0")}-${String(nextMarch31st.getMonth() + 1).padStart(2, "0")}-${nextMarch31st.getFullYear()} ${String(nextMarch31st.getHours()).padStart(2, "0")}:${String(nextMarch31st.getMinutes()).padStart(2, "0")}:${String(nextMarch31st.getSeconds()).padStart(2, "0")}`;
+
+
+    const architectId = data?.payments?.Payments[0]?.auditDetails?.createdBy;
+    const architectUuid = data?.payments?.Payments[0]?.payerId;
+    const architectMobNo = data?.payments?.Payments[0]?.mobileNumber;
+    (async () => {
+      const user = {
+        uuid: architectUuid,
+        mobileNumber: architectMobNo,
+        id: architectId,
+        validityDate: formattedDate,
+      };
+
+      try {
+        const updateResponse = await Digit.HRMSService.architectValidityUpdate(tenantId, { user: user }, {});
+        // console.log("updateResponse: " + JSON.stringify(updateResponse));
+      } catch (error) {
+        console.error("Error updating validity:", error);
+      }
+    })();
+  }
 
   // const { data: demand } = Digit.Hooks.useDemandSearch(
   //   { consumerCode, businessService: business_service },
@@ -71,7 +115,7 @@ export const SuccessfulPayment = (props)=>{
 
   useEffect(() => {
     return () => {
-      localStorage.setItem("BillPaymentEnabled","false")
+      localStorage.setItem("BillPaymentEnabled", "false");
       queryClient.clear();
     };
   }, []);
@@ -125,14 +169,14 @@ export const SuccessfulPayment = (props)=>{
     //const tenantId = Digit.ULBService.getCurrentTenantId();
     const state = tenantId;
     const applicationDetails = await Digit.TLService.search({ applicationNumber: consumerCode, tenantId });
-    const generatePdfKeyForTL = "tlcertificate"
+    const generatePdfKeyForTL = "tlcertificate";
 
     if (applicationDetails) {
       let response = await Digit.PaymentService.generatePdf(state, { Licenses: applicationDetails?.Licenses }, generatePdfKeyForTL);
       const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
       window.open(fileStore[response.filestoreIds[0]], "_blank");
     }
-  }
+  };
 
   const printReciept = async () => {
     if (printing) return;
@@ -198,29 +242,31 @@ export const SuccessfulPayment = (props)=>{
       setTimeout(() => URL.revokeObjectURL(link.href), 7000);
     }
   };
-  
 
-  const getPermitOccupancyOrderSearch = async(order, mode="download") => {
+  const getPermitOccupancyOrderSearch = async (order, mode = "download") => {
     let queryObj = { applicationNo: bpaData?.[0]?.applicationNo };
     let bpaResponse = await Digit.OBPSService.BPASearch(bpaData?.[0]?.tenantId, queryObj);
     const edcrResponse = await Digit.OBPSService.scrutinyDetails(bpaData?.[0]?.tenantId, { edcrNumber: bpaData?.[0]?.edcrNumber });
-    let bpaDataDetails = bpaResponse?.BPA?.[0], edcrData = edcrResponse?.edcrDetail?.[0];
+    let bpaDataDetails = bpaResponse?.BPA?.[0],
+      edcrData = edcrResponse?.edcrDetail?.[0];
     let currentDate = new Date();
-    bpaDataDetails.additionalDetails.runDate = convertDateToEpoch(currentDate.getFullYear() + '-' + (currentDate.getMonth() + 1) + '-' + currentDate.getDate());
-    let reqData = {...bpaDataDetails, edcrDetail: [{...edcrData}]};
+    bpaDataDetails.additionalDetails.runDate = convertDateToEpoch(
+      currentDate.getFullYear() + "-" + (currentDate.getMonth() + 1) + "-" + currentDate.getDate()
+    );
+    let reqData = { ...bpaDataDetails, edcrDetail: [{ ...edcrData }] };
     let response = await Digit.PaymentService.generatePdf(bpaDataDetails?.tenantId, { Bpa: [reqData] }, order);
     const fileStore = await Digit.PaymentService.printReciept(bpaDataDetails?.tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
 
     reqData["applicationType"] = bpaDataDetails?.additionalDetails?.applicationType;
-    let edcrresponse = await Digit.OBPSService.edcr_report_download({BPA: {...reqData}});
+    let edcrresponse = await Digit.OBPSService.edcr_report_download({ BPA: { ...reqData } });
     const responseStatus = parseInt(edcrresponse.status, 10);
     if (responseStatus === 201 || responseStatus === 200) {
       mode == "print"
         ? printPdf(new Blob([edcrresponse.data], { type: "application/pdf" }))
         : downloadPdf(new Blob([edcrresponse.data], { type: "application/pdf" }), `edcrReport.pdf`);
     }
-  }
+  };
 
   const getBillingPeriod = (billDetails) => {
     const { taxPeriodFrom, taxPeriodTo, fromPeriod, toPeriod } = billDetails || {};
@@ -247,7 +293,6 @@ export const SuccessfulPayment = (props)=>{
       let from = new Date(fromPeriod).getFullYear().toString();
       let to = new Date(toPeriod).getFullYear().toString();
       return "FY " + from + "-" + to;
-
     } else return "N/A";
   };
 
@@ -255,7 +300,7 @@ export const SuccessfulPayment = (props)=>{
   if (workflw) {
     bannerText = `CITIZEN_SUCCESS_UC_PAYMENT_MESSAGE`;
   } else {
-    if(paymentData?.paymentDetails?.[0]?.businessService?.includes("BPA")) {
+    if (paymentData?.paymentDetails?.[0]?.businessService?.includes("BPA")) {
       let nameOfAchitect = sessionStorage.getItem("BPA_ARCHITECT_NAME");
       let parsedArchitectName = nameOfAchitect ? JSON.parse(nameOfAchitect) : "ARCHITECT";
       bannerText = `CITIZEN_SUCCESS_${paymentData?.paymentDetails[0].businessService.replace(/\./g, "_")}_${parsedArchitectName}_PAYMENT_MESSAGE`;
@@ -275,7 +320,7 @@ export const SuccessfulPayment = (props)=>{
 
   const ommitRupeeSymbol = ["PT"].includes(business_service);
 
-  if ((window.location.href.includes("bpa") || window.location.href.includes("BPA")) && isBpaSearchLoading) return <Loader />
+  if ((window.location.href.includes("bpa") || window.location.href.includes("BPA")) && isBpaSearchLoading) return <Loader />;
 
   return (
     <Card>
@@ -331,53 +376,66 @@ export const SuccessfulPayment = (props)=>{
           />
         )}
       </StatusTable>
-      <div style={{display:"flex"}}>
-      {business_service == "TL" ? (
-        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={printReciept}>
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#f47738">
-            <path d="M0 0h24v24H0V0z" fill="none" />
-            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
-          </svg>
-          {t("TL_RECEIPT")}
-        </div>
-      ) : null}
-      {business_service == "TL" ? (
-        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginTop:"15px" }} onClick={printCertificate}>
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#f47738">
-            <path d="M0 0h24v24H0V0z" fill="none" />
-            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
-          </svg>
-          {t("TL_CERTIFICATE")}
-        </div>
-      ) : null}
-      {bpaData?.[0]?.businessService === "BPA_OC" && (bpaData?.[0]?.status==="APPROVED" || bpaData?.[0]?.status==="PENDING_SANC_FEE_PAYMENT") ? (
-        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset" }} onClick={e => getPermitOccupancyOrderSearch("occupancy-certificate")}>
-          <DownloadPrefixIcon />
+      <div style={{ display: "flex" }}>
+        {business_service == "TL" ? (
+          <div
+            className="primary-label-btn d-grid"
+            style={{ marginLeft: "unset", marginRight: "20px", marginTop: "15px", marginBottom: "15px" }}
+            onClick={printReciept}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#f47738">
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+            </svg>
+            {t("TL_RECEIPT")}
+          </div>
+        ) : null}
+        {business_service == "TL" ? (
+          <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginTop: "15px" }} onClick={printCertificate}>
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#f47738">
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+            </svg>
+            {t("TL_CERTIFICATE")}
+          </div>
+        ) : null}
+        {bpaData?.[0]?.businessService === "BPA_OC" &&
+        (bpaData?.[0]?.status === "APPROVED" || bpaData?.[0]?.status === "PENDING_SANC_FEE_PAYMENT") ? (
+          <div
+            className="primary-label-btn d-grid"
+            style={{ marginLeft: "unset" }}
+            onClick={(e) => getPermitOccupancyOrderSearch("occupancy-certificate")}
+          >
+            <DownloadPrefixIcon />
             {t("BPA_OC_CERTIFICATE")}
           </div>
-      ) : null}
-      {/* {bpaData?.[0]?.businessService === "BPA_LOW" ? (
+        ) : null}
+        {/* {bpaData?.[0]?.businessService === "BPA_LOW" ? (
         <div className="primary-label-btn d-grid" style={{ marginLeft: "unset" }} onClick={r => getPermitOccupancyOrderSearch("buildingpermit-low")}>
           <DownloadPrefixIcon />
             {t("BPA_PERMIT_ORDER")}
           </div>
       ) : null} */}
-      {((bpaData?.[0]?.businessService === "BPA") || (bpaData?.[0]?.businessService === "BPA_LOW")) && (bpaData?.[0]?.businessService !== "BPA_OC") && (bpaData?.[0]?.status==="PENDING_SANC_FEE_PAYMENT" || bpaData?.[0]?.status==="APPROVED")? (
-        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset" }} onClick={r => getPermitOccupancyOrderSearch("buildingpermit")}>
-          <DownloadPrefixIcon />
+        {(bpaData?.[0]?.businessService === "BPA" || bpaData?.[0]?.businessService === "BPA_LOW") &&
+        bpaData?.[0]?.businessService !== "BPA_OC" &&
+        (bpaData?.[0]?.status === "PENDING_SANC_FEE_PAYMENT" || bpaData?.[0]?.status === "APPROVED") ? (
+          <div className="primary-label-btn d-grid" style={{ marginLeft: "unset" }} onClick={(r) => getPermitOccupancyOrderSearch("buildingpermit")}>
+            <DownloadPrefixIcon />
             {t("BPA_PERMIT_ORDER")}
           </div>
-      ) : null}
+        ) : null}
       </div>
       {!(business_service == "TL") && <SubmitBar onSubmit={printReciept} label={t("COMMON_DOWNLOAD_RECEIPT")} />}
-      {!(business_service == "TL") &&<div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }}>
-        <Link to={`/digit-ui/citizen`}>{t("CORE_COMMON_GO_TO_HOME")}</Link>
-      </div>}
-      {business_service == "TL" && 
-      <Link to={`/digit-ui/citizen`}>
-      <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
-      </Link>
-      }
+      {!(business_service == "TL") && (
+        <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }}>
+          <Link to={`/digit-ui/citizen`}>{t("CORE_COMMON_GO_TO_HOME")}</Link>
+        </div>
+      )}
+      {business_service == "TL" && (
+        <Link to={`/digit-ui/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>
+      )}
     </Card>
   );
 };
