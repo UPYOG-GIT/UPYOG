@@ -75,6 +75,7 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
                         .businessService(rs.getString("businessservice"))
                         .fileStoreId(rs.getString("tl_fileStoreId"))
                         .id(id)
+                        .licenseYear(rs.getInt("licenseyear"))
                         .build();
 
                 tradeLicenseMap.put(id,currentTradeLicense);

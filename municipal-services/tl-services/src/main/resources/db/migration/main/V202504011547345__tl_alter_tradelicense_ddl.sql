@@ -1,0 +1,1 @@
+ALTER TABLE eg_tl_tradelicense ADD COLUMN licenseyear int;
