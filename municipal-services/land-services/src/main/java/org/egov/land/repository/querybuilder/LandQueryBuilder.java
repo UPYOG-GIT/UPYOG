@@ -18,7 +18,7 @@ public class LandQueryBuilder {
 	private static final String LEFT_OUTER_JOIN_STRING = " LEFT OUTER JOIN ";
 
 	private static final String QUERY = "SELECT landInfo.*,landInfoaddress.*,landInfoowner.*,landInfounit.*,"
-			+ "landInfogeolocation.latitude, landInfogeolocation.longitude, landInfogeolocation.additionaldetails AS geolocationadditionaldetails,landInstitution.*,landInfodoc.*,landInfo.id as land_id,landInfo.tenantid as landInfo_tenantId,"
+			+ "landInfogeolocation.latitude, landInfogeolocation.longitude, landInfogeolocation.additionaldetails AS geolocationadditionaldetails,landInfogeolocation.gisplacename,landInstitution.*,landInfodoc.*,landInfo.id as land_id,landInfo.tenantid as landInfo_tenantId,"
 			+ "landInfo.lastModifiedTime as landinfo_lastmodifiedtime, landInfo.createdBy as landInfo_createdBy,landInfo.lastModifiedBy as landInfo_lastModifiedBy,"
 			+ "landInfo.createdTime as landInfo_createdTime,landInfo.additionalDetails, "
 			+ "landInfoaddress.id as landInfo_ad_id,landInfogeolocation.id as landInfo_geo_loc,"
