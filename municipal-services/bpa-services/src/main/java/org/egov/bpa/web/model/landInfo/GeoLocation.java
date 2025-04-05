@@ -22,113 +22,127 @@ import javax.validation.constraints.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GeoLocation   {
-  @JsonProperty("latitude")
-  private Double latitude = null;
+public class GeoLocation {
+	@JsonProperty("latitude")
+	private Double latitude = null;
 
-  @JsonProperty("longitude")
-  private Double longitude = null;
+	@JsonProperty("longitude")
+	private Double longitude = null;
 
-  @JsonProperty("additionalDetails")
-  private Object additionalDetails = null;
+	@JsonProperty("additionalDetails")
+	private Object additionalDetails = null;
 
-  public GeoLocation latitude(Double latitude) {
-    this.latitude = latitude;
-    return this;
-  }
+	@JsonProperty("gisPlaceName")
+	private String gisPlaceName = null;
 
-  /**
-   * latitude of the address
-   * @return latitude
-  **/
-  @ApiModelProperty(value = "latitude of the address")
-  
-    public Double getLatitude() {
-    return latitude;
-  }
+	public GeoLocation latitude(Double latitude) {
+		this.latitude = latitude;
+		return this;
+	}
 
-  public void setLatitude(Double latitude) {
-    this.latitude = latitude;
-  }
+	/**
+	 * latitude of the address
+	 * 
+	 * @return latitude
+	 **/
+	@ApiModelProperty(value = "latitude of the address")
 
-  public GeoLocation longitude(Double longitude) {
-    this.longitude = longitude;
-    return this;
-  }
+	public Double getLatitude() {
+		return latitude;
+	}
 
-  /**
-   * longitude of the address
-   * @return longitude
-  **/
-  @ApiModelProperty(value = "longitude of the address")
-  
-    public Double getLongitude() {
-    return longitude;
-  }
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
 
-  public void setLongitude(Double longitude) {
-    this.longitude = longitude;
-  }
+	public GeoLocation longitude(Double longitude) {
+		this.longitude = longitude;
+		return this;
+	}
 
-  public GeoLocation additionalDetails(Object additionalDetails) {
-    this.additionalDetails = additionalDetails;
-    return this;
-  }
+	/**
+	 * longitude of the address
+	 * 
+	 * @return longitude
+	 **/
+	@ApiModelProperty(value = "longitude of the address")
 
-  /**
-   * Json object to capture any extra information which is not accommodated by model
-   * @return additionalDetails
-  **/
-  @ApiModelProperty(value = "Json object to capture any extra information which is not accommodated by model")
-  
-    public Object getAdditionalDetails() {
-    return additionalDetails;
-  }
+	public Double getLongitude() {
+		return longitude;
+	}
 
-  public void setAdditionalDetails(Object additionalDetails) {
-    this.additionalDetails = additionalDetails;
-  }
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
+	}
 
+	public GeoLocation additionalDetails(Object additionalDetails) {
+		this.additionalDetails = additionalDetails;
+		return this;
+	}
 
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    GeoLocation geoLocation = (GeoLocation) o;
-    return Objects.equals(this.latitude, geoLocation.latitude) &&
-        Objects.equals(this.longitude, geoLocation.longitude) &&
-        Objects.equals(this.additionalDetails, geoLocation.additionalDetails);
-  }
+	/**
+	 * Json object to capture any extra information which is not accommodated by
+	 * model
+	 * 
+	 * @return additionalDetails
+	 **/
+	@ApiModelProperty(value = "Json object to capture any extra information which is not accommodated by model")
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(latitude, longitude, additionalDetails);
-  }
+	public Object getAdditionalDetails() {
+		return additionalDetails;
+	}
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class GeoLocation {\n");
-    
-    sb.append("    latitude: ").append(toIndentedString(latitude)).append("\n");
-    sb.append("    longitude: ").append(toIndentedString(longitude)).append("\n");
-    sb.append("    additionalDetails: ").append(toIndentedString(additionalDetails)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
+	public void setAdditionalDetails(Object additionalDetails) {
+		this.additionalDetails = additionalDetails;
+	}
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
-  }
+	@Override
+	public boolean equals(java.lang.Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		GeoLocation geoLocation = (GeoLocation) o;
+		return Objects.equals(this.latitude, geoLocation.latitude)
+				&& Objects.equals(this.longitude, geoLocation.longitude)
+				&& Objects.equals(this.additionalDetails, geoLocation.additionalDetails);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(latitude, longitude, additionalDetails);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("class GeoLocation {\n");
+
+		sb.append("    latitude: ").append(toIndentedString(latitude)).append("\n");
+		sb.append("    longitude: ").append(toIndentedString(longitude)).append("\n");
+		sb.append("    additionalDetails: ").append(toIndentedString(additionalDetails)).append("\n");
+		sb.append("}");
+		return sb.toString();
+	}
+
+	/**
+	 * Convert the given object to string with each line indented by 4 spaces
+	 * (except the first line).
+	 */
+	private String toIndentedString(java.lang.Object o) {
+		if (o == null) {
+			return "null";
+		}
+		return o.toString().replace("\n", "\n    ");
+	}
+
+	public String getGisPlaceName() {
+		return gisPlaceName;
+	}
+
+	public void setGisPlaceName(String gisPlaceName) {
+		this.gisPlaceName = gisPlaceName;
+	}
 }
