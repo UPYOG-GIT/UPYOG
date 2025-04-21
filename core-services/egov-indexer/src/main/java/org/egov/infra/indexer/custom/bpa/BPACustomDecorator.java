@@ -74,7 +74,7 @@ public class BPACustomDecorator {
 	public EnrichedBPARequest transformData(BPARequest bpaRequest){
 		List<EnrichedUnit> enrichedUnitList = new ArrayList<>();
         Double plotAreaApproved=null;
-		Integer plotArea=null;
+		Double plotArea=null;
 
 		//fetching plotArea after approval based on approval number
 		if(bpaRequest.getBPA().getStatus().equals("APPROVED"))
@@ -220,9 +220,9 @@ public class BPACustomDecorator {
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	public Integer getPlotAreafromEdcr(String edcrNo, RequestInfo requestInfo, BPA bpa) {
+	public Double getPlotAreafromEdcr(String edcrNo, RequestInfo requestInfo, BPA bpa) {
 		StringBuilder uri = new StringBuilder(edcrHost);
-		Integer plotArea=null;
+		Double plotArea=null;
 
 		uri.append(getPlanEndPoint);
 		uri.append("?").append("tenantId=").append(bpa.getTenantId());
