@@ -214,7 +214,7 @@ public class BPACustomDecorator {
 		}
 		String jsonString = new JSONObject(responseMap).toString();
 		DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
-		plotArea = context.read("edcrDetail[0].planDetail.planInformation.plotArea");
+		plotArea = Double.parseDouble(context.read("edcrDetail[0].planDetail.planInformation.plotArea").toString());
 
 		return plotArea;
 	}
@@ -385,8 +385,8 @@ public class BPACustomDecorator {
 		RequestInfo bpaRequestInfo = new RequestInfo();
 		BeanUtils.copyProperties(requestInfo, bpaRequestInfo);
 		LinkedHashMap responseMap = null;
-		log.info("uri : " + uri.toString());
-		log.info("bpaRequestInfo: " + bpaRequestInfo.toString());
+//		log.info("uri : " + uri.toString());
+//		log.info("bpaRequestInfo: " + bpaRequestInfo.toString());
 		try {
 			responseMap = (LinkedHashMap) fetchResult(uri, new RequestInfoWrapper(bpaRequestInfo));
 		} catch (Exception e) {
@@ -401,12 +401,12 @@ public class BPACustomDecorator {
 		String jsonString = new JSONObject(responseMap).toString();
 
 		ArrayList<BPA> bpaInfo = new ArrayList<BPA>();
-		log.info("responseMap: " + responseMap.toString());
-		log.info("===================================");
+//		log.info("responseMap: " + responseMap.toString());
+//		log.info("===================================");
 
 		bpaInfo = (ArrayList<BPA>) responseMap.get("BPA");
 
-		log.info("bpaInfo: " + bpaInfo.toString());
+//		log.info("bpaInfo: " + bpaInfo.toString());
 		BPA bpaData = mapper.convertValue(bpaInfo.get(0), BPA.class);
 
 		return bpaData;
