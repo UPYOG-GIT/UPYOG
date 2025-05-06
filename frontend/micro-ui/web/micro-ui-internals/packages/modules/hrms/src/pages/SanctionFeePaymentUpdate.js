@@ -1,22 +1,16 @@
-
-import { StatusTable,BackButton, SearchField, TextInput, SubmitBar, Header, Card, CardHeader, Row, PDFSvg, CardSectionHeader,MultiLink, Loader } from "@egovernments/digit-ui-react-components";
+import { StatusTable,BackButton, SearchField, TextInput, SubmitBar, Header, Toast, Card, CardHeader, Row, PDFSvg, CardSectionHeader,MultiLink, Loader } from "@egovernments/digit-ui-react-components";
 
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { fromUnixTime, format } from 'date-fns';
-import { OBPSService } from "../../../../libraries/src/services/elements/OBPS";
-// import { MdmsService } from "../../../../../../libraries/src/services/elements/MDMS";
-// import { pdfDocumentName, pdfDownloadLink, stringReplaceAll } from "../../../utils";
-// import ApplicationTimeline from "../../../components/ApplicationTimeline";
 
 
 
-const SanctionFeePaymentUpdate = ({ formState, register, reset, previousPage }) => {
+const SanctionFeePaymentUpdate = ({}) => {
   const { t } = useTranslation();
   const [applicationNo, setApplicationNo] = useState("");
   const [applicationData, setApplicationData] = useState([]);
+  const [showToast, setShowToast] = useState(null);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -38,18 +32,14 @@ const SanctionFeePaymentUpdate = ({ formState, register, reset, previousPage }) 
 
             const updateResponse = await Digit.OBPSAdminService.updateBillAmount(applicationData[0].applicationNo, "BPA.NC_SAN_FEE", "Post");
 
-            console.log("updateResponse: "+JSON.stringify(updateResponse));
-        //   const edcrResponse = await OBPSService.scrutinyDetails(tableData[0].tenantId, { edcrNumber: tableData[0].edcrNumber });
-        //   const [edcr] = edcrResponse?.edcrDetail;
-        //   const mdmsRes = await MdmsService.getMultipleTypes(tableData[0].tenantId, "BPA", ["RiskTypeComputation", "CheckList"]);
-        //   const riskType = Digit.Utils.obps.calculateRiskType(mdmsRes?.BPA?.RiskTypeComputation, edcr?.planDetail?.plot?.area, edcr?.planDetail?.blocks);
-
-        //   setTableData((prevTableData) =>
-        //   prevTableData.map((item) => ({
-        //     ...item,
-        //     riskType: riskType,
-        //   }))
-        // );
+            if(updateResponse.includes("Updated Successfully ")){
+                setShowToast({ key: false, label: "Payment Successfully Updated", bgcolor: "#4BB543" });
+              }
+              else{
+                setShowToast({ key: true, label: "Payment not Updated", bgcolor: "red" });
+              }
+        
+              console.log("showToast"+JSON.stringify(showToast));
   
         }
       } catch (error) {
@@ -70,7 +60,7 @@ const SanctionFeePaymentUpdate = ({ formState, register, reset, previousPage }) 
  
   return (
 
-    
+    <>
     <form onSubmit={handleSubmit}>
        <BackButton>{t("CS_COMMON_BACK")}</BackButton>
        <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" , marginTop: 20}}>
@@ -90,28 +80,27 @@ const SanctionFeePaymentUpdate = ({ formState, register, reset, previousPage }) 
         <SubmitBar label="Search" submit onClick={handleSubmit} />
       
       </SearchField>
-     
-      {/* {applicationData.length > 0 && (
         
-      <Fragment >
-         
-  
-    <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" , marginTop: 20}}>
-      <Header styles={{ fontSize: "32px" }}>{t("Application Details")}</Header>
-    </div>
- 
-  
-    
-
-</Fragment>
-)} */}
-
-
-
-
-    
   
     </form>
+    {showToast && (
+      <div
+        style={{
+          backgroundColor: showToast.bgcolor,
+          color: "white",
+          padding: "10px",
+          borderRadius: "5px",
+          textAlign: "center",
+          marginTop: "20px",
+          maxWidth: "960px",
+          margin: "20px auto 0"
+        }}
+      >
+        {showToast.label}
+      </div>
+    )}
+    
+    </>
   );
 };
 
