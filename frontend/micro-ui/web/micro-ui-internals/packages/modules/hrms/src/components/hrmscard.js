@@ -66,7 +66,12 @@ const HRMSCard = () => {
             {
                 label: t("EDCR Rule Entry"),
                 link: `/digit-ui/employee/hrms/edcrRuleEntry`
-            },     
+            }, 
+            ,  
+            {
+                label: t("Update Total Bill Amount"),
+                link: `/digit-ui/employee/hrms/paymentAmountUpdate`
+            },      
         ]
     }
 
