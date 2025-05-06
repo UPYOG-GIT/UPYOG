@@ -226,4 +226,13 @@ export const OBPSAdminService = {
       userService: true,
       method: "POST"
     }),
+
+    updateBillAmount: (applicationNo, businessService, feeType) =>
+    Request({
+      url: Urls.obps.updateBillAmount,
+      params: { applicationNo, businessService, feeType },
+      auth: true,
+      userService: true,
+      method: "POST"
+    }),
 }

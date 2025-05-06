@@ -31,6 +31,7 @@ import PayTpEntry from "./pages/PayTpEntry";
 import ArchitectDetailsInbox from "./pages/ArchitectDetailsInbox";
 import ArchitectDetailsInbox1 from "./pages/ArchitectDetailsInbox1";
 import ArchitectDetailsInbox2 from "./pages/ArchitectDetailsInbox2";
+import UpdateBillAmount from "./pages/SanctionFeePaymentUpdate";
 
 export const HRMSModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = "HR";
@@ -78,6 +79,7 @@ const componentsToRegister = {
   ArchitectDetailsInbox,
   ArchitectDetailsInbox1,
   ArchitectDetailsInbox2,
+  UpdateBillAmount,
   HRMS_INBOX_FILTER: (props) => <InboxFilter {...props} />,
 };
 

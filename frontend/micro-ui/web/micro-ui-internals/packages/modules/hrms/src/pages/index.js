@@ -29,6 +29,8 @@ const EmployeeApp = ({ path, url, userType }) => {
   const ArchitectDetailsInbox = Digit?.ComponentRegistryService?.getComponent("ArchitectDetailsInbox");
   const ArchitectDetailsInbox1 = Digit?.ComponentRegistryService?.getComponent("ArchitectDetailsInbox1");
   const ArchitectDetailsInbox2 = Digit?.ComponentRegistryService?.getComponent("ArchitectDetailsInbox2");
+  const UpdateBillAmount = Digit?.ComponentRegistryService?.getComponent("UpdateBillAmount");
+  
   
   return (
     <Switch>
@@ -64,6 +66,7 @@ const EmployeeApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/subcateEntry`} component={()=><SubCateEntry/>}/>
           <PrivateRoute path={`${path}/paytyEntry`} component={()=><PayTpEntry/>}/>
           <PrivateRoute path={`${path}/edcrRuleEntry`} component={()=><EdcrRuleEntry/>} />
+          <PrivateRoute path={`${path}/paymentAmountUpdate`} component={()=><UpdateBillAmount/>} />
         </div>
       </React.Fragment>
     </Switch>
