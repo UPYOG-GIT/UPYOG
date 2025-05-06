@@ -58,7 +58,7 @@ public class BPACustomDecorator {
 	@Value("${egov.edcr.getPlan.endpoint}")
 	private String getPlanEndPoint;
 
-	//BPA Service
+	// BPA Service
 	@Value("${egov.bpa.host}")
 	private String bpaHost;
 
@@ -71,117 +71,89 @@ public class BPACustomDecorator {
 	 * @param bpaRequest
 	 * @return
 	 */
-	public EnrichedBPARequest transformData(BPARequest bpaRequest){
+	public EnrichedBPARequest transformData(BPARequest bpaRequest) {
 		List<EnrichedUnit> enrichedUnitList = new ArrayList<>();
-        Double plotAreaApproved=null;
-		Double plotArea=null;
+		Double plotAreaApproved = null;
+		Double plotArea = null;
 
-		//fetching plotArea after approval based on approval number
-		if(bpaRequest.getBPA().getStatus().equals("APPROVED"))
-		{
+		// fetching plotArea after approval based on approval number
+		if (bpaRequest.getBPA().getStatus().equals("APPROVED")) {
 			log.info("INSIDE APPROVED ");
-		
-			String edcrnumber = fetchPermitNumber(bpaRequest.getRequestInfo(),bpaRequest.getBPA());
-			plotAreaApproved = getEDCRDetails(edcrnumber,bpaRequest.getRequestInfo(),bpaRequest.getBPA());
+
+			String edcrnumber = fetchPermitNumber(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
+			plotAreaApproved = getEDCRDetails(edcrnumber, bpaRequest.getRequestInfo(), bpaRequest.getBPA());
 			log.info("Fetched Approved Plot Area ");
 		}
-	
-		BPA bpaObject =    bpaSearch(bpaRequest.getRequestInfo(),bpaRequest.getBPA());
-	
-		for(Unit unit:bpaObject.getLandInfo().getUnit())
-		{
+
+		BPA bpaObject = bpaSearch(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
+
+		for (Unit unit : bpaObject.getLandInfo().getUnit()) {
 			String[] ocType = unit.getOccupancyType().split(",");
 			Set<String> ocTypeSet = new HashSet<>(Arrays.asList(ocType));
 			Set<String> usageCategorySet = null;
-			//Converting comma separated string value to set
-			if(!StringUtils.isBlank(unit.getUsageCategory())) {
-			String[] usageCategory = unit.getUsageCategory().split(",");
-			usageCategorySet = new HashSet<>(Arrays.asList(usageCategory));
-			}else
-			{
-				 usageCategorySet = new HashSet<String>();
+			// Converting comma separated string value to set
+			if (!StringUtils.isBlank(unit.getUsageCategory())) {
+				String[] usageCategory = unit.getUsageCategory().split(",");
+				usageCategorySet = new HashSet<>(Arrays.asList(usageCategory));
+			} else {
+				usageCategorySet = new HashSet<String>();
 			}
-			//fetching occupancy type based on suboccupancy type
-		//	Set<String> occupancyType = fetchOccupancyCode(bpaRequest.getRequestInfo(),bpaRequest.getBPA().getTenantId(),usageCategory);
-			Set<String>	occupancyType = fetchOccupancyNames(bpaRequest.getRequestInfo(),bpaRequest.getBPA().getTenantId(),ocTypeSet);
+			// fetching occupancy type based on suboccupancy type
+			// Set<String> occupancyType =
+			// fetchOccupancyCode(bpaRequest.getRequestInfo(),bpaRequest.getBPA().getTenantId(),usageCategory);
+			Set<String> occupancyType = fetchOccupancyNames(bpaRequest.getRequestInfo(),
+					bpaRequest.getBPA().getTenantId(), ocTypeSet);
 
-			EnrichedUnit enrichedUnit = EnrichedUnit.builder()
-					.id(unit.getId())
-					.tenantId(unit.getTenantId())
-					.floorNo(unit.getFloorNo())
-					.unitType(unit.getUnitType())
-					.usageCategory(usageCategorySet)
-					.occupancyType(occupancyType)
-					.occupancyDate(unit.getOccupancyDate())
-					.additionalDetails(unit.getAdditionalDetails())
-					.additionalDetails(unit.getAuditDetails())
-					.build();
+			EnrichedUnit enrichedUnit = EnrichedUnit.builder().id(unit.getId()).tenantId(unit.getTenantId())
+					.floorNo(unit.getFloorNo()).unitType(unit.getUnitType()).usageCategory(usageCategorySet)
+					.occupancyType(occupancyType).occupancyDate(unit.getOccupancyDate())
+					.additionalDetails(unit.getAdditionalDetails()).additionalDetails(unit.getAuditDetails()).build();
 
 			enrichedUnitList.add(enrichedUnit);
-			
+
 		}
 
-		plotArea = getPlotAreafromEdcr(bpaRequest.getBPA().getEdcrNumber(),bpaRequest.getRequestInfo(),bpaRequest.getBPA());
+		plotArea = getPlotAreafromEdcr(bpaRequest.getBPA().getEdcrNumber(), bpaRequest.getRequestInfo(),
+				bpaRequest.getBPA());
 
-		EnrichedLandInfo enrichedLandInfo = EnrichedLandInfo.builder()
-				.id(bpaObject.getLandInfo().getId())
+		EnrichedLandInfo enrichedLandInfo = EnrichedLandInfo.builder().id(bpaObject.getLandInfo().getId())
 				.landUId(bpaObject.getLandInfo().getLandUId())
 				.landUniqueRegNo(bpaObject.getLandInfo().getLandUniqueRegNo())
-				.tenantId(bpaObject.getLandInfo().getTenantId())
-				.status(bpaObject.getLandInfo().getStatus())
+				.tenantId(bpaObject.getLandInfo().getTenantId()).status(bpaObject.getLandInfo().getStatus())
 				.address(bpaObject.getLandInfo().getAddress())
 				.ownershipCategory(bpaObject.getLandInfo().getOwnershipCategory())
-				.owners(bpaObject.getLandInfo().getOwners())
-				.institution(bpaObject.getLandInfo().getInstitution())
-				.source(bpaObject.getLandInfo().getSource())
-				.channel(bpaObject.getLandInfo().getChannel())
-				.documents(bpaObject.getLandInfo().getDocuments())
-				.unit(enrichedUnitList)
+				.owners(bpaObject.getLandInfo().getOwners()).institution(bpaObject.getLandInfo().getInstitution())
+				.source(bpaObject.getLandInfo().getSource()).channel(bpaObject.getLandInfo().getChannel())
+				.documents(bpaObject.getLandInfo().getDocuments()).unit(enrichedUnitList)
 				.additionalDetails(bpaObject.getLandInfo().getAdditionalDetails())
-				.auditDetails(bpaObject.getLandInfo().getAuditDetails())
-				.plotAreaApproved(plotAreaApproved)
-				.plotArea(plotArea)
-				.build();
+				.auditDetails(bpaObject.getLandInfo().getAuditDetails()).plotAreaApproved(plotAreaApproved)
+				.plotArea(plotArea).build();
 
 		BPA bpa = bpaRequest.getBPA();
-		EnrichedBPA enrichedBPA = EnrichedBPA.builder()
-				.id(bpa.getId())
-				.applicationNo(bpa.getApplicationNo())
-				.accountId(bpa.getAccountId())
-				.edcrNumber(bpa.getEdcrNumber())
-				.riskType(bpa.getRiskType())
-				.businessService(bpa.getBusinessService())
-				.approvalNo(bpa.getApprovalNo())
-				.landId(bpa.getLandId())
-				.tenantId(bpa.getTenantId())
-				.approvalDate((bpa.getApprovalDate()))
-				.applicationDate(bpa.getApplicationDate())
-				.status(bpa.getStatus())
-				.documents(bpa.getDocuments())
-				.landInfo(enrichedLandInfo)
-				.workflow(bpa.getWorkflow())
-				.auditDetails(bpa.getAuditDetails())
-				.additionalDetails(bpa.getAdditionalDetails())
-				.build();
+		EnrichedBPA enrichedBPA = EnrichedBPA.builder().id(bpa.getId()).applicationNo(bpa.getApplicationNo())
+				.accountId(bpa.getAccountId()).edcrNumber(bpa.getEdcrNumber()).riskType(bpa.getRiskType())
+				.businessService(bpa.getBusinessService()).approvalNo(bpa.getApprovalNo()).landId(bpa.getLandId())
+				.tenantId(bpa.getTenantId()).approvalDate((bpa.getApprovalDate()))
+				.applicationDate(bpa.getApplicationDate()).status(bpa.getStatus()).documents(bpa.getDocuments())
+				.landInfo(enrichedLandInfo).workflow(bpa.getWorkflow()).auditDetails(bpa.getAuditDetails())
+				.additionalDetails(bpa.getAdditionalDetails()).build();
 
-        EnrichedBPARequest enrichedBPARequest = EnrichedBPARequest.builder()
-				.BPA(enrichedBPA)
-				.requestInfo(bpaRequest.getRequestInfo())
-				.build();
+		EnrichedBPARequest enrichedBPARequest = EnrichedBPARequest.builder().BPA(enrichedBPA)
+				.requestInfo(bpaRequest.getRequestInfo()).build();
 
 		return enrichedBPARequest;
 	}
 
 	/**
 	 * fetch the bpa details from the approval number
+	 * 
 	 * @param requestInfo
 	 * @param bpa
 	 * @return
 	 */
-	public String fetchPermitNumber(RequestInfo requestInfo, BPA bpa)
-	{
-		BPA bpaObject =    bpaSearch(requestInfo,bpa);
-		
+	public String fetchPermitNumber(RequestInfo requestInfo, BPA bpa) {
+		BPA bpaObject = bpaSearch(requestInfo, bpa);
+
 		StringBuilder uri = new StringBuilder(bpaHost);
 		uri.append(bpaEndpoint);
 		uri.append("?").append("tenantId=").append(bpaObject.getTenantId());
@@ -189,16 +161,15 @@ public class BPACustomDecorator {
 
 		Map<String, Object> apiRequest = new HashMap<>();
 		apiRequest.put("RequestInfo", requestInfo);
-		String edcrNumber="";
+		String edcrNumber = "";
 
 		RequestInfo bpaRequestInfo = new RequestInfo();
 		BeanUtils.copyProperties(requestInfo, bpaRequestInfo);
 		LinkedHashMap responseMap = null;
 		try {
-			responseMap = (LinkedHashMap) fetchResult(uri,
-					new RequestInfoWrapper(bpaRequestInfo));
+			responseMap = (LinkedHashMap) fetchResult(uri, new RequestInfoWrapper(bpaRequestInfo));
 		} catch (Exception e) {
-			log.error("Exception while fetching edcr number from bpa response ",e);
+			log.error("Exception while fetching edcr number from bpa response ", e);
 		}
 
 		if (CollectionUtils.isEmpty(responseMap)) {
@@ -208,13 +179,14 @@ public class BPACustomDecorator {
 
 		String jsonString = new JSONObject(responseMap).toString();
 		DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
-		 edcrNumber = context.read("$.BPA[0].edcrNumber");
+		edcrNumber = context.read("$.BPA[0].edcrNumber");
 
 		return edcrNumber;
 	}
 
 	/**
 	 * fetch the plotarea from edcr details for the given edcrNummber
+	 * 
 	 * @param requestInfo
 	 * @param bpa
 	 * @return
@@ -222,7 +194,7 @@ public class BPACustomDecorator {
 	@SuppressWarnings("rawtypes")
 	public Double getPlotAreafromEdcr(String edcrNo, RequestInfo requestInfo, BPA bpa) {
 		StringBuilder uri = new StringBuilder(edcrHost);
-		Double plotArea=null;
+		Double plotArea = null;
 
 		uri.append(getPlanEndPoint);
 		uri.append("?").append("tenantId=").append(bpa.getTenantId());
@@ -232,10 +204,9 @@ public class BPACustomDecorator {
 		BeanUtils.copyProperties(requestInfo, edcrRequestInfo);
 		LinkedHashMap responseMap = null;
 		try {
-			responseMap = (LinkedHashMap) fetchResult(uri,
-					new RequestInfoWrapper(edcrRequestInfo));
+			responseMap = (LinkedHashMap) fetchResult(uri, new RequestInfoWrapper(edcrRequestInfo));
 		} catch (Exception e) {
-			log.error("Exception while fetching plot area from edcr response ",e);
+			log.error("Exception while fetching plot area from edcr response ", e);
 		}
 		if (CollectionUtils.isEmpty(responseMap)) {
 			log.error("The response from BPA service is empty or null");
@@ -243,13 +214,14 @@ public class BPACustomDecorator {
 		}
 		String jsonString = new JSONObject(responseMap).toString();
 		DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
-		plotArea = context.read("edcrDetail[0].planDetail.planInformation.plotArea");
+		plotArea = Double.parseDouble(context.read("edcrDetail[0].planDetail.planInformation.plotArea").toString());
 
 		return plotArea;
 	}
 
 	/**
 	 * fetch the edcr details from the bpa
+	 * 
 	 * @param requestInfo
 	 * @param bpa
 	 * @return
@@ -257,7 +229,7 @@ public class BPACustomDecorator {
 	@SuppressWarnings("rawtypes")
 	public Double getEDCRDetails(String edcrNo, RequestInfo requestInfo, BPA bpa) {
 		StringBuilder uri = new StringBuilder(edcrHost);
-		Double plotArea=null;
+		Double plotArea = null;
 
 		uri.append(getPlanEndPoint);
 		uri.append("?").append("tenantId=").append(bpa.getTenantId());
@@ -267,10 +239,9 @@ public class BPACustomDecorator {
 		BeanUtils.copyProperties(requestInfo, edcrRequestInfo);
 		LinkedHashMap responseMap = null;
 		try {
-			responseMap = (LinkedHashMap) fetchResult(uri,
-					new RequestInfoWrapper(edcrRequestInfo));
+			responseMap = (LinkedHashMap) fetchResult(uri, new RequestInfoWrapper(edcrRequestInfo));
 		} catch (Exception e) {
-			log.error("Exception while fetching plot area from edcr response ",e);
+			log.error("Exception while fetching plot area from edcr response ", e);
 		}
 		if (CollectionUtils.isEmpty(responseMap)) {
 			log.error("The response from BPA service is empty or null");
@@ -283,35 +254,32 @@ public class BPACustomDecorator {
 		return plotArea;
 	}
 
-
-	public Set<String> fetchOccupancyCode(RequestInfo requestInfo, String tenantId, String[] usageCategory){
+	public Set<String> fetchOccupancyCode(RequestInfo requestInfo, String tenantId, String[] usageCategory) {
 		Set<String> occupancyType = new HashSet<>();
 
 		JSONArray jsonarray = null;
 
 		StringBuilder uri = new StringBuilder();
 		uri.append(mdmsHost).append(mdmsEndpoint);
-		if(StringUtils.isEmpty(tenantId))
+		if (StringUtils.isEmpty(tenantId))
 			return occupancyType;
 
 		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForSubOccupancyType(requestInfo, tenantId.split("\\.")[0]);
 		try {
 			Object response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
-			for(String subOccupancyType : usageCategory)
-			{
-				Filter masterDataFilter = filter(
-						where("code").is(subOccupancyType));
-				jsonarray = JsonPath.parse(response).read("$.MdmsRes.BPA.SubOccupancyType[?]",masterDataFilter);
+			for (String subOccupancyType : usageCategory) {
+				Filter masterDataFilter = filter(where("code").is(subOccupancyType));
+				jsonarray = JsonPath.parse(response).read("$.MdmsRes.BPA.SubOccupancyType[?]", masterDataFilter);
 				LinkedHashMap map = (LinkedHashMap) jsonarray.get(0);
 				occupancyType.add((String) map.get("occupancyType"));
 			}
-		}catch(Exception e) {
-			log.error("Exception while fetching mdms response ",e);
+		} catch (Exception e) {
+			log.error("Exception while fetching mdms response ", e);
 		}
 		return occupancyType;
 	}
 
-	private MdmsCriteriaReq getMdmsRequestForSubOccupancyType(RequestInfo requestInfo, String tenantId){
+	private MdmsCriteriaReq getMdmsRequestForSubOccupancyType(RequestInfo requestInfo, String tenantId) {
 		MasterDetail masterDetail = new MasterDetail();
 		masterDetail.setName("SubOccupancyType");
 		List<MasterDetail> masterDetailList = new ArrayList<>();
@@ -334,33 +302,31 @@ public class BPACustomDecorator {
 		return mdmsCriteriaReq;
 	}
 
-	public Set<String> fetchOccupancyNames(RequestInfo requestInfo, String tenantId, Set<String> occupancyType){
+	public Set<String> fetchOccupancyNames(RequestInfo requestInfo, String tenantId, Set<String> occupancyType) {
 		Set<String> finalOccupancyType = new HashSet<>();
 		JSONArray jsonarray = null;
 
 		StringBuilder uri = new StringBuilder();
 		uri.append(mdmsHost).append(mdmsEndpoint);
-		if(StringUtils.isEmpty(tenantId))
+		if (StringUtils.isEmpty(tenantId))
 			return occupancyType;
 
 		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForOccupancyType(requestInfo, tenantId.split("\\.")[0]);
 		try {
 			Object response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
-			for(String occupancyTypeCode : occupancyType)
-			{
-				Filter masterDataFilter = filter(
-						where("code").is(occupancyTypeCode));
-				jsonarray = JsonPath.parse(response).read("$.MdmsRes.BPA.OccupancyType[?]",masterDataFilter);
+			for (String occupancyTypeCode : occupancyType) {
+				Filter masterDataFilter = filter(where("code").is(occupancyTypeCode));
+				jsonarray = JsonPath.parse(response).read("$.MdmsRes.BPA.OccupancyType[?]", masterDataFilter);
 				LinkedHashMap map = (LinkedHashMap) jsonarray.get(0);
 				finalOccupancyType.add((String) map.get("name"));
 			}
-		}catch(Exception e) {
-			log.error("Exception while fetching mdms response ",e);
+		} catch (Exception e) {
+			log.error("Exception while fetching mdms response ", e);
 		}
 		return finalOccupancyType;
 	}
 
-	private MdmsCriteriaReq getMdmsRequestForOccupancyType(RequestInfo requestInfo, String tenantId){
+	private MdmsCriteriaReq getMdmsRequestForOccupancyType(RequestInfo requestInfo, String tenantId) {
 		MasterDetail masterDetail = new MasterDetail();
 		masterDetail.setName("OccupancyType");
 		List<MasterDetail> masterDetailList = new ArrayList<>();
@@ -385,6 +351,7 @@ public class BPACustomDecorator {
 
 	/**
 	 * fetchResult form the different services based on the url and request object
+	 * 
 	 * @param uri
 	 * @param request
 	 * @return
@@ -405,9 +372,8 @@ public class BPACustomDecorator {
 
 		return response;
 	}
-	
-	public BPA bpaSearch(RequestInfo requestInfo, BPA bpa)
-	{
+
+	public BPA bpaSearch(RequestInfo requestInfo, BPA bpa) {
 		StringBuilder uri = new StringBuilder(bpaHost);
 		uri.append(bpaEndpoint);
 		uri.append("?").append("tenantId=").append(bpa.getTenantId());
@@ -415,16 +381,16 @@ public class BPACustomDecorator {
 
 		Map<String, Object> apiRequest = new HashMap<>();
 		apiRequest.put("RequestInfo", requestInfo);
-		
 
 		RequestInfo bpaRequestInfo = new RequestInfo();
 		BeanUtils.copyProperties(requestInfo, bpaRequestInfo);
 		LinkedHashMap responseMap = null;
+//		log.info("uri : " + uri.toString());
+//		log.info("bpaRequestInfo: " + bpaRequestInfo.toString());
 		try {
-			responseMap = (LinkedHashMap) fetchResult(uri,
-					new RequestInfoWrapper(bpaRequestInfo));
+			responseMap = (LinkedHashMap) fetchResult(uri, new RequestInfoWrapper(bpaRequestInfo));
 		} catch (Exception e) {
-			log.error("Exception while fetching edcr number from bpa response ",e);
+			log.error("Exception while fetching edcr number from bpa response ", e);
 		}
 
 		if (CollectionUtils.isEmpty(responseMap)) {
@@ -433,12 +399,15 @@ public class BPACustomDecorator {
 		}
 
 		String jsonString = new JSONObject(responseMap).toString();
-		
+
 		ArrayList<BPA> bpaInfo = new ArrayList<BPA>();
+//		log.info("responseMap: " + responseMap.toString());
+//		log.info("===================================");
 
 		bpaInfo = (ArrayList<BPA>) responseMap.get("BPA");
-		   BPA bpaData = mapper.convertValue(bpaInfo.get(0), BPA.class);
-	
+
+//		log.info("bpaInfo: " + bpaInfo.toString());
+		BPA bpaData = mapper.convertValue(bpaInfo.get(0), BPA.class);
 
 		return bpaData;
 	}
