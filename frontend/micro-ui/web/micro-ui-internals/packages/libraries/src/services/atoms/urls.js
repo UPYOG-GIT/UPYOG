@@ -153,7 +153,8 @@ const Urls = {
     deletePaytpRate:"/bpa-services/v1/bpa/_deletepaytprate",
     getDashboardCount:"/bpa-services/v1/bpa/dashboard/count",
     //for searching application details by application number from dashboard
-    searchByApplicationNo: "/bpa-services/v1/bpa/application/_search"
+    searchByApplicationNo: "/bpa-services/v1/bpa/application/_search",
+    updateBillAmount: "/bpa-services/v1/bpa/_updatebillamount"
   },
 
   edcr: {
