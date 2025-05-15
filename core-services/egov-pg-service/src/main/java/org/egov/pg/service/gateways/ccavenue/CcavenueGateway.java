@@ -572,6 +572,11 @@ public class CcavenueGateway implements Gateway {
 				if (resp.containsKey("order_option_type")) {
 					responseMap.put("payment_mode", resp.get("order_option_type"));
 				}
+				if (resp.containsKey("error_desc")) {
+					responseMap.put("error_desc", resp.get("error_desc"));
+					responseMap.put("order_status", "Failure");
+					responseMap.put("tracking_id", "");
+				}
 
 //				responseMap.put("payment_mode", "");
 				responseMap.put("status_code", "");
