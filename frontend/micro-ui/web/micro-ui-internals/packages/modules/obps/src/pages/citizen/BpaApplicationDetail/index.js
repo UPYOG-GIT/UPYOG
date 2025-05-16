@@ -4,6 +4,7 @@ import { useParams, useHistory } from "react-router-dom";
 import { useQueryClient } from "react-query";
 import { useTranslation } from "react-i18next";
 import BPAApplicationTimeline from "./BPAApplicationTimeline";
+import GISPreview from "./GISPreview";
 import DocumentDetails from "../../../components/DocumentDetails";
 import ActionModal from "./Modal";
 import OBPSDocument from "../../../pageComponents/OBPSDocuments";
@@ -488,7 +489,6 @@ const BpaApplicationDetail = () => {
     data.applicationDetails = results;
   }
 
-
   return (
     <Fragment>
       <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
@@ -502,7 +502,6 @@ const BpaApplicationDetail = () => {
         />}
       </div>
       {data?.applicationDetails?.filter((ob) => Object.keys(ob).length > 0).map((detail, index, arr) => {
-
         return (
           <div>
             {!detail?.isNotAllowed ? <Card key={index} style={!detail?.additionalDetails?.fiReport && detail?.title === "" ? { marginTop: "-30px" } : {}}>
@@ -542,6 +541,14 @@ const BpaApplicationDetail = () => {
                         <p style={{ marginTop: "8px", marginBottom: "20px", fontWeight: "bold", fontSize: "16px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>{t(scrutiny?.text)}</p>
                       </Fragment>
                     )) : null}
+
+                  {/* to get GIS Map values */}
+                  {(detail?.isGISDetail) ?
+                    (
+                      <Fragment>
+                        {<GISPreview gisData={data?.applicationData?.landInfo?.address?.geoLocation} svgStyles={{}} isSendBackFlow={false} isHrLine={true} titleStyles={{ fontSize: "20px", lineHeight: "24px", "fontWeight": 700, marginBottom: "10px" }} />}
+                      </Fragment>
+                    ) : null}
 
                   {/* to get Owner values */}
                   {(detail?.isOwnerDetails && detail?.additionalDetails?.owners?.length > 0) ? detail?.additionalDetails?.owners.map((owner, index) => (

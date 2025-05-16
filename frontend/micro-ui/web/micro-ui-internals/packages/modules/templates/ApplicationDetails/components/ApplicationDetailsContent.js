@@ -19,6 +19,8 @@ import TLCaption from "./TLCaption";
 import TLTradeAccessories from "./TLTradeAccessories";
 import TLTradeUnits from "./TLTradeUnits";
 import DocumentsPreview from "./DocumentsPreview";
+// import GISMapPreview from "./GISMapPreview";
+// import GISPreview from "../../../obps/src/pages/citizen/BpaApplicationDetail/GISPreview";
 
 function ApplicationDetailsContent({
   applicationDetails,
@@ -32,7 +34,7 @@ function ApplicationDetailsContent({
   paymentsList
 }) {
   const { t } = useTranslation();
-
+  
   function OpenImage(imageSource, index,thumbnailsToShow){
     window.open(thumbnailsToShow?.fullImage?.[0],"_blank");
   }
@@ -200,6 +202,13 @@ function ApplicationDetailsContent({
           {detail?.additionalDetails?.permissions && workflowDetails?.data?.nextActions?.length > 0 && (
             <PermissionCheck applicationData={applicationDetails?.applicationData} t={t} permissions={detail?.additionalDetails?.permissions} />
           )}
+          {/* to get GIS Map values */}
+          {/* {(detail?.isGISDetail) ?
+                    (
+                      <Fragment>
+                        {<GISPreview gisData={applicationData?.landInfo?.address?.geoLocation} svgStyles={{}} isSendBackFlow={false} isHrLine={true} titleStyles={{ fontSize: "20px", lineHeight: "24px", "fontWeight": 700, marginBottom: "10px" }} />}
+                      </Fragment>
+                    ) : null} */}
           {detail?.additionalDetails?.obpsDocuments && (
             <BPADocuments
               t={t}
