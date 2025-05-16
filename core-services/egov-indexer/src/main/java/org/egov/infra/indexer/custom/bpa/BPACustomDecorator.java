@@ -80,9 +80,11 @@ public class BPACustomDecorator {
 		if (bpaRequest.getBPA().getStatus().equals("APPROVED")) {
 			log.info("INSIDE APPROVED ");
 
-			String edcrnumber = fetchPermitNumber(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
-			plotAreaApproved = getEDCRDetails(edcrnumber, bpaRequest.getRequestInfo(), bpaRequest.getBPA());
-			log.info("Fetched Approved Plot Area ");
+//			String edcrnumber = fetchPermitNumber(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
+//			String edcrnumber = bpaRequest.getBPA().getEdcrNumber();
+//			plotAreaApproved = getEDCRDetails(edcrnumber, bpaRequest.getRequestInfo(), bpaRequest.getBPA());
+			plotAreaApproved = Double.valueOf(bpaRequest.getBPA().getLandInfo().getAddress().getPlotArea().toString());
+			log.info("Fetched Approved Plot Area :" + plotAreaApproved);
 		}
 
 		BPA bpaObject = bpaSearch(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
@@ -112,9 +114,9 @@ public class BPACustomDecorator {
 			enrichedUnitList.add(enrichedUnit);
 
 		}
-
-		plotArea = getPlotAreafromEdcr(bpaRequest.getBPA().getEdcrNumber(), bpaRequest.getRequestInfo(),
-				bpaRequest.getBPA());
+		plotArea = Double.valueOf(bpaRequest.getBPA().getLandInfo().getAddress().getPlotArea().toString());
+//		plotArea = getPlotAreafromEdcr(bpaRequest.getBPA().getEdcrNumber(), bpaRequest.getRequestInfo(),
+//				bpaRequest.getBPA());
 
 		EnrichedLandInfo enrichedLandInfo = EnrichedLandInfo.builder().id(bpaObject.getLandInfo().getId())
 				.landUId(bpaObject.getLandInfo().getLandUId())
@@ -179,6 +181,7 @@ public class BPACustomDecorator {
 
 		String jsonString = new JSONObject(responseMap).toString();
 		DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
+		log.info("context: " + context.toString());
 		edcrNumber = context.read("$.BPA[0].edcrNumber");
 
 		return edcrNumber;
