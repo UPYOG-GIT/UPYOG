@@ -77,17 +77,19 @@ public class BPACustomDecorator {
 		Double plotArea = null;
 
 		// fetching plotArea after approval based on approval number
+		
+
+		BPA bpaObject = bpaSearch(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
+		
 		if (bpaRequest.getBPA().getStatus().equals("APPROVED")) {
 			log.info("INSIDE APPROVED ");
 
 //			String edcrnumber = fetchPermitNumber(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
-//			String edcrnumber = bpaRequest.getBPA().getEdcrNumber();
+//			String edcrnumber = bpaObject.getEdcrNumber();
 //			plotAreaApproved = getEDCRDetails(edcrnumber, bpaRequest.getRequestInfo(), bpaRequest.getBPA());
-			plotAreaApproved = Double.valueOf(bpaRequest.getBPA().getLandInfo().getAddress().getPlotArea().toString());
+			plotAreaApproved = Double.valueOf(bpaObject.getLandInfo().getAddress().getPlotArea().toString());
 			log.info("Fetched Approved Plot Area :" + plotAreaApproved);
 		}
-
-		BPA bpaObject = bpaSearch(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
 
 		for (Unit unit : bpaObject.getLandInfo().getUnit()) {
 			String[] ocType = unit.getOccupancyType().split(",");
@@ -114,7 +116,7 @@ public class BPACustomDecorator {
 			enrichedUnitList.add(enrichedUnit);
 
 		}
-		plotArea = Double.valueOf(bpaRequest.getBPA().getLandInfo().getAddress().getPlotArea().toString());
+		plotArea = Double.valueOf(bpaObject.getLandInfo().getAddress().getPlotArea().toString());
 //		plotArea = getPlotAreafromEdcr(bpaRequest.getBPA().getEdcrNumber(), bpaRequest.getRequestInfo(),
 //				bpaRequest.getBPA());
 
