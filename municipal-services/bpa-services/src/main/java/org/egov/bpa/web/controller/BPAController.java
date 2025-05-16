@@ -514,7 +514,7 @@ public class BPAController {
 			if (updateResult > 0) {
 				return new ResponseEntity<>("Updated Successfully " + updateResult, HttpStatus.OK);
 			} else {
-				return new ResponseEntity<>("No Record updated " + updateResult, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>("Total Bill Amount is already updated", HttpStatus.OK);
 			}
 		} catch (Exception ex) {
 			log.error("Exception in updateBillAmount: " + ex);

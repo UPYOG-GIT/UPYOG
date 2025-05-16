@@ -132,7 +132,13 @@ public class IndexerService {
 			jsonToBeIndexed = dataTransformationService.buildJsonForIndex(index, kafkaJson, isBulk, false);
 		}
 
-		if(index.getName().contains("collection") || index.getName().contains("payment") || configkey.equals(Mapping.ConfigKeyEnum.LEGACYINDEX)) {
+//		if(index.getName().contains("collection") || index.getName().contains("payment") || configkey.equals(Mapping.ConfigKeyEnum.LEGACYINDEX)) {
+//			// this is already sent
+//		} else {
+//			validateAndIndex(jsonToBeIndexed, url.toString(), index);
+//		}
+		
+		if(configkey.equals(Mapping.ConfigKeyEnum.LEGACYINDEX)) {
 			// this is already sent
 		} else {
 			validateAndIndex(jsonToBeIndexed, url.toString(), index);
