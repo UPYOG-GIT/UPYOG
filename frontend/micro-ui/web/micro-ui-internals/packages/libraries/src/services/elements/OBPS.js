@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { MdmsService } from "./MDMS";
 import React from "react";
 import { UploadServices } from "../atoms/UploadServices";
+// import GISPreview from "../../../../modules/obps/src/pages/citizen/BpaApplicationDetail/GISPreview"; 
 
 
 export const OBPSService = {
@@ -737,8 +738,21 @@ export const OBPSService = {
         { title: "BPA_LOC_MOHALLA_LABEL", value: BPA?.landInfo?.address?.locality?.name },
         { title: "BPA_DETAILS_SRT_NAME_LABEL", value: BPA?.landInfo?.address?.street },
         { title: "ES_NEW_APPLICATION_LOCATION_LANDMARK", value: BPA?.landInfo?.address?.landmark },
-        { title: "Proposed Site Address", value: BPA?.landInfo?.address?.address}
+        { title: "BPA_PROPOSED_SITE_ADDRESS", value: BPA?.landInfo?.address?.address}
       ]
+    };
+
+    const gisDetails = {
+      title: "BPA_GIS_MAP_MARKING_DETAILS",
+      isGISDetail: BPA?.landInfo?.address?.geoLocation?.gisPlaceName ? true : false,
+      isCommon: false,
+      additionalDetails: {
+      values: [
+        { isMap:false, title: "BPA_GIS_PLACE_NAME", value: BPA?.landInfo?.address?.geoLocation?.gisPlaceName},
+        // { isMap:true, title: "BPA_GIS_PLACE_NAME", value: BPA?.landInfo?.address?.geoLocation?.additionalDetails}
+        // { title: "BPA_GIS_PLACE_NAME", value: <GISPreview gisData={BPA?.landInfo?.address?.geoLocation} svgStyles={{}} isSendBackFlow={false} isHrLine={true} titleStyles={{ fontSize: "20px", lineHeight: "24px", "fontWeight": 700, marginBottom: "10px" }} />}        
+      ]
+    }
     };
 
 
@@ -842,7 +856,7 @@ export const OBPSService = {
     }
 
     if (BPA?.businessService !== "BPA_OC") {
-      details = [...details, applicationDetailsInfo, basicDetails, plotDetails, scrutinyDetails, buildingExtractionDetails, subOccupancyTableDetails, demolitionAreaDetails, addressDetails, ownerDetails, documentDetails, fiReports, ...nocDetails, approvalChecksDetails, PermitConditions]
+      details = [...details, applicationDetailsInfo, basicDetails, plotDetails, scrutinyDetails, buildingExtractionDetails, subOccupancyTableDetails, demolitionAreaDetails, addressDetails, gisDetails, ownerDetails, documentDetails, fiReports, ...nocDetails, approvalChecksDetails, PermitConditions]
     } else {
       details = [...details, applicationDetailsInfo, basicDetails, plotDetails, scrutinyDetails, buildingExtractionDetails, subOccupancyTableDetails, demolitionAreaDetails, documentDetails, fiReports, ...nocDetails, PermitConditions]
     }
