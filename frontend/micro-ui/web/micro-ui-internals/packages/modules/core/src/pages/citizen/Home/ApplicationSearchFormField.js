@@ -144,7 +144,7 @@ const ApplicationSearchFormField = ({ formState, register, reset, previousPage }
           <Row className="border-none" label={t(`BPA_LOC_MOHALLA_LABEL`)} text={tableData[0]?.landInfo?.address?.locality?.name || t("CS_NA")} />
           <Row className="border-none" label={t(`Street`)} text={tableData[0]?.landInfo?.address?.street || t("CS_NA")} />
           <Row className="border-none" label={t(`ES_NEW_APPLICATION_LOCATION_LANDMARK`)} text={tableData[0]?.landInfo?.address?.landmark || t("CS_NA")} />
-          <Row className="border-none" label={t(`Proposed Site Address`)} text={tableData[0]?.landInfo?.address?.address || t("CS_NA")} />
+          <Row className="border-none" label={t(`BPA_PROPOSED_SITE_ADDRESS`)} text={tableData[0]?.landInfo?.address?.address || t("CS_NA")} />
       </StatusTable>
       </Card>
 
