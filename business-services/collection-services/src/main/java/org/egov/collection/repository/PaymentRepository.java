@@ -203,7 +203,7 @@ public class PaymentRepository {
 				billIds.addAll(payment.getPaymentDetails().stream().map(detail -> detail.getBillId())
 						.collect(Collectors.toSet()));
 			}
-			Map<String, Bill> billMap = getBills(billIds);
+			Map<String, Bill> billMap = getPlainSearchBills(billIds);
 			for (Payment payment : payments) {
 				payment.getPaymentDetails().forEach(detail -> {
 					detail.setBill(billMap.get(detail.getBillId()));
@@ -227,6 +227,20 @@ public class PaymentRepository {
 
 		return mapOfIdAndBills;
 
+	}
+	
+	private Map<String, Bill> getPlainSearchBills(Set<String> ids) {
+		Map<String, Bill> mapOfIdAndBills = new HashMap<>();
+		Map<String, Object> preparedStatementValues = new HashMap<>();
+		preparedStatementValues.put("id", ids);
+		String query = paymentQueryBuilder.getBillPlainSearchQuery();
+		List<Bill> bills = namedParameterJdbcTemplate.query(query, preparedStatementValues, billRowMapper);
+		bills.forEach(bill -> {
+			mapOfIdAndBills.put(bill.getId(), bill);
+		});
+		
+		return mapOfIdAndBills;
+		
 	}
 
 	public void updateStatus(List<Payment> payments) {
