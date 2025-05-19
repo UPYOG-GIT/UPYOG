@@ -35,13 +35,19 @@ const AddPayType = () => {
   const [feeDetailtblval, setfeeDetailtblval] = useState([]);
   let { uuid } = Digit.UserService.getUser()?.info || {};
 
+  
   const selectedRows = [];
-  const billId = feeDetailtblval[0]?.bill_id;
+  // const billId = feeDetailtblval[0]?.bill_id;
   // console.log("billId : " + billId);
   // this is for add new row in table
   const insertNewRow = async (e) => {
     e.preventDefault();
 
+    const fetchBillRes = await Digit.PaymentService.fetchBill(tenantId, { consumerCode: id, businessService: "BPA.NC_SAN_FEE" });
+    let billId = "";
+    if (fetchBillRes?.Bill?.length > 0) {
+      billId = fetchBillRes?.Bill?.[0]?.id;
+    }
     const PayTypeFeeDetailRequest = {
       tenantId: tenantId,
       billId: billId ? billId : "",
