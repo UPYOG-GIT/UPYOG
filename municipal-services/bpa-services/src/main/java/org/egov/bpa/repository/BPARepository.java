@@ -222,12 +222,21 @@ public class BPARepository {
 		String deleteQuery = "DELETE FROM fee_details WHERE id IN (" + id + ")";
 		log.info("deleteQuery: " + deleteQuery);
 		int deleteResult = jdbcTemplate.update(deleteQuery);
-		log.info("BPARepository.deletePayTpRateById: " + deleteResult
-				+ " data deleted from pay_tp_rate_master table of id(s) : " + ids.toString());
+		log.info("BPARepository.deleteFeeDetailsById: " + deleteResult
+				+ " data deleted from fee_details table of id(s) : " + ids.toString());
 		String totalAmountQuery = "SELECT SUM(amount) as amount from fee_details WHERE application_no='" + applicationNo
 				+ "' and feetype='" + feeType + "' and is_fdr='N'";
-		Map<String, Object> resultMap = jdbcTemplate.queryForMap(totalAmountQuery);
-		updateBillDetailAmount(applicationNo, Double.valueOf(resultMap.get("amount").toString()));
+//		Map<String, Object> resultMap = jdbcTemplate.queryForMap(totalAmountQuery);
+		Double updatedAmount = 0.0;
+		List<Map<String, Object>> results = jdbcTemplate.queryForList(totalAmountQuery);
+		if (!results.isEmpty()) {
+			Map<String, Object> resultMap = results.get(0);
+			updatedAmount = Double.valueOf(resultMap.get("amount").toString());
+			log.info("Total Updated Amount: " + updatedAmount);
+		} 
+
+//		updateBillDetailAmount(applicationNo, Double.valueOf(resultMap.get("amount").toString()));
+		updateBillDetailAmount(applicationNo, updatedAmount);
 		return deleteResult;
 	}
 
@@ -256,7 +265,7 @@ public class BPARepository {
 				+ "' WHERE demanddetailid = ( SELECT id FROM updated_demanddetail) RETURNING id) UPDATE egbs_demanddetail_v1_audit SET taxamount = '"
 				+ totalAmount + "' WHERE demanddetailid = (SELECT id FROM updated_demanddetail)";
 		int updateResult = jdbcTemplate.update(updateQuery);
-		log.info("BPARepository.updateFeeDetails: " + updateResult + " data updated into paytype_master table");
+		log.info("BPARepository.updateFeeDetails: " + updateResult + " data updated into updated_billdetail table");
 //		return updateResult;
 	}
 
