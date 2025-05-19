@@ -31,8 +31,11 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
   let cityCode = formData?.data?.edcrDetails?.tenantId;
   formData = { address: { ...formData?.address } };
   const enabledTenantIds = globalConfigs?.getConfig("GIS_ENABLED");
-  const isGISEnabled = enabledTenantIds.includes(cityCode);
+  const isGISEnabled = Array.isArray(enabledTenantIds) && enabledTenantIds.includes(cityCode);
 
+  // console.log("enabledTenantIds: " + enabledTenantIds);
+  // console.log("aaaaa "+Array.isArray(enabledTenantIds));
+  // console.log("isGISEnabled: " + isGISEnabled);
   const [isMapOpen, setIsMapOpen] = useState(false);
 
   const openMap = () => setIsMapOpen(true);
@@ -148,11 +151,10 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
     onSelect(config.key, address);
   };
 
-
   function onSave(transformedGeojson, latitude, longitude, gisPlacename) {
     const markDetails = {
-      markDetails: transformedGeojson
-    }
+      markDetails: transformedGeojson,
+    };
     const location = {
       latitude: latitude,
       longitude: longitude,
@@ -229,7 +231,6 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
     sessionStorage.setItem("currLocality", JSON.stringify(locality));
   }
 
-
   return (
     <div>
       {!isOpen && <Timeline />}
@@ -251,7 +252,6 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
               }
             }
           >
-            
             <TextInput
               style={{}}
               isMandatory={false}
@@ -269,7 +269,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
               onChange={selectGeolocation}
               disabled={!isGISEnabled}
             />
-            { isGISEnabled &&
+            {isGISEnabled && (
               <LinkButton
                 label={
                   <div>
@@ -293,7 +293,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
                 style={{}}
                 onClick={(e) => handleGIS()}
               />
-            }
+            )}
           </div>
 
           {isMapOpen && (
