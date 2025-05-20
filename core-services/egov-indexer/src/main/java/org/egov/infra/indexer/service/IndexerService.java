@@ -121,7 +121,7 @@ public class IndexerService {
 	 */
 	public void indexProccessor(Index index, Mapping.ConfigKeyEnum configkey, String kafkaJson, boolean isBulk) throws Exception {
 		Long startTime = null;
-		log.debug("index: " + index.getCustomJsonMapping());
+		log.info("index: " + index.getCustomJsonMapping());
 		StringBuilder url = new StringBuilder();
 		url.append(esHostUrl).append(index.getName()).append("/").append(index.getType()).append("/").append("_bulk");
 		startTime = new Date().getTime();
@@ -138,11 +138,11 @@ public class IndexerService {
 //			validateAndIndex(jsonToBeIndexed, url.toString(), index);
 //		}
 		
-		if(configkey.equals(Mapping.ConfigKeyEnum.LEGACYINDEX)) {
-			// this is already sent
-		} else {
+//		if(configkey.equals(Mapping.ConfigKeyEnum.LEGACYINDEX)) {
+//			// this is already sent
+//		} else {
 			validateAndIndex(jsonToBeIndexed, url.toString(), index);
-		}
+//		}
 
 		log.info("Total time taken: " + ((new Date().getTime()) - startTime) + "ms");
 	}
