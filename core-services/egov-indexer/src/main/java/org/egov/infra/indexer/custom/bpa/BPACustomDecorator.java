@@ -77,10 +77,9 @@ public class BPACustomDecorator {
 		Double plotArea = null;
 
 		// fetching plotArea after approval based on approval number
-		
 
 		BPA bpaObject = bpaSearch(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
-		
+
 		if (bpaRequest.getBPA().getStatus().equals("APPROVED")) {
 			log.info("INSIDE APPROVED ");
 
@@ -117,6 +116,7 @@ public class BPACustomDecorator {
 
 		}
 		plotArea = Double.valueOf(bpaObject.getLandInfo().getAddress().getPlotArea().toString());
+		log.info("BPA Status : " + bpaRequest.getBPA().getStatus() + ", plotArea : " + plotArea);
 //		plotArea = getPlotAreafromEdcr(bpaRequest.getBPA().getEdcrNumber(), bpaRequest.getRequestInfo(),
 //				bpaRequest.getBPA());
 
