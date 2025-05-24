@@ -943,6 +943,10 @@ public class BPAService {
 		for (int i = 0; i < bpas.size(); i++) {
 			for (int j = 0; j < landInfos.size(); j++) {
 				if (landInfos.get(j).getId().equalsIgnoreCase(bpas.get(i).getLandId())) {
+					if (bpas.get(i).getStatus().equals("APPROVED")) {
+						Double plotAreaApproved = Double.valueOf(landInfos.get(j).getAddress().getPlotArea().toString());
+						landInfos.get(j).setPlotAreaApproved(plotAreaApproved);
+					}
 					bpas.get(i).setLandInfo(landInfos.get(j));
 				}
 			}
@@ -958,6 +962,10 @@ public class BPAService {
 						missingLandcriteria);
 				for (int j = 0; j < newLandInfo.size(); j++) {
 					if (newLandInfo.get(j).getId().equalsIgnoreCase(bpas.get(i).getLandId())) {
+						if (bpas.get(i).getStatus().equals("APPROVED")) {
+							Double plotAreaApproved = Double.valueOf(newLandInfo.get(j).getAddress().getPlotArea().toString());
+							newLandInfo.get(j).setPlotAreaApproved(plotAreaApproved);
+						}
 						bpas.get(i).setLandInfo(newLandInfo.get(j));
 					}
 				}
