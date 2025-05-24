@@ -207,7 +207,7 @@ public class DataTransformationService {
                     log.error("URI: " + uri);
                     continue;
                 }
-                log.debug("Response: " + response + " from the URI: " + uriMapping.getPath());
+                log.info("Response: " + response + " from the URI: " + uriMapping.getPath());
                 for (FieldMapping fieldMapping : uriMapping.getUriResponseMapping()) {
                     String[] expressionArray = (fieldMapping.getOutJsonPath()).split("[.]");
                     String expression = indexerUtils.getProcessedJsonPath(fieldMapping.getOutJsonPath());
@@ -222,7 +222,7 @@ public class DataTransformationService {
                         documentContext.put(expression, expressionArray[expressionArray.length - 1], value);
                     } catch (Exception e) {
                         log.error("Value: " + fieldMapping.getInjsonpath() + " is not found!");
-                        log.debug("URI: " + uri);
+                        log.info("URI: " + uri);
                         documentContext.put(expression, expressionArray[expressionArray.length - 1], null);
                         continue;
                     }
@@ -264,7 +264,7 @@ public class DataTransformationService {
 					log.info("MDMS Request failure: " + e);
                     continue;
                 }
-                log.debug("Response: " + response + " from the URI: " + uriMapping.getPath());
+                log.info("Response: " + response + " from the URI: " + uriMapping.getPath());
                 for (FieldMapping fieldMapping : uriMapping.getUriResponseMapping()) {
                     String[] expressionArray = (fieldMapping.getOutJsonPath()).split("[.]");
                     String expression = indexerUtils.getProcessedJsonPath(fieldMapping.getOutJsonPath());
@@ -278,7 +278,7 @@ public class DataTransformationService {
                         documentContext.put(expression, expressionArray[expressionArray.length - 1], value);
                     } catch (Exception e) {
                         log.error("Value: " + fieldMapping.getInjsonpath() + " is not found!");
-                        log.debug("MDMS Request: " + request);
+                        log.info("MDMS Request: " + request);
                         documentContext.put(expression, expressionArray[expressionArray.length - 1], null);
                         continue;
                     }
