@@ -170,11 +170,15 @@ public class DataTransformationService {
 			for (FieldMapping fieldMapping : customJsonMappings.getFieldMapping()) {
 				String[] expressionArray = (fieldMapping.getOutJsonPath()).split("[.]");
 				String expression = indexerUtils.getProcessedJsonPath(fieldMapping.getOutJsonPath());
+				log.info("expressionArray: " + expressionArray.toString());
+				log.info("expression: " + expression);
+				log.info("fieldMapping.getInjsonpath(): " + fieldMapping.getInjsonpath().toString());
+				log.info("fieldMapping.getOutJsonPath(): " + fieldMapping.getOutJsonPath().toString());
 				try {
 					documentContext.put(expression, expressionArray[expressionArray.length - 1],
 							JsonPath.read(kafkaJson, fieldMapping.getInjsonpath()));
 				} catch (Exception e) {
-					log.error("kafkaJson: " + kafkaJson);
+//					log.error("kafkaJson: " + kafkaJson);
 					log.error("Error while building custom JSON for index: " + e.getMessage());
 					continue;
 				}
