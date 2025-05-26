@@ -170,7 +170,10 @@ public class DataTransformationService {
 			for (FieldMapping fieldMapping : customJsonMappings.getFieldMapping()) {
 				String[] expressionArray = (fieldMapping.getOutJsonPath()).split("[.]");
 				String expression = indexerUtils.getProcessedJsonPath(fieldMapping.getOutJsonPath());
-				log.info("expressionArray: " + expressionArray.toString());
+				log.info("expressionArray: ");
+				for(String str:expressionArray) {
+					log.info(str +" ");
+				}
 				log.info("expression: " + expression);
 				log.info("fieldMapping.getInjsonpath(): " + fieldMapping.getInjsonpath().toString());
 				log.info("fieldMapping.getOutJsonPath(): " + fieldMapping.getOutJsonPath().toString());
