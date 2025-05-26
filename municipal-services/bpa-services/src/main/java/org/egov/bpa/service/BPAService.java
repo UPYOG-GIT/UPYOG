@@ -943,10 +943,11 @@ public class BPAService {
 		for (int i = 0; i < bpas.size(); i++) {
 			for (int j = 0; j < landInfos.size(); j++) {
 				if (landInfos.get(j).getId().equalsIgnoreCase(bpas.get(i).getLandId())) {
+					Double plotArea = Double.valueOf(landInfos.get(j).getAddress().getPlotArea().toString());
 					if (bpas.get(i).getStatus().equals("APPROVED")) {
-						Double plotAreaApproved = Double.valueOf(landInfos.get(j).getAddress().getPlotArea().toString());
-						landInfos.get(j).setPlotAreaApproved(plotAreaApproved);
+						landInfos.get(j).setPlotAreaApproved(plotArea);
 					}
+					landInfos.get(j).setPlotArea(plotArea);
 					bpas.get(i).setLandInfo(landInfos.get(j));
 				}
 			}
@@ -962,10 +963,11 @@ public class BPAService {
 						missingLandcriteria);
 				for (int j = 0; j < newLandInfo.size(); j++) {
 					if (newLandInfo.get(j).getId().equalsIgnoreCase(bpas.get(i).getLandId())) {
+						Double plotArea = Double.valueOf(newLandInfo.get(j).getAddress().getPlotArea().toString());
 						if (bpas.get(i).getStatus().equals("APPROVED")) {
-							Double plotAreaApproved = Double.valueOf(newLandInfo.get(j).getAddress().getPlotArea().toString());
-							newLandInfo.get(j).setPlotAreaApproved(plotAreaApproved);
+							newLandInfo.get(j).setPlotAreaApproved(plotArea);
 						}
+						newLandInfo.get(j).setPlotArea(plotArea);
 						bpas.get(i).setLandInfo(newLandInfo.get(j));
 					}
 				}
