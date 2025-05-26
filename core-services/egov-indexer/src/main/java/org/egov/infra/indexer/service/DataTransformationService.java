@@ -91,6 +91,7 @@ public class DataTransformationService {
 						String customIndexJson = buildCustomJsonForIndex(index.getCustomJsonMapping(),
 								stringifiedObject);
 						JSONObject jsonString = new JSONObject(customIndexJson);
+						jsonString.getJSONObject("Data").getJSONObject("landInfo").put("plotArea", Double.parseDouble(jsonString.getJSONObject("Data").getString("plotArea")));
 						jsonString.getJSONObject("Data").put("plotArea", Double.parseDouble(jsonString.getJSONObject("Data").getString("plotArea")));
 						JSONArray units = jsonString.getJSONObject("Data").getJSONObject("landInfo")
 								.getJSONArray("unit");
