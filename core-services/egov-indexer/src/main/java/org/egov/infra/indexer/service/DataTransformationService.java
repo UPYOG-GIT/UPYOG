@@ -2,13 +2,7 @@ package org.egov.infra.indexer.service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.indexer.util.IndexerConstants;
 import org.egov.infra.indexer.util.IndexerUtils;
@@ -18,14 +12,18 @@ import org.egov.infra.indexer.web.contract.Index;
 import org.egov.infra.indexer.web.contract.UriMapping;
 import org.egov.tracer.model.CustomException;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -92,6 +90,34 @@ public class DataTransformationService {
 					if (isCustom) {
 						String customIndexJson = buildCustomJsonForIndex(index.getCustomJsonMapping(),
 								stringifiedObject);
+						JSONObject jsonString = new JSONObject(customIndexJson);
+						jsonString.getJSONObject("Data").put("plotArea", Double.parseDouble(jsonString.getJSONObject("Data").getString("plotArea")));
+						JSONArray units = jsonString.getJSONObject("Data").getJSONObject("landInfo")
+								.getJSONArray("unit");
+						for (int k = 0; k < units.length(); k++) {
+							JSONObject unit = units.getJSONObject(k);
+							String occupancyType = unit.getString("occupancyType");
+							JSONArray mappedOccupancy = new JSONArray();
+							switch (occupancyType) {
+							case "A":
+								mappedOccupancy.put("Residential");
+								break;
+							case "G":
+								mappedOccupancy.put("Industrial");
+								break;
+							case "F":
+								mappedOccupancy.put("Mercantile / Commercial");
+								break;
+							case "B":
+								mappedOccupancy.put("Educational");
+								break;
+							default:
+								mappedOccupancy.put(occupancyType);
+								break;
+							}
+							unit.put("occupancyType", mappedOccupancy); // Set to your desired value
+						}
+						customIndexJson=jsonString.toString();
 						indexerUtils.pushCollectionToDSSTopic(id, customIndexJson, index);
 						indexerUtils.pushToKafka(id, customIndexJson, index);
 						StringBuilder builder = appendIdToJson(index, jsonTobeIndexed, stringifiedObject,
@@ -171,8 +197,8 @@ public class DataTransformationService {
 				String[] expressionArray = (fieldMapping.getOutJsonPath()).split("[.]");
 				String expression = indexerUtils.getProcessedJsonPath(fieldMapping.getOutJsonPath());
 				log.info("expressionArray: ");
-				for(String str:expressionArray) {
-					log.info(str +" ");
+				for (String str : expressionArray) {
+					log.info(str + " ");
 				}
 				log.info("expression: " + expression);
 				log.info("fieldMapping.getInjsonpath(): " + fieldMapping.getInjsonpath().toString());
