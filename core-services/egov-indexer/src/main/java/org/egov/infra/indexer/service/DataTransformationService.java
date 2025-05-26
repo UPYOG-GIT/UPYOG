@@ -92,7 +92,7 @@ public class DataTransformationService {
 								stringifiedObject);
 						JSONObject jsonString = new JSONObject(customIndexJson);
 //						jsonString.getJSONObject("Data").getJSONObject("landInfo").put("plotArea", Double.parseDouble(jsonString.getJSONObject("Data").getString("plotArea")));
-						jsonString.getJSONObject("Data").put("plotArea", Double.parseDouble(jsonString.getJSONObject("Data").getString("plotArea")));
+						jsonString.getJSONObject("Data").put("plotArea", Double.parseDouble(jsonString.getJSONObject("Data").get("plotArea").toString()));
 						JSONArray units = jsonString.getJSONObject("Data").getJSONObject("landInfo")
 								.getJSONArray("unit");
 						for (int k = 0; k < units.length(); k++) {
