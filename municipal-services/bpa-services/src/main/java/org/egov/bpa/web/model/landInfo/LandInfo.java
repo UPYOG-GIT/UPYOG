@@ -92,6 +92,9 @@ public class LandInfo {
 	//added to use only in elastic legacy indexing
 	@JsonProperty("plotAreaApproved")
 	private Double plotAreaApproved = null;
+	
+	@JsonProperty("plotArea")
+	private Double plotArea = null;
 
 	public LandInfo id(String id) {
 		this.id = id;
@@ -498,5 +501,13 @@ public class LandInfo {
 
 	public void setPlotAreaApproved(Double plotAreaApproved) {
 		this.plotAreaApproved = plotAreaApproved;
+	}
+
+	public Double getPlotArea() {
+		return plotArea;
+	}
+
+	public void setPlotArea(Double plotArea) {
+		this.plotArea = plotArea;
 	}
 }
