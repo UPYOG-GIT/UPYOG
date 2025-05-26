@@ -89,9 +89,9 @@ public class LandInfo {
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails = null;
 
-	//added for elastic legacy indexing only
+	//added to use only in elastic legacy indexing
 	@JsonProperty("plotAreaApproved")
-	private Double plotAreaApproved = 0.0;
+	private Double plotAreaApproved = null;
 
 	public LandInfo id(String id) {
 		this.id = id;
