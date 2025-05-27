@@ -97,7 +97,7 @@ public class DataTransformationService {
 								.getJSONArray("unit");
 						for (int k = 0; k < units.length(); k++) {
 							JSONObject unit = units.getJSONObject(k);
-							String occupancyType = unit.getString("occupancyType");
+							String occupancyType = unit.get("occupancyType").toString();
 							JSONArray mappedOccupancy = new JSONArray();
 							switch (occupancyType) {
 							case "A":
