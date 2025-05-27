@@ -83,8 +83,10 @@ public class DataTransformationService {
 		JSONArray kafkaJsonArray = null;
 		try {
 			kafkaJsonArray = indexerUtils.constructArrayForBulkIndex(kafkaJson, index, isBulk);
+			int totalLength = 0;
 			for (int i = 0; i < kafkaJsonArray.length(); i++) {
 				if (null != kafkaJsonArray.get(i)) {
+					totalLength++;
 					String stringifiedObject = indexerUtils.buildString(kafkaJsonArray.get(i));
 					String id = indexerUtils.buildIndexId(index, stringifiedObject);
 					if (isCustom) {
@@ -92,7 +94,8 @@ public class DataTransformationService {
 								stringifiedObject);
 						JSONObject jsonString = new JSONObject(customIndexJson);
 //						jsonString.getJSONObject("Data").getJSONObject("landInfo").put("plotArea", Double.parseDouble(jsonString.getJSONObject("Data").getString("plotArea")));
-						jsonString.getJSONObject("Data").put("plotArea", Double.parseDouble(jsonString.getJSONObject("Data").get("plotArea").toString()));
+						jsonString.getJSONObject("Data").put("plotArea",
+								Double.parseDouble(jsonString.getJSONObject("Data").get("plotArea").toString()));
 						JSONArray units = jsonString.getJSONObject("Data").getJSONObject("landInfo")
 								.getJSONArray("unit");
 						for (int k = 0; k < units.length(); k++) {
@@ -118,7 +121,7 @@ public class DataTransformationService {
 							}
 							unit.put("occupancyType", mappedOccupancy); // Set to your desired value
 						}
-						customIndexJson=jsonString.toString();
+						customIndexJson = jsonString.toString();
 						indexerUtils.pushCollectionToDSSTopic(id, customIndexJson, index);
 						indexerUtils.pushToKafka(id, customIndexJson, index);
 						StringBuilder builder = appendIdToJson(index, jsonTobeIndexed, stringifiedObject,
@@ -137,6 +140,7 @@ public class DataTransformationService {
 					continue;
 				}
 			}
+			log.info("Total Indexed Data " + totalLength);
 			result = jsonTobeIndexed.toString();
 		} catch (Exception e) {
 			log.error("Error while building jsonstring for indexing", e);
@@ -197,13 +201,13 @@ public class DataTransformationService {
 			for (FieldMapping fieldMapping : customJsonMappings.getFieldMapping()) {
 				String[] expressionArray = (fieldMapping.getOutJsonPath()).split("[.]");
 				String expression = indexerUtils.getProcessedJsonPath(fieldMapping.getOutJsonPath());
-				log.info("expressionArray: ");
-				for (String str : expressionArray) {
-					log.info(str + " ");
-				}
-				log.info("expression: " + expression);
-				log.info("fieldMapping.getInjsonpath(): " + fieldMapping.getInjsonpath().toString());
-				log.info("fieldMapping.getOutJsonPath(): " + fieldMapping.getOutJsonPath().toString());
+//				log.info("expressionArray: ");
+//				for (String str : expressionArray) {
+//					log.info(str + " ");
+//				}
+//				log.info("expression: " + expression);
+//				log.info("fieldMapping.getInjsonpath(): " + fieldMapping.getInjsonpath().toString());
+//				log.info("fieldMapping.getOutJsonPath(): " + fieldMapping.getOutJsonPath().toString());
 				try {
 					documentContext.put(expression, expressionArray[expressionArray.length - 1],
 							JsonPath.read(kafkaJson, fieldMapping.getInjsonpath()));
@@ -246,7 +250,7 @@ public class DataTransformationService {
 					log.error("URI: " + uri);
 					continue;
 				}
-				log.info("Response: " + response + " from the URI: " + uriMapping.getPath());
+//				log.info("Response: " + response + " from the URI: " + uriMapping.getPath());
 				for (FieldMapping fieldMapping : uriMapping.getUriResponseMapping()) {
 					String[] expressionArray = (fieldMapping.getOutJsonPath()).split("[.]");
 					String expression = indexerUtils.getProcessedJsonPath(fieldMapping.getOutJsonPath());
@@ -306,7 +310,7 @@ public class DataTransformationService {
 					log.info("MDMS Request failure: " + e);
 					continue;
 				}
-				log.info("Response: " + response + " from the URI: " + uriMapping.getPath());
+//				log.info("Response: " + response + " from the URI: " + uriMapping.getPath());
 				for (FieldMapping fieldMapping : uriMapping.getUriResponseMapping()) {
 					String[] expressionArray = (fieldMapping.getOutJsonPath()).split("[.]");
 					String expression = indexerUtils.getProcessedJsonPath(fieldMapping.getOutJsonPath());
