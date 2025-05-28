@@ -96,8 +96,9 @@ public class DataTransformationService {
 //						jsonString.getJSONObject("Data").getJSONObject("landInfo").put("plotArea", Double.parseDouble(jsonString.getJSONObject("Data").getString("plotArea")));
 						jsonString.getJSONObject("Data").put("plotArea",
 								Double.parseDouble(jsonString.getJSONObject("Data").get("plotArea").toString()));
-						JSONArray units = jsonString.getJSONObject("Data").getJSONObject("landInfo")
-								.getJSONArray("unit");
+//						JSONArray units = jsonString.getJSONObject("Data").getJSONObject("landInfo")
+//								.getJSONArray("unit");
+						JSONArray units = jsonString.getJSONObject("Data").getJSONObject("landInfo").get("unit") instanceof JSONArray ? jsonString.getJSONObject("Data").getJSONObject("landInfo").getJSONArray("unit") : new JSONArray().put(jsonString.getJSONObject("Data").getJSONObject("landInfo").getJSONObject("unit"));
 						for (int k = 0; k < units.length(); k++) {
 							JSONObject unit = units.getJSONObject(k);
 							String occupancyType = unit.get("occupancyType").toString();
