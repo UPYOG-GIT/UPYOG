@@ -96,31 +96,33 @@ public class DataTransformationService {
 //						jsonString.getJSONObject("Data").getJSONObject("landInfo").put("plotArea", Double.parseDouble(jsonString.getJSONObject("Data").getString("plotArea")));
 						jsonString.getJSONObject("Data").put("plotArea",
 								Double.parseDouble(jsonString.getJSONObject("Data").get("plotArea").toString()));
-//						JSONArray units = jsonString.getJSONObject("Data").getJSONObject("landInfo")
-//								.getJSONArray("unit");
-						JSONArray units = jsonString.getJSONObject("Data").getJSONObject("landInfo").get("unit") instanceof JSONArray ? jsonString.getJSONObject("Data").getJSONObject("landInfo").getJSONArray("unit") : new JSONArray().put(jsonString.getJSONObject("Data").getJSONObject("landInfo").getJSONObject("unit"));
-						for (int k = 0; k < units.length(); k++) {
-							JSONObject unit = units.getJSONObject(k);
-							String occupancyType = unit.get("occupancyType").toString();
-							JSONArray mappedOccupancy = new JSONArray();
-							switch (occupancyType) {
-							case "A":
-								mappedOccupancy.put("Residential");
-								break;
-							case "G":
-								mappedOccupancy.put("Industrial");
-								break;
-							case "F":
-								mappedOccupancy.put("Mercantile / Commercial");
-								break;
-							case "B":
-								mappedOccupancy.put("Educational");
-								break;
-							default:
-								mappedOccupancy.put(occupancyType);
-								break;
+						if (jsonString.getJSONObject("Data").getJSONObject("landInfo").has("unit")) {
+							JSONArray units = jsonString.getJSONObject("Data").getJSONObject("landInfo")
+									.getJSONArray("unit");
+//						JSONArray units = jsonString.getJSONObject("Data").getJSONObject("landInfo").get("unit") instanceof JSONArray ? jsonString.getJSONObject("Data").getJSONObject("landInfo").getJSONArray("unit") : new JSONArray().put(jsonString.getJSONObject("Data").getJSONObject("landInfo").getJSONObject("unit"));
+							for (int k = 0; k < units.length(); k++) {
+								JSONObject unit = units.getJSONObject(k);
+								String occupancyType = unit.get("occupancyType").toString();
+								JSONArray mappedOccupancy = new JSONArray();
+								switch (occupancyType) {
+								case "A":
+									mappedOccupancy.put("Residential");
+									break;
+								case "G":
+									mappedOccupancy.put("Industrial");
+									break;
+								case "F":
+									mappedOccupancy.put("Mercantile / Commercial");
+									break;
+								case "B":
+									mappedOccupancy.put("Educational");
+									break;
+								default:
+									mappedOccupancy.put(occupancyType);
+									break;
+								}
+								unit.put("occupancyType", mappedOccupancy); // Set to your desired value
 							}
-							unit.put("occupancyType", mappedOccupancy); // Set to your desired value
 						}
 						customIndexJson = jsonString.toString();
 						indexerUtils.pushCollectionToDSSTopic(id, customIndexJson, index);

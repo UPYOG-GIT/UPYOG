@@ -121,10 +121,11 @@ public class IndexerService {
 	 */
 	public void indexProccessor(Index index, Mapping.ConfigKeyEnum configkey, String kafkaJson, boolean isBulk) throws Exception {
 		Long startTime = null;
-		log.info("index: " + index.getCustomJsonMapping());
+//		log.info("index: " + index.getCustomJsonMapping());
 		StringBuilder url = new StringBuilder();
 		url.append(esHostUrl).append(index.getName()).append("/").append(index.getType()).append("/").append("_bulk");
 		startTime = new Date().getTime();
+		log.info("Inside indexProccessor()");
 		String jsonToBeIndexed;
 		if (null != index.getCustomJsonMapping()) {
 			jsonToBeIndexed = dataTransformationService.buildJsonForIndex(index, kafkaJson, isBulk, true);
