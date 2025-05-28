@@ -92,56 +92,63 @@ public class DataTransformationService {
 					if (isCustom) {
 						String customIndexJson = buildCustomJsonForIndex(index.getCustomJsonMapping(),
 								stringifiedObject);
-						JSONObject jsonString = new JSONObject(customIndexJson);
+
+						//code added only for BPA legacy data ingesting 
+						if (index.getType().equalsIgnoreCase("bpaapplication")) {
+							JSONObject jsonString = new JSONObject(customIndexJson);
 //						jsonString.getJSONObject("Data").getJSONObject("landInfo").put("plotArea", Double.parseDouble(jsonString.getJSONObject("Data").getString("plotArea")));
-						jsonString.getJSONObject("Data").put("plotArea",
-								Double.parseDouble(jsonString.getJSONObject("Data").opt("plotArea").toString()));
+							jsonString.getJSONObject("Data").put("plotArea",
+									Double.parseDouble(jsonString.getJSONObject("Data").opt("plotArea").toString()));
 
-						// Navigate safely to "landInfo"
-						JSONObject data = jsonString.optJSONObject("Data");
-						if (data != null) {
-							JSONObject landInfo = data.optJSONObject("landInfo");
-							if (landInfo != null && landInfo.has("unit")) {
-								Object unitObj = landInfo.get("unit");
+							// Navigate safely to "landInfo"
+							JSONObject data = jsonString.optJSONObject("Data");
+							if (data != null) {
+								JSONObject landInfo = data.optJSONObject("landInfo");
+								if (landInfo != null && landInfo.has("unit")) {
+									Object unitObj = landInfo.get("unit");
 
-								// Normalize "unit" to JSONArray
-								JSONArray units = new JSONArray();
-								if (unitObj instanceof JSONArray) {
-									units = (JSONArray) unitObj;
-								} else if (unitObj instanceof JSONObject) {
-									units.put((JSONObject) unitObj);
-								}
-
-								// Transform each unit's occupancyType
-								for (int k = 0; k < units.length(); k++) {
-									JSONObject unit = units.getJSONObject(k);
-									String occupancyType = unit.optString("occupancyType", "");
-									JSONArray mappedOccupancy = new JSONArray();
-
-									switch (occupancyType) {
-									case "A":
-										mappedOccupancy.put("Residential");
-										break;
-									case "G":
-										mappedOccupancy.put("Industrial");
-										break;
-									case "F":
-//										mappedOccupancy.put("Mercantile / Commercial");
-										mappedOccupancy.put("Commercial");
-										break;
-									case "B":
-										mappedOccupancy.put("Educational");
-										break;
-									default:
-										mappedOccupancy.put(occupancyType);
-										break;
+									// Normalize "unit" to JSONArray
+									JSONArray units = new JSONArray();
+									if (unitObj instanceof JSONArray) {
+										units = (JSONArray) unitObj;
+									} else if (unitObj instanceof JSONObject) {
+										units.put((JSONObject) unitObj);
 									}
 
-									unit.put("occupancyType", mappedOccupancy);
+									// Transform each unit's occupancyType
+									for (int k = 0; k < units.length(); k++) {
+										JSONObject unit = units.getJSONObject(k);
+										String occupancyType = unit.optString("occupancyType", "");
+										JSONArray mappedOccupancy = new JSONArray();
+
+										switch (occupancyType) {
+										case "A":
+											mappedOccupancy.put("Residential");
+											break;
+										case "G":
+											mappedOccupancy.put("Industrial");
+											break;
+										case "F":
+//										mappedOccupancy.put("Mercantile / Commercial");
+											mappedOccupancy.put("Commercial");
+											break;
+										case "B":
+											mappedOccupancy.put("Educational");
+											break;
+										default:
+											mappedOccupancy.put(occupancyType);
+											break;
+										}
+
+										unit.put("occupancyType", mappedOccupancy);
+									}
 								}
 							}
+							customIndexJson = jsonString.toString();
 						}
-						customIndexJson = jsonString.toString();
+						//code ended for BPA data indexing
+						//below is normal continue code
+						
 						indexerUtils.pushCollectionToDSSTopic(id, customIndexJson, index);
 						indexerUtils.pushToKafka(id, customIndexJson, index);
 						StringBuilder builder = appendIdToJson(index, jsonTobeIndexed, stringifiedObject,
