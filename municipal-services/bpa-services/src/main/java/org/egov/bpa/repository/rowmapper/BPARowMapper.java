@@ -80,6 +80,7 @@ public class BPARowMapper implements ResultSetExtractor<List<BPA>> {
 						.isSwsApplication(isSwsApplication)
 						.swsApplicationId(swsApplicationId)
 						.swsUnitRegistrationNo(swsUnitRegistrationNo)
+						.riskType(rs.getString("risktype"))
 						.build();
 
 				buildingMap.put(id, currentbpa);
