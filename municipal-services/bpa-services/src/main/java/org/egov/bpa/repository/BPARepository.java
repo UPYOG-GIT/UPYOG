@@ -851,10 +851,7 @@ public class BPARepository {
 
 	public int updateRiskType(List<Map<String, Object>> batchValues) {
 		String updateQuery = "UPDATE eg_bpa_buildingplan SET risktype = ? WHERE applicationno = ?";
-
 		jdbcTemplate.batchUpdate(updateQuery, new BatchPreparedStatementSetter() {
-
-			int batchUpdateResult = 0;
 
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -865,11 +862,10 @@ public class BPARepository {
 
 			@Override
 			public int getBatchSize() {
-				batchUpdateResult = batchValues.size();
-				return batchUpdateResult;
+				return batchValues.size();
 			}
 		});
 
-		return batchUpdateResult;
+		return batchValues.size();
 	}
 }
