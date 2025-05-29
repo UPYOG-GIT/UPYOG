@@ -826,23 +826,23 @@ public class BPARepository {
 
 	public List<BPA> getRiskTypeTest(String tenantId) {
 		String query = "SELECT applicationno, edcrnumber FROM eg_bpa_buildingplan WHERE tenantid = '" + tenantId + "'";
-		
-		String query1="SELECT bpa.*,bpadoc.*,bpa.id as bpa_id,bpa.tenantid as bpa_tenantId,bpa.lastModifiedTime as "
-				+ "bpa_lastModifiedTime,bpa.createdBy as bpa_createdBy,bpa.lastModifiedBy as bpa_lastModifiedBy,bpa.createdTime as "
-				+ "bpa_createdTime,bpa.additionalDetails,bpa.landId as bpa_landId, bpadoc.id as bpa_doc_id, bpadoc.additionalDetails as doc_details, bpadoc.documenttype as bpa_doc_documenttype,bpadoc.filestoreid as bpa_doc_filestore"
-				+ " FROM eg_bpa_buildingplan bpa LEFT OUTER JOIN eg_bpa_document bpadoc ON bpadoc.buildingplanid = bpa.id WHERE bpa.tenantid ='"+ tenantId + "'";
-		
-		List<Map<String, Object>> resultList = jdbcTemplate.queryForList(query);
-		
-		
+
 		List<BPA> bpaList = new ArrayList<>();
-		for(Map<String, Object> resultMap: resultList) {
-			BPA bpa = new BPA();
-			bpa.setApplicationNo(resultMap.get("applicationno").toString());
-			bpa.setEdcrNumber(resultMap.get("edcrnumber").toString());
-			bpaList.add(bpa);
+		try {
+			List<Map<String, Object>> resultList = jdbcTemplate.queryForList(query);
+
+			log.info("query: " + query + ", resultList size : " + resultList.size());
+
+			for (Map<String, Object> resultMap : resultList) {
+				BPA bpa = new BPA();
+				bpa.setApplicationNo(resultMap.get("applicationno").toString());
+				bpa.setEdcrNumber(resultMap.get("edcrnumber").toString());
+				bpaList.add(bpa);
+			}
+		} catch (Exception ex) {
+			log.error("bparepository.getRiskTypeTest Exception : " + ex.toString());
 		}
 		return bpaList;
-		
+
 	}
 }

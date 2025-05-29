@@ -1109,7 +1109,7 @@ public class BPAService {
 	public int deleteApplication(String applicationNo) {
 		return repository.deleteApplication(applicationNo);
 	}
-	
+
 	public int applicationStepBack(String applicationNo, String applicationStatus, int stepsBack) {
 		return repository.applicationStepBack(applicationNo, applicationStatus, stepsBack);
 	}
@@ -1206,19 +1206,27 @@ public class BPAService {
 		bucket.put("value", value);
 		return bucket;
 	}
-	
-	public List<Map<String,Object>> getRiskTypeTest(BPARequest bpaRequest) {
-		RequestInfo requestInfo = bpaRequest.getRequestInfo();
-		String tenantId = bpaRequest.getBPA().getTenantId().split("\\.")[0];
-		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
-		List<BPA> bpaList = repository.getRiskTypeTest(tenantId);
-		List<Map<String,Object>> returnBpaList = new ArrayList<>();
-		for(BPA bpa:bpaList) {
-			bpaRequest.setBPA(bpa);
-			Map<String,Object> bpaMap = edcrService.getRiskTypeTest(bpaRequest, mdmsData);
+
+	public List<Map<String, Object>> getRiskTypeTest(BPARequest bpaRequest) {
+
+		log.info("Insied BpaService getRiskTypeTest");
+		List<Map<String, Object>> returnBpaList = new ArrayList<>();
+		try {
+			RequestInfo requestInfo = bpaRequest.getRequestInfo();
+			String tenantId = bpaRequest.getBPA().getTenantId().split("\\.")[0];
+
+			Object mdmsData = util.mDMSCall(requestInfo, tenantId);
+			List<BPA> bpaList = repository.getRiskTypeTest(tenantId);
+
+			for (BPA bpa : bpaList) {
+				bpaRequest.setBPA(bpa);
+				Map<String, Object> bpaMap = edcrService.getRiskTypeTest(bpaRequest, mdmsData);
 //			Map<String,Object> bpaMap= new HashMap<>();
-			bpaMap.put("applicatioNo", bpa.getApplicationNo());
-			returnBpaList.add(bpaMap);
+				bpaMap.put("applicatioNo", bpa.getApplicationNo());
+				returnBpaList.add(bpaMap);
+			}
+		} catch (Exception ex) {
+			log.error("bpaService.getRiskTypeTest, Exception :" + ex.toString());
 		}
 		return returnBpaList;
 	}
