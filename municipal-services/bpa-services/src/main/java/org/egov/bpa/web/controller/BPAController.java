@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -669,4 +670,18 @@ public class BPAController {
 //		return null;
 	}
 
+	@PostMapping(value = "/_getrisktypetest")
+	public List<Map<String, Object>> getRiskTypeTest(@Valid @RequestBody BPARequest bpaRequest) {
+
+		try {
+			return bpaService.getRiskTypeTest(bpaRequest);
+		} catch (Exception ex) {
+			List<Map<String, Object>> returnBpaList = new ArrayList<>();
+			Map<String, Object> errorMap = new HashMap<>();
+			errorMap.put("Error", ex.toString());
+			returnBpaList.add(errorMap);
+
+			return returnBpaList;
+		}
+	}
 }

@@ -115,7 +115,6 @@ public class BPAService {
 
 //	@Autowired
 //	SwsService swsService;
-
 	/**
 	 * does all the validations required to create BPA Record in the system
 	 * 
@@ -1206,6 +1205,22 @@ public class BPAService {
 		bucket.put("name", name);
 		bucket.put("value", value);
 		return bucket;
+	}
+	
+	public List<Map<String,Object>> getRiskTypeTest(BPARequest bpaRequest) {
+		RequestInfo requestInfo = bpaRequest.getRequestInfo();
+		String tenantId = bpaRequest.getBPA().getTenantId().split("\\.")[0];
+		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
+		List<BPA> bpaList = repository.getRiskTypeTest(tenantId);
+		List<Map<String,Object>> returnBpaList = new ArrayList<>();
+		for(BPA bpa:bpaList) {
+			bpaRequest.setBPA(bpa);
+			Map<String,Object> bpaMap = edcrService.getRiskTypeTest(bpaRequest, mdmsData);
+//			Map<String,Object> bpaMap= new HashMap<>();
+			bpaMap.put("applicatioNo", bpa.getApplicationNo());
+			returnBpaList.add(bpaMap);
+		}
+		return returnBpaList;
 	}
 
 }
