@@ -447,7 +447,7 @@ public class EDCRService {
 					.valueOf(context.read("edcrDetail[0].planDetail.plot.area").toString());
 			
 			Double buildingHeight = Double
-					.valueOf(context.read("edcrDetail[0].planDetail.blocks.*.building.buildingHeight").toString());
+					.valueOf(context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeight").toString());
 
 //			Double plotArea = plotAreas.get(0);
 //		log.info("masterData: " + masterData);
