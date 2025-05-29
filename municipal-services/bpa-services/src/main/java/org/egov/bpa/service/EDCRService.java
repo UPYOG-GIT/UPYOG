@@ -436,20 +436,26 @@ public class EDCRService {
 
 			String jsonString = new JSONObject(responseMap).toString();
 			DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
-			TypeRef<List<Double>> typeRef = new TypeRef<List<Double>>() {
-			};
+//			TypeRef<List<Double>> typeRef = new TypeRef<List<Double>>() {
+//			};
+//
+//			List<Double> plotAreas = context.read("edcrDetail.*.planDetail.plot.area", typeRef);
+//			List<Double> buildingHeights = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight",
+//					typeRef);
+			
+			Double plotArea = Double
+					.valueOf(context.read("edcrDetail[0].planDetail.plot.area").toString());
+			
+			Double buildingHeight = Double
+					.valueOf(context.read("edcrDetail[0].planDetail.blocks.*.building.buildingHeight").toString());
 
-			List<Double> plotAreas = context.read("edcrDetail.*.planDetail.plot.area", typeRef);
-			List<Double> buildingHeights = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight",
-					typeRef);
-
-			Double plotArea = plotAreas.get(0);
+//			Double plotArea = plotAreas.get(0);
 //		log.info("masterData: " + masterData);
 			List jsonOutput = JsonPath.read(masterData, BPAConstants.RISKTYPE_COMPUTATION);
 //		log.info("jsonOutput: " + jsonOutput);
 			String filterExp = "";
 			List<String> riskTypes = new ArrayList<String>();
-			Double buildingHeight = Collections.max(buildingHeights);
+//			Double buildingHeight = Collections.max(buildingHeights);
 			if (plotArea > 1000 || buildingHeight >= 15) {
 //			filterExp = "$.[?((@.fromPlotArea < " + plotArea + " ) || ( @.fromBuildingHeight < " + buildingHeight
 //					+ "  ))].riskType";
