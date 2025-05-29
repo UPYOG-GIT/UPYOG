@@ -837,6 +837,7 @@ public class BPARepository {
 				BPA bpa = new BPA();
 				bpa.setApplicationNo(resultMap.get("applicationno").toString());
 				bpa.setEdcrNumber(resultMap.get("edcrnumber").toString());
+				bpa.setTenantId(tenantId);
 				bpaList.add(bpa);
 			}
 		} catch (Exception ex) {
