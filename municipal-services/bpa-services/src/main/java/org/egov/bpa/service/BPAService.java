@@ -1217,14 +1217,19 @@ public class BPAService {
 
 			Object mdmsData = util.mDMSCall(requestInfo, tenantId);
 			List<BPA> bpaList = repository.getRiskTypeTest(bpaRequest.getBPA().getTenantId());
-
+			List<Map<String, Object>> batchValues = new ArrayList<>();
 			for (BPA bpa : bpaList) {
 				bpaRequest.setBPA(bpa);
 				Map<String, Object> bpaMap = edcrService.getRiskTypeTest(bpaRequest, mdmsData);
 //			Map<String,Object> bpaMap= new HashMap<>();
 				bpaMap.put("applicatioNo", bpa.getApplicationNo());
 				returnBpaList.add(bpaMap);
+				batchValues.add(bpaMap);
 			}
+
+			int batchUpdateResult = repository.updateRiskType(batchValues);
+
+			log.info("batchUpdateResult: " + batchUpdateResult);
 		} catch (Exception ex) {
 			log.error("bpaService.getRiskTypeTest, Exception :" + ex.toString());
 		}

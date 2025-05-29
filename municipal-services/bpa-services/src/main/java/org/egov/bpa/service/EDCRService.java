@@ -471,9 +471,9 @@ public class EDCRService {
 
 				riskTypes = JsonPath.read(jsonOutput, filterExp);
 			}
-			returnMap.put("Plot Area", plotArea);
-			returnMap.put("Building Height", buildingHeight);
-			returnMap.put("Risk Type", riskTypes.get(0));
+			returnMap.put("plotArea", plotArea);
+			returnMap.put("buildingHeight", buildingHeight);
+			returnMap.put("riskType", riskTypes.get(0));
 			log.info("riskTypes.get(0): " + riskTypes.get(0));
 		} catch (Exception ex) {
 			log.error("EdcerService.getRiskTypeTest Exception : " + ex.toString());
