@@ -1216,7 +1216,7 @@ public class BPAService {
 			String tenantId = bpaRequest.getBPA().getTenantId().split("\\.")[0];
 
 			Object mdmsData = util.mDMSCall(requestInfo, tenantId);
-			List<BPA> bpaList = repository.getRiskTypeTest(tenantId);
+			List<BPA> bpaList = repository.getRiskTypeTest(bpaRequest.getBPA().getTenantId());
 
 			for (BPA bpa : bpaList) {
 				bpaRequest.setBPA(bpa);
