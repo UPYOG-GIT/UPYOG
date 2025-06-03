@@ -697,6 +697,10 @@ public class Far extends FeatureProcess {
         }
         occupancy.setFloorArea((occupancy.getBuiltUpArea() == null ? BigDecimal.ZERO : occupancy.getBuiltUpArea())
                 .subtract(occupancy.getDeduction() == null ? BigDecimal.ZERO : occupancy.getDeduction()));
+        
+        occupancy.setBuiltUpArea((occupancy.getBuiltUpArea() == null ? BigDecimal.ZERO : occupancy.getBuiltUpArea())
+				.subtract(occupancy.getDeduction() == null ? BigDecimal.ZERO : occupancy.getDeduction()));
+        
         if (occupancy.getFloorArea() != null && occupancy.getFloorArea().compareTo(BigDecimal.valueOf(0)) < 0) {
             pl.addError(VALIDATION_NEGATIVE_FLOOR_AREA, getLocaleMessage(VALIDATION_NEGATIVE_FLOOR_AREA,
                     blk.getNumber(), flr.getNumber().toString(), occupancyTypeHelper));
