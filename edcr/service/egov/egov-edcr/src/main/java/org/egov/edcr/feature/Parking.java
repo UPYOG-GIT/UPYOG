@@ -158,7 +158,8 @@ public class Parking extends FeatureProcess {
 
 	private static final String PARKING_VIOLATED_DIM = " parking violated dimension.";
 	private static final String PARKING_AREA_DIM = "1.5 M x 2 M";
-
+	private static final String PARKING_DETAILS_DESCRIPTION = "Parking Area provided in m²";
+	
 	@Override
 	public Plan validate(Plan pl) {
 		// validateDimensions(pl);
@@ -280,6 +281,7 @@ public class Parking extends FeatureProcess {
 		BigDecimal totalBuiltupArea = pl.getOccupancies().stream().map(Occupancy::getBuiltUpArea)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 		BigDecimal coverParkingArea = BigDecimal.ZERO;
+		BigDecimal stiltParkingArea = BigDecimal.ZERO;
 //		BigDecimal basementParkingArea = BigDecimal.ZERO;
 		BigDecimal noOfBeds = BigDecimal.ZERO;
 		Integer noOfSeats = 0;
@@ -289,8 +291,8 @@ public class Parking extends FeatureProcess {
 		BigDecimal openParkingArea = pl.getParkingDetails().getOpenCars().stream().map(Measurement::getArea)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		BigDecimal stiltParkingArea = pl.getParkingDetails().getStilts().stream().map(Measurement::getArea)
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
+//		BigDecimal stiltParkingArea = pl.getParkingDetails().getStilts().stream().map(Measurement::getArea)
+//				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		BigDecimal lowerGroungFloorParkingArea = pl.getParkingDetails().getLowerGroundFloor().stream()
 				.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -335,6 +337,8 @@ public class Parking extends FeatureProcess {
 				for (Floor floor : block.getBuilding().getFloors()) {
 					coverParkingArea = coverParkingArea.add(floor.getParking().getCoverCars().stream()
 							.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add)); //
+					stiltParkingArea = stiltParkingArea.add(floor.getParking().getStilts().stream()
+							.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
 //				basementParkingArea = basementParkingArea.add(floor.getParking().getBasementCars().stream() //
 //						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
 
@@ -386,23 +390,29 @@ public class Parking extends FeatureProcess {
 				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
 			}
 
-			ScrutinyDetail parkingScrutinyDetail = new ScrutinyDetail();
-			parkingScrutinyDetail.setKey("Common_Parking Details");
-			parkingScrutinyDetail.addColumnHeading(1, "Open Parking");
-			parkingScrutinyDetail.addColumnHeading(2, "Stilt Parking");
-			parkingScrutinyDetail.addColumnHeading(3, "Lower Ground Floor Parking");
-			parkingScrutinyDetail.addColumnHeading(4, "Basement Parking");
-			parkingScrutinyDetail.addColumnHeading(5, STATUS);
-
-			Map<String, String> parkingDetails = new HashMap<>();
-			parkingDetails.put("Open Parking", openParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
-			parkingDetails.put("Stilt Parking", stiltParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
-			parkingDetails.put("Lower Ground Floor Parking",
-					lowerGroungFloorParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
-			parkingDetails.put("Basement Parking", basementParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
-			parkingDetails.put(STATUS, "");
-			parkingScrutinyDetail.getDetail().add(parkingDetails);
-			pl.getReportOutput().getScrutinyDetails().add(parkingScrutinyDetail);
+			/*
+			 * ScrutinyDetail parkingScrutinyDetail = new ScrutinyDetail();
+			 * parkingScrutinyDetail.setKey("Common_Parking Details");
+			 * parkingScrutinyDetail.addColumnHeading(1, "Open Parking");
+			 * parkingScrutinyDetail.addColumnHeading(2, "Stilt Parking");
+			 * parkingScrutinyDetail.addColumnHeading(3, "Lower Ground Floor Parking");
+			 * parkingScrutinyDetail.addColumnHeading(4, "Basement Parking");
+			 * parkingScrutinyDetail.addColumnHeading(5, STATUS);
+			 * 
+			 * Map<String, String> parkingDetails = new HashMap<>();
+			 * parkingDetails.put("Open Parking", openParkingArea.setScale(2,
+			 * ROUNDMODE_MEASUREMENTS).toString()); parkingDetails.put("Stilt Parking",
+			 * stiltParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
+			 * parkingDetails.put("Lower Ground Floor Parking",
+			 * lowerGroungFloorParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
+			 * parkingDetails.put("Basement Parking", basementParkingArea.setScale(2,
+			 * ROUNDMODE_MEASUREMENTS).toString()); parkingDetails.put(STATUS, "");
+			 * parkingScrutinyDetail.getDetail().add(parkingDetails);
+			 * pl.getReportOutput().getScrutinyDetails().add(parkingScrutinyDetail);
+			 */
+			
+			setReportOutputParkingDetails(pl, openParkingArea, stiltParkingArea, lowerGroungFloorParkingArea,
+					basementParkingArea);
 
 			BigDecimal totalProvidedCarParkArea = openParkingArea.add(coverParkingArea).add(basementParkingArea)
 					.add(stiltParkingArea).add(lowerGroungFloorParkingArea);
@@ -551,6 +561,47 @@ public class Parking extends FeatureProcess {
 		details.put(STATUS, status);
 		scrutinyDetail.getDetail().add(details);
 		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+	}
+	
+	private void setReportOutputParkingDetails(Plan pl, BigDecimal openParkingArea, BigDecimal stiltParkingArea,
+			BigDecimal lowerGroungFloorParkingArea, BigDecimal basementParkingArea) {
+		ScrutinyDetail parkingScrutinyDetail = new ScrutinyDetail();
+		parkingScrutinyDetail.setKey("Common_Parking Details");
+		parkingScrutinyDetail.addColumnHeading(1, PARKING_TYPE);
+		parkingScrutinyDetail.addColumnHeading(2, DESCRIPTION);
+		parkingScrutinyDetail.addColumnHeading(3, PROVIDED);
+		parkingScrutinyDetail.addColumnHeading(4, STATUS);
+
+		
+		Map<String, String> openParkingDetails = new HashMap<>();
+		openParkingDetails.put(PARKING_TYPE, "Open Parking");
+		openParkingDetails.put(DESCRIPTION, PARKING_DETAILS_DESCRIPTION);
+		openParkingDetails.put(PROVIDED, openParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
+		openParkingDetails.put(STATUS, "");
+		parkingScrutinyDetail.getDetail().add(openParkingDetails);
+		
+		Map<String, String> stiltParkingDetails = new HashMap<>();
+		stiltParkingDetails.put(PARKING_TYPE, "Stilt Parking");
+		stiltParkingDetails.put(DESCRIPTION, PARKING_DETAILS_DESCRIPTION);
+		stiltParkingDetails.put(PROVIDED, stiltParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
+		stiltParkingDetails.put(STATUS, "");
+		parkingScrutinyDetail.getDetail().add(stiltParkingDetails);
+		
+		Map<String, String> lowerParkingDetails = new HashMap<>();
+		lowerParkingDetails.put(PARKING_TYPE, "Lower Ground Floor Parking");
+		lowerParkingDetails.put(DESCRIPTION, PARKING_DETAILS_DESCRIPTION);
+		lowerParkingDetails.put(PROVIDED, lowerGroungFloorParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
+		lowerParkingDetails.put(STATUS, "");
+		parkingScrutinyDetail.getDetail().add(lowerParkingDetails);
+		
+		Map<String, String> basementParkingDetails = new HashMap<>();
+		basementParkingDetails.put(PARKING_TYPE, "Basement Parking");
+		basementParkingDetails.put(DESCRIPTION, PARKING_DETAILS_DESCRIPTION);
+		basementParkingDetails.put(PROVIDED, basementParkingArea.setScale(2, ROUNDMODE_MEASUREMENTS).toString());
+		basementParkingDetails.put(STATUS, "");
+		parkingScrutinyDetail.getDetail().add(basementParkingDetails);
+		
+		pl.getReportOutput().getScrutinyDetails().add(parkingScrutinyDetail);
 	}
 
 	private void validateSpecialParking(Plan pl, ParkingHelper helper, BigDecimal totalBuiltupArea) {
