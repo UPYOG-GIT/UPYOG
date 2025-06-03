@@ -85,6 +85,7 @@ public abstract class FeatureProcess {
 	public static final String DEVELOPMENT_ZONE = "Development Zone";
 	public static final String CENTER_AREA = "Inside Center Area";
 	public static final String BUILDING_HEIGHT = "Building Height";
+	public static final String PARKING_TYPE = "Parking Type";
 
 	public abstract Map<String, Date> getAmendments();
 
