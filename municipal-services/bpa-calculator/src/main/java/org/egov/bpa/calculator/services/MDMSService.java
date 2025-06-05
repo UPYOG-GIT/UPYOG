@@ -186,12 +186,25 @@ public class MDMSService {
 //			log.info("totalparkarea:----- " +parkDetails.toString());
 			JSONArray parkDetails11 = context.read(
 					"edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking\")].detail[0].Provided");
-			JSONArray parkDetails12 = context.read(
-					"edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking Details\")].detail[0].['Open Parking']");
+//			JSONArray parkDetails12 = context.read(
+//					"edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key==\"Common_Parking Details\")].detail[0].['Open Parking']");
+
+//			List<String> parkDetails12 = context.read(
+//				    "edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key=='Common_Parking Details')].detail[?(@['Parking Type']=='Open Parking')].Provided"
+//				);
+			List<Double> parkDetails12 = context.read(
+					"edcrDetail[0].planDetail.parkingDetails.openCars[*].area"
+					);
+			
+			if(parkDetails12.size()==0) {
+				parkDetails12.add(0.00);
+			}
+			
 			log.info("parkDetails11====:----- " + parkDetails11.toString());
 			log.info("parkDetails12====:----- " + parkDetails12.toString());
 			String totalParkArea = parkDetails11.get(0).toString();
-			String totalParkArea1 = parkDetails12.get(0).toString();
+//			String totalParkArea1 = parkDetails12.get(0).toString();
+			String totalParkArea1 = String.valueOf(parkDetails12.stream().mapToDouble(Double::doubleValue).sum());
 
 //			String zonedesc = context.read("edcrDetail[0].planDetail.planInfoProperties.DEVELOPMENT_ZONE");
 			String zonedesc = "";

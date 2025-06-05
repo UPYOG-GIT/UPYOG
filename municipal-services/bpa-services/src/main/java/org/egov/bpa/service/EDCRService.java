@@ -404,4 +404,84 @@ public class EDCRService {
 		return CollectionUtils.isEmpty(edcrNos) ? null : edcrNos;
 	}
 
+	public Map<String, Object> getRiskTypeTest(BPARequest request, Object mdmsData) {
+
+		log.info("inside EdcrService get Risk Type");
+		Map<String, Object> returnMap = new HashMap<>();
+		try {
+			String edcrNo = request.getBPA().getEdcrNumber();
+			StringBuilder uri = new StringBuilder(config.getEdcrHost());
+			BPA bpa = request.getBPA();
+
+			uri.append(config.getGetPlanEndPoint());
+			uri.append("?").append("tenantId=").append(bpa.getTenantId());
+			uri.append("&").append("edcrNumber=").append(edcrNo);
+			RequestInfo edcrRequestInfo = new RequestInfo();
+			BeanUtils.copyProperties(request.getRequestInfo(), edcrRequestInfo);
+			Map<String, List<String>> masterData = mdmsValidator.getAttributeValues(mdmsData);
+
+//		log.info("masterData: " + masterData);
+			LinkedHashMap responseMap = null;
+			try {
+				responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri,
+						new RequestInfoWrapper(edcrRequestInfo));
+//			log.info("responseMap: " + responseMap);
+			} catch (ServiceCallException se) {
+				throw new CustomException(BPAErrorConstants.EDCR_ERROR, " EDCR Number is Invalid");
+			}
+
+			if (CollectionUtils.isEmpty(responseMap))
+				throw new CustomException(BPAErrorConstants.EDCR_ERROR,
+						"The response from EDCR service is empty or null");
+
+			String jsonString = new JSONObject(responseMap).toString();
+			DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
+//			TypeRef<List<Double>> typeRef = new TypeRef<List<Double>>() {
+//			};
+//
+//			List<Double> plotAreas = context.read("edcrDetail.*.planDetail.plot.area", typeRef);
+//			List<Double> buildingHeights = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight",
+//					typeRef);
+			
+			Double plotArea = Double
+					.valueOf(context.read("edcrDetail[0].planDetail.plot.area").toString());
+			
+			Double buildingHeight = Double
+					.valueOf(context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeight").toString());
+
+//			Double plotArea = plotAreas.get(0);
+//		log.info("masterData: " + masterData);
+			List jsonOutput = JsonPath.read(masterData, BPAConstants.RISKTYPE_COMPUTATION);
+//		log.info("jsonOutput: " + jsonOutput);
+			String filterExp = "";
+			List<String> riskTypes = new ArrayList<String>();
+//			Double buildingHeight = Collections.max(buildingHeights);
+			if (plotArea > 1000 || buildingHeight >= 15) {
+//			filterExp = "$.[?((@.fromPlotArea < " + plotArea + " ) || ( @.fromBuildingHeight < " + buildingHeight
+//					+ "  ))].riskType";
+//			log.info("filterExp: " + filterExp);
+//
+//			riskTypes = JsonPath.read(jsonOutput, filterExp);
+				riskTypes.add("HIGH");
+			} else {
+				filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
+						+ ") && ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
+						+ buildingHeight + "  ))].riskType";
+//				log.info("filterExp: " + filterExp);
+
+				riskTypes = JsonPath.read(jsonOutput, filterExp);
+			}
+			returnMap.put("plotArea", plotArea);
+			returnMap.put("buildingHeight", buildingHeight);
+			returnMap.put("riskType", riskTypes.get(0));
+			log.info("riskTypes.get(0): " + riskTypes.get(0));
+		} catch (Exception ex) {
+			log.error("EdcerService.getRiskTypeTest Exception : " + ex.toString());
+		}
+		return returnMap;
+//		this.validateOCEdcr(OccupancyTypes, plotAreas, buildingHeights, applicationType, masterData, riskType);
+
+//		return additionalDetails;
+	}
+
 }

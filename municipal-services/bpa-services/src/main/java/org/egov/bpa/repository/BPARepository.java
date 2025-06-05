@@ -1,10 +1,11 @@
 package org.egov.bpa.repository;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.egov.bpa.config.BPAConfiguration;
 import org.egov.bpa.producer.Producer;
@@ -25,6 +26,7 @@ import org.egov.bpa.web.model.ProposalTypeRequest;
 import org.egov.bpa.web.model.SlabMasterRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -233,7 +235,7 @@ public class BPARepository {
 			Map<String, Object> resultMap = results.get(0);
 			updatedAmount = Double.valueOf(resultMap.get("amount").toString());
 			log.info("Total Updated Amount: " + updatedAmount);
-		} 
+		}
 
 //		updateBillDetailAmount(applicationNo, Double.valueOf(resultMap.get("amount").toString()));
 		updateBillDetailAmount(applicationNo, updatedAmount);
@@ -822,5 +824,48 @@ public class BPARepository {
 				queryResult, stepsBack);
 
 		return queryResult;
+	}
+
+	public List<BPA> getRiskTypeTest(String tenantId) {
+		String query = "SELECT applicationno, edcrnumber FROM eg_bpa_buildingplan WHERE tenantid = '" + tenantId + "'";
+
+		List<BPA> bpaList = new ArrayList<>();
+		try {
+			List<Map<String, Object>> resultList = jdbcTemplate.queryForList(query);
+
+			log.info("query: " + query + ", resultList size : " + resultList.size());
+
+			for (Map<String, Object> resultMap : resultList) {
+				BPA bpa = new BPA();
+				bpa.setApplicationNo(resultMap.get("applicationno").toString());
+				bpa.setEdcrNumber(resultMap.get("edcrnumber").toString());
+				bpa.setTenantId(tenantId);
+				bpaList.add(bpa);
+			}
+		} catch (Exception ex) {
+			log.error("bparepository.getRiskTypeTest Exception : " + ex.toString());
+		}
+		return bpaList;
+
+	}
+
+	public int updateRiskType(List<Map<String, Object>> batchValues) {
+		String updateQuery = "UPDATE eg_bpa_buildingplan SET risktype = ? WHERE applicationno = ?";
+		jdbcTemplate.batchUpdate(updateQuery, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				Map<String, Object> paramMap = batchValues.get(i);
+				ps.setString(1, paramMap.get("riskType").toString());
+				ps.setString(2, paramMap.get("applicatioNo").toString());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return batchValues.size();
+			}
+		});
+
+		return batchValues.size();
 	}
 }

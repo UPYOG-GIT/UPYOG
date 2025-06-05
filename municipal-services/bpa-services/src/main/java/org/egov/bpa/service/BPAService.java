@@ -115,7 +115,6 @@ public class BPAService {
 
 //	@Autowired
 //	SwsService swsService;
-
 	/**
 	 * does all the validations required to create BPA Record in the system
 	 * 
@@ -943,6 +942,11 @@ public class BPAService {
 		for (int i = 0; i < bpas.size(); i++) {
 			for (int j = 0; j < landInfos.size(); j++) {
 				if (landInfos.get(j).getId().equalsIgnoreCase(bpas.get(i).getLandId())) {
+					Double plotArea = Double.valueOf(landInfos.get(j).getAddress().getPlotArea().toString());
+					if (bpas.get(i).getStatus().equals("APPROVED")) {
+						landInfos.get(j).setPlotAreaApproved(plotArea);
+					}
+					landInfos.get(j).setPlotArea(plotArea);
 					bpas.get(i).setLandInfo(landInfos.get(j));
 				}
 			}
@@ -958,6 +962,11 @@ public class BPAService {
 						missingLandcriteria);
 				for (int j = 0; j < newLandInfo.size(); j++) {
 					if (newLandInfo.get(j).getId().equalsIgnoreCase(bpas.get(i).getLandId())) {
+						Double plotArea = Double.valueOf(newLandInfo.get(j).getAddress().getPlotArea().toString());
+						if (bpas.get(i).getStatus().equals("APPROVED")) {
+							newLandInfo.get(j).setPlotAreaApproved(plotArea);
+						}
+						newLandInfo.get(j).setPlotArea(plotArea);
 						bpas.get(i).setLandInfo(newLandInfo.get(j));
 					}
 				}
@@ -1100,7 +1109,7 @@ public class BPAService {
 	public int deleteApplication(String applicationNo) {
 		return repository.deleteApplication(applicationNo);
 	}
-	
+
 	public int applicationStepBack(String applicationNo, String applicationStatus, int stepsBack) {
 		return repository.applicationStepBack(applicationNo, applicationStatus, stepsBack);
 	}
@@ -1196,6 +1205,35 @@ public class BPAService {
 		bucket.put("name", name);
 		bucket.put("value", value);
 		return bucket;
+	}
+
+	public List<Map<String, Object>> getRiskTypeTest(BPARequest bpaRequest) {
+
+		log.info("Insied BpaService getRiskTypeTest");
+		List<Map<String, Object>> returnBpaList = new ArrayList<>();
+		try {
+			RequestInfo requestInfo = bpaRequest.getRequestInfo();
+			String tenantId = bpaRequest.getBPA().getTenantId().split("\\.")[0];
+
+			Object mdmsData = util.mDMSCall(requestInfo, tenantId);
+			List<BPA> bpaList = repository.getRiskTypeTest(bpaRequest.getBPA().getTenantId());
+			List<Map<String, Object>> batchValues = new ArrayList<>();
+			for (BPA bpa : bpaList) {
+				bpaRequest.setBPA(bpa);
+				Map<String, Object> bpaMap = edcrService.getRiskTypeTest(bpaRequest, mdmsData);
+//			Map<String,Object> bpaMap= new HashMap<>();
+				bpaMap.put("applicatioNo", bpa.getApplicationNo());
+				returnBpaList.add(bpaMap);
+				batchValues.add(bpaMap);
+			}
+
+			int batchUpdateResult = repository.updateRiskType(batchValues);
+
+			log.info("batchUpdateResult: " + batchUpdateResult);
+		} catch (Exception ex) {
+			log.error("bpaService.getRiskTypeTest, Exception :" + ex.toString());
+		}
+		return returnBpaList;
 	}
 
 }
