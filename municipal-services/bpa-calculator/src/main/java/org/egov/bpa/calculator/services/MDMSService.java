@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.egov.bpa.calculator.config.BPACalculatorConfig;
 import org.egov.bpa.calculator.repository.BPARepository;
@@ -192,9 +193,15 @@ public class MDMSService {
 //			List<String> parkDetails12 = context.read(
 //				    "edcrDetail[0].planDetail.reportOutput.scrutinyDetails[?(@.key=='Common_Parking Details')].detail[?(@['Parking Type']=='Open Parking')].Provided"
 //				);
-			List<Double> parkDetails12 = context.read(
-					"edcrDetail[0].planDetail.parkingDetails.openCars[*].area"
-					);
+//			List<Double> parkDetails12 = context.read(
+//					"edcrDetail[0].planDetail.parkingDetails.openCars[*].area"
+//					);
+			
+			List<Number> tempList = context.read("edcrDetail[0].planDetail.parkingDetails.openCars[*].area");
+
+			List<Double> parkDetails12 = tempList.stream()
+			    .map(Number::doubleValue)
+			    .collect(Collectors.toList());
 			
 			if(parkDetails12.size()==0) {
 				parkDetails12.add(0.00);
