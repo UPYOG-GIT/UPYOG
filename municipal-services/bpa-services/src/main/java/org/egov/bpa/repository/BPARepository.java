@@ -603,18 +603,19 @@ public class BPARepository {
 				+ "    counts.Approved, " + "    counts.Rejected, " + "    counts.Reassign, "
 				+ "    counts.Inprogress, " + "    counts.appl_fee, " + "    counts.sanc_fee_pending, "
 				+ "    counts.department_inprocess, "
-				+ "    COALESCE(bhawan.direct_bhawan_anugya, 0) AS direct_bhawan_anugya, "
-				+ "    (counts.Initiated + counts.CITIZEN_APPROVAL_INPROCESS + counts.Approved + counts.Rejected + counts.Reassign + counts.Inprogress + counts.appl_fee + counts.sanc_fee_pending + counts.department_inprocess) AS Total "
+				+ "    COALESCE(bhawan.direct_bhawan_anugya, 0) AS direct_bhawan_anugya, counts.Total "
+				//+ "    (counts.Initiated + counts.CITIZEN_APPROVAL_INPROCESS + counts.Approved + counts.Rejected + counts.Reassign + counts.Inprogress + counts.appl_fee + counts.sanc_fee_pending + counts.department_inprocess) AS Total "
 				+ " FROM (" + "    SELECT "
+				+ "		   COUNT(bp.applicationno) AS Total, "
 				+ "        COUNT(CASE WHEN bp.status = 'INITIATED' THEN 1 END) AS Initiated, "
-				+ "        COUNT(CASE WHEN bp.status IN ('CITIZEN_APPROVAL_INPROCESS','CITIZEN_ACTION_PENDING_AT_DOC_VERIF') THEN 1 END) AS CITIZEN_APPROVAL_INPROCESS, "
+				+ "        COUNT(CASE WHEN bp.status IN ('CITIZEN_APPROVAL_INPROCESS','CITIZEN_ACTION_PENDING_AT_DOC_VERIF', 'CITIZEN_ACTION_PENDING_AT_APPROVAL') THEN 1 END) AS CITIZEN_APPROVAL_INPROCESS, "
 				+ "        COUNT(CASE WHEN bp.status = 'APPROVED' THEN 1 END) AS Approved, "
 				+ "        COUNT(CASE WHEN bp.status = 'REJECTED' THEN 1 END) AS Rejected, "
 				+ "        COUNT(CASE WHEN bp.status = 'REASSIGN' THEN 1 END) AS Reassign, "
 				+ "        COUNT(CASE WHEN bp.status = 'INPROGRESS' THEN 1 END) AS Inprogress, "
 				+ "        COUNT(CASE WHEN bp.status = 'PENDING_APPL_FEE' THEN 1 END) AS appl_fee, "
 				+ "        COUNT(CASE WHEN bp.status = 'PENDING_SANC_FEE_PAYMENT' THEN 1 END) AS sanc_fee_pending, "
-				+ "        COUNT(CASE WHEN bp.status IN ('DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'DOC_VERIFICATION_INPROGRESS_BY_BUILDER', 'POST_FEE_APPROVAL_INPROGRESS', 'APPROVAL_INPROGRESS') THEN 1 END) AS department_inprocess "
+				+ "        COUNT(CASE WHEN bp.status IN ('DOC_VERIFICATION_INPROGRESS_BY_ENGINEER', 'DOC_VERIFICATION_INPROGRESS_BY_BUILDER', 'POST_FEE_APPROVAL_INPROGRESS', 'APPROVAL_INPROGRESS', 'POST_FEE_APPROVAL_INPROGRESS_BY_BUILDER', 'APPROVAL_INPROGRESS_BY_COMMISSIONER') THEN 1 END) AS department_inprocess "
 				+ "    FROM eg_bpa_buildingplan bp " + "    WHERE bp.tenantid != 'cg.citya'";
 
 		if (tenantId != null) {
