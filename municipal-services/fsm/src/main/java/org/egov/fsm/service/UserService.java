@@ -56,7 +56,8 @@ public class UserService {
 			UserDetailResponse applicantDetailResponse = null;
 			if (applicant.getMobileNumber() != null) {
 				if (applicant.getTenantId() == null) {
-					applicant.setTenantId(fsm.getTenantId().split("\\.")[0]);
+//					applicant.setTenantId(fsm.getTenantId().split("\\.")[0]);
+					applicant.setTenantId(fsm.getTenantId());
 				}
 
 				userDetailResponse = userExists(applicant, requestInfo);
@@ -164,7 +165,8 @@ public class UserService {
 	private UserDetailResponse userExists(User applicant, @Valid RequestInfo requestInfo) {
 
 		UserSearchRequest userSearchRequest = new UserSearchRequest();
-		userSearchRequest.setTenantId(applicant.getTenantId().split("\\.")[0]);
+//		userSearchRequest.setTenantId(applicant.getTenantId().split("\\.")[0]);
+		userSearchRequest.setTenantId(applicant.getTenantId());
 		userSearchRequest.setMobileNumber(applicant.getMobileNumber());
 		if( !StringUtils.isEmpty(applicant.getName())) {
 			userSearchRequest.setName(applicant.getName());
@@ -308,7 +310,8 @@ public class UserService {
 	private UserSearchRequest getUserSearchRequest(FSMSearchCriteria criteria, RequestInfo requestInfo) {
 		UserSearchRequest userSearchRequest = new UserSearchRequest();
 		userSearchRequest.setRequestInfo(requestInfo);
-		userSearchRequest.setTenantId(criteria.getTenantId().split("\\.")[0]);
+//		userSearchRequest.setTenantId(criteria.getTenantId().split("\\.")[0]);
+		userSearchRequest.setTenantId(criteria.getTenantId());
 		userSearchRequest.setMobileNumber(criteria.getMobileNumber());
 		userSearchRequest.setActive(true);
 		userSearchRequest.setUserType(FSMConstants.CITIZEN);
