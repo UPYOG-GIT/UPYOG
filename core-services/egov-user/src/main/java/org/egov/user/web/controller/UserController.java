@@ -270,5 +270,17 @@ public class UserController {
 		log.info("encryptedString: " + encryptedString);
 		return new ResponseEntity<>(userService.swsDecrypt(encryptedString), HttpStatus.OK);
 	}
+	
+	@PostMapping("/users/_createnovalidatefsm")
+	public UserDetailResponse createUserWithoutValidationFSM(@RequestBody @Valid CreateUserRequest createUserRequest,
+			@RequestHeader HttpHeaders headers) {
+
+		User user = createUserRequest.toDomain(true);
+		user.setMobileValidationMandatory(isMobileValidationRequired(headers));
+		user.setOtpValidationMandatory(false);
+		log.info("*********user.getTenantId(): " + user.getTenantId());
+		final User newUser = userService.createUser(user, createUserRequest.getRequestInfo());
+		return createResponse(newUser);
+	}
 
 }
