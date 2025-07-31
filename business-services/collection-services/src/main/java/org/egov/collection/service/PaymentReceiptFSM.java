@@ -200,13 +200,13 @@ public class PaymentReceiptFSM {
 						.setTextAlignment(TextAlignment.RIGHT));
 				
 				Table threeColTable31 = new Table(threeColumnWidth1);
-				threeColTable31.addCell(new Cell().add("Gross Amount\r").setTextAlignment(TextAlignment.RIGHT));
-				threeColTable31
-						.addCell(new Cell().add(String.valueOf(grossAmount)).setTextAlignment(TextAlignment.RIGHT));
-				threeColTable31.addCell(new Cell().add("Service Tax ( 0% )  ").setTextAlignment(TextAlignment.RIGHT));
-				threeColTable31.addCell(new Cell().add("0").setTextAlignment(TextAlignment.RIGHT));
-				threeColTable31.addCell(new Cell().add("Education Cess ( 0% )").setTextAlignment(TextAlignment.RIGHT));
-				threeColTable31.addCell(new Cell().add("0").setTextAlignment(TextAlignment.RIGHT));
+//				threeColTable31.addCell(new Cell().add("Gross Amount\r").setTextAlignment(TextAlignment.RIGHT));
+//				threeColTable31
+//						.addCell(new Cell().add(String.valueOf(grossAmount)).setTextAlignment(TextAlignment.RIGHT));
+//				threeColTable31.addCell(new Cell().add("Service Tax ( 0% )  ").setTextAlignment(TextAlignment.RIGHT));
+//				threeColTable31.addCell(new Cell().add("0").setTextAlignment(TextAlignment.RIGHT));
+//				threeColTable31.addCell(new Cell().add("Education Cess ( 0% )").setTextAlignment(TextAlignment.RIGHT));
+//				threeColTable31.addCell(new Cell().add("0").setTextAlignment(TextAlignment.RIGHT));
 				threeColTable31.addCell(new Cell().add("Total  ").setTextAlignment(TextAlignment.RIGHT));
 				threeColTable31
 						.addCell(new Cell().add(String.valueOf(totalAmount)).setTextAlignment(TextAlignment.RIGHT));
