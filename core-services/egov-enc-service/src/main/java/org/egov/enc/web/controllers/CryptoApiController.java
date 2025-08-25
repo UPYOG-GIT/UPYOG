@@ -63,6 +63,13 @@ public class CryptoApiController{
     	String decryptionString = decryptionObject.getJSONObject("decryptionRequest").getString("userDetails");
         return new ResponseEntity<>(encryptionService.swsDecrypt(decryptionString), HttpStatus.OK );
     }
+    
+    @RequestMapping(value="/crypto/v1/_swsdecryptnew", method = RequestMethod.POST)
+    public ResponseEntity<String> cryptoSwsDecryptNewPost(@Valid @RequestBody Object decryptionRequest) throws Exception {
+    	JSONObject decryptionObject = new JSONObject(decryptionRequest);
+    	String decryptionString = decryptionObject.getJSONObject("decryptionRequest").getString("userDetails");
+    	return new ResponseEntity<>(encryptionService.swsDecryptNew(decryptionString), HttpStatus.OK );
+    }
 
     @RequestMapping(value="/crypto/v1/_sign", method = RequestMethod.POST)
     public ResponseEntity<SignResponse> cryptoSignPost(@Valid @RequestBody SignRequest signRequest) throws Exception {
