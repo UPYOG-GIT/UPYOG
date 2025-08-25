@@ -48,4 +48,7 @@ public class AppProperties {
     
     @Value("${sws.integration.inialvector}")
     private String swsIntialVector;
+    
+    @Value("${sws.deccxryptionkey.new}")
+    private String swsDecryptionKeyNew;
 }
