@@ -684,4 +684,18 @@ public class BPAController {
 			return returnBpaList;
 		}
 	}
+
+	@PostMapping(value = "/_getbuildingdetails")
+	public Map<String, Object> getBuildingDetails(@RequestParam String locid) {
+		try {
+			Map<String, Object> bpaList = bpaService.getBuildingDetails(locid);
+			return bpaList;
+		} catch (Exception ex) {
+			Map<String, Object> returnStatement = new HashMap();
+			returnStatement.put("Exception", "Exception While fetching data");
+			returnStatement.put("status", false);
+
+			return returnStatement;
+		}
+	}
 }

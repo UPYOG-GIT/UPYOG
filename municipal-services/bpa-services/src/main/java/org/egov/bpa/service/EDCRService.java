@@ -7,6 +7,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.egov.bpa.config.BPAConfiguration;
 import org.egov.bpa.repository.BPARepository;
@@ -442,10 +445,9 @@ public class EDCRService {
 //			List<Double> plotAreas = context.read("edcrDetail.*.planDetail.plot.area", typeRef);
 //			List<Double> buildingHeights = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight",
 //					typeRef);
-			
-			Double plotArea = Double
-					.valueOf(context.read("edcrDetail[0].planDetail.plot.area").toString());
-			
+
+			Double plotArea = Double.valueOf(context.read("edcrDetail[0].planDetail.plot.area").toString());
+
 			Double buildingHeight = Double
 					.valueOf(context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeight").toString());
 
@@ -484,4 +486,67 @@ public class EDCRService {
 //		return additionalDetails;
 	}
 
+	public List<Map<String, Object>> getEDCRDetailsPtis(String edcrNo, String tenantId) {
+
+		org.egov.common.contract.request.RequestInfo requestInfo = new org.egov.common.contract.request.RequestInfo();
+//		String edcrNo = bpa.getEdcrNumber();
+		StringBuilder uri = new StringBuilder(config.getEdcrHost());
+
+		uri.append(config.getGetPlanEndPoint());
+		uri.append("?").append("tenantId=").append(tenantId);
+		uri.append("&").append("edcrNumber=").append(edcrNo);
+		RequestInfo edcrRequestInfo = new RequestInfo();
+		BeanUtils.copyProperties(requestInfo, edcrRequestInfo);
+		LinkedHashMap responseMap = null;
+		Map<String, Object> response = new HashMap();
+		try {
+			response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri,
+					new RequestInfoWrapper(edcrRequestInfo));
+		} catch (ServiceCallException se) {
+			throw new CustomException(BPAErrorConstants.EDCR_ERROR, " EDCR Number is Invalid");
+		}
+
+		List<Map<String, Object>> blocks = Optional.ofNullable((List<Map<String, Object>>) response.get("edcrDetail"))
+				.filter(list -> !list.isEmpty()).map(list -> list.get(0))
+				.map(edcrDetail -> (Map<String, Object>) edcrDetail.get("planDetail"))
+				.map(planDetail -> (List<Map<String, Object>>) planDetail.get("blocks"))
+				.orElse(Collections.emptyList());
+
+		List<Map<String, Object>> floors = blocks.stream().map(block -> (List<Map<String, Object>>) block.get("floors"))
+				.filter(Objects::nonNull).flatMap(List::stream).map(floor -> {
+					Map<String, Object> floorMap = new HashMap<>();
+					int floorNo = Integer.parseInt(String.valueOf(floor.get("number")));
+
+					List<Map<String, Object>> occupancies = (List<Map<String, Object>>) floor.get("occupancies");
+					double totalFloorArea = occupancies == null ? 0.0
+							: occupancies.stream().map(occ -> occ.get("floorArea")).filter(Objects::nonNull)
+									.mapToDouble(obj -> Double.parseDouble(obj.toString())).sum();
+
+					floorMap.put("Floor_No", String.valueOf(floorNo + 1));
+					floorMap.put("Floor_Area", String.valueOf(totalFloorArea));
+					floorMap.put("Measurement_Unit", "SqM");
+					floorMap.put("Floor_Name", getFloorName(floorNo));
+
+					return floorMap;
+				}).collect(Collectors.toList());
+
+		return floors;
+	}
+
+	private static String getFloorName(int number) {
+		switch (number) {
+		case 0:
+			return "GF";
+		case 1:
+			return "FF";
+		case 2:
+			return "SF";
+		case 3:
+			return "TF";
+		case 4:
+			return "FF";
+		default:
+			return number + "F"; // fallback e.g., 4 → "4F"
+		}
+	}
 }
