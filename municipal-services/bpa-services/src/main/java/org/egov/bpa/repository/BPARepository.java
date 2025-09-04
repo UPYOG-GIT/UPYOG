@@ -604,9 +604,10 @@ public class BPARepository {
 				+ "    counts.Inprogress, " + "    counts.appl_fee, " + "    counts.sanc_fee_pending, "
 				+ "    counts.department_inprocess, "
 				+ "    COALESCE(bhawan.direct_bhawan_anugya, 0) AS direct_bhawan_anugya, counts.Total "
-				//+ "    (counts.Initiated + counts.CITIZEN_APPROVAL_INPROCESS + counts.Approved + counts.Rejected + counts.Reassign + counts.Inprogress + counts.appl_fee + counts.sanc_fee_pending + counts.department_inprocess) AS Total "
-				+ " FROM (" + "    SELECT "
-				+ "		   COUNT(bp.applicationno) AS Total, "
+				// + " (counts.Initiated + counts.CITIZEN_APPROVAL_INPROCESS + counts.Approved +
+				// counts.Rejected + counts.Reassign + counts.Inprogress + counts.appl_fee +
+				// counts.sanc_fee_pending + counts.department_inprocess) AS Total "
+				+ " FROM (" + "    SELECT " + "		   COUNT(bp.applicationno) AS Total, "
 				+ "        COUNT(CASE WHEN bp.status = 'INITIATED' THEN 1 END) AS Initiated, "
 				+ "        COUNT(CASE WHEN bp.status IN ('CITIZEN_APPROVAL_INPROCESS','CITIZEN_ACTION_PENDING_AT_DOC_VERIF', 'CITIZEN_ACTION_PENDING_AT_APPROVAL') THEN 1 END) AS CITIZEN_APPROVAL_INPROCESS, "
 				+ "        COUNT(CASE WHEN bp.status = 'APPROVED' THEN 1 END) AS Approved, "
@@ -768,8 +769,8 @@ public class BPARepository {
 				+ "), deleted_landowneraudit AS (\r\n" + "  DELETE FROM eg_land_owner_auditdetails\r\n"
 				+ "  WHERE landinfoid IN (SELECT landid from delete_buildingplan)\r\n" + "  RETURNING id\r\n"
 				+ "), deleted_landaddressaudit AS (\r\n" + "  DELETE FROM eg_land_address_auditdetails\r\n"
-				+ "  WHERE landinfoid IN (SELECT landid from delete_buildingplan)\r\n" + "  RETURNING id\r\n" + ") \r\n"
-				+ "  DELETE FROM eg_land_unit_auditdetails\r\n"
+				+ "  WHERE landinfoid IN (SELECT landid from delete_buildingplan)\r\n" + "  RETURNING id\r\n"
+				+ "), \r\n" + "  DELETE FROM eg_land_unit_auditdetails\r\n"
 				+ "  WHERE landinfoid IN (SELECT landid from delete_buildingplan\r\n"
 				+ "), deleted_landgeolocation AS (\r\n" + "  DELETE FROM eg_land_geolocation\r\n"
 				+ "  WHERE addressid IN (SELECT id from deleted_landaddress)\r\n" + "  RETURNING id\r\n"
@@ -868,5 +869,17 @@ public class BPARepository {
 		});
 
 		return batchValues.size();
+	}
+
+	public List<Map<String, Object>> getBuildingDetails(String tenantId) {
+		String query = "SELECT bpa.applicationno, TO_CHAR(TO_TIMESTAMP(bpa.createdtime / 1000), 'DD/MM/YYYY') AS applicationdate, bpa.tenantid, bpa.edcrnumber, cit.uuid, addr.plotno, addr.occupancy, addr.wardno, addr.address\r\n"
+				+ "	FROM eg_bpa_buildingplan bpa\r\n"
+				+ "	JOIN eg_land_landinfo land ON bpa.landid = land.id\r\n"
+				+ "	JOIN eg_land_address addr ON bpa.landid = addr.landinfoid\r\n"
+				+ "	JOIN eg_land_ownerinfo cit ON bpa.landid = cit.landinfoid\r\n"
+				+ "	WHERE bpa.tenantid='" + tenantId + "'";
+		
+		List<Map<String, Object>> resultList = jdbcTemplate.queryForList(query);
+		return resultList;
 	}
 }
