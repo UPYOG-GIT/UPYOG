@@ -1315,8 +1315,8 @@ public class BPAService {
 			result.put("tenantId", "cg.bhilaicharoda");
 			break;
 		case "999":
-			result.put("name", "Bhilai Charoda");
-			result.put("tenantId", "cg.bhilaicharoda");
+			result.put("name", "Citya");
+			result.put("tenantId", "cg.citya");
 			break;
 		default:
 		}
