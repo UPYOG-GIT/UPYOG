@@ -3,6 +3,7 @@ package org.egov.bpa.web.controller;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -686,13 +687,37 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_getbuildingdetails")
-	public Map<String, Object> getBuildingDetails(@RequestParam String locid, String fromDate, String toDate) {
+	public Map<String, Object> getBuildingDetails(@RequestParam(required = false) String locid,
+			@RequestParam(required = false) String fromDate, @RequestParam(required = false) String toDate) {
+		Map<String, Object> response = new HashMap<>();
+
+		if (locid == null || locid.trim().isEmpty() || fromDate == null || fromDate.trim().isEmpty() || toDate == null
+				|| toDate.trim().isEmpty()) {
+
+			response.put("status", false);
+			response.put("message", "locid, fromDate, and toDate fields are mandatory");
+			return response;
+		}
+
 		try {
+
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate from = LocalDate.parse(fromDate, formatter);
+			LocalDate to = LocalDate.parse(toDate, formatter);
+
+			// Validate range: not more than 1 month
+			Period diff = Period.between(from, to);
+			if (diff.getMonths() > 1 || diff.getYears() > 0 || (diff.getMonths() == 1 && diff.getDays() > 0)) {
+				response.put("status", false);
+				response.put("message", "Date range should not exceed one month");
+				return response;
+			}
+
 			Map<String, Object> bpaList = bpaService.getBuildingDetails(locid, fromDate, toDate);
 			return bpaList;
 		} catch (Exception ex) {
 			log.info("Exception : " + ex.toString());
-			Map<String, Object> returnStatement = new HashMap();
+			Map<String, Object> returnStatement = new HashMap<>();
 			returnStatement.put("Exception", "Exception While fetching data");
 			returnStatement.put("status", false);
 

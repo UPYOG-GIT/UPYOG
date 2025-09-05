@@ -1246,7 +1246,7 @@ public class BPAService {
 		String tenantId = ulbDetails.get("tenantId").toString();
 		String ulbName = ulbDetails.get("name").toString();
 
-		Map<String, Object> applicationDetails = new HashMap();
+		Map<String, Object> applicationDetails = new HashMap<>();
 
 		List<Map<String, Object>> detailsList = new ArrayList<>();
 
@@ -1257,13 +1257,13 @@ public class BPAService {
 		UserDetailResponse userDetailResponse = userService.getUserForPtis(uuidList, tenantId);
 		List<OwnerInfo> users = userDetailResponse.getUser();
 
-		List<String> edcrNumbers = bpaList.stream().map(map -> map.get("edcrnumber")).filter(Objects::nonNull)
-				.map(Object::toString).collect(Collectors.toList());
+//		List<String> edcrNumbers = bpaList.stream().map(map -> map.get("edcrnumber")).filter(Objects::nonNull)
+//				.map(Object::toString).collect(Collectors.toList());
 
 		Map<String, OwnerInfo> userMap = users.stream().collect(Collectors.toMap(OwnerInfo::getUuid, u -> u));
 
 		for (Map<String, Object> bpa : bpaList) {
-			Map<String, Object> detailsMap = new HashMap();
+			Map<String, Object> detailsMap = new HashMap<>();
 			List<Map<String, Object>> floorDetails = edcrService.getEDCRDetailsPtis(bpa.get("edcrnumber").toString(),
 					tenantId);
 
