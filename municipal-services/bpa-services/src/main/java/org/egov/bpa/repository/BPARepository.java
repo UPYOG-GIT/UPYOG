@@ -871,14 +871,17 @@ public class BPARepository {
 		return batchValues.size();
 	}
 
-	public List<Map<String, Object>> getBuildingDetails(String tenantId) {
+	public List<Map<String, Object>> getBuildingDetails(String tenantId, String fromDate, String toDate) {
 		String query = "SELECT bpa.applicationno, TO_CHAR(TO_TIMESTAMP(bpa.createdtime / 1000), 'DD/MM/YYYY') AS applicationdate, bpa.tenantid, bpa.edcrnumber, cit.uuid, addr.plotno, addr.occupancy, addr.wardno, addr.address\r\n"
-				+ "	FROM eg_bpa_buildingplan bpa\r\n"
-				+ "	JOIN eg_land_landinfo land ON bpa.landid = land.id\r\n"
+				+ "	FROM eg_bpa_buildingplan bpa\r\n" + "	JOIN eg_land_landinfo land ON bpa.landid = land.id\r\n"
 				+ "	JOIN eg_land_address addr ON bpa.landid = addr.landinfoid\r\n"
-				+ "	JOIN eg_land_ownerinfo cit ON bpa.landid = cit.landinfoid\r\n"
-				+ "	WHERE bpa.tenantid='" + tenantId + "'";
-		
+				+ "	JOIN eg_land_ownerinfo cit ON bpa.landid = cit.landinfoid\r\n" + "	WHERE bpa.tenantid='" + tenantId
+				+ "' ";
+
+		if ((fromDate != null && toDate != null) || (fromDate != "" && toDate != "")) {
+			query += " AND TO_TIMESTAMP(bpa.createdtime / 1000)  BETWEEN TO_DATE('" + fromDate + "', 'YYYY-MM-DD')  "
+					+ " AND TO_DATE('" + toDate + "', 'YYYY-MM-DD') interval '1 day' - interval '1 second'";
+		}
 		List<Map<String, Object>> resultList = jdbcTemplate.queryForList(query);
 		return resultList;
 	}
