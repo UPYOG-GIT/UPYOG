@@ -878,7 +878,7 @@ public class BPARepository {
 				+ "	JOIN eg_land_ownerinfo cit ON bpa.landid = cit.landinfoid\r\n" + "	WHERE bpa.tenantid='" + tenantId
 				+ "' ";
 
-		if ((fromDate != null && toDate != null) || (fromDate != "" && toDate != "")) {
+		if (fromDate != null && !fromDate.trim().isEmpty() && toDate != null && !toDate.trim().isEmpty()) {
 			query += " AND TO_TIMESTAMP(bpa.createdtime / 1000)  BETWEEN TO_DATE('" + fromDate + "', 'YYYY-MM-DD')  "
 					+ " AND TO_DATE('" + toDate + "', 'YYYY-MM-DD') + interval '1 day' - interval '1 second'";
 		}
