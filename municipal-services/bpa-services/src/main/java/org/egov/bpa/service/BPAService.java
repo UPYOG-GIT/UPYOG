@@ -1238,7 +1238,7 @@ public class BPAService {
 		return returnBpaList;
 	}
 
-	public Map<String, Object> getBuildingDetails(String code) {
+	public Map<String, Object> getBuildingDetails(String code, String fromDate, String toDate) {
 
 		Map<String, Object> ulbDetails = getNameAndTenant(code);
 		String tenantId = ulbDetails.get("tenantId").toString();
@@ -1248,7 +1248,7 @@ public class BPAService {
 
 		List<Map<String, Object>> detailsList = new ArrayList<>();
 
-		List<Map<String, Object>> bpaList = repository.getBuildingDetails(tenantId);
+		List<Map<String, Object>> bpaList = repository.getBuildingDetails(tenantId, fromDate, toDate);
 		List<String> uuidList = bpaList.stream().map(map -> map.get("uuid")).filter(Objects::nonNull)
 				.map(Object::toString).collect(Collectors.toList());
 
