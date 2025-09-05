@@ -686,8 +686,7 @@ public class BPAController {
 	}
 
 	@PostMapping(value = "/_getbuildingdetails")
-	public Map<String, Object> getBuildingDetails(@RequestParam String locid, @RequestParam String fromDate,
-			@RequestParam String toDate) {
+	public Map<String, Object> getBuildingDetails(@RequestParam String locid, String fromDate, String toDate) {
 		try {
 			Map<String, Object> bpaList = bpaService.getBuildingDetails(locid, fromDate, toDate);
 			return bpaList;
