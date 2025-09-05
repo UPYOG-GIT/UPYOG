@@ -876,12 +876,13 @@ public class BPARepository {
 				+ "	FROM eg_bpa_buildingplan bpa\r\n" + "	JOIN eg_land_landinfo land ON bpa.landid = land.id\r\n"
 				+ "	JOIN eg_land_address addr ON bpa.landid = addr.landinfoid\r\n"
 				+ "	JOIN eg_land_ownerinfo cit ON bpa.landid = cit.landinfoid\r\n" + "	WHERE bpa.tenantid='" + tenantId
-				+ "' ";
+				+ "' AND TO_TIMESTAMP(bpa.createdtime / 1000)  BETWEEN TO_DATE('" + fromDate + "', 'YYYY-MM-DD')  "
+				+ " AND TO_DATE('" + toDate + "', 'YYYY-MM-DD') + interval '1 day' - interval '1 second'";
 
-		if (fromDate != null && !fromDate.trim().isEmpty() && toDate != null && !toDate.trim().isEmpty()) {
-			query += " AND TO_TIMESTAMP(bpa.createdtime / 1000)  BETWEEN TO_DATE('" + fromDate + "', 'YYYY-MM-DD')  "
-					+ " AND TO_DATE('" + toDate + "', 'YYYY-MM-DD') + interval '1 day' - interval '1 second'";
-		}
+//		if (fromDate != null && !fromDate.trim().isEmpty() && toDate != null && !toDate.trim().isEmpty()) {
+//			query += " AND TO_TIMESTAMP(bpa.createdtime / 1000)  BETWEEN TO_DATE('" + fromDate + "', 'YYYY-MM-DD')  "
+//					+ " AND TO_DATE('" + toDate + "', 'YYYY-MM-DD') + interval '1 day' - interval '1 second'";
+//		}
 		List<Map<String, Object>> resultList = jdbcTemplate.queryForList(query);
 		return resultList;
 	}
