@@ -49,6 +49,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -98,6 +99,7 @@ public class BPAService {
 	private WorkflowService workflowService;
 
 	@Autowired
+	@Lazy
 	private NotificationUtil notificationUtil;
 
 	@Autowired
@@ -1309,6 +1311,10 @@ public class BPAService {
 			result.put("tenantId", "cg.dhamtari");
 			break;
 		case "14":
+			result.put("name", "Bhilai Charoda");
+			result.put("tenantId", "cg.bhilaicharoda");
+			break;
+		case "999":
 			result.put("name", "Bhilai Charoda");
 			result.put("tenantId", "cg.bhilaicharoda");
 			break;
