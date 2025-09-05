@@ -880,7 +880,7 @@ public class BPARepository {
 
 		if ((fromDate != null && toDate != null) || (fromDate != "" && toDate != "")) {
 			query += " AND TO_TIMESTAMP(bpa.createdtime / 1000)  BETWEEN TO_DATE('" + fromDate + "', 'YYYY-MM-DD')  "
-					+ " AND TO_DATE('" + toDate + "', 'YYYY-MM-DD') interval '1 day' - interval '1 second'";
+					+ " AND TO_DATE('" + toDate + "', 'YYYY-MM-DD') + interval '1 day' - interval '1 second'";
 		}
 		List<Map<String, Object>> resultList = jdbcTemplate.queryForList(query);
 		return resultList;
