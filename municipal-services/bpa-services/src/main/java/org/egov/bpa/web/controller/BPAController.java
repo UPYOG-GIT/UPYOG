@@ -692,6 +692,7 @@ public class BPAController {
 			Map<String, Object> bpaList = bpaService.getBuildingDetails(locid, fromDate, toDate);
 			return bpaList;
 		} catch (Exception ex) {
+			log.info("Exception : " + ex.toString());
 			Map<String, Object> returnStatement = new HashMap();
 			returnStatement.put("Exception", "Exception While fetching data");
 			returnStatement.put("status", false);
