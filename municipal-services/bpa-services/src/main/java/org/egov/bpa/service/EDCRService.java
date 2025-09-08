@@ -497,8 +497,8 @@ public class EDCRService {
 		uri.append("&").append("edcrNumber=").append(edcrNo);
 		RequestInfo edcrRequestInfo = new RequestInfo();
 		BeanUtils.copyProperties(requestInfo, edcrRequestInfo);
-		LinkedHashMap responseMap = null;
-		Map<String, Object> response = new HashMap();
+//		LinkedHashMap responseMap = null;
+		Map<String, Object> response = new HashMap<>();
 		try {
 			response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri,
 					new RequestInfoWrapper(edcrRequestInfo));
@@ -512,8 +512,10 @@ public class EDCRService {
 				.map(planDetail -> (List<Map<String, Object>>) planDetail.get("blocks"))
 				.orElse(Collections.emptyList());
 
-		List<Map<String, Object>> floors = blocks.stream().map(block -> (List<Map<String, Object>>) block.get("floors"))
-				.filter(Objects::nonNull).flatMap(List::stream).map(floor -> {
+		List<Map<String, Object>> floors = blocks.stream().map(block -> (Map<String, Object>) block.get("building"))
+				.filter(Objects::nonNull).map(building -> (List<Map<String, Object>>) building.get("floors"))
+				.filter(Objects::nonNull).flatMap(List::stream) // flatten all floors
+				.map(floor -> {
 					Map<String, Object> floorMap = new HashMap<>();
 					int floorNo = Integer.parseInt(String.valueOf(floor.get("number")));
 
