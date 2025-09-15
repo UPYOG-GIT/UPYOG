@@ -39,7 +39,6 @@ import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.HTTPUtilities;
-import org.owasp.esapi.filters.SecurityWrapperRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -72,23 +71,30 @@ public class RestServiceAuthFilter implements Filter {
 		LOGGER.info("Rest service authentication initiated");
 
 		HttpServletRequest httpRequest = (HttpServletRequest) req;
+		LOGGER.info("req inside do filter"+req);
 		HttpServletResponse httpResponse = (HttpServletResponse) res;
 
 		HTTPUtilities httpUtilities = ESAPI.httpUtilities();
 		httpUtilities.setCurrentHTTP(httpRequest, httpResponse);
+		LOGGER.info("*****httpRequest.getRequestURI()****"+httpRequest.getRequestURI());
 		if (httpRequest.getRequestURI().contains("/ClearToken")
 				|| httpRequest.getRequestURI().contains("/refreshToken")) {
-			LOGGER.info("Clear Token request recieved ");
-			httpRequest.getRequestDispatcher(httpRequest.getServletPath()).forward(req, res);
+			LOGGER.info("*****Clear Token request recieved****");
+			chain.doFilter(req, res);
+		} else if (httpRequest.getRequestURI().contains("/rest/logout")) {
+			LOGGER.info("*****LOGOUT Request forward****");
+			chain.doFilter(req, res);
 		} else if (httpRequest.getRequestURI().contains("/rest/voucher/")) {
 			try {
 				RestRequestWrapper request = new RestRequestWrapper(httpRequest);
+				LOGGER.info("***request  inside doFilter"+request);
 				String tenantId = readTenantId(request);
 				String userToken = readAuthToken(request, tenantId);
 				HttpSession session = httpRequest.getSession();
 				session.setAttribute(MS_TENANTID_KEY, tenantId);
 				session.setAttribute(MS_USER_TOKEN, userToken);
 				CurrentUser user = new CurrentUser(this.getUserDetails(request));
+				LOGGER.info("***user from CurrentUser inside doFilter"+user);
 				Authentication auth = this.prepareAuthenticationObj(request, user);
 				SecurityContextHolder.getContext().setAuthentication(auth);
 				chain.doFilter(request, res);
@@ -162,8 +168,9 @@ public class RestServiceAuthFilter implements Filter {
 		session.setAttribute(MS_USER_TOKEN, userToken);
 		CustomUserDetails user = this.microserviceUtils.getUserDetails(userToken, adminToken);
 		session.setAttribute(MS_TENANTID_KEY, user.getTenantId());
+		LOGGER.info("userToken inside getUserDetails:" + userToken);
 		UserSearchResponse response = this.microserviceUtils.getUserInfo(userToken, user.getTenantId(), user.getUuid());
-
+		LOGGER.info("response inside getUserDetails:" + response);
 		return parepareCurrentUser(response.getUserSearchResponseContent().get(0));
 	}
 
