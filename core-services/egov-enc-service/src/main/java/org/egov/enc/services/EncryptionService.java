@@ -21,42 +21,43 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 
-
 @Slf4j
 @Service
 public class EncryptionService {
 
-    @Autowired
-    private AppProperties appProperties;
-    @Autowired
-    private ProcessJSONUtil processJSONUtil;
-    @Autowired
-    private KeyManagementService keyManagementService;
+	@Autowired
+	private AppProperties appProperties;
+	@Autowired
+	private ProcessJSONUtil processJSONUtil;
+	@Autowired
+	private KeyManagementService keyManagementService;
 
-    public Object encrypt(EncryptionRequest encryptionRequest) throws Exception {
-        LinkedList<Object> outputList = new LinkedList<>();
-        for(EncReqObject encReqObject : encryptionRequest.getEncryptionRequests()) {
-            if(!keyManagementService.checkIfTenantExists(encReqObject.getTenantId())) {
-                throw new CustomException(encReqObject.getTenantId() + Constants.TENANT_NOT_FOUND,
-                        encReqObject.getTenantId() + Constants.TENANT_NOT_FOUND );
-            }
-            MethodEnum encryptionMethod = MethodEnum.fromValue(appProperties.getTypeToMethodMap().get(encReqObject.getType()));
-            if(encryptionMethod == null) {
-                throw new CustomException(encReqObject.getType() + Constants.INVALD_DATA_TYPE,
-                        encReqObject.getType() + Constants.INVALD_DATA_TYPE);
-            }
-            outputList.add(processJSONUtil.processJSON(encReqObject.getValue(), ModeEnum.ENCRYPT, encryptionMethod, encReqObject.getTenantId()));
-        }
-        return outputList;
-    }
+	public Object encrypt(EncryptionRequest encryptionRequest) throws Exception {
+		LinkedList<Object> outputList = new LinkedList<>();
+		for (EncReqObject encReqObject : encryptionRequest.getEncryptionRequests()) {
+			if (!keyManagementService.checkIfTenantExists(encReqObject.getTenantId())) {
+				throw new CustomException(encReqObject.getTenantId() + Constants.TENANT_NOT_FOUND,
+						encReqObject.getTenantId() + Constants.TENANT_NOT_FOUND);
+			}
+			MethodEnum encryptionMethod = MethodEnum
+					.fromValue(appProperties.getTypeToMethodMap().get(encReqObject.getType()));
+			if (encryptionMethod == null) {
+				throw new CustomException(encReqObject.getType() + Constants.INVALD_DATA_TYPE,
+						encReqObject.getType() + Constants.INVALD_DATA_TYPE);
+			}
+			outputList.add(processJSONUtil.processJSON(encReqObject.getValue(), ModeEnum.ENCRYPT, encryptionMethod,
+					encReqObject.getTenantId()));
+		}
+		return outputList;
+	}
 
-    public Object decrypt(Object decryptionRequest) throws Exception {
-        return processJSONUtil.processJSON(decryptionRequest, ModeEnum.DECRYPT, null, null);
-    }
-    
-    public String swsDecrypt(String decryptionRequest) throws Exception {
-    	String encryptedText = URLDecoder.decode(decryptionRequest, "UTF-8");
-    	Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
+	public Object decrypt(Object decryptionRequest) throws Exception {
+		return processJSONUtil.processJSON(decryptionRequest, ModeEnum.DECRYPT, null, null);
+	}
+
+	public String swsDecrypt(String decryptionRequest) throws Exception {
+		String encryptedText = URLDecoder.decode(decryptionRequest, "UTF-8");
+		Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
 		byte[] keyBytes = Base64.getDecoder().decode(appProperties.getSwsKey());
 		byte[] b = Base64.getDecoder().decode(appProperties.getSwsKey());
 		int len = b.length;
@@ -68,7 +69,38 @@ public class EncryptionService {
 		IvParameterSpec ivSpec = new IvParameterSpec(Base64.getDecoder().decode(appProperties.getSwsIntialVector()));
 		cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
 		byte[] results = cipher.doFinal(Base64.getDecoder().decode(encryptedText));
-		
+
 		return new String(results, "UTF-8");
-    }
+	}
+
+	public String swsDecryptNew(String decryptionRequest) throws Exception {
+		// Convert key string to 32-byte array
+    	String encryptedText = URLDecoder.decode(decryptionRequest, "UTF-8");
+		byte[] keyBytes = appProperties.getSwsDecryptionKeyNew().getBytes("UTF-8");
+
+		// IV (must be 16 bytes)
+		byte[] ivBytes = "ABCDEF0123456789".getBytes("UTF-8");
+
+		// Convert cipher hex string to byte[]
+		byte[] cipherBytes = hexStringToByteArray(encryptedText);
+
+		SecretKeySpec secretKeySpec = new SecretKeySpec(keyBytes, "AES");
+		IvParameterSpec ivSpec = new IvParameterSpec(ivBytes);
+
+		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding"); // PKCS5 == PKCS7 for Java
+		cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivSpec);
+
+		byte[] decryptedBytes = cipher.doFinal(cipherBytes);
+		return new String(decryptedBytes, "UTF-8");
+	}
+
+	// Helper: Convert Hex String to byte[]
+	public static byte[] hexStringToByteArray(String s) {
+		int len = s.length();
+		byte[] data = new byte[len / 2];
+		for (int i = 0; i < len; i += 2) {
+			data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i + 1), 16));
+		}
+		return data;
+	}
 }

@@ -231,5 +231,15 @@ public class UserService {
 
 		return uuids;
 	}
+	
+	
+	public UserDetailResponse getUserForPtis(List<String> uuids, String tenantId) {
+		UserSearchRequest userSearchRequest = new UserSearchRequest();
+		if (!CollectionUtils.isEmpty(uuids))
+			userSearchRequest.setUuid(uuids);
+		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
+		UserDetailResponse userDetailResponse = userCall(userSearchRequest, uri);
+		return userDetailResponse;
+	}
 
 }

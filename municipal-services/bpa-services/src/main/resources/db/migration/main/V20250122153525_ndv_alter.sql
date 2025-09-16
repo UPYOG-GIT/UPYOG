@@ -1,3 +1,0 @@
-ALTER TABLE eg_ndb_push_status
-ADD COLUMN totalPlotArea DOUBLE PRECISION,
-ADD COLUMN totalCollection DOUBLE PRECISION;

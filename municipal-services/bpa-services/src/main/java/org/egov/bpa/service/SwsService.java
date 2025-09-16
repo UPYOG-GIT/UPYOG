@@ -22,6 +22,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -40,6 +41,7 @@ public class SwsService {
 	private RestTemplate restTemplate;
 
 	@Autowired
+	@Lazy
 	private BPAService bpaService;
 
 	public ResponseEntity<String> updateStatusToSws(BPARequest bpaRequest) {

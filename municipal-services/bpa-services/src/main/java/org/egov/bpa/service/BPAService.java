@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.egov.bpa.config.BPAConfiguration;
 import org.egov.bpa.repository.BPARepository;
@@ -47,6 +49,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -96,6 +99,7 @@ public class BPAService {
 	private WorkflowService workflowService;
 
 	@Autowired
+	@Lazy
 	private NotificationUtil notificationUtil;
 
 	@Autowired
@@ -1236,4 +1240,86 @@ public class BPAService {
 		return returnBpaList;
 	}
 
+	public Map<String, Object> getBuildingDetails(String code, String fromDate, String toDate) {
+
+		Map<String, Object> ulbDetails = getNameAndTenant(code);
+		String tenantId = ulbDetails.get("tenantId").toString();
+		String ulbName = ulbDetails.get("name").toString();
+
+		Map<String, Object> applicationDetails = new HashMap<>();
+
+		List<Map<String, Object>> detailsList = new ArrayList<>();
+
+		List<Map<String, Object>> bpaList = repository.getBuildingDetails(tenantId, fromDate, toDate);
+		List<String> uuidList = bpaList.stream().map(map -> map.get("uuid")).filter(Objects::nonNull)
+				.map(Object::toString).collect(Collectors.toList());
+
+		UserDetailResponse userDetailResponse = userService.getUserForPtis(uuidList, tenantId);
+		List<OwnerInfo> users = userDetailResponse.getUser();
+
+//		List<String> edcrNumbers = bpaList.stream().map(map -> map.get("edcrnumber")).filter(Objects::nonNull)
+//				.map(Object::toString).collect(Collectors.toList());
+
+		Map<String, OwnerInfo> userMap = users.stream().collect(Collectors.toMap(OwnerInfo::getUuid, u -> u));
+
+		for (Map<String, Object> bpa : bpaList) {
+			Map<String, Object> detailsMap = new HashMap<>();
+			List<Map<String, Object>> floorDetails = edcrService.getEDCRDetailsPtis(bpa.get("edcrnumber").toString(),
+					tenantId);
+
+			String uuid = String.valueOf(bpa.get("uuid"));
+			OwnerInfo user = userMap.get(uuid);
+
+			detailsMap.put("Proposal_No", bpa.get("applicationno"));
+			detailsMap.put("ULB_ID", code);
+			detailsMap.put("ULB_Name", ulbName);
+			detailsMap.put("Proposal_Date", bpa.get("applicationdate"));
+			detailsMap.put("Ward_NO", bpa.get("wardno"));
+			detailsMap.put("Property_Uid", null);
+			detailsMap.put("Client_and_Father_detail", "");
+			detailsMap.put("Client_Address", bpa.get("address"));
+			detailsMap.put("Client_Phone_NO", "");
+			detailsMap.put("Plot_no", bpa.get("plotno"));
+			detailsMap.put("Plot_type", "");
+			detailsMap.put("Proposal_Type", bpa.get("occupancy"));
+			detailsMap.put("floors", floorDetails);
+
+			if (user != null) {
+				detailsMap.put("Client_and_Father_detail", user.getName() + "," + user.getFatherOrHusbandName());
+				detailsMap.put("Client_Phone_NO", user.getMobileNumber());
+			}
+
+			detailsList.add(detailsMap);
+
+		}
+
+		applicationDetails.put("status", true);
+		applicationDetails.put("proposal_details", detailsList);
+
+		return applicationDetails;
+	}
+
+	private static Map<String, Object> getNameAndTenant(String code) {
+		Map<String, Object> result = new HashMap<>();
+		switch (code) {
+		case "15":
+			result.put("name", "Birgaon");
+			result.put("tenantId", "cg.birgaon");
+			break;
+		case "13":
+			result.put("name", "Dhamtari");
+			result.put("tenantId", "cg.dhamtari");
+			break;
+		case "14":
+			result.put("name", "Bhilai Charoda");
+			result.put("tenantId", "cg.bhilaicharoda");
+			break;
+		case "999":
+			result.put("name", "Citya");
+			result.put("tenantId", "cg.citya");
+			break;
+		default:
+		}
+		return result;
+	}
 }
