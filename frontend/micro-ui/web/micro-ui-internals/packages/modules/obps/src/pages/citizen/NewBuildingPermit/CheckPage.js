@@ -190,6 +190,7 @@ const CheckPage = ({ onSubmit, value }) => {
         <Row className="border-none" label={t(`BPA_PATWARI_HALKA_NUMBER_LABEL`)} text={datafromAPI?.planDetail?.planInformation?.patwariHN  || t("CS_NA")} />
         <Row className="border-none" label={t(`BPA_HOLDING_NUMBER_LABEL`)} text={data?.holdingNumber || t("CS_NA")} />
         <Row className="border-none" label={t(`BPA_BOUNDARY_LAND_REG_DETAIL_LABEL`)} text={data?.registrationDetails || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_PROPERTY_TAX_ID_LABEL`)} text={data?.propertyId || t("CS_NA")} />
         
   </StatusTable>
   </Card>
