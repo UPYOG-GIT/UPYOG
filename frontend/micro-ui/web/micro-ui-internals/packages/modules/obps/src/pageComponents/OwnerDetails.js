@@ -281,8 +281,9 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.tenantId = formData?.address?.city?.code;
                 payload.workflow = { action: "INITIATE", assignes: [userInfo?.info?.uuid] };
                 payload.accountId = accountId;
-                payload.documents = null;
-
+                payload.documents = null;   
+                payload.propertyId = formData?.data?.propertyId ? formData?.data?.propertyId : null;
+                
                 // Additonal details
                 payload.additionalDetails = { GISPlaceName: formData?.address?.placeName };
                 if (formData?.data?.holdingNumber) payload.additionalDetails.holdingNo = formData?.data?.holdingNumber;

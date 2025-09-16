@@ -42,6 +42,14 @@ export const newConfig = [
               // required: true
             },
             name: "registrationDetails"
+          },
+          {
+            label: "BPA_PROPERTY_TAX_ID_LABEL",
+            type: "text",
+            validation: {
+              // required: true
+            },
+            name: "propertyId"
           }
         ]
       },
