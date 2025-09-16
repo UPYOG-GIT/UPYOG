@@ -111,6 +111,10 @@ public class BPA {
 	
 	@JsonProperty("swsAdditionalDetails")
 	private Object swsAdditionalDetails = null;
+	
+	@SafeHtml
+	@JsonProperty("propertyId")
+	private String propertyId = null;
 
 	public BPA id(String id) {
 		this.id = id;
