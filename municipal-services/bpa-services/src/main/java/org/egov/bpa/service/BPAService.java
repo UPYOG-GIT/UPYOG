@@ -1275,7 +1275,7 @@ public class BPAService {
 			detailsMap.put("ULB_Name", ulbName);
 			detailsMap.put("Proposal_Date", bpa.get("applicationdate"));
 			detailsMap.put("Ward_NO", bpa.get("wardno"));
-			detailsMap.put("Property_Uid", null);
+			detailsMap.put("Property_Uid", bpa.get("propertyid"));
 			detailsMap.put("Client_and_Father_detail", "");
 			detailsMap.put("Client_Address", bpa.get("address"));
 			detailsMap.put("Client_Phone_NO", "");
