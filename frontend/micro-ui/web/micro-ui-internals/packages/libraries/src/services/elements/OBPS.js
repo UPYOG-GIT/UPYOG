@@ -636,6 +636,7 @@ export const OBPSService = {
         { title: "BPA_BASIC_DETAILS_OCCUPANCY_LABEL", value: edcr?.planDetail?.planInformation?.occupancy },
         { title: "BPA_BASIC_DETAILS_RISK_TYPE_LABEL", value: `WF_BPA_${riskType}`, isInsert: true, },
         { title: "BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL", value: edcr?.planDetail?.planInformation?.applicantName },
+        { title: "BPA_PROPERTY_TAX_ID_LABEL", value: BPA?.propertyId || "NA" },
       ]
     };
 
