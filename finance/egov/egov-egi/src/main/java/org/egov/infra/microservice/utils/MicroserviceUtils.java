@@ -659,7 +659,7 @@ public class MicroserviceUtils {
         final RestTemplate restTemplate = createRestTemplate();
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        header.add("Authorization", this.tokenAuthorizationKey);
+        header.add("Authorization", "Basic "+this.tokenAuthorizationKey);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("username", this.siUser);
         map.add("scope", this.siScope);
