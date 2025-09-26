@@ -1282,7 +1282,13 @@ public class BPAService {
 			detailsMap.put("Plot_no", bpa.get("plotno"));
 			detailsMap.put("Plot_type", "");
 			detailsMap.put("Proposal_Type", bpa.get("occupancy"));
+			detailsMap.put("Approval_Date", bpa.get("issueddate"));
+			detailsMap.put("Total_Plot_Area", bpa.get("occuplotareapancy"));
+			detailsMap.put("Total_Builtup_Area", bpa.get("builtuparea"));
+			detailsMap.put("Khasra_Number", bpa.get("khatano"));
+			detailsMap.put("Patwari_Halka_Number", bpa.get("patwarihn"));
 			detailsMap.put("floors", floorDetails);
+			
 
 			if (user != null) {
 				detailsMap.put("Client_and_Father_detail", user.getName() + "," + user.getFatherOrHusbandName());
