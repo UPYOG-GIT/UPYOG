@@ -872,7 +872,8 @@ public class BPARepository {
 	}
 
 	public List<Map<String, Object>> getBuildingDetails(String tenantId, String fromDate, String toDate) {
-		String query = "SELECT bpa.applicationno, TO_CHAR(TO_TIMESTAMP(bpa.createdtime / 1000), 'DD/MM/YYYY') AS applicationdate, bpa.tenantid, bpa.edcrnumber, bpa.propertyid, cit.uuid, addr.plotno, addr.occupancy, addr.wardno, addr.address\r\n"
+		String query = "SELECT bpa.applicationno, TO_CHAR(TO_TIMESTAMP(bpa.createdtime / 1000), 'DD/MM/YYYY') AS applicationdate, bpa.tenantid, bpa.edcrnumber, bpa.propertyid, cit.uuid, addr.plotno, addr.occupancy, addr.wardno, addr.address,\r\n"
+				+ " TO_CHAR(TO_TIMESTAMP(bpa.approvaldate / 1000), 'DD/MM/YYYY') AS issueddate, addr.khatano, addr.plotarea, addr.patwarihn, addr.builtuparea "
 				+ "	FROM eg_bpa_buildingplan bpa\r\n" + "	JOIN eg_land_landinfo land ON bpa.landid = land.id\r\n"
 				+ "	JOIN eg_land_address addr ON bpa.landid = addr.landinfoid\r\n"
 				+ "	JOIN eg_land_ownerinfo cit ON bpa.landid = cit.landinfoid\r\n" + "	WHERE bpa.tenantid='" + tenantId
