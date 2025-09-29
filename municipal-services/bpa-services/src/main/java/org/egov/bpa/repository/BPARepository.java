@@ -887,4 +887,14 @@ public class BPARepository {
 		List<Map<String, Object>> resultList = jdbcTemplate.queryForList(query);
 		return resultList;
 	}
+
+	public int updatePropertyId(String applicationNo, String propertyId) {
+		String updateQuery = "UPDATE eg_bpa_buildingplan SET propertyid = '" + propertyId + "' WHERE applicationno = '"
+				+ applicationNo + "'";
+
+		int updateResult = jdbcTemplate.update(updateQuery);
+		log.info("BPARepository.updatePropertyId: " + updateResult + ", Property Id : " + propertyId
+				+ " updated for applicatioNo : " + applicationNo);
+		return updateResult;
+	}
 }

@@ -724,4 +724,19 @@ public class BPAController {
 			return returnStatement;
 		}
 	}
+
+	@PostMapping(value = "/_updatepropertyid")
+	public ResponseEntity<Object> updatePropertyId(String applicationNo, String propertyId) {
+		try {
+			int updateResult = bpaService.updatePropertyId(applicationNo, propertyId);
+			if (updateResult > 0) {
+				return new ResponseEntity<>(updateResult, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(updateResult, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			log.error("Exception in updatePropertyId: " + ex);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+		}
+	}
 }

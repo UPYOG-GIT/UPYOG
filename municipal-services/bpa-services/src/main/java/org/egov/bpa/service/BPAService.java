@@ -1288,7 +1288,6 @@ public class BPAService {
 			detailsMap.put("Khasra_Number", bpa.get("khatano"));
 			detailsMap.put("Patwari_Halka_Number", bpa.get("patwarihn"));
 			detailsMap.put("floors", floorDetails);
-			
 
 			if (user != null) {
 				detailsMap.put("Client_and_Father_detail", user.getName() + "," + user.getFatherOrHusbandName());
@@ -1327,5 +1326,9 @@ public class BPAService {
 		default:
 		}
 		return result;
+	}
+
+	public int updatePropertyId(String applicationNo, String propertyId) {
+		return repository.updatePropertyId(applicationNo, propertyId);
 	}
 }
