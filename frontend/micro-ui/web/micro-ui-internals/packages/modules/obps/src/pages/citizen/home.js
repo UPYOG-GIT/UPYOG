@@ -369,6 +369,10 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
             link: `edcrscrutiny/oc-apply`,
             i18nKey: t("BPA_OC_PLAN_SCRUTINY_FOR_NEW_CONSTRUCTION_LABEL"),
           },
+          {
+            link: `pt-update`,
+            i18nKey: t("BPA_PROPERTY_ID_UPDATE_LABEL"),
+          },
         ],
         styles: { minWidth: "90%", minHeight: "90%" },
       },

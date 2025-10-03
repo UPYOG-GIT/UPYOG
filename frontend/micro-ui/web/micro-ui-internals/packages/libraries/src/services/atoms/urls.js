@@ -1,3 +1,5 @@
+import propertyIdUpdate from "../../../../modules/obps/src/pages/citizen/propertyIdUpdate";
+
 const Urls = {
   MDMS: `/egov-mdms-service/v1/_search`,
   WorkFlow: `/egov-workflow-v2/egov-wf/businessservice/_search`,
@@ -154,7 +156,8 @@ const Urls = {
     getDashboardCount:"/bpa-services/v1/bpa/dashboard/count",
     //for searching application details by application number from dashboard
     searchByApplicationNo: "/bpa-services/v1/bpa/application/_search",
-    updateBillAmount: "/bpa-services/v1/bpa/_updatebillamount"
+    updateBillAmount: "/bpa-services/v1/bpa/_updatebillamount",
+    propertyIdUpdate: "/bpa-services/v1/bpa/_updatepropertyid"
   },
 
   edcr: {
