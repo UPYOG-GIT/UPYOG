@@ -1275,13 +1275,18 @@ public class BPAService {
 			detailsMap.put("ULB_Name", ulbName);
 			detailsMap.put("Proposal_Date", bpa.get("applicationdate"));
 			detailsMap.put("Ward_NO", bpa.get("wardno"));
-			detailsMap.put("Property_Uid", null);
+			detailsMap.put("Property_Uid", bpa.get("propertyid"));
 			detailsMap.put("Client_and_Father_detail", "");
 			detailsMap.put("Client_Address", bpa.get("address"));
 			detailsMap.put("Client_Phone_NO", "");
 			detailsMap.put("Plot_no", bpa.get("plotno"));
 			detailsMap.put("Plot_type", "");
 			detailsMap.put("Proposal_Type", bpa.get("occupancy"));
+			detailsMap.put("Approval_Date", bpa.get("issueddate"));
+			detailsMap.put("Total_Plot_Area", bpa.get("occuplotareapancy"));
+			detailsMap.put("Total_Builtup_Area", bpa.get("builtuparea"));
+			detailsMap.put("Khasra_Number", bpa.get("khatano"));
+			detailsMap.put("Patwari_Halka_Number", bpa.get("patwarihn"));
 			detailsMap.put("floors", floorDetails);
 
 			if (user != null) {
@@ -1321,5 +1326,9 @@ public class BPAService {
 		default:
 		}
 		return result;
+	}
+
+	public int updatePropertyId(String applicationNo, String propertyId) {
+		return repository.updatePropertyId(applicationNo, propertyId);
 	}
 }

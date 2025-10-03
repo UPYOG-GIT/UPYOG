@@ -524,7 +524,7 @@ public class EDCRService {
 							: occupancies.stream().map(occ -> occ.get("floorArea")).filter(Objects::nonNull)
 									.mapToDouble(obj -> Double.parseDouble(obj.toString())).sum();
 
-					floorMap.put("Floor_No", String.valueOf(floorNo + 1));
+					floorMap.put("Floor_No", String.valueOf(floorNo));
 					floorMap.put("Floor_Area", String.valueOf(totalFloorArea));
 					floorMap.put("Measurement_Unit", "SqM");
 					floorMap.put("Floor_Name", getFloorName(floorNo));
@@ -536,19 +536,47 @@ public class EDCRService {
 	}
 
 	private static String getFloorName(int number) {
-		switch (number) {
-		case 0:
-			return "GF";
-		case 1:
-			return "FF";
-		case 2:
-			return "SF";
-		case 3:
-			return "TF";
-		case 4:
-			return "FF";
-		default:
-			return number + "F"; // fallback e.g., 4 → "4F"
+		if (number < 0) {
+			return "Basement";
+		} else if (number == 0) {
+			return "Ground Floor";
+		} else if (number == 1) {
+			return "First Floor";
+		} else if (number == 2) {
+			return "Second Floor";
+		} else if (number == 3) {
+			return "Third Floor";
+		} else if (number == 4) {
+			return "Fourth Floor";
+		} else if (number == 5) {
+			return "Fifth Floor";
+		} else if (number == 6) {
+			return "Sixth Floor";
+		} else if (number == 7) {
+			return "Seventh Floor";
+		} else if (number == 8) {
+			return "Eighth Floor";
+		} else if (number == 9) {
+			return "Nineth Floor";
+		} else if (number == 10) {
+			return "Tenth Floor";
+		} else {
+			return "Floor";
 		}
+
+//		switch (number) {
+//		case 0:
+//			return "GF";
+//		case 1:
+//			return "FF";
+//		case 2:
+//			return "SF";
+//		case 3:
+//			return "TF";
+//		case 4:
+//			return "FF";
+//		default:
+//			return number + "F"; 
+//		}
 	}
 }
