@@ -42,6 +42,7 @@ const App = ({ path }) => {
   const BPASendBackToCitizen = Digit?.ComponentRegistryService?.getComponent('ObpsBPASendBackToCitizen');
   const OCSendBackToCitizen = Digit?.ComponentRegistryService?.getComponent('ObpsOCSendBackToCitizen');
   const isDocScreenAfterEdcr = sessionStorage.getItem("clickOnBPAApplyAfterEDCR") === "true" ? true : false
+  const propertyIdUpdate = Digit?.ComponentRegistryService?.getComponent('propertyIdUpdate');
 
 
   return (
@@ -67,6 +68,7 @@ const App = ({ path }) => {
         <PrivateRoute path={`${path}/sendbacktocitizen/ocbpa/:tenantId/:applicationNo`} component={OCSendBackToCitizen} />
         <PrivateRoute path={`${path}/response`} component={OBPSResponse} />
         <PrivateRoute path={`${path}/rga/edcrscrutiny/apply`} component={CreateRGAEDCR} />
+        <PrivateRoute path={`${path}/pt-update`} component={propertyIdUpdate} />
         <Route path={`${path}/my-applications-bypass`} component={MyApplicationLoginByPass} />
       </Switch>
     </React.Fragment>
