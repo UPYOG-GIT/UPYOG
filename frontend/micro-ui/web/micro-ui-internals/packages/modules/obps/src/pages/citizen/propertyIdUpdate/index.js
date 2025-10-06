@@ -10,16 +10,21 @@ const propertyIdUpdate = ({}) => {
   const [applicationNo, setApplicationNo] = useState("");
   const [propertyId, setPropertyId] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [sucessMessage, setSucessMessage] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
       const data = await OBPSService.propertyIdUpdate(applicationNo, propertyId);
-      // console.log("propertyIdUpdate Response:", data);
+      if (data === 1) {
+        setSucessMessage("Property Id updated for Application No. : " + applicationNo);
+        // console.log("propertyIdUpdate Response:", data);
+      }
       setErrorMessage("");
     } catch (error) {
       // console.error("Update Error:", error);
+      setSucessMessage("");
       setErrorMessage("Application number not present.");
     }
   };
@@ -50,9 +55,8 @@ const propertyIdUpdate = ({}) => {
           style={{ width: "400px", height: "40px", fontSize: "16px" }}
         />
       </SearchField>
-      {errorMessage && (
-        <div style={{ color: "red", marginBottom: "10px" }}>{errorMessage}</div>
-      )}
+      {sucessMessage && <div style={{ color: "green", marginBottom: "10px" }}>{sucessMessage}</div>}
+      {errorMessage && <div style={{ color: "red", marginBottom: "10px" }}>{errorMessage}</div>}
       <SearchField className="submit">
         <SubmitBar label="Update" submit onClick={handleSubmit} disabled={!applicationNo || !propertyId} />
       </SearchField>
