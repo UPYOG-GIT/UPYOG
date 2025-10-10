@@ -202,10 +202,13 @@ public class PlanInformation implements Serializable {
 	private String additionalDetails = null;
 
 	// used for application applied through SWS
-	private long swsApplicationId = 0L;
+	private long swsApplicationNumber = 0L;
 
 	// used for application applied through SWS
-	private long swsUnitRegistrationNumber = 0L;
+	private long swsUdyamAkankshaNumber = 0L;
+
+	// used for application applied through SWS
+	private long swsServiceId = 0L;
 
 	// Application is applied through SWS or not
 	private Boolean isSwsApplication = false;
@@ -745,20 +748,20 @@ public class PlanInformation implements Serializable {
 		this.additionalDetails = additionalDetails;
 	}
 
-	public void setSwsApplicationId(long swsApplicationId) {
-		this.swsApplicationId = swsApplicationId;
+	public void setSwsApplicationNumber(long swsApplicationNumber) {
+		this.swsApplicationNumber = swsApplicationNumber;
 	}
 
-	public long getSwsApplicationId() {
-		return swsApplicationId;
+	public long getSwsApplicationNumber() {
+		return swsApplicationNumber;
 	}
 
-	public void setSwsUnitRegistrationNumber(long unitRegistrationNumber) {
-		this.swsUnitRegistrationNumber = unitRegistrationNumber;
+	public void setSwsUdyamAkankshaNumber(long swsUdyamAkankshaNumber) {
+		this.swsUdyamAkankshaNumber = swsUdyamAkankshaNumber;
 	}
 
-	public long getSwsUnitRegistrationNumber() {
-		return swsUnitRegistrationNumber;
+	public long getSwsUdyamAkankshaNumber() {
+		return swsUdyamAkankshaNumber;
 	}
 
 	public void setIsSwsApplication(Boolean isSwsApplication) {
@@ -767,6 +770,14 @@ public class PlanInformation implements Serializable {
 
 	public Boolean getIsSwsApplication() {
 		return isSwsApplication;
+	}
+
+	public long getSwsServiceId() {
+		return swsServiceId;
+	}
+
+	public void setSwsServiceId(long swsServiceId) {
+		this.swsServiceId = swsServiceId;
 	}
 
 }
