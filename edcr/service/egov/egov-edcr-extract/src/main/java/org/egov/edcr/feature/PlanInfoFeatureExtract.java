@@ -815,7 +815,7 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		if (StringUtils.isNotBlank(swsServiceId)) {
 			swsServiceId = swsServiceId.replaceAll(digitsRegex, "");
 			if (getNumericValue(swsServiceId, pl, DxfFileConstants.SWS_SERVICE_ID.toString()) != null)
-				pi.setSwsServiceId(Long.parseLong(swsUnitRegistrationNumber));
+				pi.setSwsServiceId(Long.parseLong(swsServiceId));
 		}
 
 		String additionalDetails = planInfoProperties.get(DxfFileConstants.ADDITIONAL_DETAILS);
