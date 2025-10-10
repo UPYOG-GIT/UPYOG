@@ -235,6 +235,15 @@ export const OBPSService = {
       auth: true,
     }),
 
+    propertyIdUpdate: (applicationNo, propertyId) =>
+    Request({
+      url: Urls.obps.propertyIdUpdate,
+      params: { applicationNo, propertyId },
+      auth: true,
+      userService: true,
+      method: "POST"
+    }),
+
   LicenseDetails: async (tenantId, params) => {
     const response = await OBPSService.BPAREGSearch(tenantId, {}, params);
     if (!response?.Licenses?.length) {

@@ -36,6 +36,7 @@ import OCSendToArchitect from "./pages/citizen/OCSendToArchitect";
 import BPASendBackToCitizen from "./pages/citizen/BPASendBackToCitizen";
 import OCSendBackToCitizen from "./pages/citizen/OCSendBackToCitizen";
 import EdcrInbox from "./pages/citizen/EdcrInbox";
+import propertyIdUpdate from "./pages/citizen/propertyIdUpdate";
 
 import LicenseType from "./pageComponents/LicenseType";
 import LicenseDetails from "./pageComponents/LicenseDetails";
@@ -170,7 +171,8 @@ const componentsToRegister = {
   ObpsOCSendBackToCitizen : OCSendBackToCitizen,
   ObpsEdcrInbox : EdcrInbox,
   ObpsEmpApplicationDetail : EmpApplicationDetail,
-  ObpsEmployeeBpaApplicationDetail : EmployeeBpaApplicationDetail
+  ObpsEmployeeBpaApplicationDetail : EmployeeBpaApplicationDetail,
+  propertyIdUpdate
 }
 
 export const initOBPSComponents = () => {
