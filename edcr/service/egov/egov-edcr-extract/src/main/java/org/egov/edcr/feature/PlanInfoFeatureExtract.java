@@ -795,20 +795,27 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 				pi.setTenementCommercial(Integer.valueOf(tenementCommertial));
 		}
 
-		String swsApplicationId = planInfoProperties.get(DxfFileConstants.SWS_APPLICATION_ID);
+		String swsApplicationId = planInfoProperties.get(DxfFileConstants.SWS_APPLICATION_NUMBER);
 		if (StringUtils.isNotBlank(swsApplicationId)) {
 			swsApplicationId = swsApplicationId.replaceAll(digitsRegex, "");
-			if (getNumericValue(swsApplicationId, pl, DxfFileConstants.SWS_APPLICATION_ID.toString()) != null)
-				pi.setSwsApplicationId(Long.parseLong(swsApplicationId));
+			if (getNumericValue(swsApplicationId, pl, DxfFileConstants.SWS_APPLICATION_NUMBER.toString()) != null)
+				pi.setSwsApplicationNumber(Long.parseLong(swsApplicationId));
 			pi.setIsSwsApplication(true);
 		}
 
-		String swsUnitRegistrationNumber = planInfoProperties.get(DxfFileConstants.SWS_UNIT_REGISTRATION_NUMBER);
+		String swsUnitRegistrationNumber = planInfoProperties.get(DxfFileConstants.SWS_UDYAM_AKANKSHA_NUMBER);
 		if (StringUtils.isNotBlank(swsUnitRegistrationNumber)) {
 			swsUnitRegistrationNumber = swsUnitRegistrationNumber.replaceAll(digitsRegex, "");
 			if (getNumericValue(swsUnitRegistrationNumber, pl,
-					DxfFileConstants.SWS_UNIT_REGISTRATION_NUMBER.toString()) != null)
-				pi.setSwsUnitRegistrationNumber(Long.parseLong(swsUnitRegistrationNumber));
+					DxfFileConstants.SWS_UDYAM_AKANKSHA_NUMBER.toString()) != null)
+				pi.setSwsUdyamAkankshaNumber(Long.parseLong(swsUnitRegistrationNumber));
+		}
+
+		String swsServiceId = planInfoProperties.get(DxfFileConstants.SWS_SERVICE_ID);
+		if (StringUtils.isNotBlank(swsServiceId)) {
+			swsServiceId = swsServiceId.replaceAll(digitsRegex, "");
+			if (getNumericValue(swsServiceId, pl, DxfFileConstants.SWS_SERVICE_ID.toString()) != null)
+				pi.setSwsServiceId(Long.parseLong(swsUnitRegistrationNumber));
 		}
 
 		String additionalDetails = planInfoProperties.get(DxfFileConstants.ADDITIONAL_DETAILS);

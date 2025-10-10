@@ -172,8 +172,9 @@ public class DxfFileConstants {
     public static final String RWH_DECLARED = "RWH_DECLARED";
     public static final String TENEMENT_FOR_RESIDENTIAL = "TENEMENT_FOR_RESIDENTIAL";
     public static final String TENEMENT_FOR_COMMERCIAL = "TENEMENT_FOR_COMMERCIAL";
-    public static final String SWS_APPLICATION_ID = "SWS_APPLICATION_ID";
-    public static final String SWS_UNIT_REGISTRATION_NUMBER = "SWS_UNIT_REGISTRATION_NUMBER";
+    public static final String SWS_APPLICATION_NUMBER = "SWS_APPLICATION_NUMBER";
+    public static final String SWS_UDYAM_AKANKSHA_NUMBER = "SWS_UDYAM_AKANKSHA_NUMBER";
+    public static final String SWS_SERVICE_ID = "SWS_SERVICE_ID";
     public static final int RESIDENTIAL_ROOM_COLOR = 1;
     public static final int COMMERCIAL_ROOM_COLOR = 2;
     public static final int EDUCATIONAL_ROOM_COLOR = 3;
