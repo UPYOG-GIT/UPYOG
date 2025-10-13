@@ -115,7 +115,7 @@ public class SwsServiceV2 {
 			String swsServiceId = additionalDetails.get("swsServiceId").toString();
 //		requestBody.put("swsAuthToken", swsAuthToken);
 			requestBody.put("status", 10);
-			requestBody.put("applicationNo", bpa.getSwsApplicationId());
+			requestBody.put("applicationNo", bpa.getSwsApplicationId().toString());
 			requestBody.put("serviceId", swsServiceId);
 
 			HttpHeaders headers = new HttpHeaders();
