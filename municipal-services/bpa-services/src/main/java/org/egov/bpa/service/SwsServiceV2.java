@@ -48,7 +48,7 @@ public class SwsServiceV2 {
 	public ResponseEntity<String> updateStatusToSws(BPARequest bpaRequest, String bpaAction) {
 
 		try {
-			log.info("bpaRequest : " + bpaRequest.toString());
+//			log.info("bpaRequest : " + bpaRequest.toString());
 			BPA bpa = bpaRequest.getBPA();
 //			log.info("SWS bpa : " + bpa.toString());
 			String bpaStatus = bpa.getStatus();
@@ -101,7 +101,7 @@ public class SwsServiceV2 {
 
 				log.info("requestEntity16 : " + requestEntity.toString());
 
-				ResponseEntity<JSONObject> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity,
+				ResponseEntity<JSONObject> response = restTemplate.exchange(paymentApiUrl, HttpMethod.POST, requestEntity,
 						JSONObject.class);
 
 				log.info("response16 " + response.toString());
