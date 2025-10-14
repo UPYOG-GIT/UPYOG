@@ -100,7 +100,11 @@ public class BPARepository {
 			producer.push(config.getUpdateWorkflowTopic(), new BPARequest(requestInfo, bpaForStatusUpdate));
 
 		if (bpa.isSwsApplication()) {
-			swsService.updateStatusToSws(bpaRequest);
+			if ((bpa.getWorkflow().getAction() != null && bpa.getWorkflow().getAction().equalsIgnoreCase("PAY"))
+					|| bpa.getStatus().equalsIgnoreCase("REJECTED") || bpa.getStatus().equalsIgnoreCase("APPROVED"))
+				swsService.updateStatusToSws(bpaRequest, bpa.getWorkflow().getAction());
+//			if (status.equalsIgnoreCase("REJECTED") || status.equalsIgnoreCase("APPROVED"))
+//				swsService.updateStatusToSws(bpaRequest, status);
 		}
 
 	}

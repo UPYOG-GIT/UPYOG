@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -44,7 +45,7 @@ public class SwsServiceV2 {
 	@Lazy
 	private BPAService bpaService;
 
-	public ResponseEntity<String> updateStatusToSws(BPARequest bpaRequest) {
+	public ResponseEntity<String> updateStatusToSws(BPARequest bpaRequest, String bpaAction) {
 
 		try {
 			log.info("bpaRequest : " + bpaRequest.toString());
@@ -57,18 +58,87 @@ public class SwsServiceV2 {
 //			log.info("bpa.getWorkflow().getAssignes(): " + bpa.getWorkflow().getAssignes());
 //			log.info("bpa.getWorkflow().getAssignes().isEmpty() : " + bpa.getWorkflow().getAssignes().isEmpty());
 //			log.info("bpa.getWorkflow().getAssignes().size(): " + bpa.getWorkflow().getAssignes().size());
-			
+
 			Map<String, Object> tokenResponse = getToken();
-			
+
 			Map<String, Object> additionalDetails = (Map<String, Object>) bpa.getAdditionalDetails();
 			String swsServiceId = additionalDetails.get("swsServiceId").toString();
-			
-			
-			requestBody.put("applicationNo", bpa.getSwsApplicationId());
+
+			requestBody.put("applicationNo", bpa.getSwsApplicationId().toString());
 			requestBody.put("serviceId", swsServiceId);
 
 			String apiUrl = "";
-			
+
+			if (bpaStatus.equalsIgnoreCase("REJECTED")) {
+				requestBody.put("status", 12);
+				requestBody.put("PaymentStatus", 1);
+				requestBody.put("BankTransId", "0");
+				requestBody.put("ChallanNo", "0");
+				requestBody.put("PaymentAmount", "0");
+				requestBody.put("Remarks", "");
+				apiUrl = "https://swpstgapi.csmpl.com/IndustryService/UpdateApplicationProgressStatus";
+			}
+
+			if (bpaAction != null && bpaAction.equalsIgnoreCase("PAY")) {
+				HttpHeaders paymentHeaders = new HttpHeaders();
+//				headers.setContentType(MediaType.APPLICATION_JSON);
+				paymentHeaders.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
+
+				String paymentApiUrl = "";
+
+				if (bpaStatus.equalsIgnoreCase("APPROVED"))
+					paymentApiUrl = "https://www.niwaspass.com/collection-services/payments/BPA.NC_SAN_FEE/_search?tenantId="
+							+ bpa.getTenantId() + "&consumerCodes=" + bpa.getApplicationNo();
+				else
+					paymentApiUrl = "https://www.niwaspass.com/collection-services/payments/BPA.NC_APP_FEE/_search?tenantId="
+							+ bpa.getTenantId() + "&consumerCodes=" + bpa.getApplicationNo();
+
+				Map<String, Object> paymentRequestBody = new HashMap<>();
+
+				paymentRequestBody.put("RequestInfo", bpaRequest.getRequestInfo());
+
+				HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(paymentRequestBody, paymentHeaders);
+
+				log.info("requestEntity16 : " + requestEntity.toString());
+
+				ResponseEntity<JSONObject> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity,
+						JSONObject.class);
+
+				log.info("response16 " + response.toString());
+				String paymentAmount = response.getBody().getJSONArray("Payments").getJSONObject(0)
+						.get("totalAmountPaid").toString();
+				String txnId = response.getBody().getJSONArray("Payments").getJSONObject(0)
+						.getString("transactionNumber");
+				String challanNo = response.getBody().getJSONArray("Payments").getJSONObject(0)
+						.getJSONArray("paymentDetails").getJSONObject(0).getString("receiptNumber");
+
+				Map<String, Object> paymentUpdateRequestBody = new HashMap<>();
+
+				paymentUpdateRequestBody.put("status", 11);
+				paymentUpdateRequestBody.put("PaymentStatus", 1);
+				paymentUpdateRequestBody.put("BankTransId", txnId);
+				paymentUpdateRequestBody.put("ChallanNo", challanNo);
+				paymentUpdateRequestBody.put("PaymentAmount", paymentAmount);
+				paymentUpdateRequestBody.put("Remarks", "Amount Paid");
+
+				String paymentUpdateApiUrl = "https://swpstgapi.csmpl.com/IndustryService/UpdateApplicationProgressStatus";
+
+				HttpHeaders paymentUpdateHeaders = new HttpHeaders();
+				paymentUpdateHeaders.setContentType(MediaType.APPLICATION_JSON);
+				paymentUpdateHeaders.set("Authorization", "Bearer " + tokenResponse.get("data"));
+
+				HttpEntity<Map<String, Object>> paymentUpdaterequestEntity = new HttpEntity<>(paymentUpdateRequestBody,
+						paymentUpdateHeaders);
+
+				log.info("requestEntity17 : " + paymentUpdaterequestEntity.toString());
+
+				ResponseEntity<String> paymentUpdateresponse = restTemplate.exchange(paymentUpdateApiUrl,
+						HttpMethod.POST, paymentUpdaterequestEntity, String.class);
+
+				log.info("response17 " + paymentUpdateresponse.toString());
+
+			}
+
 			if (bpaStatus.equalsIgnoreCase("APPROVED")) {
 				String fileByte = getFileStoreId(bpaRequest);
 				Map<String, Object> docListMap = new HashMap<>();
@@ -76,23 +146,26 @@ public class SwsServiceV2 {
 				List<Map<String, Object>> docList = new ArrayList<>();
 				docList.add(docListMap);
 				requestBody.put("documentList", docList);
-				apiUrl = "https://swpstgapi.csmpl.com/IndustryService/UpdateApprovalDoc";
 				requestBody.put("status", 11);
+				apiUrl = "https://swpstgapi.csmpl.com/IndustryService/UpdateApprovalDoc";
+			}
 
-			} 
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);
-			headers.set("Authorization", "Bearer " + tokenResponse.get("data"));
+			if (bpaAction != null && !bpaAction.equalsIgnoreCase("PAY")) {
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_JSON);
+				headers.set("Authorization", "Bearer " + tokenResponse.get("data"));
 
-			HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+				HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
-			log.info("requestEntity15 : " + requestEntity.toString());
-			
-			ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity,
-					String.class);
+				log.info("requestEntity15 : " + requestEntity.toString());
 
-			log.info("response15 " + response.toString());
-			return ResponseEntity.ok(response.getBody().toString());
+				ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity,
+						String.class);
+
+				log.info("response15 " + response.toString());
+				return ResponseEntity.ok(response.getBody().toString());
+			}
+			return null;
 		} catch (Exception ex) {
 			String error = ex.toString();
 			log.error("Error15: " + error);
