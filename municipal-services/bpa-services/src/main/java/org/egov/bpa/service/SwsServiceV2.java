@@ -30,6 +30,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
@@ -86,6 +88,10 @@ public class SwsServiceV2 {
 
 				String paymentApiUrl = "";
 
+				Map<String, Object> bpaTokenResponse = getBpaAuthToken(
+						bpaRequest.getRequestInfo().getUserInfo().getMobileNumber(),
+						bpaRequest.getRequestInfo().getUserInfo().getTenantId());
+
 				if (bpaStatus.equalsIgnoreCase("APPROVED"))
 					paymentApiUrl = "https://www.niwaspass.com/collection-services/payments/BPA.NC_SAN_FEE/_search?tenantId="
 							+ bpa.getTenantId() + "&consumerCodes=" + bpa.getApplicationNo();
@@ -95,14 +101,18 @@ public class SwsServiceV2 {
 
 				Map<String, Object> paymentRequestBody = new HashMap<>();
 
+				if ((boolean) bpaTokenResponse.get("success")) {
+					bpaRequest.getRequestInfo().setAuthToken(bpaTokenResponse.get("access_token").toString());
+				}
+
 				paymentRequestBody.put("RequestInfo", bpaRequest.getRequestInfo());
 
 				HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(paymentRequestBody, paymentHeaders);
 
 				log.info("requestEntity16 : " + requestEntity.toString());
 
-				ResponseEntity<JSONObject> response = restTemplate.exchange(paymentApiUrl, HttpMethod.POST, requestEntity,
-						JSONObject.class);
+				ResponseEntity<JSONObject> response = restTemplate.exchange(paymentApiUrl, HttpMethod.POST,
+						requestEntity, JSONObject.class);
 
 				log.info("response16 " + response.toString());
 				String paymentAmount = response.getBody().getJSONArray("Payments").getJSONObject(0)
@@ -628,6 +638,50 @@ public class SwsServiceV2 {
 
 				log.info("Token: " + responseBody.get("data"));
 
+				return responseBody;
+
+			} else {
+				log.error("API call failed with status: " + response.getStatusCode());
+				responseBody.put("Error", "API call failed with status: " + response.getStatusCode());
+				responseBody.put("success", "false");
+				return responseBody;
+			}
+
+		} catch (Exception ex) {
+			log.error("Error calling API: " + ex.getMessage());
+			responseBody.put("Error", "Error calling API: " + ex.getMessage());
+			responseBody.put("success", "false");
+			return responseBody;
+		}
+	}
+
+	private Map<String, Object> getBpaAuthToken(String mobileNumber, String tenantId) {
+		MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+		Map<String, Object> responseBody = new HashMap<>();
+
+		formData.add("tenantId", tenantId);
+		formData.add("username", mobileNumber);
+		formData.add("password", "123456"); // or your actual name
+		formData.add("userType", "CITIZEN");
+		formData.add("scope", "read");
+		formData.add("grant_type", "password");
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+//		headers.setBasicAuth("ZWdvdi11c2VyLWNsaWVudDo=");
+		headers.set("authorization", "Basic ZWdvdi11c2VyLWNsaWVudDo=");
+
+		HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(formData, headers);
+		try {
+			String apiUrl = "https://www.niwaspass.com/user/oauth/token";
+
+			// POST call
+			ResponseEntity<Map> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity, Map.class);
+
+			// Handle response
+			if (response.getStatusCode().is2xxSuccessful()) {
+				responseBody = response.getBody();
+				responseBody.put("success", true);
 				return responseBody;
 
 			} else {
