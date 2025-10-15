@@ -135,6 +135,8 @@ public class SwsServiceV2 {
 					paymentUpdateRequestBody.put("ChallanNo", challanNo);
 					paymentUpdateRequestBody.put("PaymentAmount", paymentAmount);
 					paymentUpdateRequestBody.put("Remarks", "Amount Paid");
+					paymentUpdateRequestBody.put("applicationNo", bpa.getSwsApplicationId().toString());
+					paymentUpdateRequestBody.put("serviceId", swsServiceId);
 
 					String paymentUpdateApiUrl = "https://swpstgapi.csmpl.com/IndustryService/UpdateApplicationProgressStatus";
 
