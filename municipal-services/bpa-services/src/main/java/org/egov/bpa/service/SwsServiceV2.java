@@ -64,8 +64,9 @@ public class SwsServiceV2 {
 			Map<String, Object> tokenResponse = getToken();
 
 			Map<String, Object> additionalDetails = (Map<String, Object>) bpa.getAdditionalDetails();
-			String swsServiceId = additionalDetails.get("swsServiceId").toString();
-
+			String swsServiceId = additionalDetails.get("swsServiceId").toString().split(".")[0];
+			additionalDetails.put("swsServiceId", swsServiceId);
+			bpaRequest.getBPA().setAdditionalDetails(additionalDetails);
 			requestBody.put("applicationNo", bpa.getSwsApplicationId().toString());
 			requestBody.put("serviceId", swsServiceId);
 
