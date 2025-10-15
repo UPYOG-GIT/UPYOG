@@ -111,41 +111,54 @@ public class SwsServiceV2 {
 
 				log.info("requestEntity16 : " + requestEntity.toString());
 
-				ResponseEntity<JSONObject> response = restTemplate.exchange(paymentApiUrl, HttpMethod.POST,
-						requestEntity, JSONObject.class);
+				ResponseEntity<Map> response = restTemplate.exchange(paymentApiUrl, HttpMethod.POST, requestEntity,
+						Map.class);
 
-				log.info("response16 " + response.toString());
-				String paymentAmount = response.getBody().getJSONArray("Payments").getJSONObject(0)
-						.get("totalAmountPaid").toString();
-				String txnId = response.getBody().getJSONArray("Payments").getJSONObject(0)
-						.getString("transactionNumber");
-				String challanNo = response.getBody().getJSONArray("Payments").getJSONObject(0)
-						.getJSONArray("paymentDetails").getJSONObject(0).getString("receiptNumber");
+				Map<String, Object> responseBody = response.getBody();
 
-				Map<String, Object> paymentUpdateRequestBody = new HashMap<>();
+//				log.info("response16 " + response.toString());
 
-				paymentUpdateRequestBody.put("status", 11);
-				paymentUpdateRequestBody.put("PaymentStatus", 1);
-				paymentUpdateRequestBody.put("BankTransId", txnId);
-				paymentUpdateRequestBody.put("ChallanNo", challanNo);
-				paymentUpdateRequestBody.put("PaymentAmount", paymentAmount);
-				paymentUpdateRequestBody.put("Remarks", "Amount Paid");
+				List<Map<String, Object>> payments = (List<Map<String, Object>>) responseBody.get("Payments");
 
-				String paymentUpdateApiUrl = "https://swpstgapi.csmpl.com/IndustryService/UpdateApplicationProgressStatus";
+				if (payments != null && !payments.isEmpty()) {
+					String challanNo = ((List<Map<String, Object>>) payments.get(0).get("paymentDetails")).get(0)
+							.get("receiptNumber").toString();
 
-				HttpHeaders paymentUpdateHeaders = new HttpHeaders();
-				paymentUpdateHeaders.setContentType(MediaType.APPLICATION_JSON);
-				paymentUpdateHeaders.set("Authorization", "Bearer " + tokenResponse.get("data"));
+					String paymentAmount = payments.get(0).get("totalAmountPaid").toString();
 
-				HttpEntity<Map<String, Object>> paymentUpdaterequestEntity = new HttpEntity<>(paymentUpdateRequestBody,
-						paymentUpdateHeaders);
+					String txnId = payments.get(0).get("transactionNumber").toString();
+					Map<String, Object> paymentUpdateRequestBody = new HashMap<>();
 
-				log.info("requestEntity17 : " + paymentUpdaterequestEntity.toString());
+					paymentUpdateRequestBody.put("status", 11);
+					paymentUpdateRequestBody.put("PaymentStatus", 1);
+					paymentUpdateRequestBody.put("BankTransId", txnId);
+					paymentUpdateRequestBody.put("ChallanNo", challanNo);
+					paymentUpdateRequestBody.put("PaymentAmount", paymentAmount);
+					paymentUpdateRequestBody.put("Remarks", "Amount Paid");
 
-				ResponseEntity<String> paymentUpdateresponse = restTemplate.exchange(paymentUpdateApiUrl,
-						HttpMethod.POST, paymentUpdaterequestEntity, String.class);
+					String paymentUpdateApiUrl = "https://swpstgapi.csmpl.com/IndustryService/UpdateApplicationProgressStatus";
 
-				log.info("response17 " + paymentUpdateresponse.toString());
+					HttpHeaders paymentUpdateHeaders = new HttpHeaders();
+					paymentUpdateHeaders.setContentType(MediaType.APPLICATION_JSON);
+					paymentUpdateHeaders.set("Authorization", "Bearer " + tokenResponse.get("data"));
+
+					HttpEntity<Map<String, Object>> paymentUpdaterequestEntity = new HttpEntity<>(
+							paymentUpdateRequestBody, paymentUpdateHeaders);
+
+					log.info("requestEntity17 : " + paymentUpdaterequestEntity.toString());
+
+					ResponseEntity<String> paymentUpdateresponse = restTemplate.exchange(paymentUpdateApiUrl,
+							HttpMethod.POST, paymentUpdaterequestEntity, String.class);
+
+					log.info("response17 " + paymentUpdateresponse.toString());
+				}
+
+//				String paymentAmount = response.getBody().getJSONArray("Payments").getJSONObject(0)
+//						.get("totalAmountPaid").toString();
+//				String txnId = response.getBody().getJSONArray("Payments").getJSONObject(0)
+//						.getString("transactionNumber");
+//				String challanNo = response.getBody().getJSONArray("Payments").getJSONObject(0)
+//						.getJSONArray("paymentDetails").getJSONObject(0).getString("receiptNumber");
 
 			}
 
