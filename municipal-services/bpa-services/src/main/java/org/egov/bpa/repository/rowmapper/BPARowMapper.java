@@ -59,6 +59,10 @@ public class BPARowMapper implements ResultSetExtractor<List<BPA>> {
 						|| rs.getString("additionalDetails").equals("null") ? null : rs.getString("additionalDetails"),
 						Object.class);
 				
+				Object swsDetails = new Gson().fromJson(rs.getString("swsdetails").equals("{}")
+						|| rs.getString("swsdetails").equals("null") ? null : rs.getString("swsdetails"),
+								Object.class);
+				
 				AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("bpa_createdBy"))
 						.createdTime(rs.getLong("bpa_createdTime")).lastModifiedBy(rs.getString("bpa_lastModifiedBy"))
 						.lastModifiedTime(lastModifiedTime).build();
@@ -83,6 +87,7 @@ public class BPARowMapper implements ResultSetExtractor<List<BPA>> {
 						.swsUnitRegistrationNo(swsUnitRegistrationNo)
 						.riskType(rs.getString("risktype"))
 						.propertyId(propertyId)
+						.swsDetails(swsDetails)
 						.build();
 
 				buildingMap.put(id, currentbpa);

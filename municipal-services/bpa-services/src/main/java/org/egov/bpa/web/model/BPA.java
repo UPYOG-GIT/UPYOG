@@ -108,10 +108,10 @@ public class BPA {
 
 //	@JsonProperty("edcrDetail")
 //	private List<String> edcrDetail = null;
-	
-	@JsonProperty("swsAdditionalDetails")
-	private Object swsAdditionalDetails = null;
-	
+
+	@JsonProperty("swsDetails")
+	private Object swsDetails = null;
+
 	@SafeHtml
 	@JsonProperty("propertyId")
 	private String propertyId = null;
@@ -579,13 +579,12 @@ public class BPA {
 //		this.edcrDetail = edcrDetail;
 //	}
 
-	public Object getSwsAdditionalDetails() {
-		return swsAdditionalDetails;
+	public Object getSwsDetails() {
+		return swsDetails;
 	}
 
-	public void setSwsAdditionalDetails(Object swsAdditionalDetails) {
-		this.swsAdditionalDetails = swsAdditionalDetails;
+	public void setSwsDetails(Object swsDetails) {
+		this.swsDetails = swsDetails;
 	}
 
-	
 }
