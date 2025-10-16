@@ -176,12 +176,9 @@ public class SwsServiceV2 {
 
 			if (bpaStatus.equalsIgnoreCase("APPROVED")) {
 				String fileByte = getFileStoreId(bpaRequest);
-				Map<String, Object> docListMap = new HashMap<>();
-				docListMap.put("documentInByte", fileByte);
-				List<Map<String, Object>> docList = new ArrayList<>();
-				docList.add(docListMap);
-				requestBody.put("documentList", docList);
+				requestBody.put("docFile", fileByte);
 				requestBody.put("status", 11);
+				requestBody.put("Remarks", "Approved");
 				apiUrl = "https://swpstgapi.csmpl.com/IndustryService/UpdateApprovalDoc";
 			}
 
