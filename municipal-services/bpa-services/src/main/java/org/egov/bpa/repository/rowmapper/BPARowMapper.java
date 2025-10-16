@@ -59,9 +59,11 @@ public class BPARowMapper implements ResultSetExtractor<List<BPA>> {
 						|| rs.getString("additionalDetails").equals("null") ? null : rs.getString("additionalDetails"),
 						Object.class);
 				
-				Object swsDetails = new Gson().fromJson(rs.getString("swsdetails").equals("{}")
-						|| rs.getString("swsdetails").equals("null") ? null : rs.getString("swsdetails"),
-								Object.class);
+				String swsdetailsStr = rs.getString("swsdetails");
+
+				Object swsDetails = (swsdetailsStr == null || swsdetailsStr.equals("{}") || swsdetailsStr.equals("null"))
+				        ? null
+				        : new Gson().fromJson(swsdetailsStr, Object.class);
 				
 				AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("bpa_createdBy"))
 						.createdTime(rs.getLong("bpa_createdTime")).lastModifiedBy(rs.getString("bpa_lastModifiedBy"))
