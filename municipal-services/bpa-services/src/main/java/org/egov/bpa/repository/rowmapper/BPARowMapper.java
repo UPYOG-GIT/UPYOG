@@ -49,6 +49,7 @@ public class BPARowMapper implements ResultSetExtractor<List<BPA>> {
 			boolean isSwsApplication = rs.getBoolean("isswsapplication");
 			Long swsApplicationId = rs.getLong("swsapplicationid");
 			Long swsUnitRegistrationNo = rs.getLong("swsunitregistrationno");
+			Long swsServiceId = rs.getLong("swsserviceid");
 			if (currentbpa == null) {
 				Long lastModifiedTime = rs.getLong("bpa_lastModifiedTime");
 				if (rs.wasNull()) {
@@ -58,12 +59,6 @@ public class BPARowMapper implements ResultSetExtractor<List<BPA>> {
 				Object additionalDetails = new Gson().fromJson(rs.getString("additionalDetails").equals("{}")
 						|| rs.getString("additionalDetails").equals("null") ? null : rs.getString("additionalDetails"),
 						Object.class);
-				
-				String swsdetailsStr = rs.getString("swsdetails");
-
-				Object swsDetails = (swsdetailsStr == null || swsdetailsStr.equals("{}") || swsdetailsStr.equals("null"))
-				        ? null
-				        : new Gson().fromJson(swsdetailsStr, Object.class);
 				
 				AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("bpa_createdBy"))
 						.createdTime(rs.getLong("bpa_createdTime")).lastModifiedBy(rs.getString("bpa_lastModifiedBy"))
@@ -89,7 +84,7 @@ public class BPARowMapper implements ResultSetExtractor<List<BPA>> {
 						.swsUnitRegistrationNo(swsUnitRegistrationNo)
 						.riskType(rs.getString("risktype"))
 						.propertyId(propertyId)
-						.swsDetails(swsDetails)
+						.swsServiceId(swsServiceId)
 						.build();
 
 				buildingMap.put(id, currentbpa);
