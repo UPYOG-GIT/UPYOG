@@ -510,9 +510,9 @@ public class SwsServiceV2 {
 			String fileStoreId = responseBody.getJSONArray("filestoreIds").get(0).toString();
 //			log.info("fileStoreId: " + fileStoreId);
 
-			String fileByte = getPermitOrder(tenantId, fileStoreId,
+			String encodedFileUrl = getPermitOrderNew(tenantId, fileStoreId,
 					bpaRequest.getRequestInfo().getMsgId().split("|")[0]);
-			return fileByte;
+			return encodedFileUrl;
 //			return ResponseEntity.ok(response.getBody().toString());
 		} catch (Exception ex) {
 			String error = ex.toString();
@@ -569,7 +569,46 @@ public class SwsServiceV2 {
 			return e.toString();
 		}
 	}
+	
+	
+	private String getPermitOrderNew(String tenantId, String fileStoreIds, String msgId) {
+		HashMap<String, Object> requestBody = new HashMap<>();
+		HttpHeaders headers = new HttpHeaders();
+//		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 
+		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+//		log.info("requestEntity3 : " + requestEntity.toString());
+		String apiUrl = "https://www.niwaspass.com/filestore/v1/files/url?tenantId=" + tenantId + "&fileStoreIds="
+				+ fileStoreIds + "&_=" + msgId;
+
+		try {
+			// Make the API call using RestTemplatex1x
+			ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.GET, requestEntity,
+					String.class);
+
+//			log.info("response " + response.toString());
+			JSONObject responseBody = new JSONObject(response.getBody().toString());
+			String fileUrl = responseBody.getJSONArray("fileStoreIds").getJSONObject(0).get("url").toString();
+//			log.info("fileUrl: " + fileUrl);
+			String encodedFileUrl = getEncodeUrl(fileUrl);
+
+			return encodedFileUrl;
+//			return ResponseEntity.ok(response.getBody().toString());
+		} catch (Exception ex) {
+			String error = ex.toString();
+			log.error("Error4: " + error);
+			return error;
+		}
+	}
+	
+
+	public static String getEncodeUrl(String url) {
+	    return Base64.getEncoder().encodeToString(url.getBytes(StandardCharsets.UTF_8));
+	}
+
+	
 	public static String encodeToBase64(byte[] fileBytes) {
 		return Base64.getEncoder().encodeToString(fileBytes);
 	}
