@@ -15,7 +15,7 @@ ADD COLUMN propertyid character varying(64);
 
 
 ALTER TABLE eg_bpa_buildingplan
-ADD COLUMN IF NOT EXISTS swsdetails jsonb;
+ADD COLUMN IF NOT EXISTS swsserviceid bigint;
 
 ALTER TABLE eg_bpa_auditdetails
-ADD COLUMN IF NOT EXISTS swsdetails jsonb;
+ADD COLUMN IF NOT EXISTS swsserviceid bigint;

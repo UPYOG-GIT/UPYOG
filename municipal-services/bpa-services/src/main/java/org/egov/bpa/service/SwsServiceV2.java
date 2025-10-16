@@ -64,11 +64,11 @@ public class SwsServiceV2 {
 			Map<String, Object> tokenResponse = getToken();
 
 //			Map<String, Object> additionalDetails = (Map<String, Object>) bpa.getAdditionalDetails();
-			Map<String, Object> swsDetails = (Map<String, Object>) bpa.getSwsDetails();
+//			Map<String, Object> swsDetails = (Map<String, Object>) bpa.getSwsDetails();
 //			String swsServiceId = additionalDetails.get("swsServiceId").toString().split(".")[0];
-			String swsServiceId = swsDetails.get("swsServiceId").toString();
+//			String swsServiceId = swsDetails.get("swsServiceId").toString();
 			requestBody.put("applicationNo", bpa.getSwsApplicationId().toString());
-			requestBody.put("serviceId", swsServiceId);
+			requestBody.put("serviceId", bpa.getSwsServiceId().toString());
 
 			String apiUrl = "";
 
@@ -137,7 +137,7 @@ public class SwsServiceV2 {
 					paymentUpdateRequestBody.put("PaymentAmount", paymentAmount);
 					paymentUpdateRequestBody.put("Remarks", "Amount Paid");
 					paymentUpdateRequestBody.put("applicationNo", bpa.getSwsApplicationId().toString());
-					paymentUpdateRequestBody.put("serviceId", swsServiceId);
+					paymentUpdateRequestBody.put("serviceId", bpa.getSwsServiceId().toString());
 
 					String paymentUpdateApiUrl = "https://swpstgapi.csmpl.com/IndustryService/UpdateApplicationProgressStatus";
 
@@ -210,12 +210,10 @@ public class SwsServiceV2 {
 			Map<String, Object> tokenResponse = getToken();
 
 			Map<String, Object> requestBody = new HashMap<>();
-			Map<String, Object> swsDetails = (Map<String, Object>) bpa.getSwsDetails();
-			String swsServiceId = swsDetails.get("swsServiceId").toString();
 //		requestBody.put("swsAuthToken", swsAuthToken);
 			requestBody.put("status", 10);
 			requestBody.put("applicationNo", bpa.getSwsApplicationId().toString());
-			requestBody.put("serviceId", swsServiceId);
+			requestBody.put("serviceId", bpa.getSwsServiceId().toString());
 
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
