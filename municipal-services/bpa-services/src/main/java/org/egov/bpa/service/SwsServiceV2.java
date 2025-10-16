@@ -210,8 +210,8 @@ public class SwsServiceV2 {
 			Map<String, Object> tokenResponse = getToken();
 
 			Map<String, Object> requestBody = new HashMap<>();
-			Map<String, Object> additionalDetails = (Map<String, Object>) bpa.getAdditionalDetails();
-			String swsServiceId = additionalDetails.get("swsServiceId").toString();
+			Map<String, Object> swsDetails = (Map<String, Object>) bpa.getSwsDetails();
+			String swsServiceId = swsDetails.get("swsServiceId").toString();
 //		requestBody.put("swsAuthToken", swsAuthToken);
 			requestBody.put("status", 10);
 			requestBody.put("applicationNo", bpa.getSwsApplicationId().toString());
