@@ -64,10 +64,9 @@ public class SwsServiceV2 {
 			Map<String, Object> tokenResponse = getToken();
 
 //			Map<String, Object> additionalDetails = (Map<String, Object>) bpa.getAdditionalDetails();
-			Map<String, Object> additionalDetails = (Map<String, Object>) bpa.getSwsDetails();
-			String swsServiceId = additionalDetails.get("swsServiceId").toString().split(".")[0];
-			additionalDetails.put("swsServiceId", swsServiceId);
-			bpaRequest.getBPA().setAdditionalDetails(additionalDetails);
+			Map<String, Object> swsDetails = (Map<String, Object>) bpa.getSwsDetails();
+//			String swsServiceId = additionalDetails.get("swsServiceId").toString().split(".")[0];
+			String swsServiceId = swsDetails.get("swsServiceId").toString();
 			requestBody.put("applicationNo", bpa.getSwsApplicationId().toString());
 			requestBody.put("serviceId", swsServiceId);
 
