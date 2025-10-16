@@ -111,6 +111,9 @@ public class BPA {
 
 	@JsonProperty("swsDetails")
 	private Object swsDetails = null;
+	
+	@JsonProperty("swsAdditionalDetails")
+	private Object swsAdditionalDetails = null;
 
 	@SafeHtml
 	@JsonProperty("propertyId")
@@ -587,4 +590,21 @@ public class BPA {
 		this.swsDetails = swsDetails;
 	}
 
+	public Object getSwsAdditionalDetails() {
+		return swsAdditionalDetails;
+	}
+
+	public void setSwsAdditionalDetails(Object swsAdditionalDetails) {
+		this.swsAdditionalDetails = swsAdditionalDetails;
+	}
+
+	public String getPropertyId() {
+		return propertyId;
+	}
+
+	public void setPropertyId(String propertyId) {
+		this.propertyId = propertyId;
+	}
+
+	
 }
