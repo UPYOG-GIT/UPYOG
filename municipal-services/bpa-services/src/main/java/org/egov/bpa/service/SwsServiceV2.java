@@ -47,7 +47,7 @@ public class SwsServiceV2 {
 	@Lazy
 	private BPAService bpaService;
 
-	public ResponseEntity<String> updateStatusToSws(BPARequest bpaRequest, String bpaAction) {
+	public ResponseEntity<String> updateStatusToSws(BPARequest bpaRequest) {
 
 		try {
 //			log.info("bpaRequest : " + bpaRequest.toString());
@@ -82,88 +82,97 @@ public class SwsServiceV2 {
 				apiUrl = "https://swpstgapi.csmpl.com/IndustryService/UpdateApplicationProgressStatus";
 			}
 
-			if (bpaAction != null && bpaAction.equalsIgnoreCase("PAY")) {
-				HttpHeaders paymentHeaders = new HttpHeaders();
-//				headers.setContentType(MediaType.APPLICATION_JSON);
-				paymentHeaders.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
-
-				String paymentApiUrl = "";
-
-				Map<String, Object> bpaTokenResponse = getBpaAuthToken(
-						bpaRequest.getRequestInfo().getUserInfo().getMobileNumber(),
-						bpaRequest.getRequestInfo().getUserInfo().getTenantId());
-
-				if (bpaStatus.equalsIgnoreCase("APPROVED"))
-					paymentApiUrl = "https://www.niwaspass.com/collection-services/payments/BPA.NC_SAN_FEE/_search?tenantId="
-							+ bpa.getTenantId() + "&consumerCodes=" + bpa.getApplicationNo();
-				else
-					paymentApiUrl = "https://www.niwaspass.com/collection-services/payments/BPA.NC_APP_FEE/_search?tenantId="
-							+ bpa.getTenantId() + "&consumerCodes=" + bpa.getApplicationNo();
-
-				Map<String, Object> paymentRequestBody = new HashMap<>();
-
-				if ((boolean) bpaTokenResponse.get("success")) {
-					bpaRequest.getRequestInfo().setAuthToken(bpaTokenResponse.get("access_token").toString());
-				}
-
-				paymentRequestBody.put("RequestInfo", bpaRequest.getRequestInfo());
-
-				HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(paymentRequestBody, paymentHeaders);
-
-				log.info("requestEntity16 : " + requestEntity.toString());
-
-				ResponseEntity<Map> response = restTemplate.exchange(paymentApiUrl, HttpMethod.POST, requestEntity,
-						Map.class);
-
-				Map<String, Object> responseBody = response.getBody();
-
-//				log.info("response16 " + response.toString());
-
-				List<Map<String, Object>> payments = (List<Map<String, Object>>) responseBody.get("Payments");
-
-				if (payments != null && !payments.isEmpty()) {
-					String challanNo = ((List<Map<String, Object>>) payments.get(0).get("paymentDetails")).get(0)
-							.get("receiptNumber").toString();
-
-					String paymentAmount = payments.get(0).get("totalAmountPaid").toString();
-
-					String txnId = payments.get(0).get("transactionNumber").toString();
-					Map<String, Object> paymentUpdateRequestBody = new HashMap<>();
-
-					paymentUpdateRequestBody.put("status", 11);
-					paymentUpdateRequestBody.put("PaymentStatus", 1);
-					paymentUpdateRequestBody.put("BankTransId", txnId);
-					paymentUpdateRequestBody.put("ChallanNo", challanNo);
-					paymentUpdateRequestBody.put("PaymentAmount", paymentAmount);
-					paymentUpdateRequestBody.put("Remarks", "Amount Paid");
-					paymentUpdateRequestBody.put("applicationNo", bpa.getSwsApplicationId().toString());
-					paymentUpdateRequestBody.put("serviceId", bpa.getSwsServiceId().toString());
-
-					String paymentUpdateApiUrl = "https://swpstgapi.csmpl.com/IndustryService/UpdateApplicationProgressStatus";
-
-					HttpHeaders paymentUpdateHeaders = new HttpHeaders();
-					paymentUpdateHeaders.setContentType(MediaType.APPLICATION_JSON);
-					paymentUpdateHeaders.set("Authorization", "Bearer " + tokenResponse.get("data"));
-
-					HttpEntity<Map<String, Object>> paymentUpdaterequestEntity = new HttpEntity<>(
-							paymentUpdateRequestBody, paymentUpdateHeaders);
-
-					log.info("requestEntity17 : " + paymentUpdaterequestEntity.toString());
-
-					ResponseEntity<String> paymentUpdateresponse = restTemplate.exchange(paymentUpdateApiUrl,
-							HttpMethod.POST, paymentUpdaterequestEntity, String.class);
-
-					log.info("response17 " + paymentUpdateresponse.toString());
-				}
-
-//				String paymentAmount = response.getBody().getJSONArray("Payments").getJSONObject(0)
-//						.get("totalAmountPaid").toString();
-//				String txnId = response.getBody().getJSONArray("Payments").getJSONObject(0)
-//						.getString("transactionNumber");
-//				String challanNo = response.getBody().getJSONArray("Payments").getJSONObject(0)
-//						.getJSONArray("paymentDetails").getJSONObject(0).getString("receiptNumber");
-
-			}
+			/*
+			 * if (bpaAction != null && bpaAction.equalsIgnoreCase("PAY")) { HttpHeaders
+			 * paymentHeaders = new HttpHeaders(); //
+			 * headers.setContentType(MediaType.APPLICATION_JSON);
+			 * paymentHeaders.setContentType(new MediaType("application", "json",
+			 * StandardCharsets.UTF_8));
+			 * 
+			 * String paymentApiUrl = "";
+			 * 
+			 * Map<String, Object> bpaTokenResponse = getBpaAuthToken(
+			 * bpaRequest.getRequestInfo().getUserInfo().getMobileNumber(),
+			 * bpaRequest.getRequestInfo().getUserInfo().getTenantId());
+			 * 
+			 * if (bpaStatus.equalsIgnoreCase("APPROVED")) paymentApiUrl =
+			 * "https://www.niwaspass.com/collection-services/payments/BPA.NC_SAN_FEE/_search?tenantId="
+			 * + bpa.getTenantId() + "&consumerCodes=" + bpa.getApplicationNo(); else
+			 * paymentApiUrl =
+			 * "https://www.niwaspass.com/collection-services/payments/BPA.NC_APP_FEE/_search?tenantId="
+			 * + bpa.getTenantId() + "&consumerCodes=" + bpa.getApplicationNo();
+			 * 
+			 * Map<String, Object> paymentRequestBody = new HashMap<>();
+			 * 
+			 * if ((boolean) bpaTokenResponse.get("success")) {
+			 * bpaRequest.getRequestInfo().setAuthToken(bpaTokenResponse.get("access_token")
+			 * .toString()); }
+			 * 
+			 * paymentRequestBody.put("RequestInfo", bpaRequest.getRequestInfo());
+			 * 
+			 * HttpEntity<Map<String, Object>> requestEntity = new
+			 * HttpEntity<>(paymentRequestBody, paymentHeaders);
+			 * 
+			 * log.info("requestEntity16 : " + requestEntity.toString());
+			 * 
+			 * ResponseEntity<Map> response = restTemplate.exchange(paymentApiUrl,
+			 * HttpMethod.POST, requestEntity, Map.class);
+			 * 
+			 * Map<String, Object> responseBody = response.getBody();
+			 * 
+			 * // log.info("response16 " + response.toString());
+			 * 
+			 * List<Map<String, Object>> payments = (List<Map<String, Object>>)
+			 * responseBody.get("Payments");
+			 * 
+			 * if (payments != null && !payments.isEmpty()) { String challanNo =
+			 * ((List<Map<String, Object>>) payments.get(0).get("paymentDetails")).get(0)
+			 * .get("receiptNumber").toString();
+			 * 
+			 * String paymentAmount = payments.get(0).get("totalAmountPaid").toString();
+			 * 
+			 * String txnId = payments.get(0).get("transactionNumber").toString();
+			 * Map<String, Object> paymentUpdateRequestBody = new HashMap<>();
+			 * 
+			 * paymentUpdateRequestBody.put("status", 11);
+			 * paymentUpdateRequestBody.put("PaymentStatus", 1);
+			 * paymentUpdateRequestBody.put("BankTransId", txnId);
+			 * paymentUpdateRequestBody.put("ChallanNo", challanNo);
+			 * paymentUpdateRequestBody.put("PaymentAmount", paymentAmount);
+			 * paymentUpdateRequestBody.put("Remarks", "Amount Paid");
+			 * paymentUpdateRequestBody.put("applicationNo",
+			 * bpa.getSwsApplicationId().toString());
+			 * paymentUpdateRequestBody.put("serviceId", bpa.getSwsServiceId().toString());
+			 * 
+			 * String paymentUpdateApiUrl =
+			 * "https://swpstgapi.csmpl.com/IndustryService/UpdateApplicationProgressStatus";
+			 * 
+			 * HttpHeaders paymentUpdateHeaders = new HttpHeaders();
+			 * paymentUpdateHeaders.setContentType(MediaType.APPLICATION_JSON);
+			 * paymentUpdateHeaders.set("Authorization", "Bearer " +
+			 * tokenResponse.get("data"));
+			 * 
+			 * HttpEntity<Map<String, Object>> paymentUpdaterequestEntity = new
+			 * HttpEntity<>( paymentUpdateRequestBody, paymentUpdateHeaders);
+			 * 
+			 * log.info("requestEntity17 : " + paymentUpdaterequestEntity.toString());
+			 * 
+			 * ResponseEntity<String> paymentUpdateresponse =
+			 * restTemplate.exchange(paymentUpdateApiUrl, HttpMethod.POST,
+			 * paymentUpdaterequestEntity, String.class);
+			 * 
+			 * log.info("response17 " + paymentUpdateresponse.toString()); }
+			 * 
+			 * // String paymentAmount =
+			 * response.getBody().getJSONArray("Payments").getJSONObject(0) //
+			 * .get("totalAmountPaid").toString(); // String txnId =
+			 * response.getBody().getJSONArray("Payments").getJSONObject(0) //
+			 * .getString("transactionNumber"); // String challanNo =
+			 * response.getBody().getJSONArray("Payments").getJSONObject(0) //
+			 * .getJSONArray("paymentDetails").getJSONObject(0).getString("receiptNumber");
+			 * 
+			 * }
+			 */
 
 			if (bpaStatus.equalsIgnoreCase("APPROVED")) {
 				String fileByte = getFileStoreId(bpaRequest);
@@ -176,22 +185,22 @@ public class SwsServiceV2 {
 				apiUrl = "https://swpstgapi.csmpl.com/IndustryService/UpdateApprovalDoc";
 			}
 
-			if (bpaAction != null && !bpaAction.equalsIgnoreCase("PAY")) {
-				HttpHeaders headers = new HttpHeaders();
-				headers.setContentType(MediaType.APPLICATION_JSON);
-				headers.set("Authorization", "Bearer " + tokenResponse.get("data"));
+//			if (bpaAction != null && !bpaAction.equalsIgnoreCase("PAY")) {
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			headers.set("Authorization", "Bearer " + tokenResponse.get("data"));
 
-				HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+			HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
-				log.info("requestEntity15 : " + requestEntity.toString());
+			log.info("requestEntity15 : " + requestEntity.toString());
 
-				ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity,
-						String.class);
+			ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity,
+					String.class);
 
-				log.info("response15 " + response.toString());
-				return ResponseEntity.ok(response.getBody().toString());
-			}
-			return null;
+			log.info("response15 " + response.toString());
+			return ResponseEntity.ok(response.getBody().toString());
+//			}
+//			return null;
 		} catch (Exception ex) {
 			String error = ex.toString();
 			log.error("Error15: " + error);
