@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CitizenInfoLabel, Loader, Dropdown, FormStep, CardLabel, RadioOrSelect } from "@egovernments/digit-ui-react-components";
+import { CitizenInfoLabel, Loader, Dropdown, FormStep, CardLabel, RadioOrSelect } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/TLTimelineInFSM";
 
 const SelectPropertyType = ({ config, onSelect, t, userType, formData }) => {

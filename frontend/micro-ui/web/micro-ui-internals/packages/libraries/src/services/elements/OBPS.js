@@ -607,13 +607,18 @@ export const OBPSService = {
     }
     if(BPA?.isSwsApplication){
       applicationDetailsInfo?.values?.push({
-        title: "SWS Application ID",
+        title: "SWS Application Number",
         value: BPA?.swsApplicationId
       });
 
       applicationDetailsInfo?.values?.push({
-        title: "SWS Unit Reg Number",
+        title: "SWS Udyam Akanksha Number",
         value: BPA?.swsUnitRegistrationNo
+      });
+
+      applicationDetailsInfo?.values?.push({
+        title: "SWS Service Id",
+        value: BPA?.swsServiceId
       });
     }
 
