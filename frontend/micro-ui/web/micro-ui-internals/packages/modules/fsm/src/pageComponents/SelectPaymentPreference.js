@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FormStep, Dropdown, Loader, RadioOrSelect, CitizenInfoLabel } from "@egovernments/digit-ui-react-components";
+import { FormStep, Dropdown, Loader, RadioOrSelect, CitizenInfoLabel } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/TLTimelineInFSM";
 
 const SelectPaymentPreference = ({ config, formData, t, onSelect, userType }) => {
