@@ -179,7 +179,7 @@ public class SwsServiceV2 {
 				requestBody.put("docFile", fileByte);
 				requestBody.put("status", 11);
 				requestBody.put("Remarks", "Approved");
-				apiUrl = "https://swpstgapi.csmpl.com/IndustryService/UpdateApprovalDoc";
+				apiUrl = "https://swpstgapi.csmpl.com/IndustryService/UpdateApprovalDocNew";
 			}
 
 //			if (bpaAction != null && !bpaAction.equalsIgnoreCase("PAY")) {
@@ -510,7 +510,7 @@ public class SwsServiceV2 {
 			String fileStoreId = responseBody.getJSONArray("filestoreIds").get(0).toString();
 //			log.info("fileStoreId: " + fileStoreId);
 
-			String encodedFileUrl = getPermitOrderNew(tenantId, fileStoreId,
+			String encodedFileUrl = getPermitOrder(tenantId, fileStoreId,
 					bpaRequest.getRequestInfo().getMsgId().split("|")[0]);
 			return encodedFileUrl;
 //			return ResponseEntity.ok(response.getBody().toString());
