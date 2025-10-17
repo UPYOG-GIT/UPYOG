@@ -172,7 +172,7 @@ public class SwsServiceV2 {
 
 			HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
-			log.info("requestEntity15 : " + requestEntity.toString());
+//			log.info("requestEntity15 : " + requestEntity.toString());
 
 			ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity,
 					String.class);
