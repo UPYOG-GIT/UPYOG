@@ -12,7 +12,7 @@ import org.egov.bpa.producer.Producer;
 import org.egov.bpa.repository.querybuilder.BPAQueryBuilder;
 import org.egov.bpa.repository.rowmapper.BPARowMapper;
 import org.egov.bpa.repository.rowmapper.BPASearchDataRowMapper;
-import org.egov.bpa.service.SwsService;
+import org.egov.bpa.service.SwsServiceV2;
 import org.egov.bpa.web.model.BCategoryRequest;
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
@@ -55,7 +55,7 @@ public class BPARepository {
 	private BPASearchDataRowMapper searchDataRowMapper;
 
 	@Autowired
-	SwsService swsService;
+	SwsServiceV2 swsService;
 
 	/**
 	 * Pushes the request on save topic through kafka
@@ -100,7 +100,12 @@ public class BPARepository {
 			producer.push(config.getUpdateWorkflowTopic(), new BPARequest(requestInfo, bpaForStatusUpdate));
 
 		if (bpa.isSwsApplication()) {
-			swsService.updateStatusToSws(bpaRequest);
+//			if ((bpa.getWorkflow().getAction() != null && bpa.getWorkflow().getAction().equalsIgnoreCase("PAY"))
+//					|| bpa.getStatus().equalsIgnoreCase("REJECTED") || bpa.getStatus().equalsIgnoreCase("APPROVED"))
+			if (bpa.getStatus().equalsIgnoreCase("REJECTED") || bpa.getStatus().equalsIgnoreCase("APPROVED"))
+				swsService.updateStatusToSws(bpaRequest);
+//			if (status.equalsIgnoreCase("REJECTED") || status.equalsIgnoreCase("APPROVED"))
+//				swsService.updateStatusToSws(bpaRequest, status);
 		}
 
 	}

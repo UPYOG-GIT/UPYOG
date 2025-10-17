@@ -49,6 +49,7 @@ public class BPARowMapper implements ResultSetExtractor<List<BPA>> {
 			boolean isSwsApplication = rs.getBoolean("isswsapplication");
 			Long swsApplicationId = rs.getLong("swsapplicationid");
 			Long swsUnitRegistrationNo = rs.getLong("swsunitregistrationno");
+			Long swsServiceId = rs.getLong("swsserviceid");
 			if (currentbpa == null) {
 				Long lastModifiedTime = rs.getLong("bpa_lastModifiedTime");
 				if (rs.wasNull()) {
@@ -83,6 +84,7 @@ public class BPARowMapper implements ResultSetExtractor<List<BPA>> {
 						.swsUnitRegistrationNo(swsUnitRegistrationNo)
 						.riskType(rs.getString("risktype"))
 						.propertyId(propertyId)
+						.swsServiceId(swsServiceId)
 						.build();
 
 				buildingMap.put(id, currentbpa);
