@@ -1,9 +1,9 @@
-import { BackButton, SearchField, TextInput, SubmitBar, Header } from "@egovernments/digit-ui-react-components";
+import { BackButton, SearchField, TextInput, SubmitBar, Header } from "@upyog/digit-ui-react-components";
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { OBPSService } from "../../../../../../libraries/src/services/elements/OBPS";
+// import { OBPSService } from "../../../../../../libraries/src/services/elements/OBPS";
 
 const propertyIdUpdate = ({}) => {
   const { t } = useTranslation();
@@ -16,7 +16,7 @@ const propertyIdUpdate = ({}) => {
     event.preventDefault();
 
     try {
-      const data = await OBPSService.propertyIdUpdate(applicationNo, propertyId);
+      const data = await Digit.OBPSService.propertyIdUpdate(applicationNo, propertyId);
       if (data === 1) {
         setSucessMessage("Property Id updated for Application No. : " + applicationNo);
         // console.log("propertyIdUpdate Response:", data);

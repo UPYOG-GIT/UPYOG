@@ -1,5 +1,5 @@
 import React from "react";
-import { DatePicker, RadioButtons } from "@egovernments/digit-ui-react-components";
+import { DatePicker, RadioButtons } from "@upyog/digit-ui-react-components";
 
 
 export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTrips, applicationCreatedTime = 0, receivedPaymentType, action }) => ({

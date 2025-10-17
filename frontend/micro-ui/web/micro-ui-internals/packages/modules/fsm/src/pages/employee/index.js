@@ -1,4 +1,4 @@
-import { BreadCrumb, ShippingTruck, EmployeeModuleCard, PrivateRoute, BackButton, AddNewIcon, ViewReportIcon, InboxIcon, ULBHomeCard } from "@egovernments/digit-ui-react-components";
+import { BreadCrumb, ShippingTruck, EmployeeModuleCard, PrivateRoute, BackButton, AddNewIcon, ViewReportIcon, InboxIcon, ULBHomeCard } from "@upyog/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Switch, useLocation } from "react-router-dom";

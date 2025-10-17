@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Loader, RatingCard } from "@egovernments/digit-ui-react-components";
+import { Loader, RatingCard } from "@upyog/digit-ui-react-components";
 import { useHistory, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
