@@ -1264,8 +1264,15 @@ public class BPAService {
 
 		for (Map<String, Object> bpa : bpaList) {
 			Map<String, Object> detailsMap = new HashMap<>();
-			List<Map<String, Object>> floorDetails = edcrService.getEDCRDetailsPtis(bpa.get("edcrnumber").toString(),
+//			List<Map<String, Object>> floorDetails = edcrService.getEDCRDetailsPtis(bpa.get("edcrnumber").toString(),
+//					tenantId);
+
+			Map<String, Object> edcrDetails = edcrService.getEDCRDetailsPtis(bpa.get("edcrnumber").toString(),
 					tenantId);
+
+			List<Map<String, Object>> floorDetails = (List<Map<String, Object>>) edcrDetails.get("floors");
+			String totalBuiltUpArea = edcrDetails.get("builtUpArea").toString();
+			String totalPlotArea = edcrDetails.get("plotArea").toString();
 
 			String uuid = String.valueOf(bpa.get("uuid"));
 			OwnerInfo user = userMap.get(uuid);
@@ -1276,21 +1283,26 @@ public class BPAService {
 			detailsMap.put("Proposal_Date", bpa.get("applicationdate"));
 			detailsMap.put("Ward_NO", bpa.get("wardno"));
 			detailsMap.put("Property_Uid", bpa.get("propertyid"));
-			detailsMap.put("Client_and_Father_detail", "");
+			detailsMap.put("Client_Name", "");
+			detailsMap.put("Client_Father_Name", "");
 			detailsMap.put("Client_Address", bpa.get("address"));
 			detailsMap.put("Client_Phone_NO", "");
 			detailsMap.put("Plot_no", bpa.get("plotno"));
 			detailsMap.put("Plot_type", "");
 			detailsMap.put("Proposal_Type", bpa.get("occupancy"));
 			detailsMap.put("Approval_Date", bpa.get("issueddate"));
-			detailsMap.put("Total_Plot_Area", bpa.get("occuplotareapancy"));
-			detailsMap.put("Total_Builtup_Area", bpa.get("builtuparea"));
+//			detailsMap.put("Total_Plot_Area", bpa.get("plotarea"));
+			detailsMap.put("Total_Plot_Area", totalPlotArea);
+//			detailsMap.put("Total_Builtup_Area", bpa.get("builtuparea"));
+			detailsMap.put("Total_Builtup_Area", totalBuiltUpArea);
 			detailsMap.put("Khasra_Number", bpa.get("khatano"));
 			detailsMap.put("Patwari_Halka_Number", bpa.get("patwarihn"));
 			detailsMap.put("floors", floorDetails);
 
 			if (user != null) {
-				detailsMap.put("Client_and_Father_detail", user.getName() + "," + user.getFatherOrHusbandName());
+				detailsMap.put("Client_Name", user.getName());
+				detailsMap.put("Client_Father_Name",
+						!user.getFatherOrHusbandName().equalsIgnoreCase("name") ? user.getFatherOrHusbandName() : null);
 				detailsMap.put("Client_Phone_NO", user.getMobileNumber());
 			}
 

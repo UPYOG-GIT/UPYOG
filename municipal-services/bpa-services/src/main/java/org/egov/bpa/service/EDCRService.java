@@ -486,7 +486,7 @@ public class EDCRService {
 //		return additionalDetails;
 	}
 
-	public List<Map<String, Object>> getEDCRDetailsPtis(String edcrNo, String tenantId) {
+	public Map<String, Object> getEDCRDetailsPtis(String edcrNo, String tenantId) {
 
 		org.egov.common.contract.request.RequestInfo requestInfo = new org.egov.common.contract.request.RequestInfo();
 //		String edcrNo = bpa.getEdcrNumber();
@@ -498,6 +498,7 @@ public class EDCRService {
 		RequestInfo edcrRequestInfo = new RequestInfo();
 		BeanUtils.copyProperties(requestInfo, edcrRequestInfo);
 //		LinkedHashMap responseMap = null;
+		Map<String, Object> detailsMap = new HashMap<>();
 		Map<String, Object> response = new HashMap<>();
 		try {
 			response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri,
@@ -506,10 +507,23 @@ public class EDCRService {
 			throw new CustomException(BPAErrorConstants.EDCR_ERROR, " EDCR Number is Invalid");
 		}
 
-		List<Map<String, Object>> blocks = Optional.ofNullable((List<Map<String, Object>>) response.get("edcrDetail"))
+//		List<Map<String, Object>> blocks = Optional.ofNullable((List<Map<String, Object>>) response.get("edcrDetail"))
+//				.filter(list -> !list.isEmpty()).map(list -> list.get(0))
+//				.map(edcrDetail -> (Map<String, Object>) edcrDetail.get("planDetail"))
+//				.map(planDetail -> (List<Map<String, Object>>) planDetail.get("blocks"))
+//				.orElse(Collections.emptyList());
+
+		Map<String, Object> planDetail = Optional.ofNullable((List<Map<String, Object>>) response.get("edcrDetail"))
 				.filter(list -> !list.isEmpty()).map(list -> list.get(0))
-				.map(edcrDetail -> (Map<String, Object>) edcrDetail.get("planDetail"))
-				.map(planDetail -> (List<Map<String, Object>>) planDetail.get("blocks"))
+				.map(edcrDetail -> (Map<String, Object>) edcrDetail.get("planDetail")).orElse(Collections.emptyMap());
+
+		String totalBuiltUpArea = Optional.ofNullable((Map<String, Object>) planDetail.get("virtualBuilding"))
+				.map(virtualBuilding -> String.valueOf(virtualBuilding.get("totalBuitUpArea"))).orElse(null);
+
+		String totalPlotArea = Optional.ofNullable((Map<String, Object>) planDetail.get("plot"))
+				.map(virtualBuilding -> String.valueOf(virtualBuilding.get("plotBndryArea"))).orElse(null);
+
+		List<Map<String, Object>> blocks = Optional.ofNullable((List<Map<String, Object>>) planDetail.get("blocks"))
 				.orElse(Collections.emptyList());
 
 		List<Map<String, Object>> floors = blocks.stream().map(block -> (Map<String, Object>) block.get("building"))
@@ -532,34 +546,38 @@ public class EDCRService {
 					return floorMap;
 				}).collect(Collectors.toList());
 
-		return floors;
+		detailsMap.put("floors", floors);
+		detailsMap.put("builtUpArea", totalBuiltUpArea);
+		detailsMap.put("plotArea", totalPlotArea);
+
+		return detailsMap;
 	}
 
 	private static String getFloorName(int number) {
 		if (number < 0) {
 			return "Basement";
 		} else if (number == 0) {
-			return "Ground Floor";
+			return "GF";
 		} else if (number == 1) {
-			return "First Floor";
+			return "1F";
 		} else if (number == 2) {
-			return "Second Floor";
+			return "2F";
 		} else if (number == 3) {
-			return "Third Floor";
+			return "3F";
 		} else if (number == 4) {
-			return "Fourth Floor";
+			return "4F";
 		} else if (number == 5) {
-			return "Fifth Floor";
+			return "5F";
 		} else if (number == 6) {
-			return "Sixth Floor";
+			return "6F";
 		} else if (number == 7) {
-			return "Seventh Floor";
+			return "7F";
 		} else if (number == 8) {
-			return "Eighth Floor";
+			return "8F";
 		} else if (number == 9) {
-			return "Nineth Floor";
+			return "9F";
 		} else if (number == 10) {
-			return "Tenth Floor";
+			return "10F";
 		} else {
 			return "Floor";
 		}
