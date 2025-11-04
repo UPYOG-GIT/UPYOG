@@ -31,7 +31,8 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
   let cityCode = formData?.data?.edcrDetails?.tenantId;
   formData = { address: { ...formData?.address } };
   const enabledTenantIds = globalConfigs?.getConfig("GIS_ENABLED");
-  const isGISEnabled = Array.isArray(enabledTenantIds) && enabledTenantIds.includes(cityCode);
+  // const isGISEnabled = Array.isArray(enabledTenantIds) && enabledTenantIds.includes(cityCode);
+  const isGISEnabled = cityCode === "cg.citya" ? true : false;
 
   // console.log("enabledTenantIds: " + enabledTenantIds);
   // console.log("aaaaa "+Array.isArray(enabledTenantIds));
