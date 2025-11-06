@@ -17,11 +17,11 @@ const MapBoxGIS = ({ t, config, onSelect, formData = {},handleRemove,onSave }) =
   const [coordinates, setCoordinates] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showMap, setShowMap] = useState(true);
-  // const [mapboxAccessToken] = useState(
-  //   "pk.eyJ1IjoiYmh1cGVzaGVudGl0IiwiYSI6ImNtM3IxeGY0djAxNDkybHI3NGlyOHZka3MifQ.DJ44H3NxwKpu6cy5UZ06AA"
-  // );
+  const [mapboxAccessToken] = useState(
+    "pk.eyJ1IjoiYmh1cGVzaGVudGl0IiwiYSI6ImNtM3IxeGY0djAxNDkybHI3NGlyOHZka3MifQ.DJ44H3NxwKpu6cy5UZ06AA"
+  );
 
-  const mapboxAccessToken = globalConfigs?.getConfig("MAPBOX_PUBLIC_KEY");
+  // const mapboxAccessToken = window?.globalConfigs?.getConfig("MAPBOX_PUBLIC_KEY");
 
   const sourceCRS = "+proj=utm +zone=33 +datum=WGS84";
   const targetCRS = "EPSG:4326";
