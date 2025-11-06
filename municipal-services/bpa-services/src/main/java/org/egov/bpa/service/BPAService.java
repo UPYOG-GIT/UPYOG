@@ -1252,7 +1252,7 @@ public class BPAService {
 
 		List<Map<String, Object>> bpaList = repository.getBuildingDetails(tenantId, fromDate, toDate);
 
-		if (bpaList.isEmpty() || bpaList.size() == 0) {
+		if (!bpaList.isEmpty() || bpaList.size() > 0) {
 			List<String> uuidList = bpaList.stream().map(map -> map.get("uuid")).filter(Objects::nonNull)
 					.map(Object::toString).collect(Collectors.toList());
 
