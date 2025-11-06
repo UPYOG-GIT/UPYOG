@@ -1251,63 +1251,67 @@ public class BPAService {
 		List<Map<String, Object>> detailsList = new ArrayList<>();
 
 		List<Map<String, Object>> bpaList = repository.getBuildingDetails(tenantId, fromDate, toDate);
-		List<String> uuidList = bpaList.stream().map(map -> map.get("uuid")).filter(Objects::nonNull)
-				.map(Object::toString).collect(Collectors.toList());
 
-		UserDetailResponse userDetailResponse = userService.getUserForPtis(uuidList, tenantId);
-		List<OwnerInfo> users = userDetailResponse.getUser();
+		if (bpaList.isEmpty() || bpaList.size() == 0) {
+			List<String> uuidList = bpaList.stream().map(map -> map.get("uuid")).filter(Objects::nonNull)
+					.map(Object::toString).collect(Collectors.toList());
 
-//		List<String> edcrNumbers = bpaList.stream().map(map -> map.get("edcrnumber")).filter(Objects::nonNull)
-//				.map(Object::toString).collect(Collectors.toList());
+			UserDetailResponse userDetailResponse = userService.getUserForPtis(uuidList, tenantId);
+			List<OwnerInfo> users = userDetailResponse.getUser();
 
-		Map<String, OwnerInfo> userMap = users.stream().collect(Collectors.toMap(OwnerInfo::getUuid, u -> u));
+//			List<String> edcrNumbers = bpaList.stream().map(map -> map.get("edcrnumber")).filter(Objects::nonNull)
+//					.map(Object::toString).collect(Collectors.toList());
 
-		for (Map<String, Object> bpa : bpaList) {
-			Map<String, Object> detailsMap = new HashMap<>();
-//			List<Map<String, Object>> floorDetails = edcrService.getEDCRDetailsPtis(bpa.get("edcrnumber").toString(),
-//					tenantId);
+			Map<String, OwnerInfo> userMap = users.stream().collect(Collectors.toMap(OwnerInfo::getUuid, u -> u));
 
-			Map<String, Object> edcrDetails = edcrService.getEDCRDetailsPtis(bpa.get("edcrnumber").toString(),
-					tenantId);
+			for (Map<String, Object> bpa : bpaList) {
+				Map<String, Object> detailsMap = new HashMap<>();
+//				List<Map<String, Object>> floorDetails = edcrService.getEDCRDetailsPtis(bpa.get("edcrnumber").toString(),
+//						tenantId);
 
-			List<Map<String, Object>> floorDetails = (List<Map<String, Object>>) edcrDetails.get("floors");
-			String totalBuiltUpArea = edcrDetails.get("builtUpArea").toString();
-			String totalPlotArea = edcrDetails.get("plotArea").toString();
+				Map<String, Object> edcrDetails = edcrService.getEDCRDetailsPtis(bpa.get("edcrnumber").toString(),
+						tenantId);
 
-			String uuid = String.valueOf(bpa.get("uuid"));
-			OwnerInfo user = userMap.get(uuid);
+				List<Map<String, Object>> floorDetails = (List<Map<String, Object>>) edcrDetails.get("floors");
+				String totalBuiltUpArea = edcrDetails.get("builtUpArea").toString();
+				String totalPlotArea = edcrDetails.get("plotArea").toString();
 
-			detailsMap.put("Proposal_No", bpa.get("applicationno"));
-			detailsMap.put("ULB_ID", code);
-			detailsMap.put("ULB_Name", ulbName);
-			detailsMap.put("Proposal_Date", bpa.get("applicationdate"));
-			detailsMap.put("Ward_NO", bpa.get("wardno"));
-			detailsMap.put("Property_Uid", bpa.get("propertyid"));
-			detailsMap.put("Client_Name", "");
-			detailsMap.put("Client_Father_Name", "");
-			detailsMap.put("Client_Address", bpa.get("address"));
-			detailsMap.put("Client_Phone_NO", "");
-			detailsMap.put("Plot_no", bpa.get("plotno"));
-			detailsMap.put("Plot_type", "");
-			detailsMap.put("Proposal_Type", bpa.get("occupancy"));
-			detailsMap.put("Approval_Date", bpa.get("issueddate"));
-//			detailsMap.put("Total_Plot_Area", bpa.get("plotarea"));
-			detailsMap.put("Total_Plot_Area", totalPlotArea);
-//			detailsMap.put("Total_Builtup_Area", bpa.get("builtuparea"));
-			detailsMap.put("Total_Builtup_Area", totalBuiltUpArea);
-			detailsMap.put("Khasra_Number", bpa.get("khatano"));
-			detailsMap.put("Patwari_Halka_Number", bpa.get("patwarihn"));
-			detailsMap.put("floors", floorDetails);
+				String uuid = String.valueOf(bpa.get("uuid"));
+				OwnerInfo user = userMap.get(uuid);
 
-			if (user != null) {
-				detailsMap.put("Client_Name", user.getName());
-				detailsMap.put("Client_Father_Name",
-						!user.getFatherOrHusbandName().equalsIgnoreCase("name") ? user.getFatherOrHusbandName() : null);
-				detailsMap.put("Client_Phone_NO", user.getMobileNumber());
+				detailsMap.put("Proposal_No", bpa.get("applicationno"));
+				detailsMap.put("ULB_ID", code);
+				detailsMap.put("ULB_Name", ulbName);
+				detailsMap.put("Proposal_Date", bpa.get("applicationdate"));
+				detailsMap.put("Ward_NO", bpa.get("wardno"));
+				detailsMap.put("Property_Uid", bpa.get("propertyid"));
+				detailsMap.put("Client_Name", "");
+				detailsMap.put("Client_Father_Name", "");
+				detailsMap.put("Client_Address", bpa.get("address"));
+				detailsMap.put("Client_Phone_NO", "");
+				detailsMap.put("Plot_no", bpa.get("plotno"));
+				detailsMap.put("Plot_type", "");
+				detailsMap.put("Proposal_Type", bpa.get("occupancy"));
+				detailsMap.put("Approval_Date", bpa.get("issueddate"));
+//				detailsMap.put("Total_Plot_Area", bpa.get("plotarea"));
+				detailsMap.put("Total_Plot_Area", totalPlotArea);
+//				detailsMap.put("Total_Builtup_Area", bpa.get("builtuparea"));
+				detailsMap.put("Total_Builtup_Area", totalBuiltUpArea);
+				detailsMap.put("Khasra_Number", bpa.get("khatano"));
+				detailsMap.put("Patwari_Halka_Number", bpa.get("patwarihn"));
+				detailsMap.put("floors", floorDetails);
+
+				if (user != null) {
+					detailsMap.put("Client_Name", user.getName());
+					detailsMap.put("Client_Father_Name",
+							!user.getFatherOrHusbandName().equalsIgnoreCase("name") ? user.getFatherOrHusbandName()
+									: null);
+					detailsMap.put("Client_Phone_NO", user.getMobileNumber());
+				}
+
+				detailsList.add(detailsMap);
+
 			}
-
-			detailsList.add(detailsMap);
-
 		}
 
 		applicationDetails.put("status", true);
