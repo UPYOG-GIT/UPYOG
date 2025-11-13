@@ -33,6 +33,9 @@ public class GeneralRule extends FeatureProcess {
     public static final String DESCRIPTION = "Description";
 
     public static final String RULE_NO = "Byelaw";
+    
+    public static final String ROAD_WIDTH = "Road Width";
+	public static final String BUILDING_HEIGHT = "Building Height";
 
     public String getLocaleMessage(String code, String... args) {
         return edcrMessageSource.getMessage(code, args, LocaleContextHolder.getLocale());
