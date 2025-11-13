@@ -106,6 +106,7 @@ public class FrontYardService_Citya extends FrontYardService {
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_2_25 = BigDecimal.valueOf(2.25); // New var added
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_2_5 = BigDecimal.valueOf(2.5);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_3 = BigDecimal.valueOf(3);
+	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_3_6 = BigDecimal.valueOf(3.6);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_4 = BigDecimal.valueOf(4);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_4_5 = BigDecimal.valueOf(4.5);
 	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_5 = BigDecimal.valueOf(5);
@@ -132,6 +133,8 @@ public class FrontYardService_Citya extends FrontYardService {
 		BigDecimal expectedminimumDistance = BigDecimal.ZERO;
 		BigDecimal expectedmeanDistance = BigDecimal.ZERO;
 		String additionalCondition;
+		BigDecimal roadWidth;
+		BigDecimal buildingHeight;
 		boolean status = false;
 	}
 
@@ -155,14 +158,25 @@ public class FrontYardService_Citya extends FrontYardService {
 		if (plot != null && !pl.getBlocks().isEmpty()) {
 			for (Block block : pl.getBlocks()) { // for each block
 
+//				ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+//				scrutinyDetail.addColumnHeading(1, RULE_NO);
+//				scrutinyDetail.addColumnHeading(2, LEVEL);
+//				scrutinyDetail.addColumnHeading(3, OCCUPANCY);
+//				scrutinyDetail.addColumnHeading(4, FIELDVERIFIED);
+//				scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
+//				scrutinyDetail.addColumnHeading(6, PROVIDED);
+//				scrutinyDetail.addColumnHeading(7, STATUS);
+//				scrutinyDetail.setHeading(FRONT_YARD_DESC);
+
 				ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 				scrutinyDetail.addColumnHeading(1, RULE_NO);
-				scrutinyDetail.addColumnHeading(2, LEVEL);
-				scrutinyDetail.addColumnHeading(3, OCCUPANCY);
-				scrutinyDetail.addColumnHeading(4, FIELDVERIFIED);
-				scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
-				scrutinyDetail.addColumnHeading(6, PROVIDED);
-				scrutinyDetail.addColumnHeading(7, STATUS);
+				scrutinyDetail.addColumnHeading(2, OCCUPANCY);
+				scrutinyDetail.addColumnHeading(3, FIELDVERIFIED);
+				scrutinyDetail.addColumnHeading(4, ROAD_WIDTH);
+				scrutinyDetail.addColumnHeading(5, BUILDING_HEIGHT);
+				scrutinyDetail.addColumnHeading(6, PERMISSIBLE);
+				scrutinyDetail.addColumnHeading(7, PROVIDED);
+				scrutinyDetail.addColumnHeading(8, STATUS);
 				scrutinyDetail.setHeading(FRONT_YARD_DESC);
 
 				FrontYardResult frontYardResult = new FrontYardResult();
@@ -232,8 +246,9 @@ public class FrontYardService_Citya extends FrontYardService {
 							if (occupancy.getTypeHelper().getType() != null
 									&& (A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
 											|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
-								checkFrontYard(pl, block.getBuilding(), block.getName(), setback.getLevel(), plot,
-										FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(), frontYardResult, errors);
+								checkFrontYardGMDC(pl, block.getBuilding(), block.getName(), setback.getLevel(), plot,
+										FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(), frontYardResult, errors,
+										buildingHeight);
 
 							} else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
 								checkFrontYardForIndustrial(pl, block.getBuilding(), block.getName(),
@@ -248,13 +263,29 @@ public class FrontYardService_Citya extends FrontYardService {
 
 //							} // for end
 
+							/*
+							 * if (errors.isEmpty()) { Map<String, String> details = new HashMap<>();
+							 * details.put(RULE_NO, frontYardResult.subRule); details.put(LEVEL,
+							 * frontYardResult.level != null ? frontYardResult.level.toString() : "");
+							 * details.put(OCCUPANCY, frontYardResult.occupancy); details.put(FIELDVERIFIED,
+							 * MINIMUMLABEL); details.put(PERMISSIBLE,
+							 * frontYardResult.expectedmeanDistance.toString()); details.put(PROVIDED,
+							 * frontYardResult.actualMeanDistance.toString());
+							 * 
+							 * if (frontYardResult.status) { details.put(STATUS,
+							 * Result.Accepted.getResultVal()); } else { details.put(STATUS,
+							 * Result.Not_Accepted.getResultVal()); }
+							 * scrutinyDetail.getDetail().add(details);
+							 * pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail); }
+							 */
+
 							if (errors.isEmpty()) {
 								Map<String, String> details = new HashMap<>();
 								details.put(RULE_NO, frontYardResult.subRule);
-								details.put(LEVEL,
-										frontYardResult.level != null ? frontYardResult.level.toString() : "");
 								details.put(OCCUPANCY, frontYardResult.occupancy);
 								details.put(FIELDVERIFIED, MINIMUMLABEL);
+								details.put(ROAD_WIDTH, frontYardResult.roadWidth.toString());
+								details.put(BUILDING_HEIGHT, frontYardResult.buildingHeight.toString());
 								details.put(PERMISSIBLE, frontYardResult.expectedmeanDistance.toString());
 								details.put(PROVIDED, frontYardResult.actualMeanDistance.toString());
 
@@ -342,6 +373,7 @@ public class FrontYardService_Citya extends FrontYardService {
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
+		BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
 //		if (mostRestrictiveOccupancy.getSubtype() != null
 //				&& (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())
 //						|| A_R.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode())
@@ -358,6 +390,41 @@ public class FrontYardService_Citya extends FrontYardService {
 			} else {
 				valid = residential(blockName, level, min, mean, mostRestrictiveOccupancy, frontYardResult, valid,
 						subRule, rule, minVal, meanVal, depthOfPlot, errors, pl);
+			}
+		} else if (F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
+			valid = commercial(level, blockName, min, mean, mostRestrictiveOccupancy, frontYardResult, valid, subRule,
+					rule, minVal, meanVal, depthOfPlot);
+		}
+		return valid;
+	}
+
+	private Boolean checkFrontYardGMDC(Plan pl, Building building, String blockName, Integer level, Plot plot,
+			String frontYardFieldName, BigDecimal min, BigDecimal mean, OccupancyTypeHelper mostRestrictiveOccupancy,
+			FrontYardResult frontYardResult, HashMap<String, String> errors, BigDecimal buildingHeight) {
+		Boolean valid = false;
+//		String subRule = RULE_7_C_1;
+		String subRule = "83 (b) (i)";
+		String rule = FRONT_YARD_DESC;
+		BigDecimal minVal = BigDecimal.ZERO;
+		BigDecimal meanVal = BigDecimal.ZERO;
+		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
+		BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
+//		if (mostRestrictiveOccupancy.getSubtype() != null
+//				&& (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())
+//						|| A_R.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode())
+//						|| A_AF.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode())
+//						|| A_PO.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode()))) {
+		if (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
+			if (pl.getPlanInformation() != null && pl.getPlanInformation().getRoadWidth() != null
+					&& StringUtils.isNotBlank(pl.getPlanInformation().getLandUseZone())
+					&& DxfFileConstants.COMMERCIAL.equalsIgnoreCase(pl.getPlanInformation().getLandUseZone())
+//					&& pl.getPlanInformation().getRoadWidth().compareTo(ROAD_WIDTH_TWELVE_POINTTWO) < 0
+			) {
+				valid = commercial(level, blockName, min, mean, mostRestrictiveOccupancy, frontYardResult, valid,
+						DxfFileConstants.RULE_28, rule, minVal, meanVal, depthOfPlot);
+			} else {
+				valid = residentialGMDC(blockName, level, min, mean, mostRestrictiveOccupancy, frontYardResult, valid,
+						subRule, rule, minVal, meanVal, depthOfPlot, errors, pl, roadWidth, buildingHeight);
 			}
 		} else if (F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
 			valid = commercial(level, blockName, min, mean, mostRestrictiveOccupancy, frontYardResult, valid, subRule,
@@ -469,6 +536,40 @@ public class FrontYardService_Citya extends FrontYardService {
 		}
 	}
 
+	private void compareFrontYardResultGMDC(String blockName, BigDecimal min, BigDecimal mean,
+			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
+			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, Integer level, BigDecimal roadWidth,
+			BigDecimal buildingHeight) {
+		String occupancyName;
+		if (mostRestrictiveOccupancy.getSubtype() != null)
+			occupancyName = mostRestrictiveOccupancy.getSubtype().getName();
+		else
+			occupancyName = mostRestrictiveOccupancy.getType().getName();
+		if (minVal.compareTo(frontYardResult.expectedminimumDistance) >= 0) {
+			if (minVal.compareTo(frontYardResult.expectedminimumDistance) == 0) {
+				frontYardResult.rule = frontYardResult.rule != null ? frontYardResult.rule + "," + rule : rule;
+				frontYardResult.occupancy = frontYardResult.occupancy != null
+						? frontYardResult.occupancy + "," + occupancyName
+						: occupancyName;
+			} else {
+				frontYardResult.rule = rule;
+				frontYardResult.occupancy = occupancyName;
+			}
+
+			frontYardResult.subRule = subRule;
+			frontYardResult.blockName = blockName;
+//			frontYardResult.level = level;
+			frontYardResult.expectedminimumDistance = minVal;
+			frontYardResult.expectedmeanDistance = meanVal;
+			frontYardResult.actualMinDistance = min;
+			frontYardResult.actualMeanDistance = mean;
+			frontYardResult.roadWidth = roadWidth;
+			frontYardResult.buildingHeight = buildingHeight;
+			frontYardResult.status = valid;
+
+		}
+	}
+
 	private Boolean residential(String blockName, Integer level, BigDecimal min, BigDecimal mean,
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot,
@@ -500,6 +601,68 @@ public class FrontYardService_Citya extends FrontYardService {
 
 		compareFrontYardResult(blockName, min, mean, mostRestrictiveOccupancy, frontYardResult, valid, subRule, rule,
 				minVal, meanVal, level);
+		return valid;
+	}
+
+	private Boolean residentialGMDC(String blockName, Integer level, BigDecimal min, BigDecimal mean,
+			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
+			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot,
+			HashMap<String, String> errors, Plan pl, BigDecimal roadWidth, BigDecimal buildingHeight) {
+
+		if (roadWidth.compareTo(BigDecimal.valueOf(6.6)) <= 0) {
+			if (buildingHeight.compareTo(BigDecimal.valueOf(9.6)) <= 0) {
+				meanVal = FRONTYARDMINIMUM_DISTANCE_3_6;
+			} else if (buildingHeight.compareTo(BigDecimal.valueOf(15.6)) <= 0) {
+				meanVal = FRONTYARDMINIMUM_DISTANCE_4_5;
+			} else {
+				meanVal = FRONTYARDMINIMUM_DISTANCE_6;
+			}
+		} else if (roadWidth.compareTo(BigDecimal.valueOf(6.6)) > 0
+				&& roadWidth.compareTo(BigDecimal.valueOf(15)) <= 0) {
+			if (buildingHeight.compareTo(BigDecimal.valueOf(9.6)) <= 0) {
+				meanVal = FRONTYARDMINIMUM_DISTANCE_4_5;
+			} else if (buildingHeight.compareTo(BigDecimal.valueOf(15.6)) <= 0) {
+				meanVal = FRONTYARDMINIMUM_DISTANCE_6;
+			} else {
+				meanVal = FRONTYARDMINIMUM_DISTANCE_7_5;
+			}
+		} else if (roadWidth.compareTo(BigDecimal.valueOf(15)) > 0
+				&& roadWidth.compareTo(BigDecimal.valueOf(24)) <= 0) {
+			if (buildingHeight.compareTo(BigDecimal.valueOf(9.6)) <= 0) {
+				meanVal = FRONTYARDMINIMUM_DISTANCE_6;
+			} else if (buildingHeight.compareTo(BigDecimal.valueOf(15.6)) <= 0) {
+				meanVal = FRONTYARDMINIMUM_DISTANCE_7_5;
+			} else {
+				meanVal = FRONTYARDMINIMUM_DISTANCE_9;
+			}
+		} else if (roadWidth.compareTo(BigDecimal.valueOf(24)) > 0
+				&& roadWidth.compareTo(BigDecimal.valueOf(45)) <= 0) {
+			if (buildingHeight.compareTo(BigDecimal.valueOf(9.6)) <= 0) {
+				meanVal = FRONTYARDMINIMUM_DISTANCE_6;
+			} else if (buildingHeight.compareTo(BigDecimal.valueOf(15.6)) <= 0) {
+				meanVal = FRONTYARDMINIMUM_DISTANCE_9;
+			} else {
+				meanVal = FRONTYARDMINIMUM_DISTANCE_12;
+			}
+		} else {
+			if (buildingHeight.compareTo(BigDecimal.valueOf(9.6)) <= 0) {
+				meanVal = FRONTYARDMINIMUM_DISTANCE_7_5;
+			} else if (buildingHeight.compareTo(BigDecimal.valueOf(15.6)) <= 0) {
+				meanVal = FRONTYARDMINIMUM_DISTANCE_12;
+			} else {
+				meanVal = FRONTYARDMINIMUM_DISTANCE_15;
+			}
+		}
+
+		/*
+		 * if (-1 == level) { rule = BSMT_FRONT_YARD_DESC; subRuleDesc =
+		 * SUB_RULE_24_12_DESCRIPTION; subRule = SUB_RULE_24_12; }
+		 */
+
+		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
+
+		compareFrontYardResultGMDC(blockName, min, mean, mostRestrictiveOccupancy, frontYardResult, valid, subRule,
+				rule, minVal, meanVal, level, roadWidth, buildingHeight);
 		return valid;
 	}
 
