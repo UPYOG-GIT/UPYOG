@@ -85,6 +85,7 @@ public class FrontYardService_Dhamtari extends FrontYardService {
 
 	private static final String RULE_35 = "7-C-1";
 	private static final String RULE_7_C_1 = "Table 7-C-1";
+	private static final String RULE_18_9_3_1 = "Table 18.9.3.1";
 	private static final String RULE_7_C_13 = "Table 7-C-13";
 //	private static final String RULE_36 = "36";
 	private static final String RULE_37_TWO_A = "37-2-A";
@@ -231,15 +232,12 @@ public class FrontYardService_Dhamtari extends FrontYardService {
 								checkFrontYard(pl, block.getBuilding(), block.getName(), setback.getLevel(), plot,
 										FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(), frontYardResult, errors);
 
-							}
-							
-//							else if (occupancy.getTypeHelper().getType() != null
-//									&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
-//								processFrontYardGovtOccupancies(pl, block.getBuilding(), block.getName(),
-//										setback.getLevel(), plot, FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(),
-//										frontYardResult);
-//							}
-							else if (occupancy.getTypeHelper().getType() != null
+							} else if (occupancy.getTypeHelper().getType() != null
+									&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+								processFrontYardGovtOccupancies(pl, block.getBuilding(), block.getName(),
+										setback.getLevel(), plot, FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(),
+										frontYardResult);
+							} else if (occupancy.getTypeHelper().getType() != null
 									&& G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
 								checkFrontYardForIndustrial(pl, block.getBuilding(), block.getName(),
 										setback.getLevel(), plot, FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(),
@@ -302,8 +300,24 @@ public class FrontYardService_Dhamtari extends FrontYardService {
 	private Boolean commercial(Integer level, String blockName, BigDecimal min, BigDecimal mean,
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot) {
-		
-		meanVal = FRONTYARDMINIMUM_DISTANCE_4_5;
+
+		// new updated MOS rules
+		if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) < 0) {
+			meanVal = FRONTYARDMINIMUM_DISTANCE_2_5;
+		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(7.62)) > 0
+				&& depthOfPlot.compareTo(BigDecimal.valueOf(15.25)) <= 0) {
+			meanVal = FRONTYARDMINIMUM_DISTANCE_3;
+		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(15.25)) > 0
+				&& depthOfPlot.compareTo(BigDecimal.valueOf(18.30)) <= 0) {
+			meanVal = FRONTYARDMINIMUM_DISTANCE_4;
+		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.30)) > 0
+				&& depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) <= 0) {
+			meanVal = FRONTYARDMINIMUM_DISTANCE_5;
+		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) > 0) {
+			meanVal = FRONTYARDMINIMUM_DISTANCE_6;
+		}
+
+//		meanVal = FRONTYARDMINIMUM_DISTANCE_4_5;
 
 		/*
 		 * if (-1 == level) { rule = BSMT_FRONT_YARD_DESC; subRuleDesc =
@@ -321,7 +335,7 @@ public class FrontYardService_Dhamtari extends FrontYardService {
 			String frontYardFieldName, BigDecimal min, BigDecimal mean, OccupancyTypeHelper mostRestrictiveOccupancy,
 			FrontYardResult frontYardResult, HashMap<String, String> errors) {
 		Boolean valid = false;
-		String subRule = RULE_7_C_1;
+		String subRule = RULE_18_9_3_1;
 		String rule = FRONT_YARD_DESC;
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;
@@ -381,7 +395,7 @@ public class FrontYardService_Dhamtari extends FrontYardService {
 			String frontYardFieldName, BigDecimal min, BigDecimal mean, OccupancyTypeHelper mostRestrictiveOccupancy,
 			FrontYardResult frontYardResult) {
 		Boolean valid = false;
-		String subRule = RULE_7_C_13;
+		String subRule = RULE_18_9_3_1;
 		String rule = FRONT_YARD_DESC;
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;
@@ -395,7 +409,7 @@ public class FrontYardService_Dhamtari extends FrontYardService {
 			Plot plot, String frontYardFieldName, BigDecimal min, BigDecimal mean,
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult) {
 		Boolean valid = false;
-		String subRule = RULE_37_TWO_A;
+		String subRule = RULE_18_9_3_1;
 		String rule = FRONT_YARD_DESC;
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;
@@ -458,25 +472,42 @@ public class FrontYardService_Dhamtari extends FrontYardService {
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot,
 			BigDecimal widthOfPlot, HashMap<String, String> errors, Plan pl) {
-		
-		if (depthOfPlot.compareTo(BigDecimal.valueOf(8)) < 0 ) {
-			meanVal = BigDecimal.ZERO;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(8)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(12)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_2;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) {
+
+		// new updated MOS rules
+		if (depthOfPlot.compareTo(BigDecimal.valueOf(12.20)) < 0) {
+			meanVal = FRONTYARDMINIMUM_DISTANCE_1_5;
+		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12.20)) > 0
+				&& depthOfPlot.compareTo(BigDecimal.valueOf(15.25)) <= 0) {
+			meanVal = FRONTYARDMINIMUM_DISTANCE_2_25;
+		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(15.25)) > 0
+				&& depthOfPlot.compareTo(BigDecimal.valueOf(18.30)) <= 0) {
 			meanVal = FRONTYARDMINIMUM_DISTANCE_3;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(24)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_4_5;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24)) > 0
-				&& depthOfPlot.compareTo(BigDecimal.valueOf(30)) <= 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_8;
-		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(30)) > 0) {
-			meanVal = FRONTYARDMINIMUM_DISTANCE_12;
+		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18.30)) > 0
+				&& depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) <= 0) {
+			meanVal = FRONTYARDMINIMUM_DISTANCE_4;
+		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(24.38)) > 0) {
+			meanVal = FRONTYARDMINIMUM_DISTANCE_5;
 		}
-		
+
+		// old rules
+		/*
+		 * if (depthOfPlot.compareTo(BigDecimal.valueOf(8)) < 0 ) { meanVal =
+		 * BigDecimal.ZERO; } else if (depthOfPlot.compareTo(BigDecimal.valueOf(8)) > 0
+		 * && depthOfPlot.compareTo(BigDecimal.valueOf(12)) <= 0) { meanVal =
+		 * FRONTYARDMINIMUM_DISTANCE_2; } else if
+		 * (depthOfPlot.compareTo(BigDecimal.valueOf(12)) > 0 &&
+		 * depthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) { meanVal =
+		 * FRONTYARDMINIMUM_DISTANCE_3; } else if
+		 * (depthOfPlot.compareTo(BigDecimal.valueOf(18)) > 0 &&
+		 * depthOfPlot.compareTo(BigDecimal.valueOf(24)) <= 0) { meanVal =
+		 * FRONTYARDMINIMUM_DISTANCE_4_5; } else if
+		 * (depthOfPlot.compareTo(BigDecimal.valueOf(24)) > 0 &&
+		 * depthOfPlot.compareTo(BigDecimal.valueOf(30)) <= 0) { meanVal =
+		 * FRONTYARDMINIMUM_DISTANCE_8; } else if
+		 * (depthOfPlot.compareTo(BigDecimal.valueOf(30)) > 0) { meanVal =
+		 * FRONTYARDMINIMUM_DISTANCE_12; }
+		 */
+
 		/*
 		 * if (depthOfPlot.compareTo(BigDecimal.valueOf(4)) < 0 &&
 		 * widthOfPlot.compareTo(BigDecimal.valueOf(8)) < 0) { minVal = BigDecimal.ZERO;
