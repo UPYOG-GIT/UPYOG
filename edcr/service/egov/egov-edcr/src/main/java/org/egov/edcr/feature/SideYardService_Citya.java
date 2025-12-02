@@ -137,6 +137,8 @@ public class SideYardService_Citya extends SideYardService {
 		String occupancy;
 		BigDecimal expectedDistance = BigDecimal.ZERO;
 		BigDecimal expectedmeanDistance = BigDecimal.ZERO;
+		BigDecimal roadWidth = BigDecimal.ZERO;
+		BigDecimal buildingHeight = BigDecimal.ZERO;
 		boolean status = false;
 	}
 
@@ -163,11 +165,19 @@ public class SideYardService_Citya extends SideYardService {
 
 				scrutinyDetail = new ScrutinyDetail();
 				scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Side Setback");
+//				scrutinyDetail.addColumnHeading(1, RULE_NO);
+//				scrutinyDetail.addColumnHeading(2, LEVEL);
+//				scrutinyDetail.addColumnHeading(3, OCCUPANCY);
+//				scrutinyDetail.addColumnHeading(4, SIDENUMBER);
+//				scrutinyDetail.addColumnHeading(5, FIELDVERIFIED);
+//				scrutinyDetail.addColumnHeading(6, PERMISSIBLE);
+//				scrutinyDetail.addColumnHeading(7, PROVIDED);
+//				scrutinyDetail.addColumnHeading(8, STATUS);
 				scrutinyDetail.addColumnHeading(1, RULE_NO);
-				scrutinyDetail.addColumnHeading(2, LEVEL);
-				scrutinyDetail.addColumnHeading(3, OCCUPANCY);
-				scrutinyDetail.addColumnHeading(4, SIDENUMBER);
-				scrutinyDetail.addColumnHeading(5, FIELDVERIFIED);
+				scrutinyDetail.addColumnHeading(2, OCCUPANCY);
+				scrutinyDetail.addColumnHeading(3, FIELDVERIFIED);
+				scrutinyDetail.addColumnHeading(4, ROAD_WIDTH);
+				scrutinyDetail.addColumnHeading(5, BUILDING_HEIGHT);
 				scrutinyDetail.addColumnHeading(6, PERMISSIBLE);
 				scrutinyDetail.addColumnHeading(7, PROVIDED);
 				scrutinyDetail.addColumnHeading(8, STATUS);
@@ -277,9 +287,12 @@ public class SideYardService_Citya extends SideYardService {
 										&& (A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
 												|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
 
-									checkSideYard(pl, block.getBuilding(), buildingHeight, block.getName(),
+									checkSideYardGMDC(pl, block.getBuilding(), buildingHeight, block.getName(),
 											setback.getLevel(), plot, minlength, max, minMeanlength, maxMeanLength,
 											occupancy.getTypeHelper(), sideYard1Result, sideYard2Result, block);
+//									checkSideYard(pl, block.getBuilding(), buildingHeight, block.getName(),
+//											setback.getLevel(), plot, minlength, max, minMeanlength, maxMeanLength,
+//											occupancy.getTypeHelper(), sideYard1Result, sideYard2Result, block);
 
 								} else if (occupancy.getTypeHelper().getType() != null
 										&& J.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
@@ -340,10 +353,12 @@ public class SideYardService_Citya extends SideYardService {
 		if (sideYard1Result != null) {
 			Map<String, String> details = new HashMap<>();
 			details.put(RULE_NO, sideYard1Result.subRule);
-			details.put(LEVEL, sideYard1Result.level != null ? sideYard1Result.level.toString() : "");
+//			details.put(LEVEL, sideYard1Result.level != null ? sideYard1Result.level.toString() : "");
 			details.put(OCCUPANCY, sideYard1Result.occupancy);
 
 			details.put(FIELDVERIFIED, MINIMUMLABEL);
+			details.put(ROAD_WIDTH, sideYard1Result.roadWidth.toString());
+			details.put(BUILDING_HEIGHT, sideYard1Result.buildingHeight.toString());
 			details.put(PERMISSIBLE, sideYard1Result.expectedDistance.toString());
 			details.put(PROVIDED, sideYard1Result.actualDistance.toString());
 
@@ -363,11 +378,13 @@ public class SideYardService_Citya extends SideYardService {
 			if (sideYard2Result != null) {
 				Map<String, String> detailsSideYard2 = new HashMap<>();
 				detailsSideYard2.put(RULE_NO, sideYard2Result.subRule);
-				detailsSideYard2.put(LEVEL, sideYard2Result.level != null ? sideYard2Result.level.toString() : "");
+//				detailsSideYard2.put(LEVEL, sideYard2Result.level != null ? sideYard2Result.level.toString() : "");
 				detailsSideYard2.put(OCCUPANCY, sideYard2Result.occupancy);
 				detailsSideYard2.put(SIDENUMBER, SIDE_YARD2_DESC);
 
 				detailsSideYard2.put(FIELDVERIFIED, MINIMUMLABEL);
+				detailsSideYard2.put(ROAD_WIDTH, sideYard2Result.roadWidth.toString());
+				detailsSideYard2.put(BUILDING_HEIGHT, sideYard2Result.buildingHeight.toString());
 				detailsSideYard2.put(PERMISSIBLE, sideYard2Result.expectedDistance.toString());
 				detailsSideYard2.put(PROVIDED, sideYard2Result.actualDistance.toString());
 				// }
@@ -537,6 +554,117 @@ public class SideYardService_Citya extends SideYardService {
 		}
 	}
 
+	private void checkSideYardGMDC(final Plan pl, Building building, BigDecimal buildingHeight, String blockName,
+			Integer level, final Plot plot, final double min, final double max, double minMeanlength,
+			double maxMeanLength, final OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard1Result,
+			SideYardResult sideYard2Result, Block block) {
+
+		String rule = SIDE_YARD_DESC;
+//		String subRule = RULE_7_C_1;
+		String subRule = "83 (b) (ii)";
+		Boolean valid2 = false;
+		Boolean valid1 = false;
+		BigDecimal side2val = BigDecimal.ZERO;
+		BigDecimal side1val = BigDecimal.ZERO;
+
+		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
+		BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
+
+		if (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
+			if (pl.getPlanInformation() != null && pl.getPlanInformation().getRoadWidth() != null
+					&& StringUtils.isNotBlank(pl.getPlanInformation().getLandUseZone())
+					&& DxfFileConstants.COMMERCIAL.equalsIgnoreCase(pl.getPlanInformation().getLandUseZone())
+//					&& pl.getPlanInformation().getRoadWidth().compareTo(ROAD_WIDTH_TWELVE_POINTTWO) < 0
+			) {
+				checkCommercial(pl, blockName, level, min, max, minMeanlength, maxMeanLength, mostRestrictiveOccupancy,
+						sideYard1Result, sideYard2Result, rule, subRule, valid2, valid1, side2val, side1val,
+						widthOfPlot, block);
+			} else {
+				checkResidentialGMDC(pl, blockName, level, min, max, minMeanlength, maxMeanLength,
+						mostRestrictiveOccupancy, sideYard1Result, sideYard2Result, rule, subRule, valid2, valid1,
+						side2val, side1val, widthOfPlot, block, roadWidth, buildingHeight);
+			}
+		} else if (F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
+			checkCommercial(pl, blockName, level, min, max, minMeanlength, maxMeanLength, mostRestrictiveOccupancy,
+					sideYard1Result, sideYard2Result, rule, subRule, valid2, valid1, side2val, side1val, widthOfPlot,
+					block);
+		}
+	}
+
+	private void checkResidentialGMDC(Plan pl, String blockName, Integer level, final double min, final double max,
+			double minMeanlength, double maxMeanLength, final OccupancyTypeHelper mostRestrictiveOccupancy,
+			SideYardResult sideYard1Result, SideYardResult sideYard2Result, String rule, String subRule, Boolean valid2,
+			Boolean valid1, BigDecimal side2val, BigDecimal side1val, BigDecimal widthOfPlot, Block block,
+			BigDecimal roadWidth, BigDecimal buildingHeight) {
+		
+		if (buildingHeight.compareTo(BigDecimal.valueOf(9.6)) <= 0) {
+			side2val = BigDecimal.valueOf(1.5);
+			side1val = BigDecimal.valueOf(1.5);
+		} else if (buildingHeight.compareTo(BigDecimal.valueOf(9.6)) > 0
+				&& buildingHeight.compareTo(BigDecimal.valueOf(12.6)) <= 0) {
+			side2val = BigDecimal.valueOf(2.4);
+			side1val = BigDecimal.valueOf(2.4);
+		} else if (buildingHeight.compareTo(BigDecimal.valueOf(12.6)) > 0
+				&& buildingHeight.compareTo(BigDecimal.valueOf(15.6)) <= 0) {
+			side2val = BigDecimal.valueOf(3.6);
+			side1val = BigDecimal.valueOf(3.6);
+		} else if (buildingHeight.compareTo(BigDecimal.valueOf(15.6)) > 0
+				&& buildingHeight.compareTo(BigDecimal.valueOf(18.6)) <= 0) {
+			side2val = BigDecimal.valueOf(4.2);
+			side1val = BigDecimal.valueOf(4.2);
+		} else if (buildingHeight.compareTo(BigDecimal.valueOf(18.6)) > 0
+				&& buildingHeight.compareTo(BigDecimal.valueOf(21.6)) <= 0) {
+			side2val = BigDecimal.valueOf(5);
+			side1val = BigDecimal.valueOf(5);
+		} else if (buildingHeight.compareTo(BigDecimal.valueOf(21.6)) > 0
+				&& buildingHeight.compareTo(BigDecimal.valueOf(24.6)) <= 0) {
+			side2val = BigDecimal.valueOf(5.5);
+			side1val = BigDecimal.valueOf(5.5);
+		} else if (buildingHeight.compareTo(BigDecimal.valueOf(24.6)) > 0
+				&& buildingHeight.compareTo(BigDecimal.valueOf(27.6)) <= 0) {
+			side2val = BigDecimal.valueOf(6);
+			side1val = BigDecimal.valueOf(6);
+		} else if (buildingHeight.compareTo(BigDecimal.valueOf(27.6)) > 0
+				&& buildingHeight.compareTo(BigDecimal.valueOf(30.6)) <= 0) {
+			side2val = BigDecimal.valueOf(7);
+			side1val = BigDecimal.valueOf(7);
+		} else if (buildingHeight.compareTo(BigDecimal.valueOf(30.6)) > 0
+				&& buildingHeight.compareTo(BigDecimal.valueOf(36.6)) <= 0) {
+			side2val = BigDecimal.valueOf(9);
+			side1val = BigDecimal.valueOf(9);
+		} else if (buildingHeight.compareTo(BigDecimal.valueOf(36.6)) > 0
+				&& buildingHeight.compareTo(BigDecimal.valueOf(45.6)) <= 0) {
+			side2val = BigDecimal.valueOf(10);
+			side1val = BigDecimal.valueOf(10);
+		} else if (buildingHeight.compareTo(BigDecimal.valueOf(45.6)) > 0) {
+			side2val = BigDecimal.valueOf(12);
+			side1val = BigDecimal.valueOf(12);
+		}
+		
+
+		if (max >= side1val.doubleValue())
+			valid1 = true;
+		if (min >= side2val.doubleValue())
+			valid2 = true;
+
+		compareSideYard2ResultGMDC(blockName, side2val, BigDecimal.valueOf(min), BigDecimal.ZERO,
+				BigDecimal.valueOf(minMeanlength), mostRestrictiveOccupancy, sideYard2Result, valid2, subRule, rule,
+				level, roadWidth, buildingHeight);
+		compareSideYard1ResultGMDC(blockName, side1val, BigDecimal.valueOf(max), BigDecimal.ZERO,
+				BigDecimal.valueOf(maxMeanLength), mostRestrictiveOccupancy, sideYard1Result, valid1, subRule, rule,
+				level, roadWidth, buildingHeight);
+
+//		if (pl.getPlanInformation() != null
+//				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(7.62)) <= 0) {
+//			exemptSideYard1ForAAndF(pl, block, sideYard1Result, BigDecimal.valueOf(max));
+//		}
+//
+//		if (pl.getPlanInformation() != null
+//				&& pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(12.2)) <= 0) {
+//			exemptSideYard2ForAAndF(pl, block, sideYard2Result, BigDecimal.valueOf(min));
+//		}
+	}
+
 	private void checkSideYardBasement(final Plan pl, Building building, BigDecimal buildingHeight, String blockName,
 			Integer level, final Plot plot, final double min, final double max, double minMeanlength,
 			double maxMeanLength, final OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard1Result,
@@ -574,10 +702,9 @@ public class SideYardService_Citya extends SideYardService {
 		}
 	}
 
-	private void checkSideYardForIndustrial(final Plan pl, Block block, Building building,
-			BigDecimal buildingHeight, String blockName, Integer level, final Plot plot, final double min,
-			final double max, double minMeanlength, double maxMeanLength,
-			final OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard1Result,
+	private void checkSideYardForIndustrial(final Plan pl, Block block, Building building, BigDecimal buildingHeight,
+			String blockName, Integer level, final Plot plot, final double min, final double max, double minMeanlength,
+			double maxMeanLength, final OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard1Result,
 			SideYardResult sideYard2Result) {
 
 		String rule = SIDE_YARD_DESC;
@@ -745,6 +872,37 @@ public class SideYardService_Citya extends SideYardService {
 		}
 	}
 
+	private void compareSideYard1ResultGMDC(String blockName, BigDecimal exptDistance, BigDecimal actualDistance,
+			BigDecimal expectedMeanDistance, BigDecimal actualMeanDistance,
+			OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard1Result, Boolean valid, String subRule,
+			String rule, Integer level, BigDecimal roadWidth, BigDecimal buildingHeight) {
+		String occupancyName;
+		if (mostRestrictiveOccupancy.getSubtype() != null)
+			occupancyName = mostRestrictiveOccupancy.getSubtype().getName();
+		else
+			occupancyName = mostRestrictiveOccupancy.getType().getName();
+		if (exptDistance.compareTo(sideYard1Result.expectedDistance) >= 0) {
+//			if (exptDistance.compareTo(sideYard1Result.expectedDistance) == 0) {
+//				sideYard1Result.rule = sideYard1Result.rule != null ? sideYard1Result.rule + "," + rule : rule;
+//				sideYard1Result.occupancy = sideYard1Result.occupancy != null
+//						? sideYard1Result.occupancy + "," + occupancyName
+//						: occupancyName;
+//			} else {
+			sideYard1Result.rule = rule;
+			sideYard1Result.occupancy = occupancyName;
+//			}
+
+			sideYard1Result.subRule = subRule;
+			sideYard1Result.blockName = blockName;
+//			sideYard1Result.level = level;
+			sideYard1Result.roadWidth = roadWidth;
+			sideYard1Result.buildingHeight = buildingHeight;
+			sideYard1Result.actualDistance = actualDistance;
+			sideYard1Result.expectedDistance = exptDistance;
+			sideYard1Result.status = valid;
+		}
+	}
+
 	private void compareSideYard2Result(String blockName, BigDecimal exptDistance, BigDecimal actualDistance,
 			BigDecimal expectedMeanDistance, BigDecimal actualMeanDistance,
 			OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard2Result, Boolean valid, String subRule,
@@ -768,6 +926,37 @@ public class SideYardService_Citya extends SideYardService {
 			sideYard2Result.subRule = subRule;
 			sideYard2Result.blockName = blockName;
 			sideYard2Result.level = level;
+			sideYard2Result.actualDistance = actualDistance;
+			sideYard2Result.expectedDistance = exptDistance;
+			sideYard2Result.status = valid;
+		}
+	}
+
+	private void compareSideYard2ResultGMDC(String blockName, BigDecimal exptDistance, BigDecimal actualDistance,
+			BigDecimal expectedMeanDistance, BigDecimal actualMeanDistance,
+			OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard2Result, Boolean valid, String subRule,
+			String rule, Integer level, BigDecimal roadWidth, BigDecimal buildingHeight) {
+		String occupancyName;
+		if (mostRestrictiveOccupancy.getSubtype() != null)
+			occupancyName = mostRestrictiveOccupancy.getSubtype().getName();
+		else
+			occupancyName = mostRestrictiveOccupancy.getType().getName();
+		if (exptDistance.compareTo(sideYard2Result.expectedDistance) >= 0) {
+//			if (exptDistance.compareTo(sideYard2Result.expectedDistance) == 0) {
+//				sideYard2Result.rule = sideYard2Result.rule != null ? sideYard2Result.rule + "," + rule : rule;
+//				sideYard2Result.occupancy = sideYard2Result.occupancy != null
+//						? sideYard2Result.occupancy + "," + occupancyName
+//						: occupancyName;
+//			} else {
+			sideYard2Result.rule = rule;
+			sideYard2Result.occupancy = occupancyName;
+//			}
+
+			sideYard2Result.subRule = subRule;
+			sideYard2Result.blockName = blockName;
+//			sideYard2Result.level = level;
+			sideYard2Result.roadWidth = roadWidth;
+			sideYard2Result.buildingHeight = buildingHeight;
 			sideYard2Result.actualDistance = actualDistance;
 			sideYard2Result.expectedDistance = exptDistance;
 			sideYard2Result.status = valid;
