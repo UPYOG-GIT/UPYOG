@@ -5,7 +5,7 @@ const useMDMS = (tenantId, moduleCode, type, config = {}, payload = []) => {
   const usePaymentGateway = () => {
     return useQuery("PAYMENT_GATEWAY", () => MdmsService.getPaymentGateway(tenantId, moduleCode, type), {
       select: (data) => {
-        return data?.[moduleCode]?.[type].filter((e) => e.active).map(({ gateway }) => gateway);
+        return data?.[moduleCode]?.[type].filter((e) => e.active && e.module === "BPA").map(({ gateway }) => gateway);
       },
       ...config,
     });
