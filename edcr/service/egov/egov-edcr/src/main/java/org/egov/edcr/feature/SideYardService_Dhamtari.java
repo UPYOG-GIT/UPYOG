@@ -318,11 +318,14 @@ public class SideYardService_Dhamtari extends SideYardService {
 							if (pl.getPlanInformation() != null && occupancy.getTypeHelper().getType() != null) {
 								if (A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
 									if (pl.getPlanInformation().getWidthOfPlot()
-											.compareTo(BigDecimal.valueOf(15)) <= 0) {
+											.compareTo(BigDecimal.valueOf(7.62)) <= 0) {
 										exemptSideYard1ForAAndF(pl, block, sideYard1Result, BigDecimal.ZERO);
+										exemptSideYard2ForAAndF(pl, block, sideYard2Result, BigDecimal.ZERO);
 									}
+								} else if (F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
 									if (pl.getPlanInformation().getWidthOfPlot()
-											.compareTo(BigDecimal.valueOf(18)) <= 0) {
+											.compareTo(BigDecimal.valueOf(15.25)) <= 0) {
+										exemptSideYard1ForAAndF(pl, block, sideYard1Result, BigDecimal.ZERO);
 										exemptSideYard2ForAAndF(pl, block, sideYard2Result, BigDecimal.ZERO);
 									}
 								}
