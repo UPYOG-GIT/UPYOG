@@ -55,8 +55,7 @@ public class RedirectController {
 
 //	@Autowired
 //	private TransactionRepository transactionRepository;
-	
-	
+
 	@Autowired
 	public RedirectController(TransactionService transactionService) {
 		this.transactionService = transactionService;
@@ -69,7 +68,7 @@ public class RedirectController {
 		String orderNo = formData.get("orderNo").get(0);
 		String tenantId = transactionService.getTenantId(orderNo);
 		log.info("tenantId: " + tenantId);
-		getWorkingKey(tenantId);
+		getWorkingKey(tenantId, "CCAVENUE");
 		log.info("workingKey: " + workingKey);
 		SecretKeySpec skey = new SecretKeySpec(getMD5(workingKey), "AES");
 		this.setupCrypto(skey);
@@ -92,7 +91,8 @@ public class RedirectController {
 		String ss1 = s2[0];
 //		String param = "eg_pg_txnid=" + s2[1];
 		String txnId = s2[1];
-		String returnURL = ss1.replace("https/", "https://").replace("http/", "http://").replace("localhost3000", "localhost:3000");
+		String returnURL = ss1.replace("https/", "https://").replace("http/", "http://").replace("localhost3000",
+				"localhost:3000");
 //		String returnURL = ss1.substring(0, 4 + 1) + ":/" + ss1.substring(4 + 1);
 		log.info("returnURL: " + returnURL);
 
@@ -220,17 +220,17 @@ public class RedirectController {
 		}
 	}
 
-	private void getWorkingKey(String tenantId) {
+	private void getWorkingKey(String tenantId, String gatewayName) {
 		log.info("inside getWorkingKey..... tenantId: " + tenantId);
-		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId);
-		
+		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId, gatewayName);
+
 //		String sqlQuery = "SELECT merchant_id,access_code,working_key FROM eg_pg_ccavenue_details WHERE tenant_id='"
 //				+ tenantId + "'";
 //		log.info("sqlQuery: "+sqlQuery);
 ////		return jdbcTemplate.queryForList(sql, new Object[] { tenantId });
 //		Map<String, Object> ccAvenueDetails =  jdbcTemplate.queryForMap(sqlQuery);
 		this.workingKey = ccAvenueDetails.get("working_key").toString();
-		
+
 //		if (tenantId.equals("cg.birgaon")) {
 //			this.workingKey = "B27E5242E8FC395A07F65AB900F021FA";
 //		} else if (tenantId.equals("cg.dhamtari")) {
