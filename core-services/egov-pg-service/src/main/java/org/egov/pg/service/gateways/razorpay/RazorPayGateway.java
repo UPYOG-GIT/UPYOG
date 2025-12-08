@@ -14,6 +14,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -153,188 +154,48 @@ public class RazorPayGateway implements Gateway {
 		log.info("MERCHANT_ID: " + MERCHANT_ID + ", WORKING_KEY: " + WORKING_KEY + ", ACCESS_CODE: " + ACCESS_CODE);
 
 		log.info("transaction.getTxnId() : " + transaction.getTxnId());
-//		String orderNumber = "CG" + randomNumber;
 		String orderNumber = transaction.getTxnId();
 		Double amount = Double.parseDouble(transaction.getTxnAmount());
 		String callBackUrl = transaction.getCallbackUrl();
-//		String jsonData = "{ \"merchant_id\":\""+MERCHANT_ID+"\", \"order_id\":\"" + orderNumber + "\" }";
-//		String jsonData = "{ \"merchant_id\":1941257, \"order_id\":\"" + orderNumber
-//				+ "\" ,\"currency\":\"INR\",\"amount\":" + amount + "}";
-
-//		String requestString = "merchant_id=" + MERCHANT_ID + "&order_id=" + orderNumber + "&currency=INR&amount="
-//				+ amount + "&redirect_url=" + RETURN_URL + "&cancel_url=" + RETURN_URL + ""
-//				+ "&language=EN&billing_name=&billing_address=&" + "billing_city=&billing_state=&billing_zip=&"
-//				+ "billing_country=&billing_tel=&billing_email=&" + "delivery_name=&delivery_address=&delivery_city="
-//				+ "&delivery_state=&delivery_zip=&delivery_country=" + "&delivery_tel=&merchant_param1=" + callBackUrl
-//				+ "&merchant_param2=CCAVENUE" + "&merchant_param3=&merchant_param4=&merchant_param5=&tid=";
 
 		String requestString = "amount=" + amount + "&currency=INR&receipt=" + orderNumber + "&payment_capture=1";
 
-//		&tid=76070845
 		log.info("requestString : " + requestString);
 		String encryptedJsonData = "";
 		StringBuffer wsDataBuff = new StringBuffer();
+
+		String auth = ACCESS_CODE + ":" + WORKING_KEY;
+		String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
+		String authHeader = "Basic " + encodedAuth;
 
 		if (WORKING_KEY != null && !WORKING_KEY.equals("") && requestString != null && !requestString.equals("")) {
 			RazorPayUtils ccavenueUtis = new RazorPayUtils(WORKING_KEY);
 			encryptedJsonData = ccavenueUtis.encrypt(requestString);
 		}
-//		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE);
-//		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE );
-		wsDataBuff
-				.append("?command=initiateTransaction&encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE);
-//		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE + "&response_type="
-//				+ RESPONSE_TYPE + "&request_type=" + REQUEST_TYPE);
 
-		URL url = null;
-		URLConnection httpUrlConnection = null;
-//		HttpURLConnection httpUrlConnection = null;
-		DataOutputStream vPrintout = null;
-		DataInputStream vInput = null;
-		StringBuffer vStringBuffer = null;
+		String[] pairs = requestString.split("&");
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
+		for (String pair : pairs) {
+			String[] keyVal = pair.split("=");
+			params.add(keyVal[0], keyVal[1]);
+		}
+
+		params.add("authorization", authHeader);
+
+		String urlString = "https://api.razorpay.com/v1/orders";
+
 		try {
-//			WS_URL+="&" + wsDataBuff;
-			String urlString = WS_URL + wsDataBuff;
-//			url = new URL(WS_URL + "&" + wsDataBuff);
-			url = new URL(urlString);
+			UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(urlString).queryParams(params).build();
 
-			if (url.openConnection() instanceof HttpsURLConnection) {
-				httpUrlConnection = (HttpsURLConnection) url.openConnection();
-//				httpUrlConnection.setRequestMethod("POST");
-			} else {
-				httpUrlConnection = (URLConnection) url.openConnection();
-			}
-			httpUrlConnection.setDoInput(true);
-			httpUrlConnection.setDoOutput(true);
-			httpUrlConnection.setUseCaches(false);
-			httpUrlConnection.connect();
-			vPrintout = new DataOutputStream(httpUrlConnection.getOutputStream());
-			vPrintout.writeBytes(wsDataBuff.toString());
-			vPrintout.flush();
-			vPrintout.close();
-//			if (isNull(url))
-			log.info("httpUrlConnection.getURL().toURI(): " + httpUrlConnection.getURL().toURI());
-			if (isNull(httpUrlConnection.getURL()))
-				throw new CustomException("CCAVENUE_REDIRECT_URI_GEN_FAILED", "Failed to generate redirect URI");
-			else {
-//				HttpServletResponse response;
-//				response.sendRedirect(httpUrlConnection.getURL().toURI().toString());
+			log.info("uriComponents: " + uriComponents.toUri().toString());
 
-				HashMap<String, String> queryMap = new HashMap<>();
-				queryMap.put(MESSAGE_TYPE_KEY, MESSAGE_TYPE);
-				queryMap.put(MERCHANT_ID_KEY, MERCHANT_ID);
-				queryMap.put(ORDER_ID_KEY, orderNumber);
-				queryMap.put(CUSTOMER_ID_KEY, transaction.getUser().getUuid());
-				queryMap.put(TRANSACTION_AMOUNT_KEY, amount.toString());
-				queryMap.put(CURRENCY_CODE_KEY, CURRENCY_CODE);
-				SimpleDateFormat format = new SimpleDateFormat(TX_DATE_FORMAT);
-				Date currentDate = new Date();
-				queryMap.put(REQUEST_DATE_TIME_KEY, format.format(currentDate));
-				String returnUrl = transaction.getCallbackUrl().replace(CITIZEN_URL, "");
-
-				queryMap.put(SERVICE_ID_KEY, getModuleCode(transaction));
-				String domainName = returnUrl.replaceAll("http(s)?://|www\\.|/.*", "");
-				String citizenReturnURL = returnUrl.split(domainName)[1];
-//		        log.info("returnUrl::::"+getReturnUrl(citizenReturnURL, REDIRECT_URL));
-				queryMap.put(SUCCESS_URL_KEY, RETURN_URL);
-				queryMap.put(FAIL_URL_KEY, RETURN_URL);
-//		        log.info("returnUrl::::"+getReturnUrl(citizenReturnURL, REDIRECT_URL));
-//		        queryMap.put(SUCCESS_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
-//		        queryMap.put(FAIL_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
-				StringBuffer userDetail = new StringBuffer();
-				if (transaction.getUser() != null) {
-					if (!StringUtils.isEmpty(transaction.getUser().getMobileNumber())) {
-						userDetail.append(transaction.getUser().getMobileNumber());
-					}
-
-					/*
-					 * if(!StringUtils.isEmpty(transaction.getUser().getEmailId())) {
-					 * if(userDetail.length()>0) { userDetail.append("^"); }
-					 * userDetail.append(transaction.getUser().getEmailId()); }
-					 */
-				}
-				if (userDetail.length() == 0) {
-					userDetail.append(ADDITIONAL_FIELD_VALUE);
-				}
-				queryMap.put(ADDITIONAL_FIELD1_KEY, userDetail.toString());
-				queryMap.put(ADDITIONAL_FIELD2_KEY, ADDITIONAL_FIELD_VALUE); // Not in use
-				queryMap.put(ADDITIONAL_FIELD3_KEY, ADDITIONAL_FIELD_VALUE); // Not in use
-				queryMap.put(ADDITIONAL_FIELD4_KEY, transaction.getConsumerCode());
-				queryMap.put(ADDITIONAL_FIELD5_KEY, getModuleCode(transaction));
-
-				// Generate Checksum for params
-				ArrayList<String> fields = new ArrayList<String>();
-				fields.add(queryMap.get(MESSAGE_TYPE_KEY));
-				fields.add(queryMap.get(MERCHANT_ID_KEY));
-				fields.add(queryMap.get(SERVICE_ID_KEY));
-				fields.add(queryMap.get(ORDER_ID_KEY));
-				fields.add(queryMap.get(CUSTOMER_ID_KEY));
-				fields.add(queryMap.get(TRANSACTION_AMOUNT_KEY));
-				fields.add(queryMap.get(CURRENCY_CODE_KEY));
-				fields.add(queryMap.get(REQUEST_DATE_TIME_KEY));
-				fields.add(queryMap.get(SUCCESS_URL_KEY));
-				fields.add(queryMap.get(FAIL_URL_KEY));
-				fields.add(queryMap.get(ADDITIONAL_FIELD1_KEY));
-				fields.add(queryMap.get(ADDITIONAL_FIELD2_KEY));
-				fields.add(queryMap.get(ADDITIONAL_FIELD3_KEY));
-				fields.add(queryMap.get(ADDITIONAL_FIELD4_KEY));
-				fields.add(queryMap.get(ADDITIONAL_FIELD5_KEY));
-
-				String message = String.join("|", fields);
-				queryMap.put("checksum", RazorPayUtils.generateCRC32Checksum(message, WORKING_KEY));
-				queryMap.put("txURL", httpUrlConnection.getURL().toURI().toString());
-				SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyyHH:mm:SSS");
-				queryMap.put(REQUEST_DATE_TIME_KEY, format1.format(currentDate));
-				log.info("REQUEST_DATE_TIME_KEY::" + queryMap.get(REQUEST_DATE_TIME_KEY));
-				ObjectMapper mapper = new ObjectMapper();
-//		        try {
-////		            urlData= mapper.writeValueAsString(queryMap);
-//		        } catch (Exception e) {
-//		            // TODO Auto-generated catch block
-//		            log.error("PAYGOV URL generation failed", e);
-//		            throw new CustomException("URL_GEN_FAILED",
-//		                    "PAYGOV URL generation failed, gateway redirect URI cannot be generated");
-//		        }
-
-				MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-				queryMap.forEach(params::add);
-
-//				String paramsString = "checksum$"+CcavenueUtils.generateCRC32Checksum(message, WORKING_KEY)+""
-//						+ "*txURL$"+httpUrlConnection.getURL().toURI().toString()+"*"+MESSAGE_TYPE_KEY+"$"+MESSAGE_TYPE+""
-//						+ "*"+MERCHANT_ID_KEY+"$"+MERCHANT_ID+"*"+ORDER_ID_KEY+"$"+orderNumber+""
-//						+ "*"+CUSTOMER_ID_KEY+"$"+transaction.getUser().getUuid()+"*"+TRANSACTION_AMOUNT_KEY+"$"+amount+""
-//						+ "*"+CURRENCY_CODE_KEY+"$"+CURRENCY_CODE+"*"+REQUEST_DATE_TIME_KEY+"$"+format.format(currentDate)+""
-//						+ "*"+SERVICE_ID_KEY+"$"+getModuleCode(transaction)+"*"+SUCCESS_URL_KEY+"$"+RETURN_URL+""
-//						+ "*"+FAIL_URL_KEY+"$"+RETURN_URL+"*"+ADDITIONAL_FIELD1_KEY+"$"+userDetail.toString()+""
-//						+ "*"+ADDITIONAL_FIELD2_KEY+"$"+ADDITIONAL_FIELD_VALUE+"*"+ADDITIONAL_FIELD3_KEY+"$"+ADDITIONAL_FIELD_VALUE+""
-//						+ "*"+"ADDITIONAL_FIELD4_KEY"+"$"+transaction.getConsumerCode()+"*"+ADDITIONAL_FIELD5_KEY+"$"+getModuleCode(transaction);
-
-				UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(urlString).queryParams(params).build();
-
-				log.info("uriComponents: " + uriComponents.toUri().toString());
-
-				return uriComponents.toUri();
+			return uriComponents.toUri();
 //				return httpUrlConnection.getURL().toURI();
-			}
-//			return url.toURI();
 		} catch (Exception e) {
 			log.error("Unable to retrieve redirect URI from gateway", e);
 			throw new ServiceCallException("Redirect URI generation failed, invalid response received from gateway");
-
 		}
-
-		/*
-		 * try { BufferedReader bufferedreader = new BufferedReader(new
-		 * InputStreamReader(vHttpUrlConnection.getInputStream())); vStringBuffer = new
-		 * StringBuffer(); String vRespData; while((vRespData =
-		 * bufferedreader.readLine()) != null) if(vRespData.length() != 0)
-		 * vStringBuffer.append(vRespData.trim()); bufferedreader.close();
-		 * bufferedreader = null; if (vInput != null) vInput.close(); if
-		 * (vHttpUrlConnection != null) vHttpUrlConnection = null; }catch(Exception ex)
-		 * {
-		 * 
-		 * }
-		 */
 
 	}
 
