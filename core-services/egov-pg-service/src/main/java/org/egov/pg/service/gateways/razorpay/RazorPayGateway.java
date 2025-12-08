@@ -1,4 +1,4 @@
-package org.egov.pg.service.gateways.ccavenue;
+package org.egov.pg.service.gateways.razorpay;
 
 import static java.util.Objects.isNull;
 
@@ -45,7 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class CcavenueGateway implements Gateway {
+public class RazorPayGateway implements Gateway {
 
 //	@Autowired
 	private TransactionService transactionService;
@@ -53,7 +53,7 @@ public class CcavenueGateway implements Gateway {
 //	@Autowired
 //	private TransactionsApiController transactionsApiController;
 
-	private final String GATEWAY_NAME = "CCAVENUE";
+	private final String GATEWAY_NAME = "RAZORPAY";
 	private String ACCESS_CODE;
 //	private final String ACCESS_CODE;
 	private String WORKING_KEY;
@@ -106,7 +106,7 @@ public class CcavenueGateway implements Gateway {
 	private PgDetailRepository pgDetailRepository;
 
 	@Autowired
-	public CcavenueGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper,
+	public RazorPayGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper,
 			PgDetailRepository pgDetailRepository) {
 		this.restTemplate = restTemplate;
 		this.objectMapper = objectMapper;
@@ -141,7 +141,7 @@ public class CcavenueGateway implements Gateway {
 	@Override
 	public URI generateRedirectURI(Transaction transaction) {
 
-		log.info("Inside CCAvenue generateRedirectURI()");
+		log.info("Inside Razorpay generateRedirectURI()");
 //		Random random = new Random();
 //		int randomNumber = random.nextInt(90000000) + 10000000;
 
@@ -161,12 +161,14 @@ public class CcavenueGateway implements Gateway {
 //		String jsonData = "{ \"merchant_id\":1941257, \"order_id\":\"" + orderNumber
 //				+ "\" ,\"currency\":\"INR\",\"amount\":" + amount + "}";
 
-		String requestString = "merchant_id=" + MERCHANT_ID + "&order_id=" + orderNumber + "&currency=INR&amount="
-				+ amount + "&redirect_url=" + RETURN_URL + "&cancel_url=" + RETURN_URL + ""
-				+ "&language=EN&billing_name=&billing_address=&" + "billing_city=&billing_state=&billing_zip=&"
-				+ "billing_country=&billing_tel=&billing_email=&" + "delivery_name=&delivery_address=&delivery_city="
-				+ "&delivery_state=&delivery_zip=&delivery_country=" + "&delivery_tel=&merchant_param1=" + callBackUrl
-				+ "&merchant_param2=CCAVENUE" + "&merchant_param3=&merchant_param4=&merchant_param5=&tid=";
+//		String requestString = "merchant_id=" + MERCHANT_ID + "&order_id=" + orderNumber + "&currency=INR&amount="
+//				+ amount + "&redirect_url=" + RETURN_URL + "&cancel_url=" + RETURN_URL + ""
+//				+ "&language=EN&billing_name=&billing_address=&" + "billing_city=&billing_state=&billing_zip=&"
+//				+ "billing_country=&billing_tel=&billing_email=&" + "delivery_name=&delivery_address=&delivery_city="
+//				+ "&delivery_state=&delivery_zip=&delivery_country=" + "&delivery_tel=&merchant_param1=" + callBackUrl
+//				+ "&merchant_param2=CCAVENUE" + "&merchant_param3=&merchant_param4=&merchant_param5=&tid=";
+
+		String requestString = "amount=" + amount + "&currency=INR&receipt=" + orderNumber + "&payment_capture=1";
 
 //		&tid=76070845
 		log.info("requestString : " + requestString);
@@ -174,7 +176,7 @@ public class CcavenueGateway implements Gateway {
 		StringBuffer wsDataBuff = new StringBuffer();
 
 		if (WORKING_KEY != null && !WORKING_KEY.equals("") && requestString != null && !requestString.equals("")) {
-			CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
+			RazorPayUtils ccavenueUtis = new RazorPayUtils(WORKING_KEY);
 			encryptedJsonData = ccavenueUtis.encrypt(requestString);
 		}
 //		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE);
@@ -279,7 +281,7 @@ public class CcavenueGateway implements Gateway {
 				fields.add(queryMap.get(ADDITIONAL_FIELD5_KEY));
 
 				String message = String.join("|", fields);
-				queryMap.put("checksum", CcavenueUtils.generateCRC32Checksum(message, WORKING_KEY));
+				queryMap.put("checksum", RazorPayUtils.generateCRC32Checksum(message, WORKING_KEY));
 				queryMap.put("txURL", httpUrlConnection.getURL().toURI().toString());
 				SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyyHH:mm:SSS");
 				queryMap.put(REQUEST_DATE_TIME_KEY, format1.format(currentDate));
@@ -358,7 +360,7 @@ public class CcavenueGateway implements Gateway {
 					+ ACCESS_CODE);
 //			String orderNo = resp.getOrderNo();
 			log.info("encResp: " + encResp);
-			CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
+			RazorPayUtils ccavenueUtis = new RazorPayUtils(WORKING_KEY);
 			String decryptedData = ccavenueUtis.decrypt(encResp);
 			log.info("decryptedData: " + decryptedData);
 			String encRespString[] = decryptedData.split("&");
@@ -452,7 +454,7 @@ public class CcavenueGateway implements Gateway {
 		setGatewayDetails(tenantId);
 		log.info("fetchStatusFromGateway: MERCHANT_ID: " + MERCHANT_ID + ", WORKING_KEY: " + WORKING_KEY
 				+ ", ACCESS_CODE: " + ACCESS_CODE);
-		CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
+		RazorPayUtils ccavenueUtis = new RazorPayUtils(WORKING_KEY);
 		encryptedJsonData = ccavenueUtis.encrypt(orderStatusQueryJson);
 
 		URL url = null;
@@ -506,7 +508,7 @@ public class CcavenueGateway implements Gateway {
 		String encResponse;
 		Map<String, String> resp = new HashMap<String, String>();
 		if (vResponse != null && !vResponse.equals("")) {
-			Map hm = CcavenueUtils.tokenizeToHashMap(vResponse, "&", "=");
+			Map hm = RazorPayUtils.tokenizeToHashMap(vResponse, "&", "=");
 			encResponse = hm.containsKey("enc_response") ? hm.get("enc_response").toString() : "";
 			String vStatus = hm.containsKey("status") ? hm.get("status").toString() : "";
 			String vError_code = hm.containsKey("enc_error_code") ? hm.get("enc_error_code").toString() : "";
@@ -700,7 +702,7 @@ public class CcavenueGateway implements Gateway {
 		fields.add(queryMap.get(ADDITIONAL_FIELD5_KEY));
 
 		String message = String.join("|", fields);
-		queryMap.put("checksum", CcavenueUtils.generateCRC32Checksum(message, WORKING_KEY));
+		queryMap.put("checksum", RazorPayUtils.generateCRC32Checksum(message, WORKING_KEY));
 		queryMap.put("txURL", WS_URL);
 		ObjectMapper mapper = new ObjectMapper();
 		try {
@@ -752,16 +754,15 @@ public class CcavenueGateway implements Gateway {
 //			this.WORKING_KEY = "7B3E3FF7D56888F44E1A7D46DF24CF52";
 //		}
 
-		//Testing Details
+		// Testing Details
 //		this.MERCHANT_ID = "1941257";
 //		this.ACCESS_CODE = "ATII96KA89BB16IIBB";
 //		this.WORKING_KEY = "D682025F99E01FA0F0FAA079B1B3F793";
-		
-		
+
 //		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId);
 //		Map<String, Object> ccAvenueDetails = transactionsApiController.getCcavenueDetails(tenantId);
-		
-		Map<String, Object> ccAvenueDetails = pgDetailRepository.getCcavenueDetails(tenantId, "CCAVENUE");
+
+		Map<String, Object> ccAvenueDetails = pgDetailRepository.getCcavenueDetails(tenantId, "RAZORPAY");
 		this.MERCHANT_ID = ccAvenueDetails.get("merchant_id").toString();
 		this.ACCESS_CODE = ccAvenueDetails.get("access_code").toString();
 		this.WORKING_KEY = ccAvenueDetails.get("working_key").toString();

@@ -186,8 +186,8 @@ public class TransactionService {
 		return transactionRepository.getTenantId(txnId);
 	}
 	
-	public Map<String, Object> getCcavenueDetails(String tenantId) {
-		return transactionRepository.getCcavenueDetails(tenantId);
+	public Map<String, Object> getCcavenueDetails(String tenantId, String gatewayName) {
+		return transactionRepository.getCcavenueDetails(tenantId, gatewayName);
 	}
 
 	public List<Map<String, Object>> getTransactions(String applicationNumber) {
