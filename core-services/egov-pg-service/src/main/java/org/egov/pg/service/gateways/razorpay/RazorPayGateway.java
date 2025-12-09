@@ -156,8 +156,11 @@ public class RazorPayGateway implements Gateway {
 
 		log.info("transaction.getTxnId() : " + transaction.getTxnId());
 		String orderNumber = transaction.getTxnId();
-		Double amount = Double.parseDouble(transaction.getTxnAmount());
+//		Double amount = Double.parseDouble(transaction.getTxnAmount());
+		Double amountValue = Double.parseDouble(transaction.getTxnAmount());
 		String callBackUrl = transaction.getCallbackUrl();
+
+		long amount = Math.round(amountValue * 100);
 
 		String requestString = "amount=" + amount + "&currency=INR&receipt=" + orderNumber + "&payment_capture=1";
 
@@ -185,45 +188,39 @@ public class RazorPayGateway implements Gateway {
 		params.add("authorization", authHeader);
 
 		String urlString = "https://api.razorpay.com/v1/orders";
-		
+
 		HttpHeaders headers = new HttpHeaders();
-	    headers.set("Authorization", authHeader);
-	    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		headers.set("Authorization", authHeader);
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-	    MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-	    body.add("amount", amount.toString());
-	    body.add("currency", "INR");
-	    body.add("receipt", orderNumber);
-	    body.add("payment_capture", "1");
-	    
-	    HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
-	    
-	    try {
-	        ResponseEntity<String> response =
-	                restTemplate.postForEntity(urlString, entity, String.class);
+//	    MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+//	    body.add("amount", amount);
+//	    body.add("currency", "INR");
+//	    body.add("receipt", orderNumber);
+//	    body.add("payment_capture", "1");
 
-	        // Parse response JSON
-	        ObjectMapper mapper = new ObjectMapper();
-	        JsonNode json = mapper.readTree(response.getBody());
+		HttpEntity<String> entity = new HttpEntity<>(requestString, headers);
 
-	        // Razorpay order ID
-	        String orderId = json.get("id").asText();
+		try {
+			ResponseEntity<String> response = restTemplate.postForEntity(urlString, entity, String.class);
 
-	        // Prepare frontend redirect URL
-	        URI redirectUri = UriComponentsBuilder
-	                .fromUriString("https://checkout.razorpay.com/v1/checkout.js")
-	                .queryParam("order_id", orderId)
-	                .queryParam("amount", amount)
-	                .queryParam("key_id", ACCESS_CODE)
-	                .queryParam("receipt", orderNumber)
-	                .build()
-	                .toUri();
+			// Parse response JSON
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode json = mapper.readTree(response.getBody());
 
-	        return redirectUri;
+			// Razorpay order ID
+			String orderId = json.get("id").asText();
 
-	    } catch (Exception ex) {
-	        throw new RuntimeException("Error creating Razorpay order", ex);
-	    }
+			// Prepare frontend redirect URL
+			URI redirectUri = UriComponentsBuilder.fromUriString("https://checkout.razorpay.com/v1/checkout.js")
+					.queryParam("order_id", orderId).queryParam("amount", amount).queryParam("key_id", ACCESS_CODE)
+					.queryParam("receipt", orderNumber).build().toUri();
+
+			return redirectUri;
+
+		} catch (Exception ex) {
+			throw new RuntimeException("Error creating Razorpay order", ex);
+		}
 
 		/*
 		 * try { UriComponents uriComponents =
