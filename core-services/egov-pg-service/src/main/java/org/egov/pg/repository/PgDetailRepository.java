@@ -24,55 +24,51 @@ import lombok.extern.slf4j.Slf4j;
 @Repository
 public class PgDetailRepository {
 
-    private AppProperties appProperties;
-    private RestTemplate restTemplate;
-    
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+	private AppProperties appProperties;
+	private RestTemplate restTemplate;
 
-    @Autowired
-    PgDetailRepository(RestTemplate restTemplate, AppProperties appProperties) {
-        this.restTemplate = restTemplate;
-        this.appProperties = appProperties;
-    }
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 
-    public PgDetail getPgDetailByTenantId( RequestInfo requestInfo, String tenantId) {
-        List<PgDetail> pgDetails = new ArrayList<PgDetail>();
-        PgDetail pgDetail = new PgDetail();
-        pgDetail.setTenantId(tenantId);
-        pgDetails.add(pgDetail);
-        PgDetailRequest pgDetailRequest = new PgDetailRequest(requestInfo,pgDetails);
-        String uri = UriComponentsBuilder
-                .fromHttpUrl(appProperties.getPgDetailHost())
-                .path(appProperties.getPgDetailPath())
-                .build()
-                .toUriString();
+	@Autowired
+	PgDetailRepository(RestTemplate restTemplate, AppProperties appProperties) {
+		this.restTemplate = restTemplate;
+		this.appProperties = appProperties;
+	}
 
+	public PgDetail getPgDetailByTenantId(RequestInfo requestInfo, String tenantId) {
+		List<PgDetail> pgDetails = new ArrayList<PgDetail>();
+		PgDetail pgDetail = new PgDetail();
+		pgDetail.setTenantId(tenantId);
+		pgDetails.add(pgDetail);
+		PgDetailRequest pgDetailRequest = new PgDetailRequest(requestInfo, pgDetails);
+		String uri = UriComponentsBuilder.fromHttpUrl(appProperties.getPgDetailHost())
+				.path(appProperties.getPgDetailPath()).build().toUriString();
 
+		try {
+			PgDetailResponse response = restTemplate.postForObject(uri, pgDetailRequest, PgDetailResponse.class);
+			if (response.getPgDetail().size() == 1)
+				return response.getPgDetail().get(0);
+			else {
+				log.error("Expected to fetch payment gateway detail for tenant " + "{}, instead found {}", tenantId,
+						response.getPgDetail().size());
+				throw new CustomException("PG_DETAIL_FETCH_ERROR",
+						"Online Payment is not allowed for selected Cant Board");
+			}
+		} catch (HttpClientErrorException e) {
+			log.error("Unable to fetch payment gateway detail for tenant " + tenantId, e);
+			throw new ServiceCallException(e.getResponseBodyAsString());
+		} catch (Exception e) {
+			log.error("Unable to fetch payment gateway detail for tenant " + tenantId, e);
+			throw new CustomException("PG_DETAIL_SEARCH_ERROR",
+					"Failed to fetch Payment Gateway Detail, unknown error " + "occurred");
+		}
+	}
 
-        try {
-            PgDetailResponse response = restTemplate.postForObject(uri, pgDetailRequest, PgDetailResponse.class);
-            if( response.getPgDetail().size() == 1 )
-                return response.getPgDetail().get(0);
-            else {
-                log.error("Expected to fetch payment gateway detail for tenant " +
-                        "{}, instead found {}", tenantId, response.getPgDetail().size());
-                throw new CustomException("PG_DETAIL_FETCH_ERROR", "Online Payment is not allowed for selected Cant Board");
-            }
-        } catch (HttpClientErrorException e) {
-            log.error("Unable to fetch payment gateway detail for tenant " + tenantId, e);
-            throw new ServiceCallException(e.getResponseBodyAsString());
-        } catch (Exception e) {
-            log.error("Unable to fetch payment gateway detail for tenant "+ tenantId, e);
-            throw new CustomException("PG_DETAIL_SEARCH_ERROR", "Failed to fetch Payment Gateway Detail, unknown error " +
-                    "occurred");
-        }
-    }
-    
-    public Map<String, Object> getCcavenueDetails(String tenantId) {
+	public Map<String, Object> getCcavenueDetails(String tenantId, String gatewayName) {
 		String sqlQuery = "SELECT merchant_id,access_code,working_key, environment, gateway_url FROM eg_pg_ccavenue_details WHERE tenant_id='"
-				+ tenantId + "'";
-		log.info("sqlQuery: "+sqlQuery);
+				+ tenantId + "' AND gateway_name = '" + gatewayName + "'";
+		log.info("sqlQuery: " + sqlQuery);
 //		return jdbcTemplate.queryForList(sql, new Object[] { tenantId });
 		return jdbcTemplate.queryForMap(sqlQuery);
 	}

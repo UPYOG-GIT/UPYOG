@@ -1,19 +1,18 @@
-package org.egov.pg.service.gateways.ccavenue;
+package org.egov.pg.service.gateways.razorpay;
 
 import static java.util.Objects.isNull;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,24 +27,27 @@ import org.egov.pg.repository.PgDetailRepository;
 import org.egov.pg.service.Gateway;
 import org.egov.pg.service.TransactionService;
 import org.egov.tracer.model.CustomException;
-import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class CcavenueGateway implements Gateway {
+public class RazorPayGateway implements Gateway {
 
 //	@Autowired
 	private TransactionService transactionService;
@@ -53,7 +55,7 @@ public class CcavenueGateway implements Gateway {
 //	@Autowired
 //	private TransactionsApiController transactionsApiController;
 
-	private final String GATEWAY_NAME = "CCAVENUE";
+	private final String GATEWAY_NAME = "RAZORPAY";
 	private String ACCESS_CODE;
 //	private final String ACCESS_CODE;
 	private String WORKING_KEY;
@@ -106,7 +108,7 @@ public class CcavenueGateway implements Gateway {
 	private PgDetailRepository pgDetailRepository;
 
 	@Autowired
-	public CcavenueGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper,
+	public RazorPayGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper,
 			PgDetailRepository pgDetailRepository) {
 		this.restTemplate = restTemplate;
 		this.objectMapper = objectMapper;
@@ -141,7 +143,7 @@ public class CcavenueGateway implements Gateway {
 	@Override
 	public URI generateRedirectURI(Transaction transaction) {
 
-		log.info("Inside CCAvenue generateRedirectURI()");
+		log.info("Inside Razorpay generateRedirectURI()");
 //		Random random = new Random();
 //		int randomNumber = random.nextInt(90000000) + 10000000;
 
@@ -153,185 +155,84 @@ public class CcavenueGateway implements Gateway {
 		log.info("MERCHANT_ID: " + MERCHANT_ID + ", WORKING_KEY: " + WORKING_KEY + ", ACCESS_CODE: " + ACCESS_CODE);
 
 		log.info("transaction.getTxnId() : " + transaction.getTxnId());
-//		String orderNumber = "CG" + randomNumber;
 		String orderNumber = transaction.getTxnId();
-		Double amount = Double.parseDouble(transaction.getTxnAmount());
+//		Double amount = Double.parseDouble(transaction.getTxnAmount());
+		Double amountValue = Double.parseDouble(transaction.getTxnAmount());
 		String callBackUrl = transaction.getCallbackUrl();
-//		String jsonData = "{ \"merchant_id\":\""+MERCHANT_ID+"\", \"order_id\":\"" + orderNumber + "\" }";
-//		String jsonData = "{ \"merchant_id\":1941257, \"order_id\":\"" + orderNumber
-//				+ "\" ,\"currency\":\"INR\",\"amount\":" + amount + "}";
 
-		String requestString = "merchant_id=" + MERCHANT_ID + "&order_id=" + orderNumber + "&currency=INR&amount="
-				+ amount + "&redirect_url=" + RETURN_URL + "&cancel_url=" + RETURN_URL + ""
-				+ "&language=EN&billing_name=&billing_address=&" + "billing_city=&billing_state=&billing_zip=&"
-				+ "billing_country=&billing_tel=&billing_email=&" + "delivery_name=&delivery_address=&delivery_city="
-				+ "&delivery_state=&delivery_zip=&delivery_country=" + "&delivery_tel=&merchant_param1=" + callBackUrl
-				+ "&merchant_param2=CCAVENUE" + "&merchant_param3=&merchant_param4=&merchant_param5=&tid=";
+		long amount = Math.round(amountValue * 100);
 
-//		&tid=76070845
+		String requestString = "amount=" + amount + "&currency=INR&receipt=" + orderNumber + "&payment_capture=1";
+
 		log.info("requestString : " + requestString);
 		String encryptedJsonData = "";
 		StringBuffer wsDataBuff = new StringBuffer();
 
+		String auth = ACCESS_CODE + ":" + WORKING_KEY;
+		String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
+		String authHeader = "Basic " + encodedAuth;
+
 		if (WORKING_KEY != null && !WORKING_KEY.equals("") && requestString != null && !requestString.equals("")) {
-			CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
+			RazorPayUtils ccavenueUtis = new RazorPayUtils(WORKING_KEY);
 			encryptedJsonData = ccavenueUtis.encrypt(requestString);
 		}
-//		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE);
-//		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE );
-		wsDataBuff
-				.append("?command=initiateTransaction&encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE);
-//		wsDataBuff.append("encRequest=" + encryptedJsonData + "&access_code=" + ACCESS_CODE + "&response_type="
-//				+ RESPONSE_TYPE + "&request_type=" + REQUEST_TYPE);
 
-		URL url = null;
-		URLConnection httpUrlConnection = null;
-//		HttpURLConnection httpUrlConnection = null;
-		DataOutputStream vPrintout = null;
-		DataInputStream vInput = null;
-		StringBuffer vStringBuffer = null;
+		String[] pairs = requestString.split("&");
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
+		for (String pair : pairs) {
+			String[] keyVal = pair.split("=");
+			params.add(keyVal[0], keyVal[1]);
+		}
+
+		params.add("authorization", authHeader);
+
+		String urlString = "https://api.razorpay.com/v1/orders";
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", authHeader);
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+//	    MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+//	    body.add("amount", amount);
+//	    body.add("currency", "INR");
+//	    body.add("receipt", orderNumber);
+//	    body.add("payment_capture", "1");
+
+		HttpEntity<String> entity = new HttpEntity<>(requestString, headers);
+
 		try {
-//			WS_URL+="&" + wsDataBuff;
-			String urlString = WS_URL + wsDataBuff;
-//			url = new URL(WS_URL + "&" + wsDataBuff);
-			url = new URL(urlString);
+			ResponseEntity<String> response = restTemplate.postForEntity(urlString, entity, String.class);
 
-			if (url.openConnection() instanceof HttpsURLConnection) {
-				httpUrlConnection = (HttpsURLConnection) url.openConnection();
-//				httpUrlConnection.setRequestMethod("POST");
-			} else {
-				httpUrlConnection = (URLConnection) url.openConnection();
-			}
-			httpUrlConnection.setDoInput(true);
-			httpUrlConnection.setDoOutput(true);
-			httpUrlConnection.setUseCaches(false);
-			httpUrlConnection.connect();
-			vPrintout = new DataOutputStream(httpUrlConnection.getOutputStream());
-			vPrintout.writeBytes(wsDataBuff.toString());
-			vPrintout.flush();
-			vPrintout.close();
-//			if (isNull(url))
-			log.info("httpUrlConnection.getURL().toURI(): " + httpUrlConnection.getURL().toURI());
-			if (isNull(httpUrlConnection.getURL()))
-				throw new CustomException("CCAVENUE_REDIRECT_URI_GEN_FAILED", "Failed to generate redirect URI");
-			else {
-//				HttpServletResponse response;
-//				response.sendRedirect(httpUrlConnection.getURL().toURI().toString());
+			// Parse response JSON
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode json = mapper.readTree(response.getBody());
 
-				HashMap<String, String> queryMap = new HashMap<>();
-				queryMap.put(MESSAGE_TYPE_KEY, MESSAGE_TYPE);
-				queryMap.put(MERCHANT_ID_KEY, MERCHANT_ID);
-				queryMap.put(ORDER_ID_KEY, orderNumber);
-				queryMap.put(CUSTOMER_ID_KEY, transaction.getUser().getUuid());
-				queryMap.put(TRANSACTION_AMOUNT_KEY, amount.toString());
-				queryMap.put(CURRENCY_CODE_KEY, CURRENCY_CODE);
-				SimpleDateFormat format = new SimpleDateFormat(TX_DATE_FORMAT);
-				Date currentDate = new Date();
-				queryMap.put(REQUEST_DATE_TIME_KEY, format.format(currentDate));
-				String returnUrl = transaction.getCallbackUrl().replace(CITIZEN_URL, "");
+			// Razorpay order ID
+			String orderId = json.get("id").asText();
 
-				queryMap.put(SERVICE_ID_KEY, getModuleCode(transaction));
-				String domainName = returnUrl.replaceAll("http(s)?://|www\\.|/.*", "");
-				String citizenReturnURL = returnUrl.split(domainName)[1];
-//		        log.info("returnUrl::::"+getReturnUrl(citizenReturnURL, REDIRECT_URL));
-				queryMap.put(SUCCESS_URL_KEY, RETURN_URL);
-				queryMap.put(FAIL_URL_KEY, RETURN_URL);
-//		        log.info("returnUrl::::"+getReturnUrl(citizenReturnURL, REDIRECT_URL));
-//		        queryMap.put(SUCCESS_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
-//		        queryMap.put(FAIL_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
-				StringBuffer userDetail = new StringBuffer();
-				if (transaction.getUser() != null) {
-					if (!StringUtils.isEmpty(transaction.getUser().getMobileNumber())) {
-						userDetail.append(transaction.getUser().getMobileNumber());
-					}
+			// Prepare frontend redirect URL
+			URI redirectUri = UriComponentsBuilder.fromUriString("https://checkout.razorpay.com/v1/checkout.js")
+					.queryParam("order_id", orderId).queryParam("amount", amount).queryParam("key_id", ACCESS_CODE)
+					.queryParam("receipt", orderNumber).build().toUri();
 
-					/*
-					 * if(!StringUtils.isEmpty(transaction.getUser().getEmailId())) {
-					 * if(userDetail.length()>0) { userDetail.append("^"); }
-					 * userDetail.append(transaction.getUser().getEmailId()); }
-					 */
-				}
-				if (userDetail.length() == 0) {
-					userDetail.append(ADDITIONAL_FIELD_VALUE);
-				}
-				queryMap.put(ADDITIONAL_FIELD1_KEY, userDetail.toString());
-				queryMap.put(ADDITIONAL_FIELD2_KEY, ADDITIONAL_FIELD_VALUE); // Not in use
-				queryMap.put(ADDITIONAL_FIELD3_KEY, ADDITIONAL_FIELD_VALUE); // Not in use
-				queryMap.put(ADDITIONAL_FIELD4_KEY, transaction.getConsumerCode());
-				queryMap.put(ADDITIONAL_FIELD5_KEY, getModuleCode(transaction));
+			return redirectUri;
 
-				// Generate Checksum for params
-				ArrayList<String> fields = new ArrayList<String>();
-				fields.add(queryMap.get(MESSAGE_TYPE_KEY));
-				fields.add(queryMap.get(MERCHANT_ID_KEY));
-				fields.add(queryMap.get(SERVICE_ID_KEY));
-				fields.add(queryMap.get(ORDER_ID_KEY));
-				fields.add(queryMap.get(CUSTOMER_ID_KEY));
-				fields.add(queryMap.get(TRANSACTION_AMOUNT_KEY));
-				fields.add(queryMap.get(CURRENCY_CODE_KEY));
-				fields.add(queryMap.get(REQUEST_DATE_TIME_KEY));
-				fields.add(queryMap.get(SUCCESS_URL_KEY));
-				fields.add(queryMap.get(FAIL_URL_KEY));
-				fields.add(queryMap.get(ADDITIONAL_FIELD1_KEY));
-				fields.add(queryMap.get(ADDITIONAL_FIELD2_KEY));
-				fields.add(queryMap.get(ADDITIONAL_FIELD3_KEY));
-				fields.add(queryMap.get(ADDITIONAL_FIELD4_KEY));
-				fields.add(queryMap.get(ADDITIONAL_FIELD5_KEY));
-
-				String message = String.join("|", fields);
-				queryMap.put("checksum", CcavenueUtils.generateCRC32Checksum(message, WORKING_KEY));
-				queryMap.put("txURL", httpUrlConnection.getURL().toURI().toString());
-				SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyyHH:mm:SSS");
-				queryMap.put(REQUEST_DATE_TIME_KEY, format1.format(currentDate));
-				log.info("REQUEST_DATE_TIME_KEY::" + queryMap.get(REQUEST_DATE_TIME_KEY));
-				ObjectMapper mapper = new ObjectMapper();
-//		        try {
-////		            urlData= mapper.writeValueAsString(queryMap);
-//		        } catch (Exception e) {
-//		            // TODO Auto-generated catch block
-//		            log.error("PAYGOV URL generation failed", e);
-//		            throw new CustomException("URL_GEN_FAILED",
-//		                    "PAYGOV URL generation failed, gateway redirect URI cannot be generated");
-//		        }
-
-				MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-				queryMap.forEach(params::add);
-
-//				String paramsString = "checksum$"+CcavenueUtils.generateCRC32Checksum(message, WORKING_KEY)+""
-//						+ "*txURL$"+httpUrlConnection.getURL().toURI().toString()+"*"+MESSAGE_TYPE_KEY+"$"+MESSAGE_TYPE+""
-//						+ "*"+MERCHANT_ID_KEY+"$"+MERCHANT_ID+"*"+ORDER_ID_KEY+"$"+orderNumber+""
-//						+ "*"+CUSTOMER_ID_KEY+"$"+transaction.getUser().getUuid()+"*"+TRANSACTION_AMOUNT_KEY+"$"+amount+""
-//						+ "*"+CURRENCY_CODE_KEY+"$"+CURRENCY_CODE+"*"+REQUEST_DATE_TIME_KEY+"$"+format.format(currentDate)+""
-//						+ "*"+SERVICE_ID_KEY+"$"+getModuleCode(transaction)+"*"+SUCCESS_URL_KEY+"$"+RETURN_URL+""
-//						+ "*"+FAIL_URL_KEY+"$"+RETURN_URL+"*"+ADDITIONAL_FIELD1_KEY+"$"+userDetail.toString()+""
-//						+ "*"+ADDITIONAL_FIELD2_KEY+"$"+ADDITIONAL_FIELD_VALUE+"*"+ADDITIONAL_FIELD3_KEY+"$"+ADDITIONAL_FIELD_VALUE+""
-//						+ "*"+"ADDITIONAL_FIELD4_KEY"+"$"+transaction.getConsumerCode()+"*"+ADDITIONAL_FIELD5_KEY+"$"+getModuleCode(transaction);
-
-				UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(urlString).queryParams(params).build();
-
-				log.info("uriComponents: " + uriComponents.toUri().toString());
-
-				return uriComponents.toUri();
-//				return httpUrlConnection.getURL().toURI();
-			}
-//			return url.toURI();
-		} catch (Exception e) {
-			log.error("Unable to retrieve redirect URI from gateway", e);
-			throw new ServiceCallException("Redirect URI generation failed, invalid response received from gateway");
-
+		} catch (Exception ex) {
+			throw new RuntimeException("Error creating Razorpay order", ex);
 		}
 
 		/*
-		 * try { BufferedReader bufferedreader = new BufferedReader(new
-		 * InputStreamReader(vHttpUrlConnection.getInputStream())); vStringBuffer = new
-		 * StringBuffer(); String vRespData; while((vRespData =
-		 * bufferedreader.readLine()) != null) if(vRespData.length() != 0)
-		 * vStringBuffer.append(vRespData.trim()); bufferedreader.close();
-		 * bufferedreader = null; if (vInput != null) vInput.close(); if
-		 * (vHttpUrlConnection != null) vHttpUrlConnection = null; }catch(Exception ex)
-		 * {
+		 * try { UriComponents uriComponents =
+		 * UriComponentsBuilder.fromHttpUrl(urlString).queryParams(params).build();
 		 * 
-		 * }
+		 * log.info("uriComponents: " + uriComponents.toUri().toString());
+		 * 
+		 * return uriComponents.toUri(); // return httpUrlConnection.getURL().toURI(); }
+		 * catch (Exception e) {
+		 * log.error("Unable to retrieve redirect URI from gateway", e); throw new
+		 * ServiceCallException("Redirect URI generation failed, invalid response received from gateway"
+		 * ); }
 		 */
 
 	}
@@ -358,7 +259,7 @@ public class CcavenueGateway implements Gateway {
 					+ ACCESS_CODE);
 //			String orderNo = resp.getOrderNo();
 			log.info("encResp: " + encResp);
-			CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
+			RazorPayUtils ccavenueUtis = new RazorPayUtils(WORKING_KEY);
 			String decryptedData = ccavenueUtis.decrypt(encResp);
 			log.info("decryptedData: " + decryptedData);
 			String encRespString[] = decryptedData.split("&");
@@ -452,7 +353,7 @@ public class CcavenueGateway implements Gateway {
 		setGatewayDetails(tenantId);
 		log.info("fetchStatusFromGateway: MERCHANT_ID: " + MERCHANT_ID + ", WORKING_KEY: " + WORKING_KEY
 				+ ", ACCESS_CODE: " + ACCESS_CODE);
-		CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
+		RazorPayUtils ccavenueUtis = new RazorPayUtils(WORKING_KEY);
 		encryptedJsonData = ccavenueUtis.encrypt(orderStatusQueryJson);
 
 		URL url = null;
@@ -506,7 +407,7 @@ public class CcavenueGateway implements Gateway {
 		String encResponse;
 		Map<String, String> resp = new HashMap<String, String>();
 		if (vResponse != null && !vResponse.equals("")) {
-			Map hm = CcavenueUtils.tokenizeToHashMap(vResponse, "&", "=");
+			Map hm = RazorPayUtils.tokenizeToHashMap(vResponse, "&", "=");
 			encResponse = hm.containsKey("enc_response") ? hm.get("enc_response").toString() : "";
 			String vStatus = hm.containsKey("status") ? hm.get("status").toString() : "";
 			String vError_code = hm.containsKey("enc_error_code") ? hm.get("enc_error_code").toString() : "";
@@ -700,7 +601,7 @@ public class CcavenueGateway implements Gateway {
 		fields.add(queryMap.get(ADDITIONAL_FIELD5_KEY));
 
 		String message = String.join("|", fields);
-		queryMap.put("checksum", CcavenueUtils.generateCRC32Checksum(message, WORKING_KEY));
+		queryMap.put("checksum", RazorPayUtils.generateCRC32Checksum(message, WORKING_KEY));
 		queryMap.put("txURL", WS_URL);
 		ObjectMapper mapper = new ObjectMapper();
 		try {
@@ -752,16 +653,15 @@ public class CcavenueGateway implements Gateway {
 //			this.WORKING_KEY = "7B3E3FF7D56888F44E1A7D46DF24CF52";
 //		}
 
-		//Testing Details
+		// Testing Details
 //		this.MERCHANT_ID = "1941257";
 //		this.ACCESS_CODE = "ATII96KA89BB16IIBB";
 //		this.WORKING_KEY = "D682025F99E01FA0F0FAA079B1B3F793";
-		
-		
+
 //		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId);
 //		Map<String, Object> ccAvenueDetails = transactionsApiController.getCcavenueDetails(tenantId);
-		
-		Map<String, Object> ccAvenueDetails = pgDetailRepository.getCcavenueDetails(tenantId, "CCAVENUE");
+
+		Map<String, Object> ccAvenueDetails = pgDetailRepository.getCcavenueDetails(tenantId, "RAZORPAY");
 		this.MERCHANT_ID = ccAvenueDetails.get("merchant_id").toString();
 		this.ACCESS_CODE = ccAvenueDetails.get("access_code").toString();
 		this.WORKING_KEY = ccAvenueDetails.get("working_key").toString();
