@@ -262,7 +262,7 @@ public class RearYardService_Dhamtari extends RearYardService {
 						} else {
 							if (pl.getPlanInformation() != null && occupancy.getTypeHelper().getType() != null) {
 								if (A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()) && pl
-										.getPlanInformation().getDepthOfPlot().compareTo(BigDecimal.valueOf(8)) <= 0) {
+										.getPlanInformation().getDepthOfPlot().compareTo(BigDecimal.valueOf(7.62)) <= 0) {
 									exemptRearYard(pl, block, rearYardResult);
 								}
 							}
