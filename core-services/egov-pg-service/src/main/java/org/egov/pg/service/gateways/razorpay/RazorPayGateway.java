@@ -4,12 +4,10 @@ import static java.util.Objects.isNull;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -29,17 +27,20 @@ import org.egov.pg.repository.PgDetailRepository;
 import org.egov.pg.service.Gateway;
 import org.egov.pg.service.TransactionService;
 import org.egov.tracer.model.CustomException;
-import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -184,18 +185,58 @@ public class RazorPayGateway implements Gateway {
 		params.add("authorization", authHeader);
 
 		String urlString = "https://api.razorpay.com/v1/orders";
+		
+		HttpHeaders headers = new HttpHeaders();
+	    headers.set("Authorization", authHeader);
+	    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-		try {
-			UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(urlString).queryParams(params).build();
+	    MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+	    body.add("amount", amount.toString());
+	    body.add("currency", "INR");
+	    body.add("receipt", orderNumber);
+	    body.add("payment_capture", "1");
+	    
+	    HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
+	    
+	    try {
+	        ResponseEntity<String> response =
+	                restTemplate.postForEntity(urlString, entity, String.class);
 
-			log.info("uriComponents: " + uriComponents.toUri().toString());
+	        // Parse response JSON
+	        ObjectMapper mapper = new ObjectMapper();
+	        JsonNode json = mapper.readTree(response.getBody());
 
-			return uriComponents.toUri();
-//				return httpUrlConnection.getURL().toURI();
-		} catch (Exception e) {
-			log.error("Unable to retrieve redirect URI from gateway", e);
-			throw new ServiceCallException("Redirect URI generation failed, invalid response received from gateway");
-		}
+	        // Razorpay order ID
+	        String orderId = json.get("id").asText();
+
+	        // Prepare frontend redirect URL
+	        URI redirectUri = UriComponentsBuilder
+	                .fromUriString("https://checkout.razorpay.com/v1/checkout.js")
+	                .queryParam("order_id", orderId)
+	                .queryParam("amount", amount)
+	                .queryParam("key_id", ACCESS_CODE)
+	                .queryParam("receipt", orderNumber)
+	                .build()
+	                .toUri();
+
+	        return redirectUri;
+
+	    } catch (Exception ex) {
+	        throw new RuntimeException("Error creating Razorpay order", ex);
+	    }
+
+		/*
+		 * try { UriComponents uriComponents =
+		 * UriComponentsBuilder.fromHttpUrl(urlString).queryParams(params).build();
+		 * 
+		 * log.info("uriComponents: " + uriComponents.toUri().toString());
+		 * 
+		 * return uriComponents.toUri(); // return httpUrlConnection.getURL().toURI(); }
+		 * catch (Exception e) {
+		 * log.error("Unable to retrieve redirect URI from gateway", e); throw new
+		 * ServiceCallException("Redirect URI generation failed, invalid response received from gateway"
+		 * ); }
+		 */
 
 	}
 
