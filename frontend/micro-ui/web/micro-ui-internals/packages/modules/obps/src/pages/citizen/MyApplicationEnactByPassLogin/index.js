@@ -187,4 +187,4 @@ const MyApplicationEnactByPassLogin = () => {
   );
 };
 
-export default MyApplicationByPassLogin;
+export default MyApplicationEnactByPassLogin;
