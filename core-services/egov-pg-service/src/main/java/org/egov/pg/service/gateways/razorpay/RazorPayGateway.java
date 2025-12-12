@@ -222,37 +222,39 @@ public class RazorPayGateway implements Gateway {
 			 */
 
 			// Step 1: Create Razorpay Order
-		    ResponseEntity<String> response = restTemplate.postForEntity(urlString, entity, String.class);
+			ResponseEntity<String> response = restTemplate.postForEntity(urlString, entity, String.class);
 
-		    ObjectMapper mapper = new ObjectMapper();
-		    JsonNode json = mapper.readTree(response.getBody());
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode json = mapper.readTree(response.getBody());
 
-		    String orderId = json.get("id").asText();
+			log.info("response : " + json.toString());
 
-		    // Step 2: Create Razorpay Embedded Checkout Session
-		    String auth1 = Base64.getEncoder()
-		            .encodeToString((ACCESS_CODE + ":" + WORKING_KEY).getBytes());
+			String orderId = json.get("id").asText();
 
-		    HttpHeaders headers2 = new HttpHeaders();
-		    headers2.setContentType(MediaType.APPLICATION_JSON);
-		    headers2.set("Authorization", "Basic " + auth1);
+			// Step 2: Create Razorpay Embedded Checkout Session
+			String auth1 = Base64.getEncoder().encodeToString((ACCESS_CODE + ":" + WORKING_KEY).getBytes());
 
-		    ObjectNode sessionReq = mapper.createObjectNode();
-		    sessionReq.put("order_id", orderId);
-		    sessionReq.put("expire_by", (System.currentTimeMillis() / 1000) + 3600);
+			HttpHeaders headers2 = new HttpHeaders();
+			headers2.setContentType(MediaType.APPLICATION_JSON);
+			headers2.set("Authorization", "Basic " + auth1);
 
-		    HttpEntity<String> sessionEntity = new HttpEntity<>(sessionReq.toString(), headers2);
+			ObjectNode sessionReq = mapper.createObjectNode();
+			sessionReq.put("order_id", orderId);
+			sessionReq.put("expire_by", (System.currentTimeMillis() / 1000) + 3600);
 
-		    ResponseEntity<String> sessionResponse =
-		            restTemplate.postForEntity("https://api.razorpay.com/v1/checkout/embedded",
-		                    sessionEntity, String.class);
+			HttpEntity<String> sessionEntity = new HttpEntity<>(sessionReq.toString(), headers2);
 
-		    JsonNode sessionJson = mapper.readTree(sessionResponse.getBody());
+			ResponseEntity<String> sessionResponse = restTemplate
+					.postForEntity("https://api.razorpay.com/v1/checkout/embedded", sessionEntity, String.class);
 
-		    String checkoutUrl = sessionJson.get("checkout_url").asText();
+			JsonNode sessionJson = mapper.readTree(sessionResponse.getBody());
+			log.info("sessionResponse: " + sessionJson.toString());
 
-		    // Return this checkout URL to FE
-		    return new URI(checkoutUrl);
+			String checkoutUrl = sessionJson.get("checkout_url").asText();
+			log.info("checkoutUrl: " + checkoutUrl);
+
+			// Return this checkout URL to FE
+			return new URI(checkoutUrl);
 		} catch (Exception ex) {
 			throw new RuntimeException("Error creating Razorpay order", ex);
 		}
