@@ -42,6 +42,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -202,22 +203,56 @@ public class RazorPayGateway implements Gateway {
 		HttpEntity<String> entity = new HttpEntity<>(requestString, headers);
 
 		try {
-			ResponseEntity<String> response = restTemplate.postForEntity(urlString, entity, String.class);
+			/*
+			 * ResponseEntity<String> response = restTemplate.postForEntity(urlString,
+			 * entity, String.class);
+			 * 
+			 * // Parse response JSON ObjectMapper mapper = new ObjectMapper(); JsonNode
+			 * json = mapper.readTree(response.getBody());
+			 * 
+			 * // Razorpay order ID String orderId = json.get("id").asText();
+			 * 
+			 * // Prepare frontend redirect URL URI redirectUri =
+			 * UriComponentsBuilder.fromUriString(
+			 * "https://checkout.razorpay.com/v1/checkout.js") .queryParam("order_id",
+			 * orderId).queryParam("amount", amount).queryParam("key_id", ACCESS_CODE)
+			 * .queryParam("receipt", orderNumber).build().toUri();
+			 * 
+			 * return redirectUri;
+			 */
 
-			// Parse response JSON
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode json = mapper.readTree(response.getBody());
+			// Step 1: Create Razorpay Order
+		    ResponseEntity<String> response = restTemplate.postForEntity(urlString, entity, String.class);
 
-			// Razorpay order ID
-			String orderId = json.get("id").asText();
+		    ObjectMapper mapper = new ObjectMapper();
+		    JsonNode json = mapper.readTree(response.getBody());
 
-			// Prepare frontend redirect URL
-			URI redirectUri = UriComponentsBuilder.fromUriString("https://checkout.razorpay.com/v1/checkout.js")
-					.queryParam("order_id", orderId).queryParam("amount", amount).queryParam("key_id", ACCESS_CODE)
-					.queryParam("receipt", orderNumber).build().toUri();
+		    String orderId = json.get("id").asText();
 
-			return redirectUri;
+		    // Step 2: Create Razorpay Embedded Checkout Session
+		    String auth1 = Base64.getEncoder()
+		            .encodeToString((ACCESS_CODE + ":" + WORKING_KEY).getBytes());
 
+		    HttpHeaders headers2 = new HttpHeaders();
+		    headers2.setContentType(MediaType.APPLICATION_JSON);
+		    headers2.set("Authorization", "Basic " + auth1);
+
+		    ObjectNode sessionReq = mapper.createObjectNode();
+		    sessionReq.put("order_id", orderId);
+		    sessionReq.put("expire_by", (System.currentTimeMillis() / 1000) + 3600);
+
+		    HttpEntity<String> sessionEntity = new HttpEntity<>(sessionReq.toString(), headers2);
+
+		    ResponseEntity<String> sessionResponse =
+		            restTemplate.postForEntity("https://api.razorpay.com/v1/checkout/embedded",
+		                    sessionEntity, String.class);
+
+		    JsonNode sessionJson = mapper.readTree(sessionResponse.getBody());
+
+		    String checkoutUrl = sessionJson.get("checkout_url").asText();
+
+		    // Return this checkout URL to FE
+		    return new URI(checkoutUrl);
 		} catch (Exception ex) {
 			throw new RuntimeException("Error creating Razorpay order", ex);
 		}
