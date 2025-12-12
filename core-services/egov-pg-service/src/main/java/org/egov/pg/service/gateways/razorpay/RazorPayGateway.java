@@ -233,10 +233,11 @@ public class RazorPayGateway implements Gateway {
 
 			// Step 2: Create Razorpay Embedded Checkout Session
 			String auth1 = Base64.getEncoder().encodeToString((ACCESS_CODE + ":" + WORKING_KEY).getBytes());
+			String authHeader1 = "Basic " + auth1;
 
 			HttpHeaders headers2 = new HttpHeaders();
-			headers2.setContentType(MediaType.APPLICATION_JSON);
-			headers2.set("Authorization", "Basic " + auth1);
+			headers2.set("Authorization", authHeader1);
+			headers2.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
 			ObjectNode sessionReq = mapper.createObjectNode();
 			sessionReq.put("order_id", orderId);
