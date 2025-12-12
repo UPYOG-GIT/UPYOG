@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -27,6 +29,7 @@ import org.egov.pg.repository.PgDetailRepository;
 import org.egov.pg.service.Gateway;
 import org.egov.pg.service.TransactionService;
 import org.egov.tracer.model.CustomException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -43,6 +46,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.razorpay.Order;
+import com.razorpay.RazorpayClient;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -153,6 +158,9 @@ public class RazorPayGateway implements Gateway {
 		// set MerchantId, WorkingKey and AccessKey according to tenantId
 		setGatewayDetails(tenantId);
 
+		String keyId = ACCESS_CODE;
+		String keySecret = WORKING_KEY;
+
 		log.info("MERCHANT_ID: " + MERCHANT_ID + ", WORKING_KEY: " + WORKING_KEY + ", ACCESS_CODE: " + ACCESS_CODE);
 
 		log.info("transaction.getTxnId() : " + transaction.getTxnId());
@@ -203,6 +211,30 @@ public class RazorPayGateway implements Gateway {
 		HttpEntity<String> entity = new HttpEntity<>(requestString, headers);
 
 		try {
+
+			RazorpayClient client = new RazorpayClient(keyId, keySecret);
+
+			JSONObject orderRequest = new JSONObject();
+			orderRequest.put("amount", amount);
+			orderRequest.put("currency", "INR");
+			orderRequest.put("receipt", transaction.getTxnId());
+			orderRequest.put("payment_capture", 1);
+
+			Order order = client.orders.create(orderRequest);
+
+			String orderId = order.get("id");
+
+			log.info("Razorpay Order: " + order);
+
+			// Build redirect URI containing JSON data
+			String json = URLEncoder.encode("{\"orderId\":\"" + orderId + "\",\"amount\":" + amount
+					+ ",\"currency\":\"INR\",\"key\":\"" + keyId + "\"}", "UTF-8");
+
+			URI redirect = new URI("razorpay://order?data=" + json);
+
+			log.info("redirect : " + redirect.toString());
+
+			return redirect;
 			/*
 			 * ResponseEntity<String> response = restTemplate.postForEntity(urlString,
 			 * entity, String.class);
@@ -222,50 +254,50 @@ public class RazorPayGateway implements Gateway {
 			 */
 
 			// Step 1: Create Razorpay Order
-			ResponseEntity<String> response = restTemplate.postForEntity(urlString, entity, String.class);
+//			ResponseEntity<String> response = restTemplate.postForEntity(urlString, entity, String.class);
 
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode json = mapper.readTree(response.getBody());
-
-			log.info("response : " + json.toString());
-
-			String orderId = json.get("id").asText();
-
-			// Step 2: Create Razorpay Payment Link
-			String auth1 = ACCESS_CODE + ":" + WORKING_KEY;
-			String encodedAuth1 = Base64.getEncoder().encodeToString(auth1.getBytes());
-			String authHeader1 = "Basic " + encodedAuth1;
-
-			HttpHeaders headers2 = new HttpHeaders();
-			headers2.set("Authorization", "Basic " + encodedAuth1);
-			headers2.setContentType(MediaType.APPLICATION_JSON);
-
-			ObjectNode linkReq = mapper.createObjectNode();
-			linkReq.put("amount", amount);
-			linkReq.put("currency", "INR");
-			linkReq.put("reference_id", orderNumber);
-			linkReq.put("expire_by", (System.currentTimeMillis()/1000) + 3600);
-			linkReq.put("callback_url", callBackUrl);
-			linkReq.put("callback_method", "get");
-
-			ObjectNode customer = mapper.createObjectNode();
-			customer.put("name", transaction.getUser().getName());
-			customer.put("contact", transaction.getUser().getMobileNumber());
-			linkReq.set("customer", customer);
-
-			HttpEntity<String> linkEntity = new HttpEntity<>(linkReq.toString(), headers2);
-
-			ResponseEntity<String> linkResponse = restTemplate
-			        .postForEntity("https://api.razorpay.com/v1/payment_links", linkEntity, String.class);
-
-			JsonNode linkJson = mapper.readTree(linkResponse.getBody());
-			log.info("payment_link_response: " + linkJson);
-
-			String checkoutUrl = linkJson.get("short_url").asText();
-			log.info("checkoutUrl: " + checkoutUrl);
-
-			// Send to frontend
-			return new URI(checkoutUrl);
+			/*
+			 * ObjectMapper mapper = new ObjectMapper(); JsonNode json =
+			 * mapper.readTree(response.getBody());
+			 * 
+			 * log.info("response : " + json.toString());
+			 * 
+			 * String orderId = json.get("id").asText();
+			 * 
+			 * // Step 2: Create Razorpay Payment Link String auth1 = ACCESS_CODE + ":" +
+			 * WORKING_KEY; String encodedAuth1 =
+			 * Base64.getEncoder().encodeToString(auth1.getBytes()); String authHeader1 =
+			 * "Basic " + encodedAuth1;
+			 * 
+			 * HttpHeaders headers2 = new HttpHeaders(); headers2.set("Authorization",
+			 * "Basic " + encodedAuth1);
+			 * headers2.setContentType(MediaType.APPLICATION_JSON);
+			 * 
+			 * ObjectNode linkReq = mapper.createObjectNode(); linkReq.put("amount",
+			 * amount); linkReq.put("currency", "INR"); linkReq.put("reference_id",
+			 * orderNumber); linkReq.put("expire_by", (System.currentTimeMillis()/1000) +
+			 * 3600); linkReq.put("callback_url", callBackUrl);
+			 * linkReq.put("callback_method", "get");
+			 * 
+			 * ObjectNode customer = mapper.createObjectNode(); customer.put("name",
+			 * transaction.getUser().getName()); customer.put("contact",
+			 * transaction.getUser().getMobileNumber()); linkReq.set("customer", customer);
+			 * 
+			 * HttpEntity<String> linkEntity = new HttpEntity<>(linkReq.toString(),
+			 * headers2);
+			 * 
+			 * ResponseEntity<String> linkResponse = restTemplate
+			 * .postForEntity("https://api.razorpay.com/v1/payment_links", linkEntity,
+			 * String.class);
+			 * 
+			 * JsonNode linkJson = mapper.readTree(linkResponse.getBody());
+			 * log.info("payment_link_response: " + linkJson);
+			 * 
+			 * String checkoutUrl = linkJson.get("short_url").asText();
+			 * log.info("checkoutUrl: " + checkoutUrl);
+			 * 
+			 * // Send to frontend return new URI(checkoutUrl);
+			 */
 		} catch (Exception ex) {
 			throw new RuntimeException("Error creating Razorpay order", ex);
 		}
