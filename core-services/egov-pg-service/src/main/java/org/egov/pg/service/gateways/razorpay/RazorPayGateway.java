@@ -320,6 +320,8 @@ public class RazorPayGateway implements Gateway {
 
 			String status1 = payment1.get("status"); // captured / authorized / failed
 			String method = payment1.get("method");
+			Double amount = payment1.get("amount");
+			String amount1 = String.valueOf(amount / 100);
 
 			if (status1.equalsIgnoreCase("Captured")) {
 				responseMap.put("order_status", "Success");
@@ -331,7 +333,7 @@ public class RazorPayGateway implements Gateway {
 				responseMap.put("tracking_id", "");
 			}
 
-			responseMap.put("amount", payment1.get("amount"));
+			responseMap.put("amount", amount1);
 			responseMap.put("tracking_id", payment1.get("id"));
 
 		} catch (RazorpayException e) {
@@ -349,7 +351,6 @@ public class RazorPayGateway implements Gateway {
 //		return currentStatus;
 
 	}
-
 
 	@Override
 	public String generateRedirectFormData(Transaction transaction) {
