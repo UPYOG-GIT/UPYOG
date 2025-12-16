@@ -98,10 +98,17 @@ public class TransactionsApiController {
 			@RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam Map<String, String> params) {
 		log.info("inside /transaction/v1/_update api......");
 		String txnId = params.get("transactionId");
-		String encResp = transactionService.getResponse(txnId);
-		log.info("encResp: " + encResp);
-		params.put("encResp", encResp);
-		params.put("FromUpdateAPI", "true");
+		String consumerCode = params.get("consumerCode");
+		String encResp = "";
+		if (!consumerCode.contains("FSM")) {
+			encResp = transactionService.getResponse(txnId);
+			log.info("encResp: " + encResp);
+			params.put("encResp", encResp);
+			params.put("FromUpdateAPI", "true");
+		} else {
+			params.put("txnId", txnId);
+		}
+
 		log.info("params.toString(): " + params.toString());
 		List<Transaction> transactions = transactionService.updateTransaction(requestInfoWrapper.getRequestInfo(),
 				params);
