@@ -74,7 +74,7 @@ public class PgDetailRepository {
 	}
 
 	public void insertRazorPayOrder(String txnId, String orderId) {
-		String query = "INSERT INTO eg_pg_razorpay_txn (txn_id, order_id) VALUES (" + txnId + ", " + orderId + ")";
+		String query = "INSERT INTO eg_pg_razorpay_txn (txn_id, order_id) VALUES ('" + txnId + "', '" + orderId + "')";
 		log.info("insertRazorPayOrder Query: " + query);
 		int insertResult = jdbcTemplate.update(query);
 		log.info("insertRazorPayOrder : " + insertResult + " data inserted");
