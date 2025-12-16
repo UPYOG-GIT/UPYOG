@@ -320,7 +320,8 @@ public class RazorPayGateway implements Gateway {
 
 			String status1 = payment1.get("status"); // captured / authorized / failed
 			String method = payment1.get("method");
-			Double amount = payment1.get("amount");
+			Integer amountInt = (Integer) payment1.get("amount");
+			Double amount = amountInt.doubleValue();
 			String amount1 = String.valueOf(amount / 100);
 
 			if (status1.equalsIgnoreCase("Captured")) {
