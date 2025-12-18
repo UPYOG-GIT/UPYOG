@@ -181,8 +181,8 @@ public class RazorPayGateway implements Gateway {
 		String authHeader = "Basic " + encodedAuth;
 
 		if (WORKING_KEY != null && !WORKING_KEY.equals("") && requestString != null && !requestString.equals("")) {
-			RazorPayUtils ccavenueUtis = new RazorPayUtils(WORKING_KEY);
-			encryptedJsonData = ccavenueUtis.encrypt(requestString);
+			RazorPayUtils RazorPayUtils = new RazorPayUtils(WORKING_KEY);
+			encryptedJsonData = RazorPayUtils.encrypt(requestString);
 		}
 
 		String[] pairs = requestString.split("&");
@@ -261,7 +261,7 @@ public class RazorPayGateway implements Gateway {
 	}
 
 	private Transaction transformRawResponse(Map<String, String> resp, Transaction currentStatus) {
-		log.info("inside CcavenueGateway.transformRawResponse().....");
+		log.info("inside RazorPayGateway.transformRawResponse().....");
 		Transaction.TxnStatusEnum status;
 
 		String gatewayStatus = resp.get("order_status");
@@ -356,7 +356,7 @@ public class RazorPayGateway implements Gateway {
 	@Override
 	public String generateRedirectFormData(Transaction transaction) {
 
-		log.info("inside CCAvenue.generateRedirectFormData()");
+		log.info("inside RazorPay.generateRedirectFormData()");
 //		PgDetail pgDetail = pgDetailRepository.getPgDetailByTenantId(requestInfo, transaction.getTenantId());
 
 		/*
@@ -445,9 +445,9 @@ public class RazorPayGateway implements Gateway {
 		try {
 			urlData = mapper.writeValueAsString(queryMap);
 		} catch (Exception e) {
-			log.error("CCAVENUE URL generation failed", e);
+			log.error("RazorPay URL generation failed", e);
 			throw new CustomException("URL_GEN_FAILED",
-					"CCAVENUE URL generation failed, gateway redirect URI cannot be generated");
+					"RazorPay URL generation failed, gateway redirect URI cannot be generated");
 		}
 		return urlData;
 	}
@@ -499,11 +499,11 @@ public class RazorPayGateway implements Gateway {
 //		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId);
 //		Map<String, Object> ccAvenueDetails = transactionsApiController.getCcavenueDetails(tenantId);
 
-		Map<String, Object> ccAvenueDetails = pgDetailRepository.getCcavenueDetails(tenantId, "RAZORPAY");
-		this.MERCHANT_ID = ccAvenueDetails.get("merchant_id").toString();
-		this.ACCESS_CODE = ccAvenueDetails.get("access_code").toString();
-		this.WORKING_KEY = ccAvenueDetails.get("working_key").toString();
-		this.WS_URL = ccAvenueDetails.get("gateway_url").toString();
+		Map<String, Object> RazorPayDetails = pgDetailRepository.getCcavenueDetails(tenantId, "RAZORPAY");
+		this.MERCHANT_ID = RazorPayDetails.get("merchant_id").toString();
+		this.ACCESS_CODE = RazorPayDetails.get("access_code").toString();
+		this.WORKING_KEY = RazorPayDetails.get("working_key").toString();
+		this.WS_URL = RazorPayDetails.get("gateway_url").toString();
 	}
 
 	private void insertOrderDetails(String txnId, String orderId) {

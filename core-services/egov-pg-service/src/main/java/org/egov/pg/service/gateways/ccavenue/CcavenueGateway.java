@@ -510,6 +510,7 @@ public class CcavenueGateway implements Gateway {
 			encResponse = hm.containsKey("enc_response") ? hm.get("enc_response").toString() : "";
 			String vStatus = hm.containsKey("status") ? hm.get("status").toString() : "";
 			String vError_code = hm.containsKey("enc_error_code") ? hm.get("enc_error_code").toString() : "";
+			log.info("vStatus: " + vStatus);
 			if (vStatus.equals("1")) {// If Api call failed
 				log.info("enc_response : " + encResponse);
 				log.info("error_code : " + vError_code);
@@ -523,7 +524,8 @@ public class CcavenueGateway implements Gateway {
 				log.info("Dec Response : " + decResponse);
 			}
 
-			if (vStatus.equals("0") && decResponse != null) {
+//			if (vStatus.equals("0") && decResponse != null) {
+			if (decResponse != null) {
 				String[] keyValuePairs = decResponse.split(",");
 				for (String pair : keyValuePairs) {
 					String[] entry = pair.split(":");
@@ -752,15 +754,14 @@ public class CcavenueGateway implements Gateway {
 //			this.WORKING_KEY = "7B3E3FF7D56888F44E1A7D46DF24CF52";
 //		}
 
-		//Testing Details
+		// Testing Details
 //		this.MERCHANT_ID = "1941257";
 //		this.ACCESS_CODE = "ATII96KA89BB16IIBB";
 //		this.WORKING_KEY = "D682025F99E01FA0F0FAA079B1B3F793";
-		
-		
+
 //		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId);
 //		Map<String, Object> ccAvenueDetails = transactionsApiController.getCcavenueDetails(tenantId);
-		
+
 		Map<String, Object> ccAvenueDetails = pgDetailRepository.getCcavenueDetails(tenantId, "CCAVENUE");
 		this.MERCHANT_ID = ccAvenueDetails.get("merchant_id").toString();
 		this.ACCESS_CODE = ccAvenueDetails.get("access_code").toString();
