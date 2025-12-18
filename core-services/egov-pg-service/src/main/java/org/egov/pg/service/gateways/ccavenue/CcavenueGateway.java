@@ -543,12 +543,18 @@ public class CcavenueGateway implements Gateway {
 					log.info("timeDifference: " + timeDifference);
 					if (resp.get("order_status").equalsIgnoreCase("Shipped")) {
 						responseMap.put("order_status", "Success");
+						responseMap.put("failure_message", "");
 					} else if (resp.get("order_status").equalsIgnoreCase("Unsuccessful")
 							|| resp.get("order_status").equalsIgnoreCase("Aborted")
 							|| resp.get("order_status").equalsIgnoreCase("Failure")
 							|| (resp.get("order_status").equalsIgnoreCase("Initiated")
 									&& (timeDifference >= 900000 && timeDifference <= 1800000))) {
 						responseMap.put("order_status", "Failure");
+						responseMap.put("tracking_id", "");
+						if (resp.containsKey("error_desc") && resp.get("error_desc") != null
+								&& !resp.get("error_desc").equals("")) {
+							responseMap.put("error_desc", resp.get("error_desc"));
+						}
 					}
 
 //					else if (resp.get("order_status").equalsIgnoreCase("Initiated")
@@ -574,15 +580,16 @@ public class CcavenueGateway implements Gateway {
 				if (resp.containsKey("order_option_type")) {
 					responseMap.put("payment_mode", resp.get("order_option_type"));
 				}
-				if (resp.containsKey("error_desc")) {
-					responseMap.put("error_desc", resp.get("error_desc"));
-					responseMap.put("order_status", "Failure");
-					responseMap.put("tracking_id", "");
-				}
+//				if (resp.containsKey("error_desc") && resp.get("error_desc") != null
+//						&& !resp.get("error_desc").equals("")) {
+//					responseMap.put("error_desc", resp.get("error_desc"));
+//					responseMap.put("order_status", "Failure");
+//					responseMap.put("tracking_id", "");
+//				}
 
 //				responseMap.put("payment_mode", "");
 				responseMap.put("status_code", "");
-				responseMap.put("failure_message", "");
+
 				return transformRawResponse(responseMap, currentStatus);
 			}
 		}
