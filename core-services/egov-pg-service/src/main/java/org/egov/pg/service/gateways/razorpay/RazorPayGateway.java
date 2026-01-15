@@ -36,6 +36,7 @@ import org.egov.pg.utils.Utils;
 import org.egov.tracer.model.CustomException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -94,6 +95,8 @@ public class RazorPayGateway implements Gateway {
 	private final String CURRENCY_CODE;
 	private final String REDIRECT_URL;
 	private final String ORIGINAL_RETURN_URL_KEY;
+	
+	@Value("${razorpay.url.checkout:https://checkout.razorpay.com/v1/checkout.js}")
 	private final String CHECKOUT_URL;
 	private final String MESSAGE_TYPE_KEY = "messageType";
 	private final String MERCHANT_ID_KEY = "merchant_id";
@@ -119,6 +122,8 @@ public class RazorPayGateway implements Gateway {
 	private String TX_DATE_FORMAT;
 	private final RequestInfo requestInfo;
 	private PgDetailRepository pgDetailRepository;
+	
+	
 	private final String ORDER_URL = "https://api.razorpay.com/v1/orders";
 	@Autowired
 	public RazorPayGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper,
