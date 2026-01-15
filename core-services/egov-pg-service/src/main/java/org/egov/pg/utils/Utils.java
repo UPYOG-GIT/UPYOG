@@ -27,16 +27,18 @@ public class Utils {
         return new BigDecimal(paise).movePointLeft(2).toPlainString();
     }
 
-	public static String convertObjectToString(ObjectMapper mapper, Map<String, Object> options) {
+	public static String convertObjectToString(ObjectMapper mapper, Map<String, Object> options) throws  Exception {
 		// TODO Auto-generated method stub
-		String objct = "";
-		try {
-			 objct = mapper.writeValueAsString(options);
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return objct;
+//		String objct = "";
+//		try {
+//			 objct = mapper.writeValueAsString(options);
+//		} catch (JsonProcessingException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return objct;
+	
+		 return mapper.writeValueAsString(options);
 	}
 
 }
