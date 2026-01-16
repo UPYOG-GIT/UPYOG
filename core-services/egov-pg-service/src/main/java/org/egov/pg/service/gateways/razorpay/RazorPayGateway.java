@@ -438,8 +438,8 @@ public class RazorPayGateway implements Gateway {
 
             String ORDER_URL = "https://api.razorpay.com/v1/orders";
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(orderRequest, headers);
-            ResponseEntity<RazorpayOrderResponse> response = restTemplate.postForEntity( // Fixed: Use correct response class
-                    ORDER_URL, request, RazorpayOrderResponse.class);
+            ResponseEntity<RazorPayResponse> response = restTemplate.postForEntity( // Fixed: Use correct response class
+                    ORDER_URL, request, RazorPayResponse.class);
 
             log.info("Razorpay order creation response: {}", response);
             if (response.getBody() != null) {
