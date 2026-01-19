@@ -310,8 +310,13 @@ public class RazorPayGateway implements Gateway {
                  &eg_pg_txnid=PG_PG_2025_11_26_000640_21
                  */
             String originalReturnUrl = transaction.getCallbackUrl();
-            String callbackUrl = UriComponentsBuilder.fromHttpUrl(REDIRECT_URL)
-                    .queryParam(ORIGINAL_RETURN_URL_KEY, originalReturnUrl)
+//            String callbackUrl = UriComponentsBuilder.fromHttpUrl(REDIRECT_URL)
+//                    .queryParam(ORIGINAL_RETURN_URL_KEY, originalReturnUrl)
+//                    .queryParam(ORDER_ID_KEY, transaction.getTxnId())
+//                    .build()
+//                    .encode()
+//                    .toUriString();
+            String callbackUrl = UriComponentsBuilder.fromHttpUrl(originalReturnUrl)
                     .queryParam(ORDER_ID_KEY, transaction.getTxnId())
                     .build()
                     .encode()
