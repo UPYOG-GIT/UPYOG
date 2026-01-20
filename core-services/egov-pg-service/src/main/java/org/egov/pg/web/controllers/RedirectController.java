@@ -153,8 +153,28 @@ public class RedirectController {
 				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString()).queryParams(params)
 						.build().encode().toUri());
 			} else {
-				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
-						.queryParams(formData).build().encode().toUri());
+//				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
+//						.queryParams(formData).build().encode().toUri());
+				String originalReturnUrl = UriComponentsBuilder
+			            .fromHttpUrl(formData.get(returnUrlKey).get(0))
+			            .build()
+			            .getQueryParams()
+			            .getFirst("originalreturnurl");
+
+//			    originalReturnUrl = URLDecoder.decode(originalReturnUrl, StandardCharsets.UTF_8.name());
+                
+//				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
+//					.queryParams(formData).build().encode().toUri());
+				
+			     httpHeaders.setLocation(UriComponentsBuilder
+			            .fromHttpUrl(originalReturnUrl)
+			            .queryParam("eg_pg_txnid", txnId)
+			            .build()
+			            .encode()
+			            .toUri());
+			
+			
+			
 			}
 		} catch (Exception ex) {
 			log.error("Exception : " + ex);
@@ -162,6 +182,8 @@ public class RedirectController {
 		log.info("httpHeaders: " + httpHeaders.toString());
 		return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);
 	}
+	
+
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<Object> handleError(Exception e) {
