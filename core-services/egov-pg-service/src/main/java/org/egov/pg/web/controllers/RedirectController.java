@@ -158,63 +158,31 @@ public class RedirectController {
 			} else if(gateway1 != null && gateway1.equalsIgnoreCase("RAZORPAY")) {
 //				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
 //						.queryParams(formData).build().encode().toUri());
-				
-				log.info("Processing Razorpay/Default Redirection");
-			    
-			    // 1. Get the full callback URL from the form data
-			    String rawCallbackUrl = formData.getFirst(returnUrlKey);
-			    
-			    // 2. Extract the 'originalreturnurl' parameter
-			    String originalReturnUrl = UriComponentsBuilder.fromHttpUrl(rawCallbackUrl)
+				String originalReturnUrl = UriComponentsBuilder
+			            .fromHttpUrl(formData.get(returnUrlKey).get(0))
 			            .build()
 			            .getQueryParams()
 			            .getFirst("originalreturnurl");
-
-			    if (originalReturnUrl != null) {
-			        // 3. Decode the URL once to handle %3D (=) and %26 (&)
-			        String decodedUrl = URLDecoder.decode(originalReturnUrl, StandardCharsets.UTF_8.name());
-
-			        // 4. Use replaceQueryParam to prevent duplicate 'eg_pg_txnid' keys
-			        // Use fromUriString for the decoded path to preserve the structure
-			        httpHeaders.setLocation(UriComponentsBuilder
-			                .fromUriString(decodedUrl)
-			                .replaceQueryParam("eg_pg_txnid", txnId) 
-			                .build()
-			                .encode() 
-			                .toUri());
-			                
-			        log.info("Redirecting to cleaned URL: " + httpHeaders.getLocation());
-			    } else {
-			        // Fallback if no originalreturnurl is found
-			        httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(defaultURL).build().toUri());
-			    }
-//				String originalReturnUrl = UriComponentsBuilder
-//			            .fromHttpUrl(formData.get(returnUrlKey).get(0))
-//			            .build()
-//			            .getQueryParams()
-//			            .getFirst("originalreturnurl");
-//                
-//			    originalReturnUrl = URLDecoder.decode(originalReturnUrl, StandardCharsets.UTF_8.name());
+                
+			    originalReturnUrl = URLDecoder.decode(originalReturnUrl, StandardCharsets.UTF_8.name());
                 
 //				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
 //					.queryParams(formData).build().encode().toUri());
 				
-//			     httpHeaders.setLocation(UriComponentsBuilder
-//			            .fromHttpUrl(originalReturnUrl)
-//			            .queryParam("eg_pg_txnid", txnId)
-//			            .build()
-//			            .encode()
-//			            .toUri());
+			     httpHeaders.setLocation(UriComponentsBuilder
+			            .fromHttpUrl(originalReturnUrl)
+			            .queryParam("eg_pg_txnid", txnId)
+			            .build()
+			            .encode()
+			            .toUri());
 			
 			
 			
 			}
 			else {
-				
 				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
-						.queryParams(formData).build().encode().toUri());
+				.queryParams(formData).build().encode().toUri());
 			}
-		
 		} catch (Exception ex) {
 			log.error("Exception : " + ex);
 		}
