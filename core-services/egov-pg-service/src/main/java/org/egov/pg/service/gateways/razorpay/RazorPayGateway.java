@@ -32,13 +32,14 @@ import java.util.Map;
 public class RazorPayGateway implements Gateway {
 
     private static final String GATEWAY_NAME = "RAZORPAY";
-    private final String KEY_ID;
-    private final String KEY_SECRET;
+    private String KEY_ID;
+    private String KEY_SECRET;
     private final String ORDER_URL;
     private final String PAYMENT_URL;
     private final String CHECKOUT_URL;
     private final boolean ACTIVE;
-
+    private  String ACCESS_CODE;
+    private  String WORKING_KEY;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
@@ -48,8 +49,10 @@ public class RazorPayGateway implements Gateway {
 
 
     @Autowired
-    public RazorPayGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper) {
-        this.restTemplate = restTemplate;
+    public RazorPayGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper, String access_CODE) {
+        this.ACCESS_CODE = access_CODE;
+		this.WORKING_KEY = "";
+		this.restTemplate = restTemplate;
 
         ACTIVE = Boolean.parseBoolean(environment.getRequiredProperty("razorpay.active"));
         KEY_ID = environment.getRequiredProperty("razorpay.key.id");
@@ -62,6 +65,8 @@ public class RazorPayGateway implements Gateway {
         this.objectMapper = objectMapper;
     }
 
+//    
+    
     @Override
     public URI generateRedirectURI(Transaction transaction) {
         try {
@@ -76,7 +81,8 @@ public class RazorPayGateway implements Gateway {
             throw new CustomException("ORDER_CREATION_FAILED", "Failed to create Razorpay order");
         }
     }
-
+     
+    
     @Override
     public String generateRedirectFormData(Transaction transaction) {
         try {
@@ -232,7 +238,38 @@ public class RazorPayGateway implements Gateway {
     }
 
 
+    private void setGatewayDetails(String tenantId) {
+        log.info("inside setGatewayDetails..... tenantId: " + tenantId);
+        //		if (tenantId.equals("cg.birgaon")) {
+        //			this.MERCHANT_ID = "2136858";
+        //			this.ACCESS_CODE = "AVWN26KC60AF20NWFA";
+        //			this.WORKING_KEY = "B27E5242E8FC395A07F65AB900F021FA";
+        //		} else if (tenantId.equals("cg.dhamtari")) {
+        //			this.MERCHANT_ID = "1941257";
+        //			this.ACCESS_CODE = "AVII96KA89BB16IIBB";
+        //			this.WORKING_KEY = "D682025F99E01FA0F0FAA079B1B3F793";
+        //		} else if (tenantId.equals("cg.bhilaicharoda")) {
+        //			this.MERCHANT_ID = "2160767";
+        //			this.ACCESS_CODE = "AVII29KC44BF31IIFB";
+        //			this.WORKING_KEY = "7B3E3FF7D56888F44E1A7D46DF24CF52";
+        //		}
 
+        // Testing Details
+        //		this.MERCHANT_ID = "1941257";
+        //		this.ACCESS_CODE = "ATII96KA89BB16IIBB";
+        //		this.WORKING_KEY = "D682025F99E01FA0F0FAA079B1B3F793";
+
+        //		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId);
+        //		Map<String, Object> ccAvenueDetails = transactionsApiController.getCcavenueDetails(tenantId);
+
+        Map<String, Object> RazorPayDetails = pgDetailRepository.getCcavenueDetails(tenantId, "RAZORPAY");
+//        this.MERCHANT_ID = RazorPayDetails.get("merchant_id").toString();
+        this.ACCESS_CODE = RazorPayDetails.get("access_code").toString();
+        this.WORKING_KEY = RazorPayDetails.get("working_key").toString();
+//        this.WS_URL = RazorPayDetails.get("gateway_url").toString();
+        KEY_ID = ACCESS_CODE;
+        KEY_SECRET = WORKING_KEY;
+    }
 
     private void insertOrderDetails(String txnId, String orderId) {
         pgDetailRepository.insertRazorPayOrder(txnId, orderId);
@@ -243,6 +280,8 @@ public class RazorPayGateway implements Gateway {
         String orderId = orderIdMap.get("order_id").toString();
         return orderId;
     }
+
+   
     
     private Transaction transformRawResponse(RazorpayPaymentResponse resp, Transaction currentStatus) {
         Transaction.TxnStatusEnum status = Transaction.TxnStatusEnum.PENDING;
