@@ -168,7 +168,7 @@ public class RedirectController {
                 
 //				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
 //					.queryParams(formData).build().encode().toUri());
-				
+				log.info("iinside the razorpay ");
 			     httpHeaders.setLocation(UriComponentsBuilder
 			            .fromHttpUrl(originalReturnUrl)
 			            .queryParam("eg_pg_txnid", txnId)
