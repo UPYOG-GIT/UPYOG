@@ -80,7 +80,8 @@ public class RedirectController {
 //		CcavenueUtils ccavenueUtis = new CcavenueUtils(WORKING_KEY);
 		CcavenueResponse ccavenueResponse = new CcavenueResponse();
 		String encResp = formData.get("encResp").get(0);
-
+		
+        String razorpay_order_id = formData.get("razorpay_order_id").get(0);
 		log.info("encResp: " + encResp);
 		ccavenueResponse.setEncResp(encResp);
 		ccavenueResponse.setOrderNo(orderNo);
@@ -155,29 +156,6 @@ public class RedirectController {
 //				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(returnURL).build().encode().toUri());
 				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString()).queryParams(params)
 						.build().encode().toUri());
-			} else if(gateway1 != null && gateway1.equalsIgnoreCase("RAZORPAY")) {
-//				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
-//						.queryParams(formData).build().encode().toUri());
-				String originalReturnUrl = UriComponentsBuilder
-			            .fromHttpUrl(formData.get(returnUrlKey).get(0))
-			            .build()
-			            .getQueryParams()
-			            .getFirst("originalreturnurl");
-                
-			    originalReturnUrl = URLDecoder.decode(originalReturnUrl, StandardCharsets.UTF_8.name());
-                
-//				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
-//					.queryParams(formData).build().encode().toUri());
-				log.info("iinside the razorpay ");
-			     httpHeaders.setLocation(UriComponentsBuilder
-			            .fromHttpUrl(originalReturnUrl)
-			            .queryParam("eg_pg_txnid", txnId)
-			            .build()
-			            .encode()
-			            .toUri());
-			
-			
-			
 			}
 			else {
 				httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))

@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.egov.pg.repository.PgDetailRepository;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.math.BigDecimal;
@@ -32,25 +32,24 @@ import java.util.Map;
 public class RazorPayGateway implements Gateway {
 
     private static final String GATEWAY_NAME = "RAZORPAY";
-    private String KEY_ID;
-    private String KEY_SECRET;
+    private final String KEY_ID;
+    private final String KEY_SECRET;
     private final String ORDER_URL;
     private final String PAYMENT_URL;
     private final String CHECKOUT_URL;
     private final boolean ACTIVE;
-    private  String ACCESS_CODE;
-    private  String WORKING_KEY;
+
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
     private final String REDIRECT_URL;
     private final String ORIGINAL_RETURN_URL_KEY;
-    private PgDetailRepository pgDetailRepository;
 
 
     @Autowired
     public RazorPayGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper) {
-		this.restTemplate = restTemplate;
+        this.restTemplate = restTemplate;
+
         ACTIVE = Boolean.parseBoolean(environment.getRequiredProperty("razorpay.active"));
         KEY_ID = environment.getRequiredProperty("razorpay.key.id");
         KEY_SECRET = environment.getRequiredProperty("razorpay.key.secret");
@@ -60,12 +59,8 @@ public class RazorPayGateway implements Gateway {
         REDIRECT_URL = environment.getRequiredProperty("razorpay.redirect.url");
         ORIGINAL_RETURN_URL_KEY = environment.getRequiredProperty("razorpay.original.return.url.key");
         this.objectMapper = objectMapper;
-        this.pgDetailRepository = pgDetailRepository;
-       
     }
 
-//    
-    
     @Override
     public URI generateRedirectURI(Transaction transaction) {
         try {
@@ -80,8 +75,7 @@ public class RazorPayGateway implements Gateway {
             throw new CustomException("ORDER_CREATION_FAILED", "Failed to create Razorpay order");
         }
     }
-     
-    
+
     @Override
     public String generateRedirectFormData(Transaction transaction) {
         try {
@@ -90,7 +84,7 @@ public class RazorPayGateway implements Gateway {
 
             // Generate checkout options as JSON
             Map<String, Object> options = transaction.getAdditionalDetails() == null ? new HashMap<>() : (Map<String, Object>) transaction.getAdditionalDetails();
-            options.put("key", ACCESS_CODE);
+            options.put("key", KEY_ID);
             String amtAsPaise = Utils.formatAmtAsPaise(transaction.getTxnAmount());
             options.put("amount", amtAsPaise);
             options.put("currency", "INR");
@@ -141,9 +135,9 @@ public class RazorPayGateway implements Gateway {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.setBasicAuth(ACCESS_CODE, WORKING_KEY);
+            headers.setBasicAuth(KEY_ID, KEY_SECRET);
 
-            log.info("Key Id and Secrets coming from Env: {} {}", WORKING_KEY, ACCESS_CODE);
+            log.info("Key Id and Secrets coming from Env: {} {}", KEY_SECRET, KEY_ID);
             Map<String, Object> orderRequest = new HashMap<>();
             String amtAsPaise = Utils.formatAmtAsPaise(transaction.getTxnAmount());
             orderRequest.put("amount", amtAsPaise);
@@ -181,7 +175,7 @@ public class RazorPayGateway implements Gateway {
 
             // Fetch payment details
             HttpHeaders headers = new HttpHeaders();
-            headers.setBasicAuth(ACCESS_CODE, WORKING_KEY);
+            headers.setBasicAuth(KEY_ID, KEY_SECRET);
             HttpEntity<Void> request = new HttpEntity<>(headers);
 
             String orderUrl = ORDER_URL + "/" + orderId;
@@ -202,7 +196,7 @@ public class RazorPayGateway implements Gateway {
         try {
             String payload = orderId + "|" + paymentId;
             Mac mac = Mac.getInstance("HmacSHA256");
-            SecretKeySpec secretKeySpec = new SecretKeySpec(WORKING_KEY.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+            SecretKeySpec secretKeySpec = new SecretKeySpec(KEY_SECRET.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
             mac.init(secretKeySpec);
             byte[] hash = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
             String expectedSignature = bytesToHex(hash);
@@ -236,52 +230,6 @@ public class RazorPayGateway implements Gateway {
         return "razorpay_payment_id";
     }
 
-
-    private void setGatewayDetails(String tenantId) {
-        log.info("inside setGatewayDetails..... tenantId: " + tenantId);
-        //		if (tenantId.equals("cg.birgaon")) {
-        //			this.MERCHANT_ID = "2136858";
-        //			this.ACCESS_CODE = "AVWN26KC60AF20NWFA";
-        //			this.WORKING_KEY = "B27E5242E8FC395A07F65AB900F021FA";
-        //		} else if (tenantId.equals("cg.dhamtari")) {
-        //			this.MERCHANT_ID = "1941257";
-        //			this.ACCESS_CODE = "AVII96KA89BB16IIBB";
-        //			this.WORKING_KEY = "D682025F99E01FA0F0FAA079B1B3F793";
-        //		} else if (tenantId.equals("cg.bhilaicharoda")) {
-        //			this.MERCHANT_ID = "2160767";
-        //			this.ACCESS_CODE = "AVII29KC44BF31IIFB";
-        //			this.WORKING_KEY = "7B3E3FF7D56888F44E1A7D46DF24CF52";
-        //		}
-
-        // Testing Details
-        //		this.MERCHANT_ID = "1941257";
-        //		this.ACCESS_CODE = "ATII96KA89BB16IIBB";
-        //		this.WORKING_KEY = "D682025F99E01FA0F0FAA079B1B3F793";
-
-        //		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId);
-        //		Map<String, Object> ccAvenueDetails = transactionsApiController.getCcavenueDetails(tenantId);
-
-        Map<String, Object> RazorPayDetails = pgDetailRepository.getCcavenueDetails(tenantId, "RAZORPAY");
-//        this.MERCHANT_ID = RazorPayDetails.get("merchant_id").toString();
-        this.ACCESS_CODE = RazorPayDetails.get("access_code").toString();
-        this.WORKING_KEY = RazorPayDetails.get("working_key").toString();
-//        this.WS_URL = RazorPayDetails.get("gateway_url").toString();
-        KEY_ID = ACCESS_CODE;
-        KEY_SECRET = WORKING_KEY;
-    }
-
-    private void insertOrderDetails(String txnId, String orderId) {
-        pgDetailRepository.insertRazorPayOrder(txnId, orderId);
-    }
-
-    private String getOrderDetails(String txnId) {
-        Map<String, Object> orderIdMap = pgDetailRepository.getRazorPayOrderDetail(txnId);
-        String orderId = orderIdMap.get("order_id").toString();
-        return orderId;
-    }
-
-   
-    
     private Transaction transformRawResponse(RazorpayPaymentResponse resp, Transaction currentStatus) {
         Transaction.TxnStatusEnum status = Transaction.TxnStatusEnum.PENDING;
 
