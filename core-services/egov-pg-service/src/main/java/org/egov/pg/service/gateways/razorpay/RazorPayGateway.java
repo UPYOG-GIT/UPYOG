@@ -50,8 +50,6 @@ public class RazorPayGateway implements Gateway {
 
     @Autowired
     public RazorPayGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper, String access_CODE) {
-        this.ACCESS_CODE = KEY_ID;
-		this.WORKING_KEY = KEY_SECRET;
 		this.restTemplate = restTemplate;
         ACTIVE = Boolean.parseBoolean(environment.getRequiredProperty("razorpay.active"));
         KEY_ID = environment.getRequiredProperty("razorpay.key.id");
@@ -62,6 +60,8 @@ public class RazorPayGateway implements Gateway {
         REDIRECT_URL = environment.getRequiredProperty("razorpay.redirect.url");
         ORIGINAL_RETURN_URL_KEY = environment.getRequiredProperty("razorpay.original.return.url.key");
         this.objectMapper = objectMapper;
+        this.pgDetailRepository = pgDetailRepository;
+       
     }
 
 //    
@@ -90,7 +90,7 @@ public class RazorPayGateway implements Gateway {
 
             // Generate checkout options as JSON
             Map<String, Object> options = transaction.getAdditionalDetails() == null ? new HashMap<>() : (Map<String, Object>) transaction.getAdditionalDetails();
-            options.put("key", KEY_ID);
+            options.put("key", ACCESS_CODE);
             String amtAsPaise = Utils.formatAmtAsPaise(transaction.getTxnAmount());
             options.put("amount", amtAsPaise);
             options.put("currency", "INR");
@@ -141,9 +141,9 @@ public class RazorPayGateway implements Gateway {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.setBasicAuth(KEY_ID, KEY_SECRET);
+            headers.setBasicAuth(ACCESS_CODE, WORKING_KEY);
 
-            log.info("Key Id and Secrets coming from Env: {} {}", KEY_SECRET, KEY_ID);
+            log.info("Key Id and Secrets coming from Env: {} {}", WORKING_KEY, ACCESS_CODE);
             Map<String, Object> orderRequest = new HashMap<>();
             String amtAsPaise = Utils.formatAmtAsPaise(transaction.getTxnAmount());
             orderRequest.put("amount", amtAsPaise);
@@ -181,7 +181,7 @@ public class RazorPayGateway implements Gateway {
 
             // Fetch payment details
             HttpHeaders headers = new HttpHeaders();
-            headers.setBasicAuth(KEY_ID, KEY_SECRET);
+            headers.setBasicAuth(ACCESS_CODE, WORKING_KEY);
             HttpEntity<Void> request = new HttpEntity<>(headers);
 
             String orderUrl = ORDER_URL + "/" + orderId;
@@ -202,7 +202,7 @@ public class RazorPayGateway implements Gateway {
         try {
             String payload = orderId + "|" + paymentId;
             Mac mac = Mac.getInstance("HmacSHA256");
-            SecretKeySpec secretKeySpec = new SecretKeySpec(KEY_SECRET.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+            SecretKeySpec secretKeySpec = new SecretKeySpec(WORKING_KEY.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
             mac.init(secretKeySpec);
             byte[] hash = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
             String expectedSignature = bytesToHex(hash);
