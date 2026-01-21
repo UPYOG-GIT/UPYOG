@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
+import org.egov.pg.repository.PgDetailRepository;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.math.BigDecimal;
@@ -44,6 +44,7 @@ public class RazorPayGateway implements Gateway {
 
     private final String REDIRECT_URL;
     private final String ORIGINAL_RETURN_URL_KEY;
+    private PgDetailRepository pgDetailRepository;
 
 
     @Autowired
@@ -230,6 +231,19 @@ public class RazorPayGateway implements Gateway {
         return "razorpay_payment_id";
     }
 
+
+
+
+    private void insertOrderDetails(String txnId, String orderId) {
+        pgDetailRepository.insertRazorPayOrder(txnId, orderId);
+    }
+
+    private String getOrderDetails(String txnId) {
+        Map<String, Object> orderIdMap = pgDetailRepository.getRazorPayOrderDetail(txnId);
+        String orderId = orderIdMap.get("order_id").toString();
+        return orderId;
+    }
+    
     private Transaction transformRawResponse(RazorpayPaymentResponse resp, Transaction currentStatus) {
         Transaction.TxnStatusEnum status = Transaction.TxnStatusEnum.PENDING;
 
