@@ -49,7 +49,7 @@ public class RazorPayGateway implements Gateway {
 
 
     @Autowired
-    public RazorPayGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper, String access_CODE) {
+    public RazorPayGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper) {
 		this.restTemplate = restTemplate;
         ACTIVE = Boolean.parseBoolean(environment.getRequiredProperty("razorpay.active"));
         KEY_ID = environment.getRequiredProperty("razorpay.key.id");
