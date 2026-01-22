@@ -85,7 +85,7 @@ public class RedirectController {
 		CcavenueResponse ccavenueResponse = new CcavenueResponse();
 		String encResp = formData.get("encResp").get(0);
 		
-        String razorpay_order_id = formData.get("razorpay_order_id").get(0);
+//        String razorpay_order_id = formData.get("razorpay_order_id").get(0);
 		log.info("encResp: " + encResp);
 		ccavenueResponse.setEncResp(encResp);
 		ccavenueResponse.setOrderNo(orderNo);
