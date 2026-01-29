@@ -1,40 +1,55 @@
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegularisationValidator.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\autonumber\impl\RegDcrApplicationNumberGeneratorImpl.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\extract\RegCoverageExtract.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegPlanFeatureService.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\extract\RegFeatureExtract.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegLayerNames.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegEdcrApplicationService.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\autonumber\RegOCPlanScrutinyNumberGenerator.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegAmendmentService.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\constants\DxfFileConstants.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\contract\RegEdcrResponse.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\entity\RegEdcrPdfDetail.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegularisationRestService.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\extract\service\RegExtractService.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\repository\RegEdcrPdfDetailRepository.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\config\RestAPIRegConfiguration.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegularisationPlanService.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\PlanInfoRegFeature.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\entity\RegEdcrApplicationDetail.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\repository\RegEdcrApplicationDetailRepository.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\contract\RegEdcrRequest.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\entity\RegEdcrIndexData.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegPlanService.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\repository\RegEdcrApplicationRepository.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\contract\RegComparisonRequest.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\RegCoverage.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegFetchCondition.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\contract\RegEdcrDetail.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\repository\RegPlanFeatureRepository.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\FeatureProcess.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\autonumber\RegDcrApplicationNumberGenerator.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\entity\RegApplicationType.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\autonumber\impl\RegOCPlanScrutinyNumberGeneratorImpl.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\entity\RegEdcrApplication.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegJasperReportService.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegPlanReportService.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegEdcrPdfDetailService.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\config\properties\RegularisationApplicationSettings.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegularisationExtractService.java
-E:\demo java projects\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegEdcrApplicationDetailService.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\FeatureProcess.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegJasperReportService.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegularisationValidator.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\config\RestAPIRegConfiguration.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\entity\RegEdcrApplication.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\autonumber\RegOCPlanScrutinyNumberGenerator.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\entity\RegAmendment.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\repository\RegPlanFeatureRepository.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\RegParking.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\entity\RegEdcrPdfDetail.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\contract\RegEdcrDetail.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegProcessPrintHelper.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\entity\RegEdcrIndexData.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\contract\RegEdcrRequest.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\extract\RegFarExtract.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegularisationRestService.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\autonumber\impl\RegOCPlanScrutinyNumberGeneratorImpl.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\extract\RegParkingExtract.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\extract\service\RegAmendmentService.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\RegParking_Birgaon.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\extract\RegFeatureExtract.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegFetchCondition.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegularisationPlanService.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\RegCoverage.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\RegFar.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\RegFar_Birgaon.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\entity\RegApplicationType.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\extract\RegPlanInfoFeatureExtract.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\RegParking_Dhamtari.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\contract\RegEdcrResponse.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegPlanReportService.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\RegFar_BhilaiCharoda.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\config\properties\RegularisationApplicationSettings.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\repository\RegEdcrPdfDetailRepository.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\RegPlanInfoFeature.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegPlanFeatureService.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegLayerNames.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\constants\DxfFileConstants.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\RegCoverage_Dhamtari.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\extract\service\RegExtractService.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\RegCoverage_BhilaiCharoda.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\entity\RegEdcrApplicationDetail.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\repository\RegEdcrApplicationRepository.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\repository\RegEdcrApplicationDetailRepository.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\entity\RegAmendmentDetails.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\autonumber\impl\RegDcrApplicationNumberGeneratorImpl.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\autonumber\RegDcrApplicationNumberGenerator.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegEdcrApplicationService.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\RegCoverage_Birgaon.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\contract\RegComparisonRequest.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\RegFar_Dhamtari.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegularisationExtractService.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegEdcrApplicationDetailService.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\feature\extract\RegCoverageExtract.java
+D:\Entit Upyog\Upyog jan 23\UPYOG\edcr\service\egov\egov-regularisation\src\main\java\org\egov\regularisation\service\RegEdcrPdfDetailService.java
