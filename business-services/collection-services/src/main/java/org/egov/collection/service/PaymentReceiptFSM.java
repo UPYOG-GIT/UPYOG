@@ -37,6 +37,10 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class PaymentReceiptFSM {
 
+	
+	private static final String reciept_log_url = "https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/rmc_logo.png";
+	private static final String rmc_address_extended = "Azad Chowk Rd, near Mahila Police Thana, Chottapara, Janta Colony, Raipur, Chhattisgarh 492001";
+	
 	public ByteArrayInputStream getPaymentReceipt(List<Payment> paymentList) throws FileNotFoundException {
 		log.info("Inside PaymentReceiptFSM.getPaymentReceipt().....");
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -91,15 +95,41 @@ public class PaymentReceiptFSM {
 				String ulbName = paymentList.get(0).getUlbName();
 				String imgPath = paymentList.get(0).getLogoUrl();// "C:\\Users\\Entit\\Downloads\\unnamed.png";
 				log.info(imgPath);
-				ImageData imageData = ImageDataFactory.create(imgPath);
-				Image image = new Image(imageData);
-				log.info(image.toString());
-				image.scaleAbsolute(70, 70);
+				ImageData imageData ;
+				Image image;
+				if(imgPath != null || !imgPath.trim().isEmpty()) {
+				    imageData = ImageDataFactory.create(imgPath);
+				    image = new Image(imageData);
+					log.info(image.toString());
+					image.scaleAbsolute(70, 70);
+				}else {
+					imageData = ImageDataFactory.create(reciept_log_url );
+				    image = new Image(imageData);
+				    log.info(image.toString());
+				    image.scaleAbsolute(70, 70);
+				}
 
 				Table table = new Table(twocolumnWidth1);
 				table.addCell(new Cell().add(image).setBorder(Border.NO_BORDER));
-				table.addCell(new Cell().setTextAlignment(TextAlignment.CENTER).add(ulbName.toUpperCase())
-						.setFontSize(16f).setBorder(Border.NO_BORDER).setBold());
+//				table.addCell(new Cell().setTextAlignment(TextAlignment.CENTER).add(ulbName.toUpperCase())
+//						.setFontSize(16f).setBorder(Border.NO_BORDER).setBold());
+				Cell ulbCell = new Cell();
+				ulbCell.setTextAlignment(TextAlignment.CENTER);
+				ulbCell.setBorder(Border.NO_BORDER);
+
+				Paragraph ulbNamePara = new Paragraph(ulbName.toUpperCase());
+				ulbNamePara.setFontSize(16f);
+				ulbNamePara.setBold();
+				
+				Paragraph ulbAddressPara = new Paragraph(rmc_address_extended);
+				ulbAddressPara.setFontSize(10f);
+				ulbAddressPara.setMarginTop(5f);
+				
+				ulbCell.add(ulbNamePara);
+				ulbCell.add(ulbAddressPara);
+				
+				table.addCell(ulbCell);
+				
 				Border gb = new SolidBorder(Color.GRAY, 2f);
 				Table divider = new Table(fullwidth);
 				divider.setBorder(gb);
