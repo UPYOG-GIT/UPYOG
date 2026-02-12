@@ -246,7 +246,7 @@ public class PaymentReceiptFSM {
 				Table fullTable = new Table(fullwidth);
 				fullTable.addCell(new Cell().add("Total Amount(in words) : " + amountInwordString)
 						.setTextAlignment(TextAlignment.LEFT));
-				fullTable.addCell(new Cell().add("For " + ulbName + "\n\n Authorised Signatory  ")
+				fullTable.addCell(new Cell().add("For " + ulbName + "\n\n\n\n Authorised Signatory  ")
 						.setTextAlignment(TextAlignment.RIGHT));
 				fullTable.addCell(new Cell().add("This is a Computer Generated Receipt\r\n" + "")
 						.setTextAlignment(TextAlignment.CENTER));
