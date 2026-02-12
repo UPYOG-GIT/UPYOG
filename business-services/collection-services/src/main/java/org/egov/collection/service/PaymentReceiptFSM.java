@@ -98,15 +98,15 @@ public class PaymentReceiptFSM {
 				ImageData imageData ;
 				Image image;
 				if(imgPath != null || !imgPath.trim().isEmpty()) {
-				    imageData = ImageDataFactory.create(imgPath);
-				    image = new Image(imageData);
-					log.info(image.toString());
-					image.scaleAbsolute(70, 70);
-				}else {
 					imageData = ImageDataFactory.create(reciept_log_url );
 				    image = new Image(imageData);
 				    log.info(image.toString());
 				    image.scaleAbsolute(70, 70);
+				}else {
+					 imageData = ImageDataFactory.create(imgPath);
+					 image = new Image(imageData);
+					 log.info(image.toString());
+					 image.scaleAbsolute(70, 70);
 				}
 
 				Table table = new Table(twocolumnWidth1);
