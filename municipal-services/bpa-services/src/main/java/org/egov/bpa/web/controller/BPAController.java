@@ -725,35 +725,43 @@ public class BPAController {
 		}
 	}
 	
-    @PostMapping(value ="/_getLabourCessFeeDetails")
-    public ResponseEntity<Object> getLabourCessFee(@RequestParam(required = false) String locid,
-			@RequestParam(required = false) String fromDate, @RequestParam(required = false) String toDate){
-				if (locid == null || locid.trim().isEmpty() || fromDate == null || fromDate.trim().isEmpty() || toDate == null
+	@PostMapping(value = "/_getLabourCessFeeDetails")
+	public ResponseEntity<Object> getLabourCessFee(
+		        @RequestParam(required = false) String locid,
+		        @RequestParam(required = false) String fromDate,
+		        @RequestParam(required = false) String toDate) {
+	
+		    // 1. Mandatory Check (Global Exception Handling could also handle this) [cite: 10, 43]
+		if (locid == null || locid.trim().isEmpty() || fromDate == null || fromDate.trim().isEmpty() || toDate == null
 				|| toDate.trim().isEmpty()) {
-
-					response.put("status", false);
-					response.put("message", "locid, fromDate, and toDate fields are mandatory");
-					return response;
-				}
-
-               try {
-
-					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-					LocalDate from = LocalDate.parse(fromDate, formatter);
-					LocalDate to = LocalDate.parse(toDate, formatter);
-
-					Map<String, Object> bpaList = bpaService.getLabourCessFee(locid, fromDate, toDate);
-					return bpaList;
-				} catch (Exception ex) {
-						log.info("Exception : " + ex.toString());
-						Map<String, Object> returnStatement = new HashMap<>();
-						returnStatement.put("Exception", "Exception While fetching data");
-						returnStatement.put("status", false);
-
-						return returnStatement;
-					}
-
-			}
+		        Map<String, Object> response = new HashMap<>();
+		        response.put("status", false);
+		        response.put("message", "locid, fromDate, and toDate fields are mandatory");
+		        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // 
+		    }
+	
+		    try {
+		        // 2. Correct Date Parsing [cite: 11]
+		        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		        LocalDate from = LocalDate.parse(fromDate, formatter);
+		        LocalDate to = LocalDate.parse(toDate, formatter);
+	
+		        // 3. Service Call (Ensure service accepts String or LocalDate as defined) [cite: 15, 59]
+		        Map<String, Object> bpaList = bpaService.getLabourCessFee(locid, fromDate, toDate);
+	
+		        return ResponseEntity.ok(bpaList); // [cite: 41]
+	
+		   
+		    } catch (Exception ex) {
+		        log.error("Exception While fetching data: ", ex);
+		        Map<String, Object> returnStatement = new HashMap<>();
+		        returnStatement.put("status", false);
+		        returnStatement.put("Exception", "An internal error occurred while fetching data");
+	
+		        // Use this if .internalServerError() is undefined in your version
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(returnStatement); // [cite: 42]
+		    }
+		}
 
 
 
