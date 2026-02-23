@@ -1320,6 +1320,99 @@ public class BPAService {
 		return applicationDetails;
 	}
 
+	public Map<String, Object> getLabourCessFee(String code, String fromDate, String toDate) {
+
+			Map<String, Object> ulbDetails = getULBCode(code);
+			String tenantId = ulbDetails.get("tenantId").toString();
+			String ulbName = ulbDetails.get("name").toString();
+			Integer locId = (Integer) ulbDetails.get("idtenantId");
+
+			Map<String, Object> applicationDetails = new HashMap<>();
+			List<Map<String, Object>> detailsList = new ArrayList<>();
+
+			// ✅ First condition (3 ULBs → DB Query)
+			if (tenantId.equals("cg.birgaon") ||
+				tenantId.equals("cg.dhamtari") ||
+				tenantId.equals("cg.bhilaicharoda")) {
+
+				List<Map<String, Object>> resultList =
+						repository.getLabourCessFeeDetails(tenantId, fromDate, toDate);
+
+				for (Map<String, Object> row : resultList) {
+
+					Map<String, Object> detailsMap = new HashMap<>();
+
+					detailsMap.put("ULB_Name", row.get("ulb_name"));
+					detailsMap.put("Consumer_Code", row.get("consumer_code"));
+					detailsMap.put("Occupancy_Type", row.get("occupancy_type"));
+					detailsMap.put("Payment_Date", row.get("payment_date"));
+					detailsMap.put("Labour_Cess_Type", row.get("labour_cess_type"));
+					detailsMap.put("Labour_Cess_Amount", row.get("labour_cess_amount"));
+					detailsMap.put("Ward_No", row.get("wardno"));
+					detailsMap.put("Plot_Area", row.get("plotarea"));
+					detailsMap.put("Builtup_Area", row.get("builtuparea"));
+					detailsMap.put("Approval_Date", row.get("approval_date"));
+
+					detailsList.add(detailsMap);
+				}
+
+			}
+			else {
+					try {
+
+						String url = "https://bpms.sudacg.in/api/api-count/labour_cess_report.php"
+								+ "?locid=" + locId
+								+ "&from_date=" + fromDate
+								+ "&to_date=" + toDate;
+
+						RestTemplate restTemplate = new RestTemplate();
+
+						ResponseEntity<Map> response =
+								restTemplate.getForEntity(url, Map.class);
+
+						if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+
+							Map<String, Object> apiResponse = response.getBody();
+
+							// Extract "data" array
+							List<Map<String, Object>> dataList =
+									(List<Map<String, Object>>) apiResponse.get("data");
+
+							if (dataList != null) {
+
+								for (Map<String, Object> row : dataList) {
+
+									Map<String, Object> detailsMap = new HashMap<>();
+
+									detailsMap.put("ULB_Name", row.get("ULB Name"));
+									detailsMap.put("Proposal_No", row.get("Proposal No"));
+									detailsMap.put("Proposal_Type", row.get("Proposal Type"));
+									detailsMap.put("Client_Name", row.get("Client_Name"));
+									detailsMap.put("Zone_No", row.get("Zone_no"));
+									detailsMap.put("Ward_No", row.get("Ward_No"));
+									detailsMap.put("Plot_Area", row.get("Plot Area"));
+									detailsMap.put("Builtup_Area", row.get("Builtup Area"));
+									detailsMap.put("Approval_Date", row.get("Approval Date"));
+									detailsMap.put("Payment_Date", row.get("Payment Date"));
+									detailsMap.put("Post_Amount_Paid", row.get("Post Amount Paid"));
+									detailsMap.put("Labour_Cess_Charges", row.get("Labour Cess Charges"));
+
+									detailsList.add(detailsMap);
+								}
+							}
+						}
+
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+
+			applicationDetails.put("status", true);
+			applicationDetails.put("labour_cess_details", detailsList);
+
+			return applicationDetails;
+	}
+
 	private static Map<String, Object> getNameAndTenant(String code) {
 		Map<String, Object> result = new HashMap<>();
 		switch (code) {
@@ -1343,7 +1436,95 @@ public class BPAService {
 		}
 		return result;
 	}
+	
+	private static Map<String, Object> getULBCode(String code) {
+		Map<String, Object> result = new HashMap<>();
+		switch (code) {
+		case "cg.birgaon":
+			result.put("name", "Birgaon");
+			result.put("tenantId", "cg.birgaon");
+			break;
+		case "cg.dhamtari":
+			result.put("name", "Dhamtari");
+			result.put("tenantId", "cg.dhamtari");
+			break;
+		case "cg.bhilaicharoda":
+			result.put("name", "Bhilai Charoda");
+			result.put("tenantId", "cg.bhilaicharoda");
+			break;
+		case "cg.raipur":
+			result.put("name", "Raipur");
+			result.put("tenantId", 1);
+			break;
+		case "cg.durg":
+			result.put("name", "Durg");
+			result.put("tenantId", 2);
+			break;
+		case "cg.bhilai":
+			result.put("name", "Bhilai");
+			result.put("tenantId", 3);
+			break;
+		case "cg.bilaspur":
+			result.put("name", "Bilaspur");
+			result.put("tenantId", 4);
+			break;
+		case "cg.jagdalpur":
+			result.put("name", "Jagdalpur");
+			result.put("tenantId", 10);
+			break;
+		case "cg.raigarh":
+			result.put("name", "Raigarh");
+			result.put("tenantId", 5);
+			break;
+		case "cg.rajnandgaon":
+			result.put("name", "Rajnandgaon");
+			result.put("tenantId", 6);
+			break;
+		case "cg.korba":
+			result.put("name", "Korba");
+			result.put("tenantId", 7);
+			break;
+		case "cg.ambikapur":
+			result.put("name", "Ambikapur");
+			result.put("tenantId", 9);
+			break;
+		case "cg.risali":
+			result.put("name", "Risali");
+			result.put("tenantId", 11);
+			break;
+		case "999":
+			result.put("name", "Citya");
+			result.put("tenantId", "cg.citya");
+			break;
+		default:
+		}
+		return result;
+	}
 
+	
+	private static Map<String, Object> getULBName(String code) {
+		Map<String, Object> result = new HashMap<>();
+		switch (code) {
+		case "15":
+			result.put("name", "Birgaon");
+			result.put("tenantId", "cg.birgaon");
+			break;
+		case "13":
+			result.put("name", "Dhamtari");
+			result.put("tenantId", "cg.dhamtari");
+			break;
+		case "14":
+			result.put("name", "Bhilai Charoda");
+			result.put("tenantId", "cg.bhilaicharoda");
+			break;
+		case "999":
+			result.put("name", "Citya");
+			result.put("tenantId", "cg.citya");
+			break;
+		default:
+		}
+		return result;
+	}
 	public int updatePropertyId(String applicationNo, String propertyId) {
 		return repository.updatePropertyId(applicationNo, propertyId);
 	}

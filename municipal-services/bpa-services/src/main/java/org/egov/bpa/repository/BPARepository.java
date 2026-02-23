@@ -902,4 +902,35 @@ public class BPARepository {
 				+ " updated for applicatioNo : " + applicationNo);
 		return updateResult;
 	}
+
+	public List<Map<String, Object>> getLabourCessFeeDetails(String tenantId, String fromDate, String toDate) {
+		String query = "SELECT " +
+				"pg.tenant_id AS ULB_Name, " +
+				"pg.consumer_code AS consumer_code, " +
+				"adr.occupancy AS occupancy_type, " +
+				"adr.plotarea AS Plot_Area," +
+				"  adr.builtuparea AS BuiltupArea , " +
+				"fd.charges_type_name AS labour_cess_type, " +
+				"fd.amount AS labour_cess_amount, " +
+				"adr.wardno AS Ward_No, " +
+				"TO_CHAR(TO_TIMESTAMP(pg.created_time / 1000), 'DD/MM/YYYY') AS payment_date, " +
+				"TO_CHAR(TO_TIMESTAMP(bp.approvaldate / 1000), 'DD/MM/YYYY') AS Approval_date " +
+				"FROM eg_pg_transactions pg " +
+				"JOIN fee_details fd ON fd.bill_id = pg.bill_id " +
+				"JOIN egbs_billdetail_v1 eb ON eb.billid = pg.bill_id " +
+				"JOIN eg_bpa_buildingplan bp ON bp.applicationno = pg.consumer_code " +
+				"JOIN eg_land_address adr ON bp.landid = adr.landinfoid " +
+				"WHERE pg.txn_status = 'SUCCESS' " +
+				"AND pg.tenant_id = ? " +
+				"AND fd.charges_type_name IN (?, ?, ?) " +
+				"AND TO_TIMESTAMP(pg.created_time / 1000) BETWEEN TO_DATE(?, 'YYYY-MM-DD') AND TO_DATE(?, 'YYYY-MM-DD') + interval '1 day' - interval '1 second' " +
+				"ORDER BY pg.created_time";
+
+
+		List<Map<String, Object>> resultList = jdbcTemplate.queryForList(query,
+				new Object[] { tenantId, "Sub-Tax (Labor Tax)", "Sub-Tax(Karmakar)Fees", "Labour Cess", fromDate, toDate });
+
+		log.info("BPARepository.getLabourCessFeeDetails: result size = " + resultList.size());
+		return resultList;
+	}
 }

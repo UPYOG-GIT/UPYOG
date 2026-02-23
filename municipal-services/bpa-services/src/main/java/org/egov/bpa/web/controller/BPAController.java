@@ -724,6 +724,38 @@ public class BPAController {
 			return returnStatement;
 		}
 	}
+	
+    @PostMapping(value ="/_getLabourCessFeeDetails")
+    public ResponseEntity<Object> getLabourCessFee(@RequestParam(required = false) String locid,
+			@RequestParam(required = false) String fromDate, @RequestParam(required = false) String toDate){
+				if (locid == null || locid.trim().isEmpty() || fromDate == null || fromDate.trim().isEmpty() || toDate == null
+				|| toDate.trim().isEmpty()) {
+
+					response.put("status", false);
+					response.put("message", "locid, fromDate, and toDate fields are mandatory");
+					return response;
+				}
+
+               try {
+
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					LocalDate from = LocalDate.parse(fromDate, formatter);
+					LocalDate to = LocalDate.parse(toDate, formatter);
+
+					Map<String, Object> bpaList = bpaService.getLabourCessFee(locid, fromDate, toDate);
+					return bpaList;
+				} catch (Exception ex) {
+						log.info("Exception : " + ex.toString());
+						Map<String, Object> returnStatement = new HashMap<>();
+						returnStatement.put("Exception", "Exception While fetching data");
+						returnStatement.put("status", false);
+
+						return returnStatement;
+					}
+
+			}
+
+
 
 	@PostMapping(value = "/_updatepropertyid")
 	public ResponseEntity<Object> updatePropertyId(String applicationNo, String propertyId) {
@@ -739,4 +771,5 @@ public class BPAController {
 			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 	}
+
 }
