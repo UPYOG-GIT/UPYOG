@@ -50,8 +50,10 @@ import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
 
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -1330,7 +1332,6 @@ public class BPAService {
 			Map<String, Object> applicationDetails = new HashMap<>();
 			List<Map<String, Object>> detailsList = new ArrayList<>();
 
-			// ✅ First condition (3 ULBs → DB Query)
 			if (tenantId.equals("cg.birgaon") ||
 				tenantId.equals("cg.dhamtari") ||
 				tenantId.equals("cg.bhilaicharoda")) {
