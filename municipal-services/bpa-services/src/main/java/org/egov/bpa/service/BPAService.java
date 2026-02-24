@@ -1329,7 +1329,7 @@ public class BPAService {
 			Map<String, Object> ulbDetails = getULBCode(code);
 			String tenantId = ulbDetails.get("tenantId").toString();
 			String ulbName = ulbDetails.get("name").toString();
-			Integer locId = (Integer) ulbDetails.get("idtenantId");
+			Integer locId = (Integer) ulbDetails.get("locid");
 
 			Map<String, Object> applicationDetails = new HashMap<>();
 			List<Map<String, Object>> detailsList = new ArrayList<>();
