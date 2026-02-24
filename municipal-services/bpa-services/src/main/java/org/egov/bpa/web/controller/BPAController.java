@@ -730,7 +730,7 @@ public class BPAController {
 		        @RequestParam(required = false) String locid,
 		        @RequestParam(required = false) String fromDate,
 		        @RequestParam(required = false) String toDate) {
-	
+					
 		    // 1. Mandatory Check (Global Exception Handling could also handle this) [cite: 10, 43]
 		if (locid == null || locid.trim().isEmpty() || fromDate == null || fromDate.trim().isEmpty() || toDate == null
 				|| toDate.trim().isEmpty()) {
