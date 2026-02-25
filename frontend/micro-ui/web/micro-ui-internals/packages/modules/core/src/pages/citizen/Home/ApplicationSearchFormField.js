@@ -73,7 +73,7 @@ const ApplicationSearchFormField = ({ formState, register, reset, previousPage }
     <form onSubmit={handleSubmit}>
        <BackButton>{t("CS_COMMON_BACK")}</BackButton>
        <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" , marginTop: 20}}>
-      <Header styles={{ fontSize: "32px" }}>{t("Application Search ")}</Header>
+      <Header styles={{ fontSize: "32px" }}>{t("Application Search Test ")}</Header>
   
     </div>
  
