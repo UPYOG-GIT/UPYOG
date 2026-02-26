@@ -75,12 +75,18 @@ public class TransactionValidator {
 	 */
 	public Transaction validateUpdateTxn(Map<String, String> requestParams) {
 		log.info("requestParams: " + requestParams);
-		Optional<String> optional = gatewayService.getTxnId(requestParams);
-//		log.info("Optional :" + optional.get());
-		if (!optional.isPresent())
-			throw new CustomException("MISSING_UPDATE_TXN_ID", "Cannot process request, missing transaction id");
+		TransactionCriteria criteria;
+		if (requestParams.containsKey("txnId")) {
+			criteria = TransactionCriteria.builder().txnId(requestParams.get("txnId")).build();
+		} else {
+			Optional<String> optional = gatewayService.getTxnId(requestParams);
+//			log.info("Optional :" + optional.get());
+			if (!optional.isPresent())
+				throw new CustomException("MISSING_UPDATE_TXN_ID", "Cannot process request, missing transaction id");
 
-		TransactionCriteria criteria = TransactionCriteria.builder().txnId(optional.get()).build();
+			criteria = TransactionCriteria.builder().txnId(optional.get()).build();
+		}
+
 		log.info("criteria.getTxnId(): " + criteria.getTxnId());
 		List<Transaction> statuses = transactionRepository.fetchTransactions(criteria);
 

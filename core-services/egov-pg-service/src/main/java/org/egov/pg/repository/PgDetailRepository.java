@@ -73,4 +73,17 @@ public class PgDetailRepository {
 		return jdbcTemplate.queryForMap(sqlQuery);
 	}
 
+	public void insertRazorPayOrder(String txnId, String orderId) {
+		String query = "INSERT INTO eg_pg_razorpay_txn (txn_id, order_id) VALUES ('" + txnId + "', '" + orderId + "')";
+		log.info("insertRazorPayOrder Query: " + query);
+		int insertResult = jdbcTemplate.update(query);
+		log.info("insertRazorPayOrder : " + insertResult + " data inserted");
+	}
+
+	public Map<String, Object> getRazorPayOrderDetail(String txnId) {
+		String sqlQuery = "SELECT order_id FROM eg_pg_razorpay_txn WHERE txn_id='" + txnId + "'";
+		log.info("getRazorPayOrderDetail sqlQuery: " + sqlQuery);
+		return jdbcTemplate.queryForMap(sqlQuery);
+	}
+
 }

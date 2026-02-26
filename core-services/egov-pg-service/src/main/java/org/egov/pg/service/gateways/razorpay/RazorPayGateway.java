@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -16,6 +17,7 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -27,12 +29,12 @@ import org.egov.pg.repository.PgDetailRepository;
 import org.egov.pg.service.Gateway;
 import org.egov.pg.service.TransactionService;
 import org.egov.tracer.model.CustomException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -40,8 +42,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.razorpay.Order;
+import com.razorpay.Payment;
+import com.razorpay.RazorpayClient;
+import com.razorpay.RazorpayException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -152,6 +157,9 @@ public class RazorPayGateway implements Gateway {
 		// set MerchantId, WorkingKey and AccessKey according to tenantId
 		setGatewayDetails(tenantId);
 
+		String keyId = ACCESS_CODE;
+		String keySecret = WORKING_KEY;
+
 		log.info("MERCHANT_ID: " + MERCHANT_ID + ", WORKING_KEY: " + WORKING_KEY + ", ACCESS_CODE: " + ACCESS_CODE);
 
 		log.info("transaction.getTxnId() : " + transaction.getTxnId());
@@ -173,8 +181,8 @@ public class RazorPayGateway implements Gateway {
 		String authHeader = "Basic " + encodedAuth;
 
 		if (WORKING_KEY != null && !WORKING_KEY.equals("") && requestString != null && !requestString.equals("")) {
-			RazorPayUtils ccavenueUtis = new RazorPayUtils(WORKING_KEY);
-			encryptedJsonData = ccavenueUtis.encrypt(requestString);
+			RazorPayUtils RazorPayUtils = new RazorPayUtils(WORKING_KEY);
+			encryptedJsonData = RazorPayUtils.encrypt(requestString);
 		}
 
 		String[] pairs = requestString.split("&");
@@ -193,104 +201,44 @@ public class RazorPayGateway implements Gateway {
 		headers.set("Authorization", authHeader);
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-//	    MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-//	    body.add("amount", amount);
-//	    body.add("currency", "INR");
-//	    body.add("receipt", orderNumber);
-//	    body.add("payment_capture", "1");
-
 		HttpEntity<String> entity = new HttpEntity<>(requestString, headers);
 
 		try {
-			ResponseEntity<String> response = restTemplate.postForEntity(urlString, entity, String.class);
 
-			// Parse response JSON
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode json = mapper.readTree(response.getBody());
+			RazorpayClient client = new RazorpayClient(keyId, keySecret);
 
-			// Razorpay order ID
-			String orderId = json.get("id").asText();
+			JSONObject orderRequest = new JSONObject();
+			orderRequest.put("amount", amount);
+			orderRequest.put("currency", "INR");
+			orderRequest.put("receipt", transaction.getTxnId());
+			orderRequest.put("payment_capture", 1);
 
-			// Prepare frontend redirect URL
-			URI redirectUri = UriComponentsBuilder.fromUriString("https://checkout.razorpay.com/v1/checkout.js")
-					.queryParam("order_id", orderId).queryParam("amount", amount).queryParam("key_id", ACCESS_CODE)
-					.queryParam("receipt", orderNumber).build().toUri();
+			Order order = client.orders.create(orderRequest);
 
-			return redirectUri;
+			String orderId = order.get("id");
 
+			log.info("Razorpay Order: " + order.toString());
+
+			insertOrderDetails(transaction.getTxnId(), orderId);
+
+			// Build redirect URI containing JSON data
+			String json = URLEncoder.encode("{\"orderId\":\"" + orderId + "\",\"amount\":" + amount
+					+ ",\"currency\":\"INR\",\"key\":\"" + keyId + "\"}", "UTF-8");
+
+			URI redirect = new URI("razorpay://order?data=" + json);
+
+			log.info("redirect : " + redirect.toString());
+
+			return redirect;
 		} catch (Exception ex) {
 			throw new RuntimeException("Error creating Razorpay order", ex);
 		}
-
-		/*
-		 * try { UriComponents uriComponents =
-		 * UriComponentsBuilder.fromHttpUrl(urlString).queryParams(params).build();
-		 * 
-		 * log.info("uriComponents: " + uriComponents.toUri().toString());
-		 * 
-		 * return uriComponents.toUri(); // return httpUrlConnection.getURL().toURI(); }
-		 * catch (Exception e) {
-		 * log.error("Unable to retrieve redirect URI from gateway", e); throw new
-		 * ServiceCallException("Redirect URI generation failed, invalid response received from gateway"
-		 * ); }
-		 */
-
 	}
 
 	@Override
 	public Transaction fetchStatus(Transaction currentStatus, Map<String, String> params) {
-		log.info("inside CcavenueGateway.fetchStatus().....");
+		log.info("inside RazorPayGateway.fetchStatus().....");
 //		CcavenueResponse resp = objectMapper.convertValue(params, CcavenueResponse.class);
-		if (params.containsKey("FromUpdateAPI")) {
-			log.info("Inside fetchStatus() if condition......");
-//			CcavenueResponse resp = new CcavenueResponse();
-//			if (!isNull(resp.getEncResp()) && !isNull(resp.getOrderNo()))
-//				;
-//				String checksum = resp.getHash();
-
-//			String encResp = resp.getEncResp();
-			String encResp = params.get("encResp");
-
-			String tenantId = currentStatus.getTenantId();
-
-			// set MerchantId, WorkingKey and AccessKey according to tenantId
-			setGatewayDetails(tenantId);
-			log.info("fetchStatus: MERCHANT_ID: " + MERCHANT_ID + ", WORKING_KEY: " + WORKING_KEY + ", ACCESS_CODE: "
-					+ ACCESS_CODE);
-//			String orderNo = resp.getOrderNo();
-			log.info("encResp: " + encResp);
-			RazorPayUtils ccavenueUtis = new RazorPayUtils(WORKING_KEY);
-			String decryptedData = ccavenueUtis.decrypt(encResp);
-			log.info("decryptedData: " + decryptedData);
-			String encRespString[] = decryptedData.split("&");
-			Map<String, String> resMap = new HashMap<String, String>();
-			for (String s : encRespString) {
-				String s2[] = s.split("=");
-				if (!s2[0].equals("merchant_param1")) {
-					String key = s2[0];
-					String value = "";
-					if (s2.length > 1) {
-						value = s2[1];
-					}
-					resMap.put(key, value);
-				}
-			}
-
-			log.info("resMap: " + resMap.toString());
-			Transaction txn = transformRawResponse(resMap, currentStatus);
-//			log.info("txn:" + txn.getTxnAmount());
-			log.info("txn.getTxnStatus():" + txn.getTxnStatus());
-			if (txn.getTxnStatus().equals(Transaction.TxnStatusEnum.SUCCESS)) {
-				return txn;
-			} else {
-				return fetchStatusFromGateway(currentStatus, resMap);
-			}
-		}
-
-//		if (txn.getTxnStatus().equals(Transaction.TxnStatusEnum.PENDING)
-//				|| txn.getTxnStatus().equals(Transaction.TxnStatusEnum.FAILURE)) {
-//			return txn;
-//		}
 
 		Map<String, String> resMap = new HashMap<String, String>();
 		return fetchStatusFromGateway(currentStatus, resMap);
@@ -313,7 +261,7 @@ public class RazorPayGateway implements Gateway {
 	}
 
 	private Transaction transformRawResponse(Map<String, String> resp, Transaction currentStatus) {
-		log.info("inside CcavenueGateway.transformRawResponse().....");
+		log.info("inside RazorPayGateway.transformRawResponse().....");
 		Transaction.TxnStatusEnum status;
 
 		String gatewayStatus = resp.get("order_status");
@@ -336,189 +284,79 @@ public class RazorPayGateway implements Gateway {
 	}
 
 	private Transaction fetchStatusFromGateway(Transaction currentStatus, Map<String, String> resMap) {
-		log.info("inside CcavenueGateway.fetchStatusFromGateway().....");
+		log.info("inside RazorPayGateway.fetchStatusFromGateway().....");
 
 //		String refNo = resMap.get("tracking_id");
 //		String orderNo = resMap.get("order_id");
-		String orderNo = currentStatus.getTxnId();
 
-//		String orderStatusQueryJson = "{ \"reference_no\":\"" + refNo + "\", \"order_no\":\"" + orderNo + "\" }";
-		String orderStatusQueryJson = "{ \"order_no\":\"" + orderNo + "\" }";
-
-		String encryptedJsonData = "";
+		String txnId = currentStatus.getTxnId();
 
 		String tenantId = currentStatus.getTenantId();
 
-		// set MerchantId, WorkingKey and AccessKey according to tenantId
+		Map<String, String> responseMap = new HashMap<String, String>();
+
+		String orderId = getOrderDetails(txnId);
 		setGatewayDetails(tenantId);
-		log.info("fetchStatusFromGateway: MERCHANT_ID: " + MERCHANT_ID + ", WORKING_KEY: " + WORKING_KEY
-				+ ", ACCESS_CODE: " + ACCESS_CODE);
-		RazorPayUtils ccavenueUtis = new RazorPayUtils(WORKING_KEY);
-		encryptedJsonData = ccavenueUtis.encrypt(orderStatusQueryJson);
+		String keyId = ACCESS_CODE;
+		String keySecret = WORKING_KEY;
 
-		URL url = null;
-		HttpURLConnection vHttpUrlConnection = null;
-		DataInputStream vInput = null;
-		String urlStr = "https://login.ccavenue.com/apis/servlet/DoWebTrans?enc_request=" + encryptedJsonData
-				+ "&access_code=" + ACCESS_CODE
-				+ "&request_type=JSON&response_type=JSON&command=orderStatusTracker&version=1.2";
-//		String urlStr = "https://logintest.ccavenue.com/apis/servlet/DoWebTrans?enc_request=" + encryptedJsonData
-//				+ "&access_code=" + ACCESS_CODE
-//				+ "&request_type=JSON&response_type=JSON&command=orderStatusTracker&version=1.2";
-		StringBuffer vStringBuffer = null;
+		RazorpayClient client;
+		List<Payment> payments = new ArrayList<>();
 		try {
-			url = new URL(urlStr);
-//			if (url.openConnection() instanceof HttpsURLConnection) {
-			vHttpUrlConnection = (HttpsURLConnection) url.openConnection();
-			vHttpUrlConnection.setRequestMethod("POST");
-//			}
-			vHttpUrlConnection.setDoInput(true);
-			vHttpUrlConnection.setDoOutput(true);
-			vHttpUrlConnection.setUseCaches(false);
+			client = new RazorpayClient(keyId, keySecret);
+			payments = client.orders.fetchPayments(orderId);
 
-			vHttpUrlConnection.connect();
-			try {
-				BufferedReader bufferedreader = new BufferedReader(
-						new InputStreamReader(vHttpUrlConnection.getInputStream()));
-				vStringBuffer = new StringBuffer();
-				String vRespData;
-				while ((vRespData = bufferedreader.readLine()) != null)
-					if (vRespData.length() != 0)
-						vStringBuffer.append(vRespData.trim());
-				bufferedreader.close();
-				bufferedreader = null;
-			} finally {
-				if (vInput != null)
-					vInput.close();
+			// Get first payment
+			Payment payment = payments.get(0);
+
+			String paymentId = payment.get("id");
+			String status = payment.get("status");
+
+			log.info("Payment ID: " + paymentId);
+			log.info("Payment Status: " + status);
+
+			Payment payment1 = client.payments.fetch(paymentId);
+			log.info("payment1 " + payments.toString());
+
+			String status1 = payment1.get("status"); // captured / authorized / failed
+			String method = payment1.get("method");
+			Integer amountInt = (Integer) payment1.get("amount");
+			Double amount = amountInt.doubleValue();
+			String amount1 = String.valueOf(amount / 100);
+
+			if (status1.equalsIgnoreCase("Captured")) {
+				responseMap.put("order_status", "Success");
+				responseMap.put("payment_mode", method);
+				responseMap.put("status_message", status);
+			} else {
+				responseMap.put("order_status", "Failure");
+				responseMap.put("error_desc", payment1.get("error_description"));
+				responseMap.put("tracking_id", "");
 			}
 
-			System.out.println("url: " + vHttpUrlConnection.getURL().toURI());
-//			System.out.println("vStringBuffer: " + vStringBuffer);
-			if (isNull(vHttpUrlConnection.getURL().toURI())) {
-				log.info("CCAVENUE_REDIRECT_URI_GEN_FAILED");
-				return currentStatus;
-			}
-		} catch (Exception e) {
-			log.info("Unable to retrieve redirect URI from gateway: " + e);
-			return currentStatus;
+			responseMap.put("amount", amount1);
+			responseMap.put("tracking_id", payment1.get("id"));
+
+		} catch (RazorpayException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
-		String vResponse = vStringBuffer.toString();
-		String encResponse;
-		Map<String, String> resp = new HashMap<String, String>();
-		if (vResponse != null && !vResponse.equals("")) {
-			Map hm = RazorPayUtils.tokenizeToHashMap(vResponse, "&", "=");
-			encResponse = hm.containsKey("enc_response") ? hm.get("enc_response").toString() : "";
-			String vStatus = hm.containsKey("status") ? hm.get("status").toString() : "";
-			String vError_code = hm.containsKey("enc_error_code") ? hm.get("enc_error_code").toString() : "";
-			if (vStatus.equals("1")) {// If Api call failed
-				log.info("enc_response : " + encResponse);
-				log.info("error_code : " + vError_code);
-				return currentStatus;
-//				throw new CustomException("FAILED_TO_FETCH_STATUS_FROM_GATEWAY",
-//						"Unable to fetch status from payment gateway for txnid: " + currentStatus.getTxnId());
-			}
-			String decResponse = "";
-			if (!encResponse.equals("")) {
-				decResponse = ccavenueUtis.decrypt(encResponse);
-				log.info("Dec Response : " + decResponse);
-			}
-
-			if (vStatus.equals("0") && decResponse != null) {
-				String[] keyValuePairs = decResponse.split(",");
-				for (String pair : keyValuePairs) {
-					String[] entry = pair.split(":");
-					resp.put(entry[0].replace("\"", "").replace("{", "").replace("}", "").trim(),
-							entry[1].replace("\"", "").replace("{", "").replace("}", "").trim());
-				}
-				Map<String, String> responseMap = new HashMap<String, String>();
-				if (resp.containsKey("order_status")) {
-//					if (resp.get("order_status").equalsIgnoreCase("Unsuccessful")) {
-//						responseMap.put("order_status", resp.get("Failure"));
-//					}
-//					Long createdTime = currentStatus.getAuditDetails().getCreatedTime();
-//					Long currentTime = System.currentTimeMillis();
-					Long timeDifference = System.currentTimeMillis() - currentStatus.getAuditDetails().getCreatedTime();
-					log.info("timeDifference: " + timeDifference);
-					if (resp.get("order_status").equalsIgnoreCase("Shipped")) {
-						responseMap.put("order_status", "Success");
-					} else if (resp.get("order_status").equalsIgnoreCase("Unsuccessful")
-							|| resp.get("order_status").equalsIgnoreCase("Aborted")
-							|| resp.get("order_status").equalsIgnoreCase("Failure")
-							|| (resp.get("order_status").equalsIgnoreCase("Initiated")
-									&& (timeDifference >= 900000 && timeDifference <= 1800000))) {
-						responseMap.put("order_status", "Failure");
-					}
-
-//					else if (resp.get("order_status").equalsIgnoreCase("Initiated")
-//							&& (timeDifference >= 900000 && timeDifference <= 1800000)) {
-//						responseMap.put("order_status", "Failure");
-//					}
-
-//					else {
-//						responseMap.put("order_status", "Failure");
-//					}
-
-				}
-
-				if (resp.containsKey("order_amt")) {
-					responseMap.put("amount", resp.get("order_amt"));
-				}
-				if (resp.containsKey("reference_no")) {
-					responseMap.put("tracking_id", resp.get("reference_no"));
-				}
-				if (resp.containsKey("order_bank_response")) {
-					responseMap.put("status_message", resp.get("order_bank_response"));
-				}
-				if (resp.containsKey("order_option_type")) {
-					responseMap.put("payment_mode", resp.get("order_option_type"));
-				}
-				if (resp.containsKey("error_desc")) {
-					responseMap.put("error_desc", resp.get("error_desc"));
-					responseMap.put("order_status", "Failure");
-					responseMap.put("tracking_id", "");
-				}
-
-//				responseMap.put("payment_mode", "");
-				responseMap.put("status_code", "");
-				responseMap.put("failure_message", "");
-				return transformRawResponse(responseMap, currentStatus);
-			}
+		if (payments == null || payments.isEmpty()) {
+			log.info("No payments found for order: " + orderId);
+//		    return;
 		}
 
-		return currentStatus;
+		return transformRawResponse(responseMap, currentStatus);
 
-	}
+//		return currentStatus;
 
-	private String hashCal(String str) {
-		byte[] hashSequence = str.getBytes();
-		StringBuilder hexString = new StringBuilder();
-		try {
-			MessageDigest algorithm = MessageDigest.getInstance("SHA-512");
-			algorithm.reset();
-			algorithm.update(hashSequence);
-			byte messageDigest[] = algorithm.digest();
-
-			for (byte aMessageDigest : messageDigest) {
-				String hex = Integer.toHexString(0xFF & aMessageDigest);
-				if (hex.length() == 1)
-					hexString.append("0");
-				hexString.append(hex);
-			}
-
-		} catch (NoSuchAlgorithmException nsae) {
-			log.error("Error occurred while generating hash " + str, nsae);
-			throw new CustomException("CHECKSUM_GEN_FAILED",
-					"Hash generation failed, gateway redirect URI " + "cannot be generated");
-		}
-
-		return hexString.toString();
 	}
 
 	@Override
 	public String generateRedirectFormData(Transaction transaction) {
 
-		log.info("inside CCAvenue.generateRedirectFormData()");
+		log.info("inside RazorPay.generateRedirectFormData()");
 //		PgDetail pgDetail = pgDetailRepository.getPgDetailByTenantId(requestInfo, transaction.getTenantId());
 
 		/*
@@ -607,9 +445,9 @@ public class RazorPayGateway implements Gateway {
 		try {
 			urlData = mapper.writeValueAsString(queryMap);
 		} catch (Exception e) {
-			log.error("CCAVENUE URL generation failed", e);
+			log.error("RazorPay URL generation failed", e);
 			throw new CustomException("URL_GEN_FAILED",
-					"CCAVENUE URL generation failed, gateway redirect URI cannot be generated");
+					"RazorPay URL generation failed, gateway redirect URI cannot be generated");
 		}
 		return urlData;
 	}
@@ -661,11 +499,21 @@ public class RazorPayGateway implements Gateway {
 //		Map<String, Object> ccAvenueDetails = transactionService.getCcavenueDetails(tenantId);
 //		Map<String, Object> ccAvenueDetails = transactionsApiController.getCcavenueDetails(tenantId);
 
-		Map<String, Object> ccAvenueDetails = pgDetailRepository.getCcavenueDetails(tenantId, "RAZORPAY");
-		this.MERCHANT_ID = ccAvenueDetails.get("merchant_id").toString();
-		this.ACCESS_CODE = ccAvenueDetails.get("access_code").toString();
-		this.WORKING_KEY = ccAvenueDetails.get("working_key").toString();
-		this.WS_URL = ccAvenueDetails.get("gateway_url").toString();
+		Map<String, Object> RazorPayDetails = pgDetailRepository.getCcavenueDetails(tenantId, "RAZORPAY");
+		this.MERCHANT_ID = RazorPayDetails.get("merchant_id").toString();
+		this.ACCESS_CODE = RazorPayDetails.get("access_code").toString();
+		this.WORKING_KEY = RazorPayDetails.get("working_key").toString();
+		this.WS_URL = RazorPayDetails.get("gateway_url").toString();
+	}
+
+	private void insertOrderDetails(String txnId, String orderId) {
+		pgDetailRepository.insertRazorPayOrder(txnId, orderId);
+	}
+
+	private String getOrderDetails(String txnId) {
+		Map<String, Object> orderIdMap = pgDetailRepository.getRazorPayOrderDetail(txnId);
+		String orderId = orderIdMap.get("order_id").toString();
+		return orderId;
 	}
 
 }
