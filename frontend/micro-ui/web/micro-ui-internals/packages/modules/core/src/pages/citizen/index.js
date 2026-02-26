@@ -17,6 +17,8 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import DashboardApplicationSearch from "./Home/DashboardApplicationSearch";
+import LabourCessFeeDetail from "./Home/LabourCessFeeDetail";
+import LabourCessDetailReport from "./Home/LabourCessDetailReport";
 
 
 
@@ -416,8 +418,12 @@ const Home = ({
           <Route path={`${path}/obps-search`}>
             <DashboardApplicationSearch />
           </Route>
-
-
+          <Route path={`${path}/labour-cess-fee`}>
+            <LabourCessFeeDetail />
+          </Route>
+          <Route path={`${path}/labour-cess-reportdetails`}>
+             <LabourCessDetailReport/>
+          </Route>
 
 
 

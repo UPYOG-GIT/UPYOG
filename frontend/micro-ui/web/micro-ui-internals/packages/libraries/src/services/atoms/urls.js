@@ -205,6 +205,13 @@ const Urls = {
   noc: {
     nocSearch: "/noc-services/v1/noc/_search"
   },
+  bpms:{
+    labourCessDetails:"https://bpms.sudacg.in/api/api-count/labour_cess_report.php"
+   
+  },
+  obpa:{
+     labourCessDetailsUlb:"/bpa-services/v1/bpa/_getLabourCessFeeDetails"
+  }
 };
 
 export default Urls;
