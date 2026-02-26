@@ -235,4 +235,22 @@ export const OBPSAdminService = {
       userService: true,
       method: "POST"
     }),
+
+    labourCessDetails: (locid,from_date,to_date) =>
+      Request({
+        url: Urls.bpms.labourCessDetails,
+        params: {locid,from_date,to_date},
+        method:"GET"
+    }),
+
+    labourCessDetailsUlb: (locid,fromDate,toDate) =>
+      Request({
+        url: Urls.obpa.labourCessDetailsUlb,
+        params: {locid,fromDate,toDate},
+        // auth: true,
+        // userService: true,
+        method:"POST"
+    })
+
+
 }
