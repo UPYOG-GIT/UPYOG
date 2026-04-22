@@ -25,7 +25,8 @@ const BpaApplicationDetail = () => {
   const stateCode = Digit.ULBService.getStateId();
   const queryClient = useQueryClient();
   const [showToast, setShowToast] = useState(null);
-  const [isTocAccepted, setIsTocAccepted] = useState(false);
+  const [isTocAccepted, setIsTocAccepted] = useState(false); 
+  const [isCondtAccepted, setIsCondtAccepted] = useState(false);
   const [displayMenu, setDisplayMenu] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
@@ -229,6 +230,11 @@ const BpaApplicationDetail = () => {
 
   function checkForSubmitDisable() {
     if (checkBoxVisible) return isFromSendBack ? !isFromSendBack : !isTocAccepted;
+    else return false;
+  }
+
+  function checkForSubmitDisableArc() {
+    if (checkBoxVisible) return isFromSendBack ? !isFromSendBack : !(isTocAccepted && isCondtAccepted);
     else return false;
   }
 
@@ -607,7 +613,7 @@ const BpaApplicationDetail = () => {
                 <Fragment>
                   <BPAApplicationTimeline application={data?.applicationData} id={id} />
                   {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length > 0 && !isFromSendBack && checkBoxVisible && (
-                    <CheckBox
+                   <CheckBox
                       styles={{ margin: "20px 0 40px", paddingTop: "10px" }}
                       checked={isTocAccepted}
                       label={getCheckBoxLable()}
@@ -632,12 +638,20 @@ const BpaApplicationDetail = () => {
                     </ActionBar>
                   )}
                   {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length == 1 && (
+                    <>
+                      <CheckBox
+                      styles={{ margin: "20px 0 40px", paddingTop: "10px" }}
+                      checked={isCondtAccepted}
+                      label="I, hereby give my consent to automatic filing of a complaint/Appeal on my behalf before the Competent Officer under Rule 6 of the Lok Seva Guarantee Rules, 2011, in the event that the applied service is not delivered within the stipulated time."
+                      // label={getCheckBoxLabelData(t, data?.applicationData, workflowDetails?.data?.nextActions)}
+                       onChange={() => { setIsCondtAccepted(!isCondtAccepted); isCondtAccepted ? setDisplayMenu(!isCondtAccepted) : "" }}
+                    />
                     <ActionBar style={{ position: "relative", boxShadow: "none", minWidth: "240px", maxWidth: "310px", padding: "0px" }}>
                       <div style={{ width: "100%" }}>
                         <button
                           style={{ width: "100%", color: "#FFFFFF", fontSize: "19px" }}
-                          className={`${checkForSubmitDisable(isFromSendBack, isTocAccepted) ? "submit-bar-disabled" : "submit-bar"}`}
-                          disabled={checkForSubmitDisable(isFromSendBack, isTocAccepted)}
+                          className={`${checkForSubmitDisableArc(isFromSendBack, isTocAccepted) ? "submit-bar-disabled" : "submit-bar"}`}
+                          disabled={checkForSubmitDisableArc(isFromSendBack, isTocAccepted)}
                           name={workflowDetails?.data?.nextActions?.[0]?.action}
                           value={workflowDetails?.data?.nextActions?.[0]?.action}
                           onClick={(e) => { onActionSelect(e.target.value) }}>
@@ -645,6 +659,7 @@ const BpaApplicationDetail = () => {
                         </button>
                       </div>
                     </ActionBar>
+                    </>
                   )}
                 </Fragment>
               </Card>
