@@ -50,8 +50,10 @@ import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
 
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -1320,6 +1322,109 @@ public class BPAService {
 		return applicationDetails;
 	}
 
+	public Map<String, Object> getLabourCessFee(String code, String fromDate, String toDate) {
+            
+		    log.info("Printing request data ::::" + code +" From date::"+fromDate+" To Date ::"+toDate);
+		
+			Map<String, Object> ulbDetails = getULBCode(code);
+			String tenantId = ulbDetails.get("tenantId").toString();
+			String ulbName = ulbDetails.get("name").toString();
+			Integer locId = (Integer) ulbDetails.get("locid");
+
+			Map<String, Object> applicationDetails = new HashMap<>();
+			List<Map<String, Object>> detailsList = new ArrayList<>();
+
+			log.info("Printing converted TenentID from code  ::::"+ulbDetails.get(tenantId));
+			if (tenantId.equals("cg.birgaon") ||
+				tenantId.equals("cg.dhamtari") ||
+				tenantId.equals("cg.bhilaicharoda")) {
+				log.info("Inside the If condition for Birgaon , Dhamatrai and Bhilai charoda condition");
+				List<Map<String, Object>> resultList =
+						repository.getLabourCessFeeDetails(tenantId, fromDate, toDate);
+
+				for (Map<String, Object> row : resultList) {
+
+					Map<String, Object> detailsMap = new HashMap<>();
+
+					detailsMap.put("ULB_Name", row.get("ulb_name"));
+					detailsMap.put("Consumer_Code", row.get("consumer_code"));
+					detailsMap.put("Occupancy_Type", row.get("occupancy_type"));
+					detailsMap.put("Payment_Date", row.get("payment_date"));
+					detailsMap.put("Labour_Cess_Type", row.get("labour_cess_type"));
+					detailsMap.put("Labour_Cess_Amount", row.get("labour_cess_amount"));
+					detailsMap.put("Ward_No", row.get("wardno"));
+					detailsMap.put("Plot_Area", row.get("plotarea"));
+					detailsMap.put("Builtup_Area", row.get("builtuparea"));
+					detailsMap.put("Approval_Date", row.get("approval_date"));
+
+					detailsList.add(detailsMap);
+				}
+
+			}
+			else if(tenantId.equals("cg.raipur") || tenantId.equals("cg.durg") ||
+					tenantId.equals("cg.bhilai") || tenantId.equals("cg.bilaspur") || 
+					tenantId.equals("cg.jagdalpur") || tenantId.equals("cg.raigarh") || tenantId.equals("cg.korba")|| 
+					tenantId.equals("cg.rajnandgaon") || tenantId.equals("cg.ambikapur") ){
+				log.info("Inside the  if condition for the Legacy BPMS labour report api");
+				try {
+                   
+						String url = "https://bpms.sudacg.in/api/api-count/labour_cess_report.php"
+								+ "?locid=" + locId
+								+ "&from_date=" + fromDate
+								+ "&to_date=" + toDate;
+
+						RestTemplate restTemplate = new RestTemplate();
+
+						ResponseEntity<Map> response =
+								restTemplate.getForEntity(url, Map.class);
+						log.info("Calling the Legacy BPMS labour report api:::"+url);
+						if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+
+							Map<String, Object> apiResponse = response.getBody();
+
+							// Extract "data" array
+							List<Map<String, Object>> dataList =(List<Map<String, Object>>) apiResponse.get("data");
+							log.info("Data record return from legacy bpms api end "+apiResponse.get("total_records"));
+							if (dataList != null) {
+
+								for (Map<String, Object> row : dataList) {
+
+									Map<String, Object> detailsMap = new HashMap<>();
+
+									detailsMap.put("ULB_Name", row.get("ULB Name"));
+									detailsMap.put("Proposal_No", row.get("Proposal No"));
+									detailsMap.put("Proposal_Type", row.get("Proposal Type"));
+									detailsMap.put("Client_Name", row.get("Client_Name"));
+									detailsMap.put("Zone_No", row.get("Zone_no"));
+									detailsMap.put("Ward_No", row.get("Ward_No"));
+									detailsMap.put("Plot_Area", row.get("Plot Area"));
+									detailsMap.put("Builtup_Area", row.get("Builtup Area"));
+									detailsMap.put("Approval_Date", row.get("Approval Date"));
+									detailsMap.put("Payment_Date", row.get("Payment Date"));
+									detailsMap.put("Post_Amount_Paid", row.get("Post Amount Paid"));
+									detailsMap.put("Labour_Cess_Charges", row.get("Labour Cess Charges"));
+
+									detailsList.add(detailsMap);
+								}
+							}
+						}
+
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}else {
+				    applicationDetails.put("status", false);
+				    applicationDetails.put("message", "Labour Cess Report not available for selected ULB");
+				    applicationDetails.put("labour_cess_details", Collections.emptyList());
+				    return applicationDetails;
+				}
+
+			applicationDetails.put("status", true);
+			applicationDetails.put("labour_cess_details", detailsList);
+			log.info("getting out the of the method :::::::::::::::::::::::::::");
+			return applicationDetails;
+	}
+
 	private static Map<String, Object> getNameAndTenant(String code) {
 		Map<String, Object> result = new HashMap<>();
 		switch (code) {
@@ -1343,8 +1448,115 @@ public class BPAService {
 		}
 		return result;
 	}
+	
+	private static Map<String, Object> getULBCode(String code) {
+		Map<String, Object> result = new HashMap<>();
+		switch (code) {
+		case "cg.birgaon":
+			result.put("name", "Birgaon");
+			result.put("tenantId", "cg.birgaon");
+			result.put ("locid",15);
+			break;
+		case "cg.dhamtari":
+			result.put("name", "Dhamtari");
+			result.put("tenantId", "cg.dhamtari");
+			result.put ("locid",13);
+			break;
+		case "cg.bhilaicharoda":
+			result.put("name", "Bhilai Charoda");
+			result.put("tenantId", "cg.bhilaicharoda");
+			result.put ("locid",14);
+			break;
+		case "cg.raipur":
+			result.put("name", "Raipur");
+			result.put("tenantId","cg.raipur");
+			result.put ("locid",1);
+			break;
+		case "cg.durg":
+			result.put("name", "Durg");
+			result.put("tenantId","cg.durg");
+			result.put ("locid",2);
+			break;
+		case "cg.bhilai":
+			result.put("name", "Bhilai");
+			result.put("tenantId", "cg.bhilai");
+			result.put ("locid",3);
+			break;
+		case "cg.bilaspur":
+			result.put("name", "Bilaspur");
+			result.put("tenantId", "cg.bilaspur");
+			result.put ("locid",4);
+			break;
+		case "cg.jagdalpur":
+			result.put("name", "Jagdalpur");
+			result.put("tenantId", "cg.jagdalpur");
+			result.put ("locid",10);
+			break;
+		case "cg.raigarh":
+			result.put("name", "Raigarh");
+			result.put("tenantId", "cg.raigarh");
+			result.put ("locid",5);
+			break;
+		case "cg.rajnandgaon":
+			result.put("name", "Rajnandgaon");
+			result.put("tenantId", "cg.rajnandgaon");
+			result.put ("locid",6);
+			break;
+		case "cg.korba":
+			result.put("name", "Korba");
+			result.put("tenantId","cg.korba");
+			result.put ("locid",7);
+			break;
+		case "cg.ambikapur":
+			result.put("name", "Ambikapur");
+			result.put("tenantId","cg.ambikapur");
+			result.put ("locid",9);
+			break;
+		case "cg.risali":
+			result.put("name", "Risali");
+			result.put("tenantId", "cg.risali");
+			result.put ("locid",11);
+			break;
+		case "999":
+			result.put("name", "Citya");
+			result.put("tenantId", "cg.citya");
+			break;
+		default:
+		}
+		return result;
+	}
 
+	
+	private static Map<String, Object> getULBName(String code) {
+		Map<String, Object> result = new HashMap<>();
+		switch (code) {
+		case "15":
+			result.put("name", "Birgaon");
+			result.put("tenantId", "cg.birgaon");
+			break;
+		case "13":
+			result.put("name", "Dhamtari");
+			result.put("tenantId", "cg.dhamtari");
+			break;
+		case "14":
+			result.put("name", "Bhilai Charoda");
+			result.put("tenantId", "cg.bhilaicharoda");
+			break;
+		case "999":
+			result.put("name", "Citya");
+			result.put("tenantId", "cg.citya");
+			break;
+		default:
+		}
+		return result;
+	}
 	public int updatePropertyId(String applicationNo, String propertyId) {
 		return repository.updatePropertyId(applicationNo, propertyId);
 	}
+	
+	
+	public int updateConsentStatus(String applicationNo,String tenantId,Boolean consentStatus) {
+		return repository.updateConsentStatus(applicationNo,tenantId,consentStatus);
+	}
+	
 }
