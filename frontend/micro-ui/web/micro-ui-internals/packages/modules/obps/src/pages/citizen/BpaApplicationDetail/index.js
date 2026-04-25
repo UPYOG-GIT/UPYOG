@@ -16,6 +16,8 @@ import DocumentsPreview from "../../../../../templates/ApplicationDetails/compon
 import ScruntinyDetails from "../../../../../templates/ApplicationDetails/components/ScruntinyDetails";
 import { Link } from "react-router-dom";
 import Urls from "../../../../../../libraries/src/services/atoms/urls";
+import { OBPSService } from "../../../../../../libraries/src/services/elements/OBPS";
+
 
 const BpaApplicationDetail = () => {
   const { id } = useParams();
@@ -25,7 +27,8 @@ const BpaApplicationDetail = () => {
   const stateCode = Digit.ULBService.getStateId();
   const queryClient = useQueryClient();
   const [showToast, setShowToast] = useState(null);
-  const [isTocAccepted, setIsTocAccepted] = useState(false);
+  const [isTocAccepted, setIsTocAccepted] = useState(false); 
+  const [isCondtAccepted, setIsCondtAccepted] = useState(true);
   const [displayMenu, setDisplayMenu] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
@@ -106,6 +109,17 @@ const BpaApplicationDetail = () => {
       return t("NA")
     }
   };
+
+  async function changeConsentStatus() {
+
+    try{
+       const response = await Digit.OBPSService.updateConsentStatus(data?.applicationData?.applicationNo, data?.applicationData?.tenantId, isCondtAccepted);
+    }
+    catch(error){
+      console.log("Error while updating consent status", error);
+    }
+
+  }
 
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
@@ -231,6 +245,11 @@ const BpaApplicationDetail = () => {
     if (checkBoxVisible) return isFromSendBack ? !isFromSendBack : !isTocAccepted;
     else return false;
   }
+
+  // function checkForSubmitDisableArc() {
+  //   if (checkBoxVisible) return isFromSendBack ? !isFromSendBack : !(isTocAccepted && isCondtAccepted);
+  //   else return false;
+  // }
 
   const submitAction = (workflow) => {
     setIsEnableLoader(true);
@@ -607,7 +626,7 @@ const BpaApplicationDetail = () => {
                 <Fragment>
                   <BPAApplicationTimeline application={data?.applicationData} id={id} />
                   {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length > 0 && !isFromSendBack && checkBoxVisible && (
-                    <CheckBox
+                   <CheckBox
                       styles={{ margin: "20px 0 40px", paddingTop: "10px" }}
                       checked={isTocAccepted}
                       label={getCheckBoxLable()}
@@ -632,6 +651,20 @@ const BpaApplicationDetail = () => {
                     </ActionBar>
                   )}
                   {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length == 1 && (
+                    <>
+                      <CheckBox
+                      styles={{ margin: "20px 0 40px", paddingTop: "10px" }}
+                      checked={isCondtAccepted}
+                      label={
+                              <span>
+                                मैं सहमति देता/देती हूँ कि यदि निर्धारित समय सीमा के भीतर आवेदनित लोक सेवा प्रदान नहीं की जाती है, तो मेरी ओर से सक्षम अधिकारी के समक्ष लोक सेवा गारंटी नियम, 2011 के नियम 6 के अंतर्गत स्वत: शिकायत/अपील दर्ज की जाए |
+                                <br />
+                                I, hereby give my consent to automatic filing of a complaint/Appeal on my behalf before the Competent Officer under Rule 6 of the Lok Seva Guarantee Rules, 2011, in the event that the applied service is not delivered within the stipulated time.
+                              </span>
+                            }
+                      // label={getCheckBoxLabelData(t, data?.applicationData, workflowDetails?.data?.nextActions)}
+                       onChange={() => { setIsCondtAccepted(!isCondtAccepted); isCondtAccepted ? setDisplayMenu(!isCondtAccepted) : "" }}
+                    />
                     <ActionBar style={{ position: "relative", boxShadow: "none", minWidth: "240px", maxWidth: "310px", padding: "0px" }}>
                       <div style={{ width: "100%" }}>
                         <button
@@ -640,11 +673,12 @@ const BpaApplicationDetail = () => {
                           disabled={checkForSubmitDisable(isFromSendBack, isTocAccepted)}
                           name={workflowDetails?.data?.nextActions?.[0]?.action}
                           value={workflowDetails?.data?.nextActions?.[0]?.action}
-                          onClick={(e) => { onActionSelect(e.target.value) }}>
+                          onClick={(e) => { changeConsentStatus();onActionSelect(e.target.value); }}>
                           {t(`WF_BPA_${workflowDetails?.data?.nextActions?.[0]?.action}`)}
                         </button>
                       </div>
                     </ActionBar>
+                    </>
                   )}
                 </Fragment>
               </Card>
