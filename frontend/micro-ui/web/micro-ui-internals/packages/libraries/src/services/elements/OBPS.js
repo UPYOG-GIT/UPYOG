@@ -244,6 +244,14 @@ export const OBPSService = {
       method: "POST"
     }),
 
+    updateConsentStatus: (applicationNo,tenantId,consentStatus) =>
+      Request({
+        url: Urls.obps.updateConsentStatus,
+        params: { applicationNo, tenantId, consentStatus },
+        method:"POST"
+    }),
+    
+
   LicenseDetails: async (tenantId, params) => {
     const response = await OBPSService.BPAREGSearch(tenantId, {}, params);
     if (!response?.Licenses?.length) {

@@ -157,7 +157,8 @@ const Urls = {
     //for searching application details by application number from dashboard
     searchByApplicationNo: "/bpa-services/v1/bpa/application/_search",
     updateBillAmount: "/bpa-services/v1/bpa/_updatebillamount",
-    propertyIdUpdate: "/bpa-services/v1/bpa/_updatepropertyid"
+    propertyIdUpdate: "/bpa-services/v1/bpa/_updatepropertyid",
+    updateConsentStatus:"/bpa-services/v1/bpa/_updateconsentstatus"
   },
 
   edcr: {
