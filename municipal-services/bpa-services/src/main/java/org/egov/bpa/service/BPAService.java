@@ -1553,4 +1553,10 @@ public class BPAService {
 	public int updatePropertyId(String applicationNo, String propertyId) {
 		return repository.updatePropertyId(applicationNo, propertyId);
 	}
+	
+	
+	public int updateConsentStatus(String applicationNo,String tenantId,Boolean consentStatus) {
+		return repository.updateConsentStatus(applicationNo,tenantId,consentStatus);
+	}
+	
 }

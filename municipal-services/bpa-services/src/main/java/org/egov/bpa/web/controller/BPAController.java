@@ -779,5 +779,28 @@ public class BPAController {
 			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	
+	@PostMapping("/_updateconsentstatus")
+	public ResponseEntity<Object> updateconsentStatus(String applicationNo,String tenantId,Boolean consentStatus){
+		
+		try {
+			int result= bpaService.updateConsentStatus(applicationNo, tenantId, consentStatus);
+			if (result > 0) {
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+			}
+		}
+		catch(Exception e){
+			log.error("Exception in updating Consent Status " + e);
+			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+		}
+	}
 
 }
+
+
+
+
+	

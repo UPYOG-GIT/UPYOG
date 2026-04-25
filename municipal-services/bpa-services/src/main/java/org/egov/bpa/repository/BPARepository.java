@@ -933,4 +933,18 @@ public class BPARepository {
 		log.info("BPARepository.getLabourCessFeeDetails: result size = " + resultList.size());
 		return resultList;
 	}
+	
+	public int updateConsentStatus(String applicationNo, String tenantId,Boolean consentStatus) {
+		
+		String query = "UPDATE eg_bpa_buildingplan SET consentstatus = ? WHERE applicationno = ? AND tenantid = ?";
+
+		int updateResult = jdbcTemplate.update(query, consentStatus, applicationNo, tenantId);
+		
+		log.info("BPARepository.updateconsentStatus: " + updateResult 
+				+ " updated for applicatioNo : " + applicationNo);
+		
+		return updateResult;
+	}
+	
+	
 }
