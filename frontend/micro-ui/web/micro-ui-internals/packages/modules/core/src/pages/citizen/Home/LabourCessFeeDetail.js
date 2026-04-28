@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { BackButton, TextInput, SubmitBar, Header, Card, CardHeader, CardLabel, Row, StatusTable, Dropdown } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import LabourCessDetailReport from "./LabourCessDetailReport";
-import LabourCessUlbDetailReport from "./LabourCessUlbDetailReport";
 import { Loader } from "@upyog/digit-ui-react-components";
 
 
@@ -76,6 +75,7 @@ const LabourCessFeeDetail = () => {
           sessionStorage.setItem("data",JSON.stringify(response.labour_cess_details));
           sessionStorage.setItem("ulb",selectedUlb.name);
           console.log("data",sessionStorage.getItem("data"));
+
           location.href="/digit-ui/citizen/labour-cess-reportdetails";
       
     } catch (error) {
@@ -120,7 +120,7 @@ const LabourCessFeeDetail = () => {
               overflowY: "auto"
             }}
           />
-        
+
         </div>
          </div>
          <div>
