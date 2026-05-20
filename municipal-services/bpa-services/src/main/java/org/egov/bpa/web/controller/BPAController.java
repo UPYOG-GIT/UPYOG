@@ -88,19 +88,25 @@ public class BPAController {
 	@PostMapping(value = "/_create")
 	public ResponseEntity<BPAResponse> create(@Valid @RequestBody BPARequest bpaRequest) {
 		bpaUtil.defaultJsonPathConfig();
+		log.info("Inside create controller");
 		BPA bpa = bpaService.create(bpaRequest);
 		List<BPA> bpas = new ArrayList<BPA>();
 		bpas.add(bpa);
 		BPAResponse response = BPAResponse.builder().BPA(bpas)
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(bpaRequest.getRequestInfo(), true))
 				.build();
+		List<BPA> list=bpaService.getBPAWithBPAId(bpaRequest);
+		for(BPA b:list) {
+			log.info(b.getApplicationNo());
+		}
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/_update")
 	public ResponseEntity<BPAResponse> update(@Valid @RequestBody BPARequest bpaRequest) {
+		log.info("Inside update controller");
 		BPA bpa = bpaService.update(bpaRequest);
-		log.info("bpa---" + bpa.getApprovalNo());
+		log.info("bpa---" + bpa.getApprovalNo());	
 		List<BPA> bpas = new ArrayList<BPA>();
 		bpas.add(bpa);
 		BPAResponse response = BPAResponse.builder().BPA(bpas)

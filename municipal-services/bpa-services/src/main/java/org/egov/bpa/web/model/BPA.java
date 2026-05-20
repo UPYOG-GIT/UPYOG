@@ -118,6 +118,10 @@ public class BPA {
 	@SafeHtml
 	@JsonProperty("propertyId")
 	private String propertyId = null;
+	
+	@JsonProperty("consentStatus")
+	private Boolean consentStatus = null;
+	
 
 	public BPA id(String id) {
 		this.id = id;
@@ -604,6 +608,14 @@ public class BPA {
 
 	public void setSwsServiceId(Long swsServiceId) {
 		this.swsServiceId = swsServiceId;
+	}
+	
+	public void setConsentStatus(Boolean consentStatus) {
+		this.consentStatus=consentStatus;
+	}
+	
+	public Boolean getConsentStatus() {
+		return consentStatus;
 	}
 
 }
