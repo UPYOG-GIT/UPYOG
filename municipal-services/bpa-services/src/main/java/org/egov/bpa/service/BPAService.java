@@ -135,6 +135,8 @@ public class BPAService {
 			throw new CustomException(BPAErrorConstants.INVALID_TENANT, " Application cannot be create at StateLevel");
 		}
 
+		log.info("Inside create service");
+		
 		log.info("bpaRequest.getBPA().getLandInfo().getAddress(): "
 				+ bpaRequest.getBPA().getLandInfo().getAddress().toString());
 		// Since approval number should be generated at approve stage
@@ -532,6 +534,19 @@ public class BPAService {
 				bpa.getApplicationNo());
 
 		List<BPA> searchResult = getBPAWithBPAId(bpaRequest);
+		
+		
+		if (CollectionUtils.isEmpty(searchResult)) {
+			throw new CustomException(BPAErrorConstants.UPDATE_ERROR,
+					"Failed to Update the Application, Found None!");
+		}
+		if (searchResult.size() > 1) {
+			throw new CustomException(BPAErrorConstants.UPDATE_ERROR,
+					"Failed to Update the Application, Found multiple applications!");
+		}
+		
+		
+		
 		if (CollectionUtils.isEmpty(searchResult) || searchResult.size() > 1) {
 			throw new CustomException(BPAErrorConstants.UPDATE_ERROR,
 					"Failed to Update the Application, Found None or multiple applications!");
