@@ -28,7 +28,7 @@ const BpaApplicationDetail = () => {
   const queryClient = useQueryClient();
   const [showToast, setShowToast] = useState(null);
   const [isTocAccepted, setIsTocAccepted] = useState(false); 
-  const [isCondtAccepted, setIsCondtAccepted] = useState(true);
+  const [isCondtAccepted, setIsCondtAccepted] = useState(false);
   const [displayMenu, setDisplayMenu] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
@@ -113,14 +113,14 @@ const BpaApplicationDetail = () => {
   async function changeConsentStatus() {
 
     try{
-       const response = await Digit.OBPSService.updateConsentStatus(data?.applicationData?.applicationNo, data?.applicationData?.tenantId, isCondtAccepted);
+      
+      const response = await OBPSService.updateConsentStatus(data?.applicationData?.applicationNo, data?.applicationData?.tenantId, isCondtAccepted);
     }
     catch(error){
       console.log("Error while updating consent status", error);
     }
 
   }
-
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
    
@@ -673,7 +673,7 @@ const BpaApplicationDetail = () => {
                           disabled={checkForSubmitDisable(isFromSendBack, isTocAccepted)}
                           name={workflowDetails?.data?.nextActions?.[0]?.action}
                           value={workflowDetails?.data?.nextActions?.[0]?.action}
-                          onClick={(e) => { changeConsentStatus();onActionSelect(e.target.value); }}>
+                          onClick={(e) => { changeConsentStatus() ;onActionSelect(e.target.value) ; }}>
                           {t(`WF_BPA_${workflowDetails?.data?.nextActions?.[0]?.action}`)}
                         </button>
                       </div>
