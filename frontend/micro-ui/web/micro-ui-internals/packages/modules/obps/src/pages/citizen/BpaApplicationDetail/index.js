@@ -38,7 +38,7 @@ const BpaApplicationDetail = () => {
   const [isEnableLoader, setIsEnableLoader] = useState(false);
   sessionStorage.removeItem("BPA_SUBMIT_APP");
   sessionStorage.setItem("isEDCRDisable", JSON.stringify(true));
-  sessionStorage.setItem("BPA_IS_ALREADY_WENT_OFF_DETAILS", JSON.stringify(false));
+  sessionStorage.setItem("BPA_IS_ALREADY_WENT_OFF_DETAILS", JSON.stringify(false));                    
 
   const history = useHistory();
   sessionStorage.setItem("bpaApplicationDetails", false);
@@ -650,8 +650,10 @@ const BpaApplicationDetail = () => {
                       </div>
                     </ActionBar>
                   )}
-                  {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length == 1 && (
+                   {/* Consent */}
+                  {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.[0]?.action==="APPLY"  && (
                     <>
+                    {/* {console.log("Check "+workflowDetails?.data?.nextActions?.[0]?.action),console.log(workflowDetails?.data)} */}
                       <CheckBox
                       styles={{ margin: "20px 0 40px", paddingTop: "10px" }}
                       checked={isCondtAccepted}
@@ -679,7 +681,26 @@ const BpaApplicationDetail = () => {
                       </div>
                     </ActionBar>
                     </>
+                    
+               )}
+                  { !workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.[0]?.action!=="APPLY" && workflowDetails?.data?.nextActions?.length == 1 && (
+                    <>
+                    <ActionBar style={{ position: "relative", boxShadow: "none", minWidth: "240px", maxWidth: "310px", padding: "0px" }}>
+                      <div style={{ width: "100%" }}>
+                        <button
+                          style={{ width: "100%", color: "#FFFFFF", fontSize: "19px" }}
+                          className={`${checkForSubmitDisable(isFromSendBack, isTocAccepted) ? "submit-bar-disabled" : "submit-bar"}`}
+                          disabled={checkForSubmitDisable(isFromSendBack, isTocAccepted)}
+                          name={workflowDetails?.data?.nextActions?.[0]?.action}
+                          value={workflowDetails?.data?.nextActions?.[0]?.action}
+                          onClick={(e) => {onActionSelect(e.target.value) ; }}>
+                          {t(`WF_BPA_${workflowDetails?.data?.nextActions?.[0]?.action}`)}
+                        </button>
+                      </div>
+                    </ActionBar>
+                    </>
                   )}
+                 
                 </Fragment>
               </Card>
             )}
