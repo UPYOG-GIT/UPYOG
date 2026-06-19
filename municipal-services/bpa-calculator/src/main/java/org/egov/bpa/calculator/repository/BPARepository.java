@@ -186,41 +186,4 @@ public class BPARepository {
 //		return insertResult;
 
 	}
-
-	private final String fetchCountDetails = "SELECT COUNT(ebb.STATUS) AS received, " +
-			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'APPROVED') AS resolved, " +
-			"    COUNT(*) FILTER(WHERE ebb.status LIKE '%PEND%') AS pending, " +
-			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'REJECTED') AS rejected, " +
-			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'APPROVED' " +
-			"	 AND (ebb.lastmodifiedtime - ebb.createdtime) <= 5184000000) AS resolvedWithIn, " +
-			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'APPROVED' " +
-			"        AND (ebb.lastmodifiedtime - ebb.createdtime) > 5184000000) AS resolvedBeyond, " +
-			"	 COUNT(*) FILTER(WHERE ebb.status LIKE '%PEND%' " +
-			"        AND (ebb.lastmodifiedtime - ebb.createdtime) <= 5184000000) AS pendingWithIn, " +
-			"	 COUNT(*) FILTER(WHERE ebb.status LIKE '%PEND%' " +
-			"        AND (ebb.lastmodifiedtime - ebb.createdtime) > 5184000000) AS pendingBeyond " +
-			"	 FROM EG_BPA_BUILDINGPLAN ebb " +
-			"	 WHERE ebb.TENANTID = ? " +
-			"	 AND ebb.CREATEDTIME >= ?" +
-			"	 AND ebb.CREATEDTIME <= ? ";
-
-
-	public ProposalDetails getCountsStatuses(String tenantId, String startTime, String endTime) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-YYYY");
-		LocalDate startDate = LocalDate.parse(startTime, formatter);
-		LocalDate endDate = LocalDate.parse(endTime, formatter);
-		return jdbcTemplate.queryForObject(fetchCountDetails, (rs, rowNum) -> {
-			ProposalDetails details = new ProposalDetails();
-			details.setReceived(rs.getLong("received"));
-			details.setResolved(rs.getLong("resolved"));
-			details.setPending(rs.getLong("pending"));
-			details.setRejected(rs.getLong("rejected"));
-			details.setResolvedWithIn(rs.getLong("resolvedWithIn"));
-			details.setResolvedBeyond(rs.getLong("resolvedBeyond"));
-			details.setPendingWithIn(rs.getLong("pendingWithIn"));
-			details.setPendingBeyond(rs.getLong("pendingBeyond"));
-			return details;
-		}, tenantId, startDate.atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli(), endDate.atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli());
-	}
-
 }
