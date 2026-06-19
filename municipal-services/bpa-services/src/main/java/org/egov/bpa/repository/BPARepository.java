@@ -6,7 +6,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
+import java.time.LocalDate;
+import java.time.ZoneId;
 import org.egov.bpa.config.BPAConfiguration;
 import org.egov.bpa.producer.Producer;
 import org.egov.bpa.repository.querybuilder.BPAQueryBuilder;
@@ -966,7 +967,7 @@ public class BPARepository {
 			"	 AND ebb.CREATEDTIME <= ? ";
 
 
-	public ProposalDetails getCountsStatuses(String tenantId, String startDate, String endDate) {
+	public ProposalDetails getCountsStatuses(String tenantId, LocalDate startDate, LocalDate endDate) {
 //		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-YYYY");
 //		LocalDate startDate = LocalDate.parse(startTime, formatter);
 //		LocalDate endDate = LocalDate.parse(endTime, formatter);

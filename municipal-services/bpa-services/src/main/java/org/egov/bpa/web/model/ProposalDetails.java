@@ -17,7 +17,7 @@ import lombok.ToString;
 @ToString
 public class ProposalDetails {
 
-    @JsonProperty(received)
+    @JsonProperty("received")
     private Long received;
 
     @JsonProperty("resolved")

@@ -30,7 +30,7 @@ public class ProposalController {
 
 
     @GetMapping(value = "/getDetails")
-    public ResponseEntity<ProposalDetails> getDetails(@RequestParams String tenantId
+    public ResponseEntity<ProposalDetails> getDetails(@RequestParam String tenantId
             , @RequestParam("startDate") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate
             , @RequestParam("endDate") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate) {
 
@@ -42,7 +42,7 @@ public class ProposalController {
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(details, HttpStatus.Ok);
+        return new ResponseEntity<>(details, HttpStatus.OK);
     }
 
 

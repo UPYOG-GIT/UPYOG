@@ -66,7 +66,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import org.egov.bpa.web.model.ProposalDetails;
-
+import java.time.LocalDate;
 import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 
@@ -1578,12 +1578,12 @@ public class BPAService {
 
 
 	public ProposalDetails countStatuses(String tenantId, LocalDate fromDate, LocalDate toDate) {
-		ProposalDetails response;
+		ProposalDetails response = null;
 		try {
             log.info("fetcing details for teneantId = " + tenantId + " from Date = " + fromDate + " to Date = " + toDate);
             response = repository.getCountsStatuses(tenantId, fromDate, toDate);
 		} catch (Exception ex) {
-			log.error("Exception occured while creating response for proposalDetail " + e);
+			log.error("Exception occured while creating response for proposalDetail " + ex);
 		}
 		return response;
 	}
