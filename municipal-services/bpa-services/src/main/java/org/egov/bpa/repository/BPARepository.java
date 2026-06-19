@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.egov.bpa.web.model.ProposalDetails;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -945,6 +946,43 @@ public class BPARepository {
 		
 		return updateResult;
 	}
-	
-	
+
+
+	private final String fetchCountDetails = "SELECT COUNT(ebb.STATUS) AS received, " +
+			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'APPROVED') AS resolved, " +
+			"    COUNT(*) FILTER(WHERE ebb.status LIKE '%PEND%') AS pending, " +
+			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'REJECTED') AS rejected, " +
+			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'APPROVED' " +
+			"	 AND (ebb.lastmodifiedtime - ebb.createdtime) <= 5184000000) AS resolvedWithIn, " +
+			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'APPROVED' " +
+			"        AND (ebb.lastmodifiedtime - ebb.createdtime) > 5184000000) AS resolvedBeyond, " +
+			"	 COUNT(*) FILTER(WHERE ebb.status LIKE '%PEND%' " +
+			"        AND (ebb.lastmodifiedtime - ebb.createdtime) <= 5184000000) AS pendingWithIn, " +
+			"	 COUNT(*) FILTER(WHERE ebb.status LIKE '%PEND%' " +
+			"        AND (ebb.lastmodifiedtime - ebb.createdtime) > 5184000000) AS pendingBeyond " +
+			"	 FROM EG_BPA_BUILDINGPLAN ebb " +
+			"	 WHERE ebb.TENANTID = ? " +
+			"	 AND ebb.CREATEDTIME >= ?" +
+			"	 AND ebb.CREATEDTIME <= ? ";
+
+
+	public ProposalDetails getCountsStatuses(String tenantId, String startDate, String endDate) {
+//		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-YYYY");
+//		LocalDate startDate = LocalDate.parse(startTime, formatter);
+//		LocalDate endDate = LocalDate.parse(endTime, formatter);
+
+		log.info("Quering Details for tenantId + " + tenantId + " from Date =  " + startDate + " endDate = " + endDate);
+		return jdbcTemplate.queryForObject(fetchCountDetails, (rs, rowNum) -> {
+			ProposalDetails details = new ProposalDetails();
+			details.setReceived(rs.getLong("received"));
+			details.setResolved(rs.getLong("resolved"));
+			details.setPending(rs.getLong("pending"));
+			details.setRejected(rs.getLong("rejected"));
+			details.setResolvedWithIn(rs.getLong("resolvedWithIn"));
+			details.setResolvedBeyond(rs.getLong("resolvedBeyond"));
+			details.setPendingWithIn(rs.getLong("pendingWithIn"));
+			details.setPendingBeyond(rs.getLong("pendingBeyond"));
+			return details;
+		}, tenantId, startDate.atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli(), endDate.atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli());
+	}
 }
