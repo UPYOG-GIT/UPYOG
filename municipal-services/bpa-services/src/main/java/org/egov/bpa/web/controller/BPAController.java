@@ -801,7 +801,7 @@ public class BPAController {
 		catch(Exception e){
 			log.error("Exception in updating Consent Status " + e);
 			return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
-		}
+		
 	}
 
 }
