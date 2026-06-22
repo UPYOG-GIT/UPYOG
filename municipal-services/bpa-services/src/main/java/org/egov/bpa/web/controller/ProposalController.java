@@ -16,6 +16,10 @@ import java.time.LocalDate;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Arrays;
 import org.egov.bpa.web.model.ProposalDetails;
+import org.springframework.web.server.ResponseStatusException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 
 
@@ -24,6 +28,7 @@ import org.egov.bpa.web.model.ProposalDetails;
 @RequestMapping("/v1/proposalDetails")
 public class ProposalController {
 
+    private static final Set<String> VALID_TENANTS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("cg.dhamtari", "cg.bhilaicharoda", "cg.birgaon")));
 
     @Autowired
     private BPAService bpaService;
@@ -34,20 +39,21 @@ public class ProposalController {
             , @RequestParam("startDate") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate
             , @RequestParam("endDate") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate) {
 
-        log.info("STARTED :: genetaing Status of tenantId = " + tenantId);
+        log.info("STARTED :: Generating Status of tenantId = " + tenantId);
         ProposalDetails details;
         if(validateTenantId(tenantId)) {
             details = bpaService.countStatuses(tenantId, startDate, endDate);
-            log.info("fetched Status for tenantId = " + tenantId);
+            log.info("Success fully fetched status for tenantId = " + tenantId);
         } else {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            log.error("Validation failed for tenantId = " + tenantId);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid tenantId provided: " + tenantId);
         }
+        log.info("ENDED :: Successfully generated Status of tenantId = " + tenantId);
         return new ResponseEntity<>(details, HttpStatus.OK);
     }
 
 
     public boolean validateTenantId(String tenantId) {
-        List<String> ulbList = Arrays.asList("cg.dhamtari", "cg.bhilaicharoda", "cg.birgaon");
-        return ulbList.contains(tenantId);
+        return tenantId != null && VALID_TENANTS.contains(tenantId);
     }
 }

@@ -1580,8 +1580,9 @@ public class BPAService {
 	public ProposalDetails countStatuses(String tenantId, LocalDate fromDate, LocalDate toDate) {
 		ProposalDetails response = null;
 		try {
-            log.info("fetcing details for teneantId = " + tenantId + " from Date = " + fromDate + " to Date = " + toDate);
+            log.info("STARTED fetcing details for teneantId = " + tenantId + " from Date = " + fromDate + " to Date = " + toDate);
             response = repository.getCountsStatuses(tenantId, fromDate, toDate);
+            log.info("ENDED fetcing details for teneantId = " + tenantId + " from Date = " + fromDate + " to Date = " + toDate);
 		} catch (Exception ex) {
 			log.error("Exception occured while creating response for proposalDetail " + ex);
 		}
