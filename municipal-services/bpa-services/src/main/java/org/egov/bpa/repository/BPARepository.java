@@ -968,11 +968,7 @@ public class BPARepository {
 
 
 	public ProposalDetails getCountsStatuses(String tenantId, LocalDate startDate, LocalDate endDate) {
-//		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-YYYY");
-//		LocalDate startDate = LocalDate.parse(startTime, formatter);
-//		LocalDate endDate = LocalDate.parse(endTime, formatter);
-
-		log.info("Quering Details for tenantId + " + tenantId + " from Date =  " + startDate + " endDate = " + endDate);
+		log.info("Quering Details from database for tenantId + " + tenantId + " from Date =  " + startDate + " endDate = " + endDate);
 		return jdbcTemplate.queryForObject(fetchCountDetails, (rs, rowNum) -> {
 			ProposalDetails details = new ProposalDetails();
 			details.setReceived(rs.getLong("received"));
