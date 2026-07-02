@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Map;
 
 
 
@@ -35,25 +36,22 @@ public class ProposalController {
 
 
     @GetMapping(value = "/getDetails")
-    public ResponseEntity<ProposalDetails> getDetails(@RequestParam String tenantId
-            , @RequestParam("startDate") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate
+    public ResponseEntity<Map<String, ProposalDetails>> getDetails(@RequestParam("startDate") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate
             , @RequestParam("endDate") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate) {
 
-        log.info("STARTED :: Generating Status of tenantId = " + tenantId);
-        ProposalDetails details;
-        if(validateTenantId(tenantId)) {
-            details = bpaService.countStatuses(tenantId, startDate, endDate);
-            log.info("Success fully fetched status for tenantId = " + tenantId);
-        } else {
-            log.error("Validation failed for tenantId = " + tenantId);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid tenantId provided: " + tenantId);
+        log.info("STARTED :: Generating Status for tenantIds");
+        Map<String, ProposalDetails> ulbList = null;
+        try {
+            ulbList = bpaService.countStatuses(startDate, endDate);
+            if(ulbList != null) {
+                log.info("ENDED :: Successfully generated Status for tenantIds");
+                return new ResponseEntity<>(ulbList, HttpStatus.OK);
+            }
+        } catch (java.lang.Exception e) {
+            log.error("Validation failed for tenantId = ");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid tenantId provided");
         }
-        log.info("ENDED :: Successfully generated Status of tenantId = " + tenantId);
-        return new ResponseEntity<>(details, HttpStatus.OK);
-    }
-
-
-    public boolean validateTenantId(String tenantId) {
-        return tenantId != null && VALID_TENANTS.contains(tenantId);
+        log.info("ENDED :: Successfully generated Status of tenantId");
+        return new ResponseEntity<>(ulbList, HttpStatus.OK);
     }
 }

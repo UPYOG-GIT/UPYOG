@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import org.egov.bpa.config.BPAConfiguration;
@@ -949,37 +950,46 @@ public class BPARepository {
 	}
 
 
-	private final String fetchCountDetails = "SELECT COUNT(ebb.STATUS) AS received, " +
-			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'APPROVED') AS resolved, " +
-			"    COUNT(*) FILTER(WHERE ebb.status LIKE '%PEND%') AS pending, " +
-			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'REJECTED') AS rejected, " +
-			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'APPROVED' " +
-			"	 AND (ebb.lastmodifiedtime - ebb.createdtime) <= 5184000000) AS resolvedWithIn, " +
-			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'APPROVED' " +
-			"        AND (ebb.lastmodifiedtime - ebb.createdtime) > 5184000000) AS resolvedBeyond, " +
-			"	 COUNT(*) FILTER(WHERE ebb.status LIKE '%PEND%' " +
-			"        AND (ebb.lastmodifiedtime - ebb.createdtime) <= 5184000000) AS pendingWithIn, " +
-			"	 COUNT(*) FILTER(WHERE ebb.status LIKE '%PEND%' " +
-			"        AND (ebb.lastmodifiedtime - ebb.createdtime) > 5184000000) AS pendingBeyond " +
-			"	 FROM EG_BPA_BUILDINGPLAN ebb " +
-			"	 WHERE ebb.TENANTID = ? " +
-			"	 AND ebb.CREATEDTIME >= ?" +
-			"	 AND ebb.CREATEDTIME <= ? ";
+	private final String fetchCountDetails = "SELECT ebb.TENANTID as tenant, COUNT(ebb.STATUS) AS received," +
+			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'APPROVED') AS resolved," +
+			"    COUNT(*) FILTER(WHERE ebb.status LIKE '%PEND%') AS pending," +
+			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'REJECTED') AS rejectsed," +
+			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'APPROVED'" +
+			"	 AND (ebb.lastmodifiedtime - ebb.createdtime) <= 5184000000) AS resolvedWithIn," +
+			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'APPROVED'" +
+			"    AND (ebb.lastmodifiedtime - ebb.createdtime) > 5184000000) AS resolvedBeyond," +
+			"    COUNT(*) FILTER(WHERE ebb.status LIKE '%PEND%'" +
+			"    AND (ebb.lastmodifiedtime - ebb.createdtime) <= 5184000000) AS pendingWithIn," +
+			"  	 COUNT(*) FILTER(WHERE ebb.status LIKE '%PEND%'" +
+			"    AND (ebb.lastmodifiedtime - ebb.createdtime) > 5184000000) AS pendingBeyond" +
+			"	 FROM EG_BPA_BUILDINGPLAN ebb" +
+			"	 WHERE ebb.CREATEDTIME >= 1775001600000" +
+			"    AND ebb.CREATEDTIME <= 1777593600000 AND ebb.TENANTID != 'cg.citya'" +
+			"	 GROUP BY ebb.TENANTID";
 
 
-	public ProposalDetails getCountsStatuses(String tenantId, LocalDate startDate, LocalDate endDate) {
-		log.info("Quering Details from database for tenantId + " + tenantId + " from Date =  " + startDate + " endDate = " + endDate);
-		return jdbcTemplate.queryForObject(fetchCountDetails, (rs, rowNum) -> {
-			ProposalDetails details = new ProposalDetails();
-			details.setReceived(rs.getLong("received"));
-			details.setResolved(rs.getLong("resolved"));
-			details.setPending(rs.getLong("pending"));
-			details.setRejected(rs.getLong("rejected"));
-			details.setResolvedWithIn(rs.getLong("resolvedWithIn"));
-			details.setResolvedBeyond(rs.getLong("resolvedBeyond"));
-			details.setPendingWithIn(rs.getLong("pendingWithIn"));
-			details.setPendingBeyond(rs.getLong("pendingBeyond"));
-			return details;
-		}, tenantId, startDate.atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli(), endDate.atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli());
+	public Map<String, ProposalDetails> getCountsStatuses (LocalDate startDate, LocalDate endDate) {
+		log.info("Quering Details from database from from Date =  " + startDate + " endDate = " + endDate);
+		return jdbcTemplate.query(
+				fetchCountDetails,
+				new Object[]{startDate.atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli()
+						, endDate.atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli()},
+				rs -> {
+					Map<String, ProposalDetails> resultMap = new HashMap<>();
+					while (rs.next()) {
+						ProposalDetails details = new ProposalDetails();
+						details.setReceived(rs.getLong("received"));
+						details.setResolved(rs.getLong("resolved"));
+						details.setPending(rs.getLong("pending"));
+						details.setRejected(rs.getLong("rejected"));
+						details.setResolvedWithIn(rs.getLong("resolvedWithIn"));
+						details.setResolvedBeyond(rs.getLong("resolvedBeyond"));
+						details.setPendingWithIn(rs.getLong("pendingWithIn"));
+						details.setPendingBeyond(rs.getLong("pendingBeyond"));
+						resultMap.put(rs.getString("tenant"), details);
+					}
+					return resultMap;
+				}
+		);
 	}
 }
