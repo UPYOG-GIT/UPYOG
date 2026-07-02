@@ -953,7 +953,7 @@ public class BPARepository {
 	private final String fetchCountDetails = "SELECT ebb.TENANTID as tenant, COUNT(ebb.STATUS) AS received," +
 			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'APPROVED') AS resolved," +
 			"    COUNT(*) FILTER(WHERE ebb.status LIKE '%PEND%') AS pending," +
-			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'REJECTED') AS rejectsed," +
+			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'REJECTED') AS rejected," +
 			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'APPROVED'" +
 			"	 AND (ebb.lastmodifiedtime - ebb.createdtime) <= 5184000000) AS resolvedWithIn," +
 			"    COUNT(*) FILTER(WHERE ebb.status LIKE 'APPROVED'" +
