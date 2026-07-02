@@ -963,8 +963,9 @@ public class BPARepository {
 			"  	 COUNT(*) FILTER(WHERE ebb.status LIKE '%PEND%'" +
 			"    AND (ebb.lastmodifiedtime - ebb.createdtime) > 5184000000) AS pendingBeyond" +
 			"	 FROM EG_BPA_BUILDINGPLAN ebb" +
-			"	 WHERE ebb.CREATEDTIME >= 1775001600000" +
-			"    AND ebb.CREATEDTIME <= 1777593600000 AND ebb.TENANTID != 'cg.citya'" +
+			"	 WHERE ebb.CREATEDTIME >= ?" +
+			"    AND ebb.CREATEDTIME <= ?" +
+			"	 AND ebb.TENANTID != 'cg.citya'" +
 			"	 GROUP BY ebb.TENANTID";
 
 
@@ -977,6 +978,7 @@ public class BPARepository {
 				rs -> {
 					Map<String, ProposalDetails> resultMap = new HashMap<>();
 					while (rs.next()) {
+						String tenantId = rs.getString("tenant");
 						ProposalDetails details = new ProposalDetails();
 						details.setReceived(rs.getLong("received"));
 						details.setResolved(rs.getLong("resolved"));
@@ -986,7 +988,7 @@ public class BPARepository {
 						details.setResolvedBeyond(rs.getLong("resolvedBeyond"));
 						details.setPendingWithIn(rs.getLong("pendingWithIn"));
 						details.setPendingBeyond(rs.getLong("pendingBeyond"));
-						resultMap.put(rs.getString("tenant"), details);
+						resultMap.put(tenantId, details);
 					}
 					return resultMap;
 				}
