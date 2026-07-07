@@ -408,7 +408,7 @@ public class EdcrRestService {
 //        edcrDetail.setAreaCategory("BR");
 
 		if (edcrApplnDtl.getApplication().getPermitApplicationDate() != null) {
-			LOG.info("application number ==dcrApplnDtl.getApplication().getPermitApplicationDate() 9090000000000000000000000000" + dcrApplnDtl.getApplication().getPermitApplicationDate());
+			LOG.info("application number ==dcrApplnDtl.getApplication().getPermitApplicationDate() 9090000000000000000000000000" + edcrApplnDtl.getApplication().getPermitApplicationDate());
 
 			edcrDetail.setPermitDate(edcrApplnDtl.getApplication().getPermitApplicationDate());
 		}
