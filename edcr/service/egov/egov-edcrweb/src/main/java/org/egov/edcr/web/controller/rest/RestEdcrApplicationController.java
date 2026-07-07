@@ -311,11 +311,8 @@ public class RestEdcrApplicationController {
 		ErrorDetail edcRes = edcrValidator.validate(requestInfoWrapper);
 		if (edcRes != null && StringUtils.isNotBlank(edcRes.getErrorMessage()))
 			return new ResponseEntity<>(edcRes, HttpStatus.BAD_REQUEST);
-		Log.info("scrutinydetailsasdv    scrutinyDetails ");
 		List<EdcrDetail> edcrDetail = edcrRestService.fetchEdcr(edcrRequest, requestInfoWrapper);
-		Log.info("scrutinydetailsasdv    scrutinyDetails  sdvadsfasdf" + edcrDetail);
 		Integer count = edcrRestService.fetchCount(edcrRequest, requestInfoWrapper);
-		Log.info("scrutinydetailsasdv    scrutinyDetails  count" + count);
 		if (!edcrDetail.isEmpty() && edcrDetail.get(0).getErrors() != null) {
 			return new ResponseEntity<>(edcrDetail.get(0).getErrors(), HttpStatus.OK);
 		} else {
