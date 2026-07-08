@@ -447,7 +447,7 @@ public class EdcrRestService {
 
 		if (edcrApplnDtl.getReportOutputId() != null)
 			edcrDetail.setPlanReport(
-					format(getFileDownloadUrl(edcrApplnDtl.getReportOutputId().getFileStoreId(), tenantId)))
+					format(getFileDownloadUrl(edcrApplnDtl.getReportOutputId().getFileStoreId(), tenantId)));
 		LOG.info("application number ==  c22222222222222222222222222222222222222" );
 
 		File file = edcrApplnDtl.getPlanDetailFileStore() != null
