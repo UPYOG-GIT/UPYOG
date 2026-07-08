@@ -380,6 +380,7 @@ public class EdcrRestService {
 	@Transactional
 	public List<EdcrDetail> edcrDetailsResponse(List<EdcrApplicationDetail> edcrApplications, EdcrRequest edcrRequest) {
 		List<EdcrDetail> edcrDetails = new ArrayList<>();
+		LOG.info("edcrDetailsResponse =  " + edcrApplications.size());
 		for (EdcrApplicationDetail edcrApp : edcrApplications)
 			edcrDetails.add(setEdcrResponse(edcrApp, edcrRequest));
 
@@ -396,9 +397,10 @@ public class EdcrRestService {
 		LOG.info("application number ==" + edcrApplnDtl.getApplication().getApplicationNumber());
 		edcrDetail.setApplicationNumber(edcrApplnDtl.getApplication().getApplicationNumber());
 		edcrDetail.setApplicationDate(edcrApplnDtl.getApplication().getApplicationDate());
-		LOG.info("application number == 34253452345234523452345" + edcrApplnDtl.getApplication().getApplicationNumber());
+		LOG.info("application number afasdfgasdf22323== " + edcrApplnDtl.getApplication().getApplicationNumber());
 
 		if (edcrApplnDtl.getApplication().getPlanPermitNumber() != null) {
+			LOG.info("application number getPlanPermitNumber " + edcrApplnDtl.getApplication().getPlanPermitNumber());
 			edcrDetail.setPermitNumber(edcrApplnDtl.getApplication().getPlanPermitNumber());
 		}
 
@@ -409,7 +411,6 @@ public class EdcrRestService {
 
 		if (edcrApplnDtl.getApplication().getPermitApplicationDate() != null) {
 			LOG.info("application number ==dcrApplnDtl.getApplication().getPermitApplicationDate() 9090000000000000000000000000" + edcrApplnDtl.getApplication().getPermitApplicationDate());
-
 			edcrDetail.setPermitDate(edcrApplnDtl.getApplication().getPermitApplicationDate());
 		}
 		ApplicationType applicationType = edcrApplnDtl.getApplication().getApplicationType();
@@ -423,6 +424,7 @@ public class EdcrRestService {
 			} else {
 				edcrDetail.setAppliactionType(applicationType.getApplicationTypeVal());
 			}
+			LOG.info("applicationType    ++++++=========" + applicationType);
 
 		}
 		if (edcrApplnDtl.getApplication().getServiceType() != null)
@@ -433,9 +435,11 @@ public class EdcrRestService {
 			tenantId = tenantArr[0];
 		else
 			tenantId = tenantArr[1];
+		LOG.info("applicationType    qqqqq22222222222222222222222222++++++=========" + applicationType);
+
 		if (edcrApplnDtl.getDxfFileId() != null)
 			edcrDetail.setDxfFile(format(getFileDownloadUrl(edcrApplnDtl.getDxfFileId().getFileStoreId(), tenantId)));
-		LOG.info("application number ==dcrApplnDtl.getApplication().getPermitApplicationDate() 11111111111111111111111" );
+			LOG.info("application number = 11111111111111111111111 " + edcrDetail.getDxfFile() );
 
 		if (edcrApplnDtl.getScrutinizedDxfFileId() != null)
 			edcrDetail.setUpdatedDxfFile(
@@ -443,14 +447,17 @@ public class EdcrRestService {
 
 		if (edcrApplnDtl.getReportOutputId() != null)
 			edcrDetail.setPlanReport(
-					format(getFileDownloadUrl(edcrApplnDtl.getReportOutputId().getFileStoreId(), tenantId)));
-		LOG.info("application number ==dcrApplnDtl.getApplication().getPermitApplicationDate()c22222222222222222222222222222222222222" );
+					format(getFileDownloadUrl(edcrApplnDtl.getReportOutputId().getFileStoreId(), tenantId)))
+		LOG.info("application number ==  c22222222222222222222222222222222222222" );
 
 		File file = edcrApplnDtl.getPlanDetailFileStore() != null
 				? fileStoreService.fetch(edcrApplnDtl.getPlanDetailFileStore().getFileStoreId(),
 						DcrConstants.APPLICATION_MODULE_TYPE, tenantId)
 				: null;
 
+		if (file != null) {
+			LOG.info(" file = " + file );
+		}
 		if (LOG.isInfoEnabled())
 			LOG.info("**************** End - Reading Plan detail file **************" + file);
 		try {
@@ -474,9 +481,11 @@ public class EdcrRestService {
 		} catch (IOException e) {
 			LOG.log(Level.ERROR, e);
 		}
-
+		LOG.info("**************** End - Reading Plan detail file ************** 2352345234532456234652345" );
 		for (EdcrPdfDetail planPdf : edcrApplnDtl.getEdcrPdfDetails()) {
+			LOG.info("**************** End - Reading Plan planPdf file ************** planPdf " + planPdf);
 			if (planPdf.getConvertedPdf() != null) {
+				LOG.info("**************** End - Reading Plan planPdf.getConvertedPdf() file ************** planPdf " + planPdf.getConvertedPdf());
 				String downloadURL = format(getFileDownloadUrl(planPdf.getConvertedPdf().getFileStoreId(),
 						ApplicationThreadLocals.getTenantID()));
 				planPdfs.add(planPdf.getLayer().concat(" - ").concat(downloadURL));
@@ -486,13 +495,14 @@ public class EdcrRestService {
 				}
 			}
 		}
-
+		LOG.info("**************** End - Reading Plan planPdf.getConvertedPdf() file ************** 123521353245  23 465234 ");
 		edcrDetail.setPlanPdfs(planPdfs);
 		edcrDetail.setTenantId(edcrRequest.getTenantId());
 //		edcrDetail.setAreaCategory(edcrRequest.getAreaCategory());// add for areaCategory in response
 
 		if (StringUtils.isNotBlank(edcrRequest.getComparisonEdcrNumber()))
 			edcrDetail.setComparisonEdcrNumber(edcrRequest.getComparisonEdcrNumber());
+		LOG.info("**************** End - edcrRequest.getComparisonEdcrNumber()edcrRequest.getComparisonEdcrNumber()  " + edcrRequest.getComparisonEdcrNumber());
 
 		if (!edcrApplnDtl.getStatus().equalsIgnoreCase("Accepted"))
 			edcrDetail.setStatus(edcrApplnDtl.getStatus());
@@ -845,12 +855,13 @@ public class EdcrRestService {
 		criteria.createAlias("edcrApplicationDetail.application", "application");
 		if (edcrRequest != null && isNotBlank(edcrRequest.getEdcrNumber())) {
 			criteria.add(Restrictions.eq("edcrApplicationDetail.dcrNumber", edcrRequest.getEdcrNumber()));
+			LOG.info("getCriteriaofSingleTenant    edcrRequest.getEdcrNumber() = "+ edcrRequest.getEdcrNumber());
+
 		}
 		LOG.info("getCriteriaofSingleTenant    edcrRequest.getTransactionNumber()");
 
 		if (edcrRequest != null && isNotBlank(edcrRequest.getTransactionNumber())) {
 			LOG.info("getCriteriaofSingleTenant    edcrRequest.getTransactionNumber()" + edcrRequest.getTransactionNumber());
-
 			criteria.add(Restrictions.eq("application.transactionNumber", edcrRequest.getTransactionNumber()));
 		}
 		if (edcrRequest != null && isNotBlank(edcrRequest.getApplicationNumber())) {
@@ -873,6 +884,8 @@ public class EdcrRestService {
 				applicationType = ApplicationType.OCCUPANCY_CERTIFICATE;
 			}
 			criteria.add(Restrictions.eq("application.applicationType", applicationType));
+			LOG.info("getCriteriaofSingleTenant    applicationType.applicationType() applicationType" + applicationType);
+
 		}
 
 		if (edcrRequest != null && isNotBlank(edcrRequest.getApplicationSubType())) {
@@ -881,7 +894,7 @@ public class EdcrRestService {
 		}
 
 		if ((onlyTenantId || isStakeholder) && userInfo != null && isNotBlank(userId)) {
-			LOG.info("getCriteriaofSingleTenant    edcrRequest.getApplicationSubType() 32452345" + edcrRequest.getApplicationSubType());
+			LOG.info("getCriteriaofSingleTenant    userId.userId() userId" + userId);
 			criteria.add(Restrictions.eq("application.thirdPartyUserCode", userId));
 		}
 
