@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
+import org.egov.bpa.web.model.LabourDepartmentDetails;
 import org.egov.bpa.config.BPAConfiguration;
 import org.egov.bpa.repository.BPARepository;
 import org.egov.bpa.util.BPAConstants;
@@ -1585,6 +1585,20 @@ public class BPAService {
             log.info("ENDED fetcing details for teneantIds from Date = " + fromDate + " to Date = " + toDate);
 		} catch (Exception ex) {
 			log.error("Exception occured while creating response for proposalDetail " + ex);
+		}
+		return response;
+	}
+
+
+
+	public List<LabourDepartmentDetails> getLabourDepartmentDetails(LocalDate todayDate) {
+		List<LabourDepartmentDetails> response = null;
+		try {
+			log.info("STARTED fetcing details for teneantIds for todayDate = " + todayDate);
+			response = repository.getLabourDepartmentDetails(todayDate);
+			log.info("ENDED fetcing details for teneantIds for todayDate = " + todayDate);
+		} catch (Exception ex) {
+			log.error("Exception occured while creating response for LabourDepartmentDetails " + ex);
 		}
 		return response;
 	}
