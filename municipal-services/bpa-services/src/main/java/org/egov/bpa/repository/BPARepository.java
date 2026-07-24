@@ -32,6 +32,9 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.egov.bpa.web.model.ProposalDetails;
+import org.egov.bpa.web.model.LabourDepartmentDetails;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import java.util.Collections;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -993,5 +996,71 @@ public class BPARepository {
 					return resultMap;
 				}
 		);
+	}
+
+	private static final String PAYMENT_DETAILS_FOR_LABOUR_DEPARTMENT = "SELECT" +
+			"        TO_CHAR(TO_TIMESTAMP(ept.last_modified_time / 1000), 'DD-MM-YYYY HH24:MI:SS') AS date_of_submission, " +
+			"        ela.occupancy AS kary_type," +
+			"        ela.address AS sthapna_pata," +
+			"        ept.tenant_id AS ulb, " +
+			"        (ept.tenant_id || '_' || ebb.applicationno) AS proposal_no," +
+			"        ela.builtUpArea AS construction_area, " +
+			"        fd.amount AS estimated_cess," +
+			"        ept.gateway_txn_id AS transaction_id," +
+			"        fd.amount AS cess_amount, " +
+			"        TO_CHAR(TO_TIMESTAMP(ept.last_modified_time / 1000), 'DD-MM-YYYY HH24:MI:SS') AS transaction_date, " +
+			"        ept.txn_status AS status," +
+			"        (ebbd.txn_response::jsonb) ->> 'bank_ref_no' AS transaction_ref_no," +
+			"        ept.txn_id AS receipt_no, " +
+			"        fd.amount AS bank_amount, " +
+			"        ept.tenant_id AS ulb_code, " +
+			"        ept.tenant_id AS ulb_name" +
+			"    FROM EG_PG_TRANSACTIONS ept" +
+			"    JOIN EG_PG_TRANSACTIONS_DUMP ebbd ON ept.txn_id = ebbd.txn_id" +
+			"    JOIN EG_BPA_BUILDINGPLAN ebb ON ept.consumer_code = ebb.applicationno" +
+			"    JOIN EG_LAND_ADDRESS ela ON ela.landinfoid = ebb.landid" +
+			"    JOIN FEE_DETAILS fd ON fd.bill_id = ept.bill_id " +
+			"        AND UPPER(fd.charges_type_name) LIKE '%LAB%' " +
+			"        AND UPPER(fd.feetype) LIKE '%POST%'" +
+			"    WHERE ept.last_modified_time >= ? " +
+			"      AND ept.last_modified_time < ? " +
+			"      AND ebb.tenantid != 'cg.citya'";
+
+
+	public List<LabourDepartmentDetails> getLabourDepartmentDetails(LocalDate inputDate) {
+		if (inputDate == null) {
+			return Collections.emptyList();
+		}
+
+		try {
+			LocalDate previousDay = inputDate.minusDays(1);
+
+			ZoneId zoneId = ZoneId.of("Asia/Kolkata");
+
+			long startOfPreviousDayMs = previousDay.atStartOfDay(zoneId)
+					.toInstant()
+					.toEpochMilli();
+
+			long endOfPreviousDayMs = inputDate.atStartOfDay(zoneId)
+					.toInstant()
+					.toEpochMilli();
+
+			log.info("Fetching Labour Department data for previous day: {} (Epoch bounds: {} to {})",
+					previousDay, startOfPreviousDayMs, endOfPreviousDayMs);
+
+			List<LabourDepartmentDetails> resultList = jdbcTemplate.query(
+					PAYMENT_DETAILS_FOR_LABOUR_DEPARTMENT,
+					new BeanPropertyRowMapper<>(LabourDepartmentDetails.class),
+					startOfPreviousDayMs,
+					endOfPreviousDayMs
+			);
+
+			log.info("Fetched {} records", resultList.size());
+			return resultList;
+
+		} catch (Exception e) {
+			log.error("Error fetching Labour Department details for date: {}", inputDate, e);
+			throw new RuntimeException("Failed to fetch Labour Department details", e);
+		}
 	}
 }
