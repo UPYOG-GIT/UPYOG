@@ -17,7 +17,7 @@ import lombok.ToString;
 public class LabourDepartmentDetails {
 
     @JsonProperty("dateOfSubmission")
-    private Long dateOfSubmission;
+    private String dateOfSubmission;
 
     @JsonProperty("karyType")
     private String karyType;
@@ -47,7 +47,7 @@ public class LabourDepartmentDetails {
     private Double cessAmount;
 
     @JsonProperty("transactionDate")
-    private Long transactionDate;
+    private String transactionDate;
 
     @JsonProperty("status")
     private String status;
