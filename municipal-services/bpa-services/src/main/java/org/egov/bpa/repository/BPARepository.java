@@ -998,13 +998,13 @@ public class BPARepository {
 		);
 	}
 
-	private static final String PAYMENT_DETAILS_FOR_LABOUR_DEPARTMENT = "SELECT ept.last_modified_time AS date_Of_Submission, " +
+	private static final String PAYMENT_DETAILS_FOR_LABOUR_DEPARTMENT = "SELECT TO_CHAR(TO_TIMESTAMP(ept.last_modified_time/1000), 'DD/MM/YYYY') AS date_Of_Submission, " +
 			" ela.occupancy AS karyType, ela.address AS sthapna_Pata, " +
 			" ept.tenant_id AS ulb, (ept.tenant_id || '_' || ebb.applicationno) AS proposal_No, " +
 			" ela.builtUpArea AS constructionArea, fd.amount AS estimated_Cess, " +
 			" ept.gateway_txn_id AS transaction_Id, " +
 			" (ebbd.txn_response #>> '{}')::jsonb ->> 'bank_ref_no' AS transactionRefNo, " +
-			" fd.amount AS cessAmount, ept.last_modified_time AS transaction_Date, ept.txn_status AS status, " +
+			" fd.amount AS cessAmount, TO_CHAR(TO_TIMESTAMP(ept.last_modified_time/1000), 'DD/MM/YYYY') AS transaction_Date, ept.txn_status AS status, " +
 			" ept.txn_id AS receiptNo, fd.amount AS bankAmount, ept.tenant_id AS ulbCode, ept.tenant_id AS ulbName " +
 			" FROM EG_PG_TRANSACTIONS ept " +
 			" JOIN EG_PG_TRANSACTIONS_DUMP ebbd ON ept.txn_id = ebbd.txn_id " +
