@@ -681,6 +681,11 @@ public class MDMSService {
 
 									}
 								} // end mix
+								if (pCategory.equals(3) && calculationArea > 2500.00D) { // INDUSTRIAL high rise
+									calculationArea = ind_area + parkArea;
+									calculationRate = rate_ind;
+									amount = 218847.00 + ((calculationArea - 2500.00) * 51.8749) + ((calculationArea - 2500.00) * 20.00);
+								}
 							} else if (calcact.equals("Multiple With Percent")) {
 								log.info("######Inside Buildup Area: Plot Area Condition ");
 								// calculated on BA and Multiple With Percent
