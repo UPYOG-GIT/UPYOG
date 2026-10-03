@@ -710,6 +710,45 @@ class ShowField extends Component {
           />
         );
       } else {
+        if (
+          this.props.metaData.reportDetails.reportName == "MisLabourDepartmentPaymentReport" &&
+          (val == "SUCCESS" || val == "FAILURE")
+        ) {
+          return (
+            <div
+              style={{
+                flexWrap: "wrap",
+                justifyContent: "center",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px"
+              }}
+            >
+              <span>{val}</span>
+              <button
+                style={{
+                  backgroundColor: "#fe7a51",
+                  color: "#ffffff",
+                  padding: "0px 0px",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer"
+                }}
+                onMouseDown={(e) => {
+                  e.currentTarget.style.backgroundColor = "#e65f38";
+                }}
+                onMouseUp={(e) => {
+                  e.currentTarget.style.backgroundColor = "#fe7a51";
+                }}
+                onClick={() => {
+                  alert("Notification sent to Labour Department");
+                }}
+              >
+                <Label color="#ffffff" label="Send Notification" />
+              </button>
+            </div>
+          );
+        }
         return val;
       }
     }
