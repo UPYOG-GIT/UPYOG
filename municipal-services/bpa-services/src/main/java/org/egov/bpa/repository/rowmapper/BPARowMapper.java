@@ -79,7 +79,7 @@ public class BPARowMapper implements ResultSetExtractor<List<BPA>> {
 						.id(id)
 						.additionalDetails(additionalDetails)
 						.businessService(rs.getString("businessService"))
-						.constructionType(rs.getString("constructionType"))
+						.buildingConstructionType(rs.getString("buildingConstructionType"))
 						.isSwsApplication(isSwsApplication)
 						.swsApplicationId(swsApplicationId)
 						.swsUnitRegistrationNo(swsUnitRegistrationNo)

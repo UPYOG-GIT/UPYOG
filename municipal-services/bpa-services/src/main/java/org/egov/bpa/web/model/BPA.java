@@ -123,8 +123,8 @@ public class BPA {
 	private Boolean consentStatus = null;
 
 	@SafeHtml
-	@JsonProperty("constructionType")
-	private String constructionType = null;
+	@JsonProperty("buildingConstructionType")
+	private String buildingConstructionType = null;
 	
 
 	public BPA id(String id) {
@@ -506,13 +506,14 @@ public class BPA {
 				&& Objects.equals(this.status, BPA.status) && Objects.equals(this.documents, BPA.documents)
 				&& Objects.equals(this.landInfo, BPA.landInfo) && Objects.equals(this.workflow, BPA.workflow)
 				&& Objects.equals(this.auditDetails, BPA.auditDetails)
-				&& Objects.equals(this.additionalDetails, BPA.additionalDetails);
+				&& Objects.equals(this.additionalDetails, BPA.additionalDetails)
+				&& Objects.equals(this.buildingConstructionType, BPA.buildingConstructionType);
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, applicationNo, approvalNo, accountId, edcrNumber, riskType, landId, tenantId, status,
-				documents, landInfo, workflow, auditDetails, additionalDetails);
+				documents, landInfo, workflow, auditDetails, additionalDetails, buildingConstructionType);
 	}
 
 	@Override
@@ -534,6 +535,8 @@ public class BPA {
 		sb.append("    workflow: ").append(toIndentedString(workflow)).append("\n");
 		sb.append("    auditDetails: ").append(toIndentedString(auditDetails)).append("\n");
 		sb.append("    additionalDetails: ").append(toIndentedString(additionalDetails)).append("\n");
+		sb.append("    buildingConstructionType: ").append(toIndentedString(buildingConstructionType)).append("\n");
+
 //		sb.append("    edcrDetail: ").append(toIndentedString(edcrDetail)).append("\n");
 		sb.append("}");
 		return sb.toString();
@@ -622,8 +625,8 @@ public class BPA {
 		return consentStatus;
 	}
 
-	public String getConstructionType() { return constructionType; }
+	public String getBuildingConstructionType() { return buildingConstructionType; }
 
-	public void setConstructionType(String constructionType) { this.constructionType = constructionType; }
+	public void setBuildingConstructionType(String buildingConstructionType) { this.buildingConstructionType = buildingConstructionType; }
 
 }
