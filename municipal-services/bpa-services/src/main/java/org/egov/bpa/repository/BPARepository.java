@@ -322,7 +322,7 @@ public class BPARepository {
 
 	}
 
-	public int updatePayType(PayTypeRequest payTypeRequest) {
+	public int updatePayType(PayTypeReque	st payTypeRequest) {
 		LocalDateTime date = LocalDateTime.now();
 
 		String updateQuery = "update paytype_master set charges_type_name='" + payTypeRequest.getChargesTypeName()

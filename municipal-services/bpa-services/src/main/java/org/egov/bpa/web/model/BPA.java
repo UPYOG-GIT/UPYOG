@@ -121,6 +121,10 @@ public class BPA {
 	
 	@JsonProperty("consentStatus")
 	private Boolean consentStatus = null;
+
+	@SafeHtml
+	@JsonProperty("constructionType")
+	private String constructionType = null;
 	
 
 	public BPA id(String id) {
@@ -617,5 +621,9 @@ public class BPA {
 	public Boolean getConsentStatus() {
 		return consentStatus;
 	}
+
+	public String getConstructionType() { return constructionType; }
+
+	public void setConstructionType(String constructionType) { this.constructionType = constructionType; }
 
 }
