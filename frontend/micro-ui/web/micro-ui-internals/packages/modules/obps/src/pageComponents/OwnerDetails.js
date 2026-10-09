@@ -281,7 +281,6 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         payload.riskType = formData?.data?.riskType;
         payload.applicationType = formData?.data?.applicationType;
         payload.serviceType = formData?.data?.serviceType;
-
         const userInfo = Digit.UserService.getUser();
         const accountId = userInfo?.info?.uuid;
         payload.tenantId = formData?.address?.city?.code;
@@ -296,7 +295,11 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         if (formData?.data?.registrationDetails) payload.additionalDetails.registrationDetails = formData?.data?.registrationDetails;
         if (formData?.data?.applicationType) payload.additionalDetails.applicationType = formData?.data?.applicationType;
         if (formData?.data?.serviceType) payload.additionalDetails.serviceType = formData?.data?.serviceType;
-
+        
+        if (formData?.data?.buildingConstructionType) {
+          payload.additionalDetails.buildingConstructionType =
+            formData.data.buildingConstructionType?.code || formData.data.buildingConstructionType;
+        }
         //add for sws application
         payload.isSwsApplication = formData?.data?.edcrDetails?.planDetail?.planInformation?.isSwsApplication;
         payload.swsApplicationId = formData?.data?.edcrDetails?.planDetail?.planInformation?.swsApplicationNumber;
@@ -374,7 +377,6 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
       }
     }
   };
-
   const onSkip = () => onSelect();
 
   // if (isLoading) {
