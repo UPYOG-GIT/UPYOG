@@ -124,7 +124,7 @@ public class BPA {
 
 	@SafeHtml
 	@JsonProperty("buildingConstructionType")
-	private String buildingConstructionType = "NOT_AVAILABLE2";
+	private String buildingConstructionType = null;
 	
 
 	public BPA id(String id) {
