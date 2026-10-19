@@ -4,6 +4,9 @@ import { Card, CardHeader, Label, SearchIconSvg, Toast, StatusTable, TextInput, 
 import Timeline from "../components/Timeline";
 import { useTranslation } from "react-i18next";
 import { scrutinyDetailsData } from "../utils";
+import { Dropdown } from "@upyog/digit-ui-react-components";
+
+
 
 const BasicDetails = ({ formData, onSelect, config }) => {
   const [showToast, setShowToast] = useState(null);
@@ -15,6 +18,18 @@ const BasicDetails = ({ formData, onSelect, config }) => {
   const isMobile = window.Digit.Utils.browser.isMobile();
   const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(stateCode, "BPA", ["RiskTypeComputation"]);
   const riskType = Digit.Utils.obps.calculateRiskType(mdmsData?.BPA?.RiskTypeComputation, basicData?.planDetail?.plot?.area, basicData?.planDetail?.blocks);
+
+  const [selectedConstructionType, setSelectedConstructionType] = useState(null);
+
+  const selectConstructionType = [
+    { label: "New Construction", value: "NEW_CONSTRUCTION" },
+    { label: "Alteration", value: "ALTERATION" },
+    { label: "Demolition/Reconstruction", value: "DEMOLITION_RECONSTRUCTION" }
+  ];
+
+  const handleConstructionTypeSelect = (selectedOption) => {
+    setSelectedConstructionType(selectedOption);
+  };
 
   const handleKeyPress = async (event) => {
     if (event.key === "Enter") {
@@ -48,7 +63,7 @@ const BasicDetails = ({ formData, onSelect, config }) => {
   }
 
   const handleSubmit = (event) => {
-    onSelect(config?.key, { scrutinyNumber, applicantName: basicData?.planDetail?.planInformation?.applicantName, occupancyType:basicData?.planDetail?.planInformation?.occupancy, applicationType: basicData?.appliactionType, serviceType: basicData?.applicationSubType, applicationDate: basicData?.applicationDate, riskType: Digit.Utils.obps.calculateRiskType(mdmsData?.BPA?.RiskTypeComputation, basicData?.planDetail?.plot?.area, basicData?.planDetail?.blocks), edcrDetails: basicData  })
+    onSelect(config?.key, { scrutinyNumber, applicantName: basicData?.planDetail?.planInformation?.applicantName, buildingConstructionType:selectedConstructionType.value, occupancyType:basicData?.planDetail?.planInformation?.occupancy, applicationType: basicData?.appliactionType, serviceType: basicData?.applicationSubType, applicationDate: basicData?.applicationDate, riskType: Digit.Utils.obps.calculateRiskType(mdmsData?.BPA?.RiskTypeComputation, basicData?.planDetail?.plot?.area, basicData?.planDetail?.blocks), edcrDetails: basicData  })
   }
 
   let disableVlaue = sessionStorage.getItem("isEDCRDisable");
@@ -105,8 +120,20 @@ const BasicDetails = ({ formData, onSelect, config }) => {
           <Row className="border-none" label={t(`BPA_BASIC_DETAILS_OCCUPANCY_LABEL`)} text={basicData?.planDetail?.planInformation?.occupancy}/>
           <Row className="border-none" label={t(`BPA_BASIC_DETAILS_RISK_TYPE_LABEL`)} text={t(`WF_BPA_${riskType}`)} />
           <Row className="border-none" label={t(`BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL`)} text={basicData?.planDetail?.planInformation?.applicantName} />
+          <Row className="border-none" label={('Select Construction Type')} />
+
+          <Dropdown
+            option={selectConstructionType}
+            selected={selectedConstructionType!=null&&selectConstructionType.find(
+                (item) => item.label === selectedConstructionType.label
+              )}
+            optionKey={"label"}
+            select={handleConstructionTypeSelect}
+            freeze={true}
+            placeholder={("Please Select Construction Type")}
+            />
         </StatusTable>
-        {riskType ? <SubmitBar label={t(`CS_COMMON_NEXT`)} onSubmit={handleSubmit} disabled={!scrutinyNumber?.edcrNumber?.length}/> : <Loader/>}
+        {riskType ? <SubmitBar label={t(`CS_COMMON_NEXT`)} onSubmit={handleSubmit} disabled={!scrutinyNumber?.edcrNumber?.length || selectedConstructionType==null}/> : <Loader/>}
       </Card>
       }
     </div>
