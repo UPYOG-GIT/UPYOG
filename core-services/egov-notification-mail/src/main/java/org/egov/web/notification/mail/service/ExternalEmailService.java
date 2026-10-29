@@ -4,6 +4,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.egov.web.notification.mail.consumer.contract.Email;
+import org.egov.web.notification.mail.consumer.contract.NotificationRequest;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -32,6 +33,9 @@ public class ExternalEmailService implements EmailService {
 			sendTextEmail(email);
 		}
     }
+
+	public void sendEmailInfo(NotificationRequest notificationRequest){
+	 }
 
 	private void sendTextEmail(Email email) {
 		final SimpleMailMessage mailMessage = new SimpleMailMessage();
