@@ -5,6 +5,7 @@ import javax.mail.internet.MimeMessage;
 import org.egov.web.notification.mail.consumer.contract.Email;
 import org.egov.web.notification.mail.consumer.contract.NotificationRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.Map;
 @Service 
 @RequiredArgsConstructor 
 @Slf4j 
+@Primary 
 public class EmailServiceImpl  implements EmailService {
     private final JavaMailSender mailSender;
     private final Configuration freemarkerConfig; // FreeMarker Configuration
