@@ -49,6 +49,16 @@
       <artifactId>lombok</artifactId>
       <optional>true</optional>
     </dependency>
+      <!-- Mail: brings JavaMailSender, spring-context-support, jakarta/javax.mail -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-mail</artifactId>
+    </dependency>
+    <!-- Spring Boot FreeMarker Starter -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-freemarker</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.egov.services</groupId>
       <artifactId>tracer</artifactId>

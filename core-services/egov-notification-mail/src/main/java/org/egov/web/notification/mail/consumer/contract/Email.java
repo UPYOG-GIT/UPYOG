@@ -23,6 +23,4 @@ public class Email {
 	private String body;
 	@JsonProperty("isHTML")
 	private boolean isHTML;
-
-
 }
