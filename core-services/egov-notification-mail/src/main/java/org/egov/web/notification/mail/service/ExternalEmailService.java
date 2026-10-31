@@ -5,6 +5,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.egov.web.notification.mail.consumer.contract.Email;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Primary;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Primary
 @ConditionalOnProperty(value = "mail.enabled", havingValue = "true")
 @Slf4j
 public class ExternalEmailService implements EmailService {
