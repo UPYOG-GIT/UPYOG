@@ -42,7 +42,10 @@ public class EmailServiceImpl  implements EmailService {
     @Override
     public void sendEmailInfo(NotificationRequest notificationRequest) {
 
-        Map<String, Object> templateModel = new HashMap<>(notificationRequest.getTemplateModel());
+        Map<String, Object> templateModel = new HashMap<>();
+        if (notificationRequest.getTemplateModel() != null) {
+            templateModel.putAll(notificationRequest.getTemplateModel());
+        }
         templateModel.put("proposalNo", notificationRequest.getApplicationDetails().getProposalNo());
         templateModel.put("karyType", notificationRequest.getApplicationDetails().getKaryType());
         templateModel.put("sthapnaPata", notificationRequest.getApplicationDetails().getSthapnaPata());
