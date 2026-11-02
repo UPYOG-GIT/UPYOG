@@ -67,15 +67,19 @@ public class EmailProperties {
     @Getter
     private String mailSenderPassword;
 
-    @Value("${mail.smtps.auth}")
+    @Value("${mail.smtp.auth}")
     @Getter
-    private String mailSmtpsAuth;
+    private String mailSmtpAuth;
 
-    @Value("${mail.smtps.starttls.enable}")
+    @Value("${mail.smtp.starttls.enable}")
     @Getter
     private String mailStartTlsEnabled;
 
-    @Value("${mail.smtps.debug}")
+    @Value("${mail.smtp.starttls.required}")
     @Getter
-    private String mailSmtpsDebug;
+    private String mailStartTlsRequired;
+
+    @Value("${mail.smtp.debug}")
+    @Getter
+    private String mailSmtpDebug;
 }
