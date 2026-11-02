@@ -16,6 +16,8 @@ import freemarker.template.Template;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -40,7 +42,7 @@ public class EmailServiceImpl  implements EmailService {
     @Override
     public void sendEmailInfo(NotificationRequest notificationRequest) {
 
-        Map<String, Object> templateModel = notificationRequest.getTemplateModel();
+        Map<String, Object> templateModel = new HashMap<>(notificationRequest.getTemplateModel());
         templateModel.put("proposalNo", notificationRequest.getApplicationDetails().getProposalNo());
         templateModel.put("karyType", notificationRequest.getApplicationDetails().getKaryType());
         templateModel.put("sthapnaPata", notificationRequest.getApplicationDetails().getSthapnaPata());
@@ -55,6 +57,11 @@ public class EmailServiceImpl  implements EmailService {
         templateModel.put("transactionDate", notificationRequest.getApplicationDetails().getTransactionDate());
         templateModel.put("receiptNo", notificationRequest.getApplicationDetails().getReceiptNo());
         templateModel.put("status", notificationRequest.getApplicationDetails().getStatus());
+        
+          if(templateModel.isEmpty()) {
+            log.error("Template model is null or empty for email notification");
+            throw new IllegalArgumentException("Template model is null or empty for email notification");
+          }
 
         // Implement the logic to send email here
        log.info("Sending email to: " + notificationRequest.getEmailInfo().getEmailTo());
@@ -74,8 +81,10 @@ public class EmailServiceImpl  implements EmailService {
 
             helper.setFrom(senderEmail);
             helper.setTo(notificationRequest.getEmailInfo().getEmailTo());
+            
             if(notificationRequest.getEmailInfo().getEmailSubjectType().equals("MAIL_FOR_LABOUR_CESS_PAYMENT_DETAILS")) {
-              helper.setSubject("Hi IM Deeksha ");
+            log.info("Setting subject for MAIL_FOR_LABOUR_CESS_PAYMENT_DETAILS");
+              helper.setSubject("Hi IM Deeksha");
             }
             
             helper.setText(htmlContent, true); // Send as HTML
