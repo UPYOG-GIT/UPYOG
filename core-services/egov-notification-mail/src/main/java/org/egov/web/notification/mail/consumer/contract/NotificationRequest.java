@@ -1,6 +1,7 @@
 package org.egov.web.notification.mail.consumer.contract;
 import static org.springframework.util.StringUtils.isEmpty;
 import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.*;
 
 @AllArgsConstructor 
@@ -12,6 +13,7 @@ public class NotificationRequest {
 
     private UserInfo userInfo;
 
+    @JsonAlias("email")
     private EmailInfo emailInfo;
 
     private ApplicationDetails applicationDetails;
