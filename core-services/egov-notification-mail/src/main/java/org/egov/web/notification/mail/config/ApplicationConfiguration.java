@@ -47,9 +47,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Properties;
-
+@Slf4j 
 @Configuration
 public class ApplicationConfiguration {
 
@@ -70,6 +71,12 @@ public class ApplicationConfiguration {
         mailProperties.setProperty("mail.smtp.starttls.required", emailProperties.getMailStartTlsRequired());
         mailProperties.setProperty("mail.smtp.debug", emailProperties.getMailSmtpDebug());
         mailSender.setJavaMailProperties(mailProperties);
+
+
+        log.info("Mail Sender Configured with Host: " + emailProperties.getMailHost() + ", Port: " + emailProperties.getMailPort() + ", Protocol: " 
+                + emailProperties.getMailProtocol()
+                + ", Username: " + emailProperties.getMailSenderUsername() + ", SMTP Auth: " + emailProperties.getMailSmtpAuth()
+                );
         return mailSender;
     }
     
