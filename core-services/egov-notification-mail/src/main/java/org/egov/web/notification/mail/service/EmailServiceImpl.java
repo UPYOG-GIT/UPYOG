@@ -43,7 +43,7 @@ public class EmailServiceImpl  implements EmailService {
     private String senderEmail;
 
     @Getter 
-    @Value ("${spring.mail.password}")
+    @Value("${spring.mail.password}")
     private String springMailPassword;
 
     @Getter
@@ -55,15 +55,15 @@ public class EmailServiceImpl  implements EmailService {
     private int springmailport;
 
     @Getter 
-    @Value ("${spring.mail.protocol}")
+    @Value("${spring.mail.protocol}")
     private String springmailprotocol;
 
     @Getter 
-    @Value ("${spring.mail.properties.mail.smtp.starttls.enable}")
+    @Value("${spring.mail.properties.mail.smtp.starttls.enable}")
     private String springmailpropertiesmailsmtpstarttlsenable;
 
     @Getter 
-    @Value ("${spring.mail.receiver.username}")
+    @Value("${spring.mail.receiver.username}")
     private String mailReceiverUsername;
 
     @Override 
