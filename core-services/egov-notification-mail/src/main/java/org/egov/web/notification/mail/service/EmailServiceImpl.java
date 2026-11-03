@@ -2,8 +2,10 @@ package org.egov.web.notification.mail.service;
 
 import javax.mail.internet.MimeMessage;
 
+import org.egov.web.notification.mail.config.EmailProperties;
 import org.egov.web.notification.mail.consumer.contract.Email;
 import org.egov.web.notification.mail.consumer.contract.NotificationRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -26,10 +28,16 @@ import java.util.Map;
 @Slf4j 
 @Primary 
 public class EmailServiceImpl  implements EmailService {
-    private final JavaMailSender mailSender;
-    private final Configuration freemarkerConfig; // FreeMarker Configuration
+    @Autowired 
+    private JavaMailSender mailSender;
 
+    @Autowired 
+    private Configuration freemarkerConfig;
     
+    @Autowired
+    private EmailProperties emailProperties;
+    
+
     @Getter
     @Value("${spring.mail.username}")
     private String senderEmail;
@@ -81,8 +89,9 @@ public class EmailServiceImpl  implements EmailService {
             // 2. Build and dispatch email
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            log.info("Sending email to: " + notificationRequest.getEmailInfo().getEmailTo());
 
-            helper.setFrom(senderEmail);
+            helper.setFrom(emailProperties.getMailSenderUsername());
             helper.setTo(notificationRequest.getEmailInfo().getEmailTo());
             
             if(notificationRequest.getEmailInfo().getEmailSubjectType().equals("MAIL_FOR_LABOUR_CESS_PAYMENT_DETAILS")) {
