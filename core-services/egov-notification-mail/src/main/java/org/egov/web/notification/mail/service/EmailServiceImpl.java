@@ -41,33 +41,32 @@ public class EmailServiceImpl  implements EmailService {
     @Getter
     @Value("${spring.mail.username}")
     private String senderEmail;
+
     @Getter 
     @Value ("${spring.mail.password}")
     private String springMailPassword;
-    
+
+    @Getter
+    @Value("${spring.mail.host}")
+    private String springMailHost;
+
     @Getter 
     @Value("${spring.mail.port}")
     private int springmailport;
+
     @Getter 
     @Value ("${spring.mail.protocol}")
     private String springmailprotocol;
-    @Getter 
-    @Value ("${spring.mail.properties.mail.smtp.auth}")
-    private String springmailpropertiesmailsmtpauth;
 
     @Getter 
     @Value ("${spring.mail.properties.mail.smtp.starttls.enable}")
     private String springmailpropertiesmailsmtpstarttlsenable;
-    @Getter 
-    @Value ("${spring.mail.properties.mail.smtp.starttls.required}")
-    private String mailSmtpStarttlsRequired;
+
     @Getter 
     @Value ("${spring.mail.receiver.username}")
     private String mailReceiverUsername;
 
-
-    
-
+    @Override 
     public void sendEmail(Email email) {
         // Implement the logic to send email here
         System.out.println("Sending email to: " );
@@ -103,7 +102,7 @@ public class EmailServiceImpl  implements EmailService {
         // Implement the logic to send email here
        log.info("Sending email to: " + notificationRequest.getEmailInfo().getEmailTo());
 
-       log.info("gettiong mail details " + getSenderEmail() + getSpringMailPassword() + getSpringmailport() + getSpringmailprotocol() + getSpringmailpropertiesmailsmtpauth() + getSpringmailpropertiesmailsmtpstarttlsenable() + getMailSmtpStarttlsRequired() + getMailReceiverUsername());
+       log.info("gettiong mail details " + getSenderEmail() + getSpringMailPassword() + getSpringmailport() + getSpringmailprotocol() + getSpringmailpropertiesmailsmtpstarttlsenable() + getMailReceiverUsername() + getSpringMailHost());
         try {
             // 1. Load FTL template and process model map
             String templateFileName =  "labour-department-payment-detail-mail.ftl";
