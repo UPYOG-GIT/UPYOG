@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 public class EmailNotificationListener {
 
     private EmailService emailService;
-    @Autowired 
     private ObjectMapper objectMapper;
 
     @Autowired
