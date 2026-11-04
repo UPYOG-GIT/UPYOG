@@ -37,6 +37,7 @@ public class EmailNotificationListener {
     public void listenProcess(final HashMap<String, Object> record) {
 
         try {
+            log.info("START: Email notification processing started for record: " + record);
             NotificationRequest notificationRequest = null;
             notificationRequest = objectMapper.convertValue(record, NotificationRequest.class);
             if (notificationRequest == null || notificationRequest.getEmailInfo() == null) {
@@ -44,7 +45,7 @@ public class EmailNotificationListener {
             } else {
                 notificationRequest.validate();
                 emailService.sendEmailInfo(notificationRequest);
-                log.info("Email notification processed successfully");
+                log.info("END: Email notification processing completed for record: ");
             }
         } catch (Exception e) {
             log.error("Email service failed");

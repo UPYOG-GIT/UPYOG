@@ -9,6 +9,7 @@ import lombok.*;
 @Builder
 @Setter
 @Getter
+@ToString
 public class NotificationRequest {
 
     private UserInfo userInfo;

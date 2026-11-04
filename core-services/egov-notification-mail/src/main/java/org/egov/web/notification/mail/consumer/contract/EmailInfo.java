@@ -10,7 +10,8 @@ import lombok.*;
 @AllArgsConstructor
 @Data
 @Builder
-@Configuration 
+@Configuration
+@ToString
 public class EmailInfo {
 
     @Value("${spring.mail.receiver.username}")
