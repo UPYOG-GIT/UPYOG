@@ -14,7 +14,7 @@ import lombok.*;
 @ToString
 public class EmailInfo {
 
-    @Value("${spring.mail.receiver.username}")
+    @Value("${receiver.emailId}")
     private String emailTo;
     private MailRequestType emailRequestType;
     private MailSubjectType emailSubjectType;

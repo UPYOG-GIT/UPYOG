@@ -58,13 +58,13 @@ public class EmailServiceImpl  implements EmailService {
     private String springmailpropertiesmailsmtpstarttlsenable;
 
     @Getter 
-    @Value("${spring.mail.receiver.username}")
+    @Value("${receiver.emailId}")
     private String mailReceiverUsername;
 
     @Override 
     public void sendEmail(Email email) {
         // Implement the logic to send email here
-        System.out.println("Sending email to: " + email.getTo());
+        System.out.println("Sending email to: " + email.getEmailTo());
     }
 
     @Override
@@ -112,7 +112,7 @@ public class EmailServiceImpl  implements EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             log.info("Sending email to: " + notificationRequest.getEmailInfo().getEmailTo());
 
-            helper.setFrom(emailProperties.getMailSenderUsername());
+            helper.setFrom(getSenderEmail());
             helper.setTo(notificationRequest.getEmailInfo().getEmailTo());
             
             if(notificationRequest.getEmailInfo().getEmailSubjectType().equals("MAIL_FOR_LABOUR_CESS_PAYMENT_DETAILS")) {
