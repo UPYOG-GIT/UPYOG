@@ -62,7 +62,6 @@ public class ApplicationConfiguration {
         final JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setPort(emailProperties.getMailPort());
         mailSender.setHost(emailProperties.getMailHost());
-        mailSender.setProtocol(emailProperties.getMailProtocol());
         mailSender.setUsername(emailProperties.getMailSenderUsername());
         mailSender.setPassword(emailProperties.getMailSenderPassword());
         final Properties mailProperties = new Properties();
@@ -70,13 +69,15 @@ public class ApplicationConfiguration {
         mailProperties.setProperty("mail.smtp.starttls.enable", emailProperties.getMailStartTlsEnabled());
         mailProperties.setProperty("mail.smtp.starttls.required", emailProperties.getMailStartTlsRequired());
         mailProperties.setProperty("mail.smtp.debug", emailProperties.getMailSmtpDebug());
+        mailProperties.setProperty("mail.smtp.writetimeout", emailProperties.getMailSmtpWriteTimeout());
+        mailProperties.setProperty("mail.smtp.timeout", emailProperties.getMailSmtpTimeout());
+        mailProperties.setProperty("mail.smtp.connectiontimeout", emailProperties.getMailSmtpConnectionTimeout());
         mailSender.setJavaMailProperties(mailProperties);
-
-
+        
         log.info("Mail Sender Configured with Host: " + emailProperties.getMailHost() + ", Port: " + emailProperties.getMailPort() + ", Protocol: " 
-                + emailProperties.getMailProtocol()
-                + ", Username: " + emailProperties.getMailSenderUsername() + ", SMTP Auth: " + emailProperties.getMailSmtpAuth()
-                );
+                + emailProperties.getMailProtocol() + ", Username: " + emailProperties.getMailSenderUsername() + ", SMTP Auth: " + emailProperties.getMailSmtpAuth()
+                + ", StartTLS Enabled: " + emailProperties.getMailStartTlsEnabled() + ", StartTLS Required: " + emailProperties.getMailStartTlsRequired()
+                + ", Write Timeout: " + emailProperties.getMailSmtpWriteTimeout() + ", Timeout: " + emailProperties.getMailSmtpTimeout() + ", Connection Timeout: " + emailProperties.getMailSmtpConnectionTimeout());
         return mailSender;
     }
     

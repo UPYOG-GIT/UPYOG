@@ -82,4 +82,17 @@ public class EmailProperties {
     @Value("${mail.smtp.debug}")
     @Getter
     private String mailSmtpDebug;
+
+    @Value("${mail.smtp.writetimeout}")
+    @Getter
+    private String mailSmtpWriteTimeout;
+
+    @Value("${mail.smtp.timeout}")
+    @Getter
+    private String mailSmtpTimeout;
+
+    @Value("${mail.smtp.connectiontimeout}")
+    @Getter
+    private String mailSmtpConnectionTimeout;
+
 }
