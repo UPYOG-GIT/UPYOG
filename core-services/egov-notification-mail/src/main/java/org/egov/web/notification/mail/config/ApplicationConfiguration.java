@@ -40,47 +40,14 @@
 
 package org.egov.web.notification.mail.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
-import java.util.Properties;
-@Slf4j 
 @Configuration
 public class ApplicationConfiguration {
 
-    @Autowired
-    private EmailProperties emailProperties;
-
-    @Bean
-    public JavaMailSenderImpl mailSender() {
-        final JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setPort(emailProperties.getMailPort());
-        mailSender.setHost(emailProperties.getMailHost());
-        mailSender.setUsername(emailProperties.getMailSenderUsername());
-        mailSender.setPassword(emailProperties.getMailSenderPassword());
-        final Properties mailProperties = new Properties();
-        mailProperties.setProperty("mail.smtp.auth", emailProperties.getMailSmtpAuth());
-        mailProperties.setProperty("mail.smtp.starttls.enable", emailProperties.getMailStartTlsEnabled());
-        mailProperties.setProperty("mail.smtp.starttls.required", emailProperties.getMailStartTlsRequired());
-        mailProperties.setProperty("mail.smtp.debug", emailProperties.getMailSmtpDebug());
-        mailProperties.setProperty("mail.smtp.writetimeout", emailProperties.getMailSmtpWriteTimeout());
-        mailProperties.setProperty("mail.smtp.timeout", emailProperties.getMailSmtpTimeout());
-        mailProperties.setProperty("mail.smtp.connectiontimeout", emailProperties.getMailSmtpConnectionTimeout());
-        mailSender.setJavaMailProperties(mailProperties);
-        
-        log.info("Mail Sender Configured with Host: " + emailProperties.getMailHost() + ", Port: " + emailProperties.getMailPort() + ", Protocol: " 
-                + emailProperties.getMailProtocol() + ", Username: " + emailProperties.getMailSenderUsername() + ", SMTP Auth: " + emailProperties.getMailSmtpAuth()
-                + ", StartTLS Enabled: " + emailProperties.getMailStartTlsEnabled() + ", StartTLS Required: " + emailProperties.getMailStartTlsRequired()
-                + ", Write Timeout: " + emailProperties.getMailSmtpWriteTimeout() + ", Timeout: " + emailProperties.getMailSmtpTimeout() + ", Connection Timeout: " + emailProperties.getMailSmtpConnectionTimeout());
-        return mailSender;
-    }
-    
     @Value("${egov.localization.host}")
     @Getter
     private String localizationHost;
@@ -93,7 +60,6 @@ public class ApplicationConfiguration {
     @Getter
     private String localizationSearchEndpoint;
     
-
     @Value("${egov.user.host}")
     @Getter
     private String userHost;
@@ -109,6 +75,5 @@ public class ApplicationConfiguration {
     @Value("${egov.user.state.tenant.id}")
     @Getter
     private String stateTenantId;
-    
     
 }

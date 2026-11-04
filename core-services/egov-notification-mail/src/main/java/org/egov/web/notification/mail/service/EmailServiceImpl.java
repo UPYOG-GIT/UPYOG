@@ -3,6 +3,7 @@ package org.egov.web.notification.mail.service;
 import javax.mail.internet.MimeMessage;
 
 import org.egov.web.notification.mail.consumer.contract.Email;
+import org.egov.web.notification.mail.consumer.contract.MailSubjectType;
 import org.egov.web.notification.mail.consumer.contract.NotificationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +28,7 @@ import java.util.Map;
 @Slf4j 
 @Primary 
 public class EmailServiceImpl  implements EmailService {
+
     @Autowired 
     private JavaMailSender mailSender;
 
@@ -36,26 +38,6 @@ public class EmailServiceImpl  implements EmailService {
     @Getter
     @Value("${spring.mail.username}")
     private String senderEmail;
-
-    @Getter 
-    @Value("${spring.mail.password}")
-    private String springMailPassword;
-
-    @Getter
-    @Value("${spring.mail.host}")
-    private String springMailHost;
-
-    @Getter 
-    @Value("${spring.mail.port}")
-    private int springmailport;
-
-    @Getter 
-    @Value("${spring.mail.protocol}")
-    private String springmailprotocol;
-
-    @Getter 
-    @Value("${spring.mail.properties.mail.smtp.starttls.enable}")
-    private String springmailpropertiesmailsmtpstarttlsenable;
 
     @Getter 
     @Value("${receiver.emailId}")
@@ -94,18 +76,23 @@ public class EmailServiceImpl  implements EmailService {
             throw new IllegalArgumentException("Template model is null or empty for email notification");
         }
         
+        log.info("Template model for email notification: {}", templateModel);
+
+        log.info("Template model for email notification: {}", notificationRequest);
+
         log.info("Sending email to: " + notificationRequest.getEmailInfo().getEmailTo());
 
-        log.info("gettiong mail details " + getSenderEmail() + getSpringMailPassword() + getSpringmailport() + getSpringmailprotocol() + getSpringmailpropertiesmailsmtpstarttlsenable() + getMailReceiverUsername() + getSpringMailHost());
+        final String templateFileName = "labour-department-payment-detail-mail.ftl";
+
         try {
             // 1. Load FTL template and process model map
-            String templateFileName =  "labour-department-payment-detail-mail.ftl";
             Template template = freemarkerConfig.getTemplate(templateFileName);
             
             String htmlContent = FreeMarkerTemplateUtils.processTemplateIntoString(
                     template, templateModel
                     // notificationRequest.getTemplateModel()
             );
+
 
             // 2. Build and dispatch email
             MimeMessage message = mailSender.createMimeMessage();
@@ -115,13 +102,12 @@ public class EmailServiceImpl  implements EmailService {
             helper.setFrom(getSenderEmail());
             helper.setTo(notificationRequest.getEmailInfo().getEmailTo());
             
-            if(notificationRequest.getEmailInfo().getEmailSubjectType().equals("MAIL_FOR_LABOUR_CESS_PAYMENT_DETAILS")) {
+            if(notificationRequest.getEmailInfo().getEmailSubjectType() == MailSubjectType.MAIL_FOR_LABOUR_CESS_PAYMENT_DETAILS) {
                 log.info("Setting subject for MAIL_FOR_LABOUR_CESS_PAYMENT_DETAILS");
-                helper.setSubject("Hi IM Deeksha");
+                helper.setSubject("Labour Cess Payment Details");
             }
             
             helper.setText(htmlContent, true); // Send as HTML
-
             mailSender.send(message);
             log.info("FTL Templated email [{}] successfully sent to: {}", templateFileName, notificationRequest.getEmailInfo().getEmailTo());
 
