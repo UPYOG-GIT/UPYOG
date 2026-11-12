@@ -12,7 +12,8 @@ import "datatables.net-responsive";
 import "datatables.net-responsive-dt";
 import { getLocaleLabels } from "egov-ui-framework/ui-utils/commons";
 import { commonApiPost } from "egov-ui-kit/utils/api";
-import { getTenantId, localStorageSet, setReturnUrl } from "egov-ui-kit/utils/localStorageUtils";
+import { endPoints } from "./endPoints";
+import { getAccessToken, getTenantId, getUserInfo, localStorageSet, setReturnUrl } from "egov-ui-kit/utils/localStorageUtils";
 import Label from "egov-ui-kit/utils/translationNode";
 import $ from "jquery";
 import JSZip from "jszip/dist/jszip";
@@ -629,7 +630,7 @@ class ShowField extends Component {
             setFlag(1);
           }
         },
-        function (err) {}
+        function (err) { }
       );
     } else if (object.defaultValue && object.defaultValue.search("_url") > -1) {
       let afterURL = object.defaultValue.split("?")[1];
@@ -663,8 +664,149 @@ class ShowField extends Component {
     return value;
   };
 
-  checkIfDate = (val, i) => {
-    let { reportResult } = this.props;
+  handleSendNotification = async (val, row) => {
+    const { reportResult } = this.props;
+    const headers = reportResult && reportResult.reportHeader ? reportResult.reportHeader : [];
+    if (!Array.isArray(row)) {
+      alert("Unable to send notification: report row data is missing.");
+      return;
+    }
+    console.log("headers", headers);
+    const rowValues = {};
+    headers.forEach((header, index) => {
+      if (header.name) {
+        rowValues[header.name.toLowerCase()] = row[index];
+      }
+    });
+
+    const pick = (...names) => {
+      for (const n of names) {
+        const v = rowValues[n.toLowerCase()];
+        if (v !== undefined && v !== null) return v;
+      }
+      return undefined;
+    };
+
+    let loggedInUser;
+    try {
+      loggedInUser = JSON.parse(getUserInfo() || "{}");
+    } catch (error) {
+      console.error("Unable to read logged-in user info", error);
+      alert("Unable to send notification: logged-in user info is invalid.");
+      return;
+    }
+
+    const uuid = loggedInUser.uuid;
+    if (!uuid) {
+      alert("Unable to send notification: logged-in user UUID is missing.");
+      return;
+    }
+    const userRole =
+      (loggedInUser.roles && loggedInUser.roles[0] && loggedInUser.roles[0].code) || undefined;
+
+    const payload = {
+      RequestInfo: {
+        apiId: "emp",
+        ts: Date.now(),
+        action: "create",
+        msgId: "20170310130900",
+        authToken: getAccessToken(),
+      },
+      userInfo: {
+        tenantId: getTenantId() || commonConfig.tenantId,
+        mobileNumber: loggedInUser.mobileNumber,
+        role_code: userRole,
+      },
+      email: {
+        emailTo: "dev4entitcs@gmail.com", // TODO: replace with the real address or read from config
+        emailRequestType: "SEND_MAIL_TO_EXTERNAL_ORGANIZATION",
+        emailSubjectType: "MAIL_FOR_LABOUR_CESS_PAYMENT_DETAILS",
+      },
+      applicationDetails: {
+        applicationNo: pick("application_no"),
+        name: pick("name"),
+        dateOfSubmission: pick("date_of_submission"),
+        karyType: pick("kary_type"),
+        sthapnaPata: pick("sthapna_pata"),
+        ulb: pick("ulb"),
+        proposalNo: pick("proposal_no"),
+        constructionArea: pick("construction_area"),
+        estimatedCess: pick("estimated_cess"),
+        transactionId: pick("transaction_id"),
+        transactionRefNo: pick("transaction_ref_no"),
+        cessAmount: pick("cess_amount"),
+        transactionDate: pick("transaction_date"),
+        status: val, 
+        receiptNo: pick("receipt_no"),
+        bankAmount: pick("total_amount"),
+        ulbCode: pick("ulb_code"),
+        ulbName: pick("ulb_name"),
+      },
+    };
+
+    try {
+    const response = await fetch("/user-otp/v1/sendNotificationToLabourDepartment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      const responseBody = await response.text();
+      throw new Error(`Request failed (${response.status}): ${responseBody}`);
+    }
+    
+  } catch (error) {
+    console.error("Failed to send notification", error);
+    alert(`Failed to send notification: ${error.message}`);
+  }
+  };
+
+  checkIfDate = (val, i, row) => {
+    let { reportResult, metaData } = this.props;
+    if (
+      metaData &&
+      metaData.reportDetails &&
+      metaData.reportDetails.reportName == "MisLabourDepartmentPaymentReport" &&
+      (val == "SUCCESS" || val == "FAILURE")
+    ) {
+      return (
+        <div
+          style={{
+            flexWrap: "wrap",
+            justifyContent: "center",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+          }}
+        >
+          <span>{val}</span>
+          <button
+            type="button"
+            style={{
+              backgroundColor: "#fe7a51",
+              color: "#ffffff",
+              padding: "4px 8px",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+            onMouseDown={(e) => {
+              e.currentTarget.style.backgroundColor = "#e65f38";
+            }}
+            onMouseUp={(e) => {
+              e.currentTarget.style.backgroundColor = "#fe7a51";
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              this.handleSendNotification(val, row);
+            }}
+          >
+            <Label color="#ffffff" label="Send Notification" />
+          </button>
+        </div>
+      );
+    }
+
     if (
       reportResult &&
       reportResult.reportHeader &&
@@ -710,45 +852,6 @@ class ShowField extends Component {
           />
         );
       } else {
-        if (
-          this.props.metaData.reportDetails.reportName == "MisLabourDepartmentPaymentReport" &&
-          (val == "SUCCESS" || val == "FAILURE")
-        ) {
-          return (
-            <div
-              style={{
-                flexWrap: "wrap",
-                justifyContent: "center",
-                display: "flex",
-                alignItems: "center",
-                gap: "10px"
-              }}
-            >
-              <span>{val}</span>
-              <button
-                style={{
-                  backgroundColor: "#fe7a51",
-                  color: "#ffffff",
-                  padding: "0px 0px",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer"
-                }}
-                onMouseDown={(e) => {
-                  e.currentTarget.style.backgroundColor = "#e65f38";
-                }}
-                onMouseUp={(e) => {
-                  e.currentTarget.style.backgroundColor = "#fe7a51";
-                }}
-                onClick={() => {
-                  alert("Notification sent to Labour Department");
-                }}
-              >
-                <Label color="#ffffff" label="Send Notification" />
-              </button>
-            </div>
-          );
-        }
         return val;
       }
     }
@@ -779,6 +882,8 @@ class ShowField extends Component {
       });
     }
   };
+
+
 
   renderHeader = () => {
     let { reportResult, metaData } = this.props;
@@ -882,7 +987,7 @@ class ShowField extends Component {
               setRoute("/print/report/" + response.viewPath);
             }
           },
-          function (err) {}
+          function (err) { }
         );
     }
   }
@@ -954,7 +1059,7 @@ class ShowField extends Component {
                           drillDown(e, dataIndex, itemIndex, dataItem, item);
                         }}
                       >
-                        {respHeader.defaultValue ? <a href="javascript:void(0)">{checkIfDate(item, itemIndex)}</a> : checkIfDate(item, itemIndex)}
+                        {respHeader.defaultValue ? <a href="javascript:void(0)">{checkIfDate(item, itemIndex, dataItem)}</a> : checkIfDate(item, itemIndex, dataItem)}
                       </td>
                     );
                   } else {
@@ -966,7 +1071,7 @@ class ShowField extends Component {
                           drillDown(e, dataIndex, itemIndex, dataItem, item);
                         }}
                       >
-                        {respHeader.defaultValue ? <a href="javascript:void(0)">{checkIfDate(item, itemIndex)}</a> : checkIfDate(item, itemIndex)}
+                        {respHeader.defaultValue ? <a href="javascript:void(0)">{checkIfDate(item, itemIndex, dataItem)}</a> : checkIfDate(item, itemIndex, dataItem)}
                       </td>
                     );
                   }
