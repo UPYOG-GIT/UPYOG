@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.config.AppProperties;
+import org.egov.pg.constants.PgConstants;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.models.TransactionDump;
 import org.egov.pg.models.TransactionDumpRequest;
@@ -63,14 +64,18 @@ public class TransactionService {
 	 * @return Redirect URI to the gateway for the particular transaction
 	 */
 	public Transaction initiateTransaction(TransactionRequest transactionRequest) {
+		Transaction transaction = transactionRequest.getTransaction();
+		if (PgConstants.PAYU_CONSUMER_CODE.equals(transaction.getConsumerCode())) {
+			transaction.setGateway(PgConstants.PAYU_GATEWAY);
+		}
+
 		validator.validateCreateTxn(transactionRequest);
 
 		// Enrich transaction by generating txnid, audit details, default status
 		enrichmentService.enrichCreateTransaction(transactionRequest);
 
 		RequestInfo requestInfo = transactionRequest.getRequestInfo();
-		Transaction transaction = transactionRequest.getTransaction();
-
+		
 		TransactionDump dump = TransactionDump.builder().txnId(transaction.getTxnId())
 				.auditDetails(transaction.getAuditDetails()).build();
 

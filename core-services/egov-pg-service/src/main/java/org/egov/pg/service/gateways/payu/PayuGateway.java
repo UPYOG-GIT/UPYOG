@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.service.Gateway;
-import org.egov.pg.utils.Utils;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +23,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -62,64 +65,144 @@ public class PayuGateway implements Gateway {
 
     @Override
     public URI generateRedirectURI(Transaction transaction) {
-
-        String hashSequence = "key|txnid|amount|productinfo|firstname|email|||||||||||";
-        hashSequence = hashSequence.concat(MERCHANT_SALT);
-        hashSequence = hashSequence.replace("key", MERCHANT_KEY);
-        hashSequence = hashSequence.replace("txnid", transaction.getTxnId());
-        hashSequence = hashSequence.replace("amount", Utils.formatAmtAsRupee(transaction.getTxnAmount()));
-        hashSequence = hashSequence.replace("productinfo", transaction.getProductInfo());
-        hashSequence = hashSequence.replace("firstname", transaction.getUser().getName());
-        hashSequence = hashSequence.replace("email", Objects.toString(transaction.getUser().getEmailId(), ""));
-
-        log.info("hashSequence: "+hashSequence);
-        String hash = hashCal(hashSequence);
-
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("key", MERCHANT_KEY);
-        params.add("txnid", transaction.getTxnId());
-        params.add("amount", Utils.formatAmtAsRupee(transaction.getTxnAmount()));
-        params.add("productinfo", transaction.getProductInfo());
-        params.add("firstname", transaction.getUser().getName());
-        params.add("email", Objects.toString(transaction.getUser().getEmailId(), ""));
-        params.add("phone", transaction.getUser().getMobileNumber());
-        params.add("surl", transaction.getCallbackUrl());
-        params.add("furl", transaction.getCallbackUrl());
-        params.add("hash", hash);
-        
-        log.info("params: "+params);
-
+        Map<String, String> paymentParams = buildPaymentParams(transaction);
         UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host(MERCHANT_URL_PAY).path
                 (MERCHANT_PATH_PAY).build();
-        
-        log.info("uriComponents: "+uriComponents);
-        log.info("uriComponents: "+uriComponents.toUriString());
-        
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            
-            log.info("headers: "+headers);
+        Map<String, Object> additionalDetails = getAdditionalDetails(transaction);
+        additionalDetails.put("payuFormData", paymentParams);
+        transaction.setAdditionalDetails(additionalDetails);
+        return uriComponents.toUri();
+    }
 
-            HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
+    private Map<String, String> buildPaymentParams(Transaction transaction) {
+        Map<String, Object> additionalDetails = getAdditionalDetails(transaction);
+        Map<String, String> params = new LinkedHashMap<>();
+        params.put("key", MERCHANT_KEY);
+        params.put("txnid", transaction.getTxnId());
+        params.put("amount", transaction.getTxnAmount());
+        params.put("productinfo", transaction.getProductInfo());
+        params.put("firstname", transaction.getUser().getName());
+        params.put("email", Objects.toString(transaction.getUser().getEmailId(), ""));
+        params.put("phone", transaction.getUser().getMobileNumber());
+        params.put("surl", transaction.getCallbackUrl());
+        params.put("furl", transaction.getCallbackUrl());
 
-            log.info("entity: "+ entity);
-            
-            URI redirectUri = restTemplate.postForLocation(
-                    uriComponents.toUriString(), entity
-            );
-            
-            log.info("redirectUri: "+ redirectUri);
-
-            if(isNull(redirectUri))
-                throw new CustomException("PAYU_REDIRECT_URI_GEN_FAILED", "Failed to generate redirect URI");
-            else
-                return redirectUri;
-
-        } catch (RestClientException e){
-            log.error("Unable to retrieve redirect URI from gateway", e);
-            throw new ServiceCallException( "Redirect URI generation failed, invalid response received from gateway");
+        for (int i = 1; i <= 10; i++) {
+            addOptionalParam(params, additionalDetails, "udf" + i);
         }
+        for (String field : new String[]{"address1", "address2", "city", "state",
+                "country", "zipcode", "enforce_paymethod"}) {
+            addOptionalParam(params, additionalDetails, field);
+        }
+
+        String splitRequest = createSplitRequest(additionalDetails);
+        if (splitRequest != null) {
+            params.put("splitRequest", splitRequest);
+        }
+        params.put("hash", createPaymentHash(params, splitRequest));
+        return params;
+    }
+
+    /**
+     * Optional split input in transaction.additionalDetails:
+     * {"splitType":"absolute","splitInfo":{"childKey":{"txnId":"...","amount":"...","charges":"0.00"}}}
+     */
+    private Map<String, Object> getAdditionalDetails(Transaction transaction) {
+        if (transaction.getAdditionalDetails() == null) {
+            return new LinkedHashMap<>();
+        }
+
+        try {
+            return objectMapper.convertValue(transaction.getAdditionalDetails(), Map.class);
+        } catch (IllegalArgumentException e) {
+            throw new CustomException("INVALID_PAYU_ADDITIONAL_DETAILS",
+                    "PayU additionalDetails must be a JSON object");
+        }
+    }
+
+    private void addOptionalParam(Map<String, String> params, Map<String, Object> additionalDetails, String key) {
+        Object value = additionalDetails.get(key);
+        if (value != null) {
+            params.put(key, value.toString());
+        }
+    }
+
+    private String createSplitRequest(Map<String, Object> additionalDetails) {
+        Object splitTypeValue = additionalDetails.get("splitRequest");
+        Object splitInfoValue = additionalDetails.get("splitInfo");
+        if (splitTypeValue == null && splitInfoValue == null) {
+            return null;
+        }
+        if (splitTypeValue == null || !(splitInfoValue instanceof Map)) {
+            throw new CustomException("INVALID_PAYU_SPLIT_DETAILS",
+                    "PayU splitType and splitInfo must both be provided");
+        }
+
+        String splitType = splitTypeValue.toString();
+        if (!"absolute".equalsIgnoreCase(splitType) && !"percentage".equalsIgnoreCase(splitType)) {
+            throw new CustomException("INVALID_PAYU_SPLIT_DETAILS",
+                    "PayU splitType must be absolute or percentage");
+        }
+
+        Map<?, ?> splitInfo = (Map<?, ?>) splitInfoValue;
+        if (splitInfo.isEmpty()) {
+            throw new CustomException("INVALID_PAYU_SPLIT_DETAILS",
+                    "PayU splitInfo must contain at least one child merchant");
+        }
+
+        Map<String, Object> payuSplitInfo = new LinkedHashMap<>();
+        for (Map.Entry<?, ?> entry : splitInfo.entrySet()) {
+            String merchantKey = Objects.toString(entry.getKey(), "");
+            if (merchantKey.trim().isEmpty() || !(entry.getValue() instanceof Map)) {
+                throw new CustomException("INVALID_PAYU_SPLIT_DETAILS",
+                        "Each PayU splitInfo entry must identify a child merchant and its split details");
+            }
+
+            Map<?, ?> childDetails = (Map<?, ?>) entry.getValue();
+            Map<String, String> payuChildDetails = new LinkedHashMap<>();
+            payuChildDetails.put("aggregatorSubTxnId", requiredSplitValue(childDetails, "txnId"));
+            payuChildDetails.put("aggregatorSubAmt", requiredSplitValue(childDetails, "amount"));
+            payuChildDetails.put("aggregatorCharges", requiredSplitValue(childDetails, "charges"));
+            payuSplitInfo.put(merchantKey, payuChildDetails);
+        }
+
+        Map<String, Object> splitRequest = new LinkedHashMap<>();
+        splitRequest.put("type", splitType.toLowerCase());
+        splitRequest.put("splitInfo", payuSplitInfo);
+        try {
+            return objectMapper.writeValueAsString(splitRequest);
+        } catch (IOException e) {
+            log.error("Failed to serialize PayU split request", e);
+            throw new CustomException("PAYU_SPLIT_REQUEST_GEN_FAILED",
+                    "Unable to generate PayU split request");
+        }
+    }
+
+    private String requiredSplitValue(Map<?, ?> childDetails, String key) {
+        Object value = childDetails.get(key);
+        if (value == null || value.toString().trim().isEmpty()) {
+            throw new CustomException("INVALID_PAYU_SPLIT_DETAILS",
+                    "PayU splitInfo child entries must contain " + key);
+        }
+        return value.toString();
+    }
+
+    private String createPaymentHash(Map<String, String> params, String splitRequest) {
+        List<String> hashParts = new ArrayList<>();
+        hashParts.add(MERCHANT_KEY);
+        hashParts.add(params.get("txnid"));
+        hashParts.add(params.get("amount"));
+        hashParts.add(params.get("productinfo"));
+        hashParts.add(params.get("firstname"));
+        hashParts.add(params.get("email"));
+        for (int i = 1; i <= 10; i++) {
+            hashParts.add(Objects.toString(params.get("udf" + i), ""));
+        }
+        hashParts.add(MERCHANT_SALT);
+        if (splitRequest != null) {
+            hashParts.add(splitRequest);
+        }
+        return hashCal(String.join("|", hashParts));
     }
 
     @Override
@@ -129,22 +212,7 @@ public class PayuGateway implements Gateway {
                 && !isNull(resp.getProductinfo()) && !isNull(resp.getFirstname()) ){
             resp.setTransaction_amount(resp.getAmount());
             String checksum = resp.getHash();
-
-            String hashSequence = "SALT|status||||||udf5|udf4|udf3|udf2|udf1|email|firstname|productinfo|amount|txnid|";
-            hashSequence = hashSequence.concat(MERCHANT_KEY);
-            hashSequence = hashSequence.replace("SALT", MERCHANT_SALT);
-            hashSequence = hashSequence.replace("status", resp.getStatus());
-            hashSequence = hashSequence.replace("udf5", resp.getUdf5());
-            hashSequence = hashSequence.replace("udf4", resp.getUdf4());
-            hashSequence = hashSequence.replace("udf3", resp.getUdf3());
-            hashSequence = hashSequence.replace("udf2", resp.getUdf2());
-            hashSequence = hashSequence.replace("udf1", resp.getUdf1());
-            hashSequence = hashSequence.replace("email", resp.getEmail());
-            hashSequence = hashSequence.replace("firstname", resp.getFirstname());
-            hashSequence = hashSequence.replace("productinfo", resp.getProductinfo());
-            hashSequence = hashSequence.replace("amount", resp.getTransaction_amount());
-            hashSequence = hashSequence.replace("txnid", resp.getTxnid());
-            String hash = hashCal(hashSequence);
+            String hash = createResponseHash(resp);
 
             if(checksum.equalsIgnoreCase(hash)){
                 Transaction txn = transformRawResponse(resp, currentStatus);
@@ -155,6 +223,27 @@ public class PayuGateway implements Gateway {
         }
 
         return fetchStatusFromGateway(currentStatus);
+    }
+
+    private String createResponseHash(PayuResponse response) {
+        List<String> hashParts = new ArrayList<>();
+        hashParts.add(MERCHANT_SALT);
+        hashParts.add(response.getStatus());
+        for (int i = 0; i < 5; i++) {
+            hashParts.add("");
+        }
+        hashParts.add(Objects.toString(response.getUdf5(), ""));
+        hashParts.add(Objects.toString(response.getUdf4(), ""));
+        hashParts.add(Objects.toString(response.getUdf3(), ""));
+        hashParts.add(Objects.toString(response.getUdf2(), ""));
+        hashParts.add(Objects.toString(response.getUdf1(), ""));
+        hashParts.add(Objects.toString(response.getEmail(), ""));
+        hashParts.add(response.getFirstname());
+        hashParts.add(response.getProductinfo());
+        hashParts.add(response.getTransaction_amount());
+        hashParts.add(response.getTxnid());
+        hashParts.add(MERCHANT_KEY);
+        return hashCal(String.join("|", hashParts));
     }
 
     @Override
@@ -255,7 +344,7 @@ public class PayuGateway implements Gateway {
     }
 
     private String hashCal(String str) {
-        byte[] hashSequence = str.getBytes();
+        byte[] hashSequence = str.getBytes(StandardCharsets.UTF_8);
         StringBuilder hexString = new StringBuilder();
         try {
             MessageDigest algorithm = MessageDigest.getInstance("SHA-512");
@@ -281,8 +370,12 @@ public class PayuGateway implements Gateway {
 
     @Override
     public String generateRedirectFormData(Transaction transaction) {
-        // TODO Auto-generated method stub
-        return null;
+        try {
+            return objectMapper.writeValueAsString(buildPaymentParams(transaction));
+        } catch (IOException e) {
+            log.error("Failed to serialize PayU form data", e);
+            throw new CustomException("PAYU_FORM_DATA_GEN_FAILED", "Unable to generate PayU form data");
+        }
     }
 
 }
