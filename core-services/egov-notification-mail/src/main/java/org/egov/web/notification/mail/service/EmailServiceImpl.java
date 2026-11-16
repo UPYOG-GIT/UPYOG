@@ -57,6 +57,7 @@ public class EmailServiceImpl  implements EmailService {
             templateModel.putAll(notificationRequest.getTemplateModel());
         }
         templateModel.put("proposalNo", notificationRequest.getApplicationDetails().getProposalNo());
+        templateModel.put("dateOfSubmission", notificationRequest.getApplicationDetails().getDateOfSubmission());
         templateModel.put("karyType", notificationRequest.getApplicationDetails().getKaryType());
         templateModel.put("sthapnaPata", notificationRequest.getApplicationDetails().getSthapnaPata());
         templateModel.put("constructionArea", notificationRequest.getApplicationDetails().getConstructionArea());
