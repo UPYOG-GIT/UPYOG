@@ -40,11 +40,21 @@ export const SelectPaymentType = (props) => {
     { tenantId: tenantId, consumerCode: wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode, businessService },
     {}
   );
+  const PAYU_TENANTS = ["cg.citya"];
+  const isPayuTenant = PAYU_TENANTS.includes(tenantId);
+  const filteredMenu = (menu || []).filter((item) => {
+    const name = typeof item === "string" ? item : item?.gateway;
+    if (name === "PAYU") return isPayuTenant;
+    if (name === "CCAVENUE") return !isPayuTenant;
+    return true;
+  });
+  
   useEffect(() => {
     if (paymentdetails?.Bill && paymentdetails.Bill.length == 0) {
       setShowToast({ key: true, label: "CS_BILL_NOT_FOUND" });
     }
   }, [paymentdetails]);
+
   useEffect(() => {
     localStorage.setItem("BillPaymentEnabled", "true");
   }, []);
@@ -110,7 +120,7 @@ export const SelectPaymentType = (props) => {
             method: "POST",
             target: "_top",
           });
-          
+
           const orderForNDSLPaymentSite = [
             "encRequest",
             "access_code",
@@ -134,19 +144,19 @@ export const SelectPaymentType = (props) => {
 
           // override default date for UPYOG Custom pay
           gatewayParam["requestDateTime"] = gatewayParam["requestDateTime"]?.split(new Date().getFullYear()).join(`${new Date().getFullYear()} `);
-        
+
           // gatewayParam["redirect_url"]= redirectUrl?.split("redirect_url=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
-          gatewayParam["redirect_url"]= redirectUrl;
-          gatewayParam["cancel_url"]= redirectUrl?.split("cancel_url=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
+          gatewayParam["redirect_url"] = redirectUrl;
+          gatewayParam["cancel_url"] = redirectUrl?.split("cancel_url=")?.[1]?.split("eg_pg_txnid=")?.[0] + 'eg_pg_txnid=' + gatewayParam?.orderId;
           // gatewayParam["successUrl"]= data?.Transaction?.callbackUrl;
           // gatewayParam["failUrl"]= data?.Transaction?.callbackUrl;
-          
+
           // var formdata = new FormData();
-          
+
           for (var key of orderForNDSLPaymentSite) {
-           
+
             // formdata.append(key,gatewayParam[key]);
-           
+
             newForm.append(
               $("<input>", {
                 name: key,
@@ -158,7 +168,7 @@ export const SelectPaymentType = (props) => {
           $(document.body).append(newForm);
           newForm.submit();
 
-        
+
           // makePayment(gatewayParam.txURL,formdata);
 
         } catch (e) {
@@ -197,12 +207,12 @@ export const SelectPaymentType = (props) => {
             <CardSectionHeader> ₹ {paymentAmount || billDetails?.totalAmount}</CardSectionHeader>
           </div>
           <CardLabel>{t("PAYMENT_CS_SELECT_METHOD")}</CardLabel>
-          {menu?.length && (
+          {filteredMenu?.length && (
             <Controller
               name="paymentType"
-              defaultValue={menu[0]}
+              defaultValue={filteredMenu[0]}
               control={control}
-              render={(props) => <RadioButtons selectedOption={props.value} options={menu} onSelect={props.onChange} />}
+              render={(props) => <RadioButtons selectedOption={props.value} options={filteredMenu} onSelect={props.onChange} />}
             />
           )}
           {!showToast && <SubmitBar label={t("PAYMENT_CS_BUTTON_LABEL")} submit={true} />}
