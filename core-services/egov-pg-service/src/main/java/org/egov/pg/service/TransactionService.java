@@ -63,6 +63,7 @@ public class TransactionService {
 	 * @return Redirect URI to the gateway for the particular transaction
 	 */
 	public Transaction initiateTransaction(TransactionRequest transactionRequest) {
+
 		validator.validateCreateTxn(transactionRequest);
 
 		// Enrich transaction by generating txnid, audit details, default status
@@ -70,6 +71,10 @@ public class TransactionService {
 
 		RequestInfo requestInfo = transactionRequest.getRequestInfo();
 		Transaction transaction = transactionRequest.getTransaction();
+
+		if("cg.citya".equalsIgnoreCase(transaction.getTenantId())) {
+            transaction.setGateway("PAYU");
+		}
 
 		TransactionDump dump = TransactionDump.builder().txnId(transaction.getTxnId())
 				.auditDetails(transaction.getAuditDetails()).build();
