@@ -21,11 +21,12 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import java.io.IOException;
 import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -60,73 +61,109 @@ public class PayuGateway implements Gateway {
         this.MERCHANT_PATH_STATUS = environment.getRequiredProperty("payu.path.status");
     }
 
+    public String generateTransactionId() {
+        return "TXN_OBPAS_" + System.currentTimeMillis();
+    }
+
     @Override
     public URI generateRedirectURI(Transaction transaction) {
 
-        String hashSequence = "key|txnid|amount|productinfo|firstname|email|||||||||||";
-        hashSequence = hashSequence.concat(MERCHANT_SALT);
-        hashSequence = hashSequence.replace("key", MERCHANT_KEY);
-        hashSequence = hashSequence.replace("txnid", transaction.getTxnId());
-        hashSequence = hashSequence.replace("amount", Utils.formatAmtAsRupee(transaction.getTxnAmount()));
-        hashSequence = hashSequence.replace("productinfo", transaction.getProductInfo());
-        hashSequence = hashSequence.replace("firstname", transaction.getUser().getName());
-        hashSequence = hashSequence.replace("email", Objects.toString(transaction.getUser().getEmailId(), ""));
+        String txnId = generateTransactionId();
 
-        log.info("hashSequence: "+hashSequence);
-        String hash = hashCal(hashSequence);
+        Map<String, String> params = new LinkedHashMap<>();
 
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("key", MERCHANT_KEY);
-        params.add("txnid", transaction.getTxnId());
-        params.add("amount", Utils.formatAmtAsRupee(transaction.getTxnAmount()));
-        params.add("productinfo", transaction.getProductInfo());
-        params.add("firstname", transaction.getUser().getName());
-        params.add("email", Objects.toString(transaction.getUser().getEmailId(), ""));
-        params.add("phone", transaction.getUser().getMobileNumber());
-        params.add("surl", transaction.getCallbackUrl());
-        params.add("furl", transaction.getCallbackUrl());
-        params.add("hash", hash);
-        
-        log.info("params: "+params);
+        params.put("key", MERCHANT_KEY);
+        params.put("txnid", txnId);
+        params.put("amount", "10");
+        params.put("productinfo", "Test");
+        params.put("firstname", "John");
+        params.put("email", "dev4entitcs@gmail.com");
+        params.put("phone", "6464646473");
+        params.put("surl", "https://payu.in/integrationlab/callback.php");
+        params.put("furl", "https://payu.in/integrationlab/callback.php");
+        params.put("lastname", "Doe");
+        params.put("city", "Mumbai");
+        params.put("state", "Maharashtra");
+        params.put("country", "India");
+        params.put("zipcode", "400001");
 
-        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host(MERCHANT_URL_PAY).path
-                (MERCHANT_PATH_PAY).build();
-        
-        log.info("uriComponents: "+uriComponents);
-        log.info("uriComponents: "+uriComponents.toUriString());
-        
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            
-            log.info("headers: "+headers);
+        // Build split merchants data
+        Map<String, Map<String, String>> splitInfo = new HashMap<>();
+        // Child Merchant 1: rCnCe9
+        Map<String, String> child1 = new HashMap<>();
+        child1.put("txnId", generateTransactionId());
+        child1.put("amount", "7");
+        child1.put("charges", "0.00");
+        splitInfo.put("rCnCe9", child1);
 
-            HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
+        // Child Merchant 2: Z9UfjV
+        Map<String, String> child2 = new HashMap<>();
+        child2.put("txnId", generateTransactionId());
+        child2.put("amount", "3");
+        child2.put("charges", "0.00");
+        splitInfo.put("Z9UfjV", child2);
 
-            log.info("entity: "+ entity);
-            
-            URI redirectUri = restTemplate.postForLocation(
-                    uriComponents.toUriString(), entity
-            );
-            
-            log.info("redirectUri: "+ redirectUri);
+        // Generate splitRequest JSON
+        String splitRequest = generateSplitRequest("absolute", splitInfo);
+        params.put("splitRequest", splitRequest);
 
-            if(isNull(redirectUri))
-                throw new CustomException("PAYU_REDIRECT_URI_GEN_FAILED", "Failed to generate redirect URI");
-            else
-                return redirectUri;
+        String hashString = MERCHANT_KEY + "|" +
+                params.get("txnid") + "|" +
+                params.get("amount") + "|" +
+                params.get("productinfo") + "|" +
+                params.get("firstname") + "|" +
+                params.get("email") + "|" +
+                params.getOrDefault("udf1", "") + "|" +
+                params.getOrDefault("udf2", "") + "|" +
+                params.getOrDefault("udf3", "") + "|" +
+                params.getOrDefault("udf4", "") + "|" +
+                params.getOrDefault("udf5", "") + "||||||" +
+                MERCHANT_SALT + "|" +
+                params.get("splitRequest");
 
-        } catch (RestClientException e){
-            log.error("Unable to retrieve redirect URI from gateway", e);
-            throw new ServiceCallException( "Redirect URI generation failed, invalid response received from gateway");
+        // Generate hash
+        String hash = hashCal(hashString);
+        params.put("hash", hash);
+
+        transaction.setTxnId(txnId);
+        transaction.setSplitRequest(splitInfo);
+        transaction.setHash(hash);
+
+        log.info("Transaction " + transaction);
+
+        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(MERCHANT_URL_PAY).build();
+
+        return uriComponents.toUri();
+
+    }
+
+    public static String generateSplitRequest(String type, Map<String, Map<String, String>> splitInfo) {
+        // Note: For production use, consider using a JSON library like Gson or Jackson
+        StringBuilder json = new StringBuilder();
+        json.append("{\"type\":\"").append(type).append("\",");
+        json.append("\"splitInfo\":{");
+        int count = 0;
+        for (Map.Entry<String, Map<String, String>> entry : splitInfo.entrySet()) {
+            if (count > 0)
+                json.append(",");
+            json.append("\"").append(entry.getKey()).append("\":{");
+            Map<String, String> details = entry.getValue();
+            json.append("\"aggregatorSubTxnId\":\"").append(details.get("txnId")).append("\",");
+            json.append("\"aggregatorSubAmt\":\"").append(details.get("amount")).append("\",");
+            json.append("\"aggregatorCharges\":\"").append(details.get("charges")).append("\"");
+            json.append("}");
+            count++;
         }
+        json.append("}}");
+        return json.toString();
     }
 
     @Override
     public Transaction fetchStatus(Transaction currentStatus, Map<String, String> params) {
         PayuResponse resp = objectMapper.convertValue(params, PayuResponse.class);
-        if( ! isNull(resp.getHash()) && ! isNull(resp.getStatus()) && ! isNull(resp.getTxnid()) && ! isNull(resp.getAmount())
-                && !isNull(resp.getProductinfo()) && !isNull(resp.getFirstname()) ){
+        if (!isNull(resp.getHash()) && !isNull(resp.getStatus()) && !isNull(resp.getTxnid())
+                && !isNull(resp.getAmount())
+                && !isNull(resp.getProductinfo()) && !isNull(resp.getFirstname())) {
             resp.setTransaction_amount(resp.getAmount());
             String checksum = resp.getHash();
 
@@ -146,9 +183,10 @@ public class PayuGateway implements Gateway {
             hashSequence = hashSequence.replace("txnid", resp.getTxnid());
             String hash = hashCal(hashSequence);
 
-            if(checksum.equalsIgnoreCase(hash)){
+            if (checksum.equalsIgnoreCase(hash)) {
                 Transaction txn = transformRawResponse(resp, currentStatus);
-                if (txn.getTxnStatus().equals(Transaction.TxnStatusEnum.PENDING) || txn.getTxnStatus().equals(Transaction.TxnStatusEnum.FAILURE)) {
+                if (txn.getTxnStatus().equals(Transaction.TxnStatusEnum.PENDING)
+                        || txn.getTxnStatus().equals(Transaction.TxnStatusEnum.FAILURE)) {
                     return txn;
                 }
             }
@@ -157,11 +195,42 @@ public class PayuGateway implements Gateway {
         return fetchStatusFromGateway(currentStatus);
     }
 
+    public String hashCal(String hashString) {
+
+        // Print hash formula and raw string for debugging
+        System.out.println("\nHash Formula:");
+        System.out.println(
+                "key|txnid|amount|productinfo|firstname|email|udf1|udf2|udf3|udf4|udf5|||||||salt|splitRequest");
+
+        System.out.println("\nRaw Hash String:");
+        System.out.println(hashString);
+
+        // Generate SHA512 hash
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            byte[] hash = md.digest(hashString.getBytes("UTF-8"));
+
+            // Convert to hex string
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+
+            return hexString.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @Override
     public boolean isActive() {
         return ACTIVE;
     }
-
 
     @Override
     public String gatewayName() {
@@ -172,7 +241,6 @@ public class PayuGateway implements Gateway {
     public String transactionIdKeyInResponse() {
         return "txnid";
     }
-
 
     private Transaction transformRawResponse(PayuResponse resp, Transaction currentStatus) {
 
@@ -215,12 +283,11 @@ public class PayuGateway implements Gateway {
                 + txnRef + "|"
                 + MERCHANT_SALT);
 
-
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("form", "2");
 
-        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host(MERCHANT_URL_STATUS).path
-                (MERCHANT_PATH_STATUS).queryParams(queryParams).build();
+        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host(MERCHANT_URL_STATUS)
+                .path(MERCHANT_PATH_STATUS).queryParams(queryParams).build();
 
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -234,49 +301,25 @@ public class PayuGateway implements Gateway {
 
             HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
 
-            ResponseEntity<String> response = restTemplate.postForEntity(uriComponents.toUriString(), entity, String.class);
+            ResponseEntity<String> response = restTemplate.postForEntity(uriComponents.toUriString(), entity,
+                    String.class);
 
             log.info(response.getBody());
 
             JsonNode payuRawResponse = objectMapper.readTree(response.getBody());
             JsonNode status = payuRawResponse.path("transaction_details").path(txnRef);
 
-            if(status.isNull())
+            if (status.isNull())
                 throw new CustomException("FAILED_TO_FETCH_STATUS_FROM_GATEWAY",
-                        "Unable to fetch status from payment gateway for txnid: "+ currentStatus.getTxnId());
+                        "Unable to fetch status from payment gateway for txnid: " + currentStatus.getTxnId());
             PayuResponse payuResponse = objectMapper.treeToValue(status, PayuResponse.class);
 
             return transformRawResponse(payuResponse, currentStatus);
 
-        }catch (RestClientException | IOException e){
-            log.error("Unable to fetch status from payment gateway for txnid: "+ currentStatus.getTxnId(), e);
+        } catch (RestClientException | IOException e) {
+            log.error("Unable to fetch status from payment gateway for txnid: " + currentStatus.getTxnId(), e);
             throw new ServiceCallException("Error occurred while fetching status from payment gateway");
         }
-    }
-
-    private String hashCal(String str) {
-        byte[] hashSequence = str.getBytes();
-        StringBuilder hexString = new StringBuilder();
-        try {
-            MessageDigest algorithm = MessageDigest.getInstance("SHA-512");
-            algorithm.reset();
-            algorithm.update(hashSequence);
-            byte messageDigest[] = algorithm.digest();
-
-
-            for (byte aMessageDigest : messageDigest) {
-                String hex = Integer.toHexString(0xFF & aMessageDigest);
-                if (hex.length() == 1) hexString.append("0");
-                hexString.append(hex);
-            }
-
-        } catch (NoSuchAlgorithmException nsae) {
-            log.error("Error occurred while generating hash "+str, nsae);
-            throw new CustomException("CHECKSUM_GEN_FAILED", "Hash generation failed, gateway redirect URI " +
-                    "cannot be generated");
-        }
-
-        return hexString.toString();
     }
 
     @Override

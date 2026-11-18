@@ -12,6 +12,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -183,6 +184,33 @@ public class Transaction {
     @JsonProperty("bankTransactionNo")
     private String bankTransactionNo;
 
+    private String amount = "10";
+
+    private String firstname = "John";
+
+    private String lastname ="Doe";
+
+    private String email = "dev4@entitcs@gmail.com";
+
+    private String phone = "6464646473";
+
+    private String city = "Mumbai";
+
+    private String state = "Maharashtra";
+
+    private String country = "India";
+
+    private String zipcode = "400001";
+
+    private String surl = "https://payu.in/integrationlab/callback.php";
+
+    private String furl = "https://payu.in/integrationlab/callback.php";
+
+    private String key = "rCnCe9";
+
+    private String hash;
+
+    private Map<String, Map<String, String>> splitRequest = new HashMap<>();    
 
     /**
      * Current status of the transaction
