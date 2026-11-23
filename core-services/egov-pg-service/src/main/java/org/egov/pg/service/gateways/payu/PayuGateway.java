@@ -91,21 +91,26 @@ public class PayuGateway implements Gateway {
         Map<String, Map<String, String>> splitInfo = new HashMap<>();
         // Child Merchant 1: rCnCe9
         Map<String, String> child1 = new HashMap<>();
-        child1.put("txnId", generateTransactionId());
-        child1.put("amount", "7");
-        child1.put("charges", "0.00");
+        child1.put("aggregatorSubTxnId", generateTransactionId());
+        child1.put("aggregatorSubAmt", "7");
+        child1.put("aggregatorCharges", "0.00");
         splitInfo.put("rCnCe9", child1);
 
         // Child Merchant 2: Z9UfjV
         Map<String, String> child2 = new HashMap<>();
-        child2.put("txnId", generateTransactionId());
-        child2.put("amount", "3");
-        child2.put("charges", "0.00");
+        child2.put("aggregatorSubTxnId", generateTransactionId());
+        child2.put("aggregatorSubAmt", "3");
+        child2.put("aggregatorCharges", "0.00");
         splitInfo.put("Z9UfjV", child2);
 
         // Generate splitRequest JSON
         String splitRequest = generateSplitRequest("absolute", splitInfo);
         params.put("splitRequest", splitRequest);
+
+
+        Map<String, Object> splitRequestParam = new LinkedHashMap<>();
+        splitRequestParam.put("type", "absolute");
+        splitRequestParam.put("splitInfo", splitInfo);
 
         String hashString = MERCHANT_KEY + "|" +
                 params.get("txnid") + "|" +
@@ -126,7 +131,7 @@ public class PayuGateway implements Gateway {
         params.put("hash", hash);
 
         transaction.setTxnId(txnId);
-        transaction.setSplitRequest(splitInfo);
+        transaction.setSplitRequest(splitRequestParam);
         transaction.setHash(hash);
 
         log.info("Transaction " + transaction);
@@ -148,9 +153,9 @@ public class PayuGateway implements Gateway {
                 json.append(",");
             json.append("\"").append(entry.getKey()).append("\":{");
             Map<String, String> details = entry.getValue();
-            json.append("\"aggregatorSubTxnId\":\"").append(details.get("txnId")).append("\",");
-            json.append("\"aggregatorSubAmt\":\"").append(details.get("amount")).append("\",");
-            json.append("\"aggregatorCharges\":\"").append(details.get("charges")).append("\"");
+            json.append("\"aggregatorSubTxnId\":\"").append(details.get("aggregatorSubTxnId")).append("\",");
+            json.append("\"aggregatorSubAmt\":\"").append(details.get("aggregatorSubAmt")).append("\",");
+            json.append("\"aggregatorCharges\":\"").append(details.get("aggregatorCharges")).append("\"");
             json.append("}");
             count++;
         }
