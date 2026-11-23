@@ -210,7 +210,7 @@ public class Transaction {
 
     private String hash;
 
-    private Map<String, Map<String, String>> splitRequest = new HashMap<>();    
+    private Map<String, Object> splitRequest = new HashMap<>();    
 
     /**
      * Current status of the transaction
