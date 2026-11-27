@@ -190,7 +190,7 @@ public class Transaction {
 
     private String lastname ="Doe";
 
-    private String email = "dev4@entitcs@gmail.com";
+    private String email = "dev4entitcs@gmail.com";
 
     private String phone = "6464646473";
 

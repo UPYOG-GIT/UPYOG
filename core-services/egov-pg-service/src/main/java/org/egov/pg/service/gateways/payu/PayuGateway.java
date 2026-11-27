@@ -133,6 +133,7 @@ public class PayuGateway implements Gateway {
         transaction.setTxnId(txnId);
         transaction.setSplitRequest(splitRequestParam);
         transaction.setHash(hash);
+        transaction.setProductInfo(params.get("productinfo"));
 
         log.info("Transaction " + transaction);
 
