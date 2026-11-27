@@ -48,7 +48,7 @@ export const SelectPaymentType = (props) => {
     if (name === "CCAVENUE") return !isPayuTenant;
     return true;
   });
-  
+
   useEffect(() => {
     if (paymentdetails?.Bill && paymentdetails.Bill.length == 0) {
       setShowToast({ key: true, label: "CS_BILL_NOT_FOUND" });
@@ -100,80 +100,123 @@ export const SelectPaymentType = (props) => {
         window.location = redirectUrl;
       } else {
         // new payment gatewayfor UPYOG pay
-        try {
+        if (data.Transaction?.gateway === "PAYU") {
+          const transaction = data.Transaction;
+          const payuParams = {
+            key: transaction.key,
+            txnid: transaction.txnId,
+            amount: transaction.amount,
+            productinfo: transaction.productInfo,
+            firstname: transaction.firstname,
+            email: transaction.email,
+            phone: transaction.phone,
+            city: transaction.city,
+            state: transaction.state,
+            country: transaction.country,
+            zipcode: transaction.zipcode,
+            splitRequest:
+              transaction.splitRequest && typeof transaction.splitRequest === "object"
+                ? JSON.stringify(transaction.splitRequest)
+                : transaction.splitRequest,
+            surl: transaction.surl,
+            furl: transaction.furl,
+            hash: transaction.hash,
+          };
+          const requiredPayuParams = ["key", "txnid", "amount", "productinfo", "firstname", "email", "phone", "surl", "furl", "hash"];
+          if (!redirectUrl || requiredPayuParams.some((key) => !payuParams[key])) {
+            throw new Error("Missing required PAYU payment details");
+          }
 
-          // console.log(redirectUrl);
-          const gatewayParam = redirectUrl
-            ?.split("?")
-            ?.slice(1)
-            ?.join("?")
-            ?.split("&")
-            ?.reduce((curr, acc) => {
-              var d = acc.split("=");
-              curr[d[0]] = d[1];
-              return curr;
-            }, {});
-
-
-          var newForm = $("<form>", {
-            action: gatewayParam.txURL+"="+gatewayParam.command,
+          const newForm = $("<form>", {
+            action: redirectUrl,
             method: "POST",
             target: "_top",
           });
 
-          const orderForNDSLPaymentSite = [
-            "encRequest",
-            "access_code",
-            // "checksum",
-            // "messageType",
-            // "merchant_id",
-            // "serviceId",
-            // "order_id",
-            // "customerId",
-            // "amount",
-            // "currency",
-            // "requestDateTime",
-            // "redirect_url",
-            // "cancel_url",
-            // "additionalField1",
-            // "additionalField2",
-            // "additionalField3",
-            // "additionalField4",
-            // "additionalField5",
-          ];
+          Object.keys(payuParams).forEach((key) => {
+            if (payuParams[key] !== undefined && payuParams[key] !== null && payuParams[key] !== "") {
+              newForm.append(
+                $("<input>", {
+                  type: "hidden",
+                  name: key,
+                  value: payuParams[key],
+                })
+              );
+            }
+          });
 
-          // override default date for UPYOG Custom pay
-          gatewayParam["requestDateTime"] = gatewayParam["requestDateTime"]?.split(new Date().getFullYear()).join(`${new Date().getFullYear()} `);
-
-          // gatewayParam["redirect_url"]= redirectUrl?.split("redirect_url=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
-          gatewayParam["redirect_url"] = redirectUrl;
-          gatewayParam["cancel_url"] = redirectUrl?.split("cancel_url=")?.[1]?.split("eg_pg_txnid=")?.[0] + 'eg_pg_txnid=' + gatewayParam?.orderId;
-          // gatewayParam["successUrl"]= data?.Transaction?.callbackUrl;
-          // gatewayParam["failUrl"]= data?.Transaction?.callbackUrl;
-
-          // var formdata = new FormData();
-
-          for (var key of orderForNDSLPaymentSite) {
-
-            // formdata.append(key,gatewayParam[key]);
-
-            newForm.append(
-              $("<input>", {
-                name: key,
-                value: gatewayParam[key],
-                // type: "hidden",
-              })
-            );
-          }
           $(document.body).append(newForm);
           newForm.submit();
+        } else {
+
+            // console.log(redirectUrl);
+            const gatewayParam = redirectUrl
+              ?.split("?")
+              ?.slice(1)
+              ?.join("?")
+              ?.split("&")
+              ?.reduce((curr, acc) => {
+                var d = acc.split("=");
+                curr[d[0]] = d[1];
+                return curr;
+              }, {});
 
 
-          // makePayment(gatewayParam.txURL,formdata);
+            var newForm = $("<form>", {
+              action: gatewayParam.txURL + "=" + gatewayParam.command,
+              method: "POST",
+              target: "_top",
+            });
 
-        } catch (e) {
-          console.log("Error in payment redirect ", e);
-          //window.location = redirectionUrl;
+            const orderForNDSLPaymentSite = [
+              "encRequest",
+              "access_code",
+              // "checksum",
+              // "messageType",
+              // "merchant_id",
+              // "serviceId",
+              // "order_id",
+              // "customerId",
+              // "amount",
+              // "currency",
+              // "requestDateTime",
+              // "redirect_url",
+              // "cancel_url",
+              // "additionalField1",
+              // "additionalField2",
+              // "additionalField3",
+              // "additionalField4",
+              // "additionalField5",
+            ];
+
+            // override default date for UPYOG Custom pay
+            gatewayParam["requestDateTime"] = gatewayParam["requestDateTime"]?.split(new Date().getFullYear()).join(`${new Date().getFullYear()} `);
+
+            // gatewayParam["redirect_url"]= redirectUrl?.split("redirect_url=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
+            gatewayParam["redirect_url"] = redirectUrl;
+            gatewayParam["cancel_url"] = redirectUrl?.split("cancel_url=")?.[1]?.split("eg_pg_txnid=")?.[0] + 'eg_pg_txnid=' + gatewayParam?.orderId;
+            // gatewayParam["successUrl"]= data?.Transaction?.callbackUrl;
+            // gatewayParam["failUrl"]= data?.Transaction?.callbackUrl;
+
+            // var formdata = new FormData();
+
+            for (var key of orderForNDSLPaymentSite) {
+
+              // formdata.append(key,gatewayParam[key]);
+
+              newForm.append(
+                $("<input>", {
+                  name: key,
+                  value: gatewayParam[key],
+                  // type: "hidden",
+                })
+              );
+            }
+            $(document.body).append(newForm);
+            newForm.submit();
+
+
+            // makePayment(gatewayParam.txURL,formdata);
         }
       }
     } catch (error) {
